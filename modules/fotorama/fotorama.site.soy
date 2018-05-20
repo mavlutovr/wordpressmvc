@@ -1,0 +1,21 @@
+{namespace fotorama_templates}
+
+/**
+* В полный экран
+* @param photos Список фотографий
+*/
+{template .fullscreen}
+<div class="fotorama-fullscreen">
+
+	// Закрыть
+	<div class="fotorama-fullscreen-button-close js-close"></div>
+	
+	// Контейнер
+	<div class="js-container _container">
+		{foreach $photo in $photos}
+			<img src="{$photo}" />
+		{/foreach}
+	</div>
+
+</div>
+{/template}

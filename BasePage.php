@@ -1,0 +1,234 @@
+<?php
+namespace Wdpro;
+
+
+class BasePage extends BaseEntity
+{
+
+	/**
+	 * Инициализация типа страниц
+	 */
+	public static function init() {
+
+		parent::init();
+		/** @var BasePage $className */
+		$className = get_called_class();
+		wdpro_register_post_type($className);
+		$type = static::getType();
+		add_action('init', function () use (&$type)
+		{
+			register_post_type( $type, array(
+				'public'       => true,
+				'hierarchical'=>true,
+
+			) );
+		});
+
+		$type = static::getType();
+
+		// Это чтобы главная загружалась
+		add_action('pre_get_posts', function ($query) use (&$type) {
+			if(
+				(!isset($query->query_vars['post_type'])
+					||'' == $query->query_vars['post_type'])
+				&& isset($query->query_vars['page_id'])
+				&& 0 != $query->query_vars['page_id'])
+				$query->query_vars['post_type'] = array( 'page', $type);
+
+			return $query;
+		});
+	}
+
+
+	/**
+	 * Текст страницы
+	 *
+	 * @param string $content Текущий текст страницы
+	 */
+	public function getCard(&$content) {
+
+
+	}
+
+
+	/**
+	 * Возвращает данные сущности вместе с данными своего поста
+	 *
+	 * @return array
+	 */
+	public function getDataWithPost()
+	{
+		$data = wdpro_extend(get_post($this->id(), ARRAY_A), $this->getData());
+
+		$data['url'] = home_url($data['post_name']);
+
+		return $data;
+	}
+
+
+	/**
+	 * Возвращает данные поста
+	 *
+	 * @return array|null|\WP_Post
+	 */
+	public function getPostData()
+	{
+		return get_post($this->id(), ARRAY_A);
+	}
+
+
+	/**
+	 * Возвращает родительскую страницу (раздел)
+	 *
+	 * @return \Wdpro\BasePage
+	 * @throws \Exception
+	 */
+	public function getParent()
+	{
+		$data = $this->getPostData();
+		if (isset($data['post_parent']) && $data['post_parent'])
+		{
+			return wdpro_object_by_post_id($data['post_parent']);
+		}
+
+		// Когда есть адрес родительской страницы
+		// Это не нужно в админке, а то хзлебные крошки пртятся
+		if (!is_admin() && $uri = static::getParentUri()) {
+
+			/** @var \Wdpro\BasePage $post */
+			$post = wdpro_get_post_by_name($uri);
+			/*if (static::getType() != $post::getType()) {
+				throw new Exception('Родительская страница, указанная в '
+					.get_class($this).'::getSubParentUri() относится к тому же классу
+					страниц');
+			}*/
+			return $post;
+		}
+	}
+
+
+	/**
+	 * Адрес страницы, которая является родительской для всех страниц данного типа
+	 *
+	 * Это нужно для того, чтобы можно было указать адрес той страницы,
+	 * которая в хлебных крошках должна быть левее страниц данного класса
+	 */
+	public static function getParentUri() {
+
+	}
+
+
+	/**
+	 * Возвращает адрес страницы
+	 *
+	 * @return string
+	 */
+	public function getUri()
+	{
+		return get_post_field('post_name', $this->id());
+	}
+
+
+	/**
+	 * Возвращает адрес страницы с подразделами этого поста
+	 *
+	 * @param string|null $childsType Тип дочерних элементов
+	 * У одного и того же раздела могут быть разные типы дочерних элементов. Например,
+	 * у одного и того же раздела каталога могут быть как товары, так и подразделы
+	 * каталога
+	 * @return string
+	 */
+	public function getConsoleListUri($childsType=null)
+	{
+		if (!$childsType)
+		{
+			$childsType = static::getType();
+		}
+		return 'edit.php?post_type='.$childsType.'&sectionId='.$this->id();
+	}
+
+
+	/**
+	 * Возаращает текст кнопки этого поста
+	 *
+	 * @return string
+	 */
+	public function getButtonText()
+	{
+		return get_post_field('post_title', $this->id());
+	}
+
+
+	/**
+	 * Возвращает количество дочерних элементов
+	 *
+	 * @param \Wdpro\Console\Roll|string $childsRollOrType Дочерний список или тип дочерних
+	 * элементов
+	 * @return null|number
+	 */
+	public function getChildsCount($childsRollOrType)
+	{
+		// Список
+		if (is_object($childsRollOrType))
+			return parent::getChildsCount($childsRollOrType);
+
+
+		// Просто тип
+		$typeSql = '';
+
+		$postType = $childsRollOrType::getType();
+		if ($postType)
+		{
+			$typeSql = ' AND post_type=%s ';
+		}
+
+		return \Wdpro\Page\SqlTable::count(array(
+			'WHERE post_parent=%d '.$typeSql
+			.' AND post_status!="trash" AND post_status!="auto-draft"',
+			$this->id(),
+			$postType
+		));
+	}
+
+
+	/**
+	 * Проверка абсолютного адреса на совпадение с адресом страницы
+	 *
+	 * @param string $url Проверяемый адрес
+	 * @return bool
+	 */
+	public function isUrl($url)
+	{
+		return home_url($this->getUri()) == $url;
+	}
+
+
+	/**
+	 * Проверка относительного адреса на совпадение с адресом страницы
+	 *
+	 * @param string $uri Проверяемый адрес
+	 * @return bool
+	 */
+	public function isUri($uri) {
+
+		return $this->getUri() == $uri;
+	}
+
+
+	/**
+	 * Возвращает количество подразделов для страницы
+	 *
+	 * @throws EntityException
+	 */
+	public function getSubsectionsCount() {
+		if ($this->sqlTable()->isField('post_parent')) {
+			return $this->sqlTable()->count([
+				'WHERE `post_parent`=%d AND `post_status`="publish"',
+				[$this->id()]
+			]);
+		}
+
+		return 0;
+	}
+
+}

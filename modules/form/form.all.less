@@ -1,0 +1,193 @@
+@import "../../css/mixins";
+
+@wdpro_red: red;
+
+// Самые основные стили
+
+// Форма
+.wdpro-form
+{
+
+}
+
+.wdpro-form-width
+{
+	display: inline-block;
+}
+
+.wdpro-form-group
+{
+
+}
+
+.wdpro-form-element
+{
+	margin-bottom: 12px;
+	
+	.JS_left_text
+	{
+		.wdpro-form-label
+		{
+			margin-left: 20px;
+		}
+	}
+}
+
+
+.wdpro-form-element-input
+{
+
+}
+
+.wdpro-form-element-input_container
+{
+
+}
+
+
+.wdpro-form-label
+{
+	font-weight: bold;
+}
+
+.wdpro-form-element-left
+{
+	.box-sizing;
+
+	.wdpro-form-label
+	{
+		padding-right: 7px;
+		text-align: right;
+	}
+}
+.wdpro-form-left-nonFirst .wdpro-form-element-left
+{
+	margin-left: 20px;
+}
+.wdpro-form-left-first
+{
+
+}
+
+.wdpro-form-element-center
+{
+
+}
+
+.wdpro-form-element-top
+{
+	margin-bottom: 3px;
+	margin-top: 5px;
+}
+
+.wdpro-form-element-right
+{
+	margin-left: 5px;
+}
+
+.wdpro-form-element-bottom
+{
+
+}
+
+
+
+.wdpro-input-border(@color, @size: 1px)
+{
+	.border2(@size solid darken(@color, 25%), @size solid lighten(@color, 25%));
+}
+.wdpro-input
+{
+	background: white;
+	.wdpro-input-border(#999);
+	//.border2(1px solid #777, 1px solid #DDD);
+	padding: 3px;
+	margin: 0;
+	outline: none;
+	font-family: Verdana, Arial;
+	font-size: 14px;
+}
+
+.wdpro-input-focus
+{
+	//background: lighten(blue, 48%);
+	//outline: 1px solid #000;
+	background: #FAF9CB;
+}
+
+.wdpro-form-element-error
+{
+	.wdpro-form-element-input_container
+	{
+		//.wdpro-input-border(@seobit_red, 2px);
+		border: 2px solid @wdpro_red;
+		padding: 2px;
+	}
+	
+}
+
+.wdpro-form-error
+{
+	color: @wdpro_red;
+	margin-top: 4px;
+	margin-bottom: 10px;
+}
+
+
+.wdpro-button
+{
+	padding: 10px 40px;
+	font-size: 18px;
+	cursor: pointer;
+	margin: 0;
+}
+
+
+/*.wdpro-form-element-error
+{
+	border: @wdpro_red 2px solid;
+}*/
+
+.wdpro-form-submit
+{
+	cursor: pointer;
+}
+
+.wdpro-form-select
+{
+	width: 100%;
+	box-sizing: border-box;
+	margin: 0;
+}
+
+.wdpro-form-select-container
+{
+	padding-right: 5px;
+	box-sizing: border-box;
+}
+
+.wdpro-form-input
+{
+	box-sizing: border-box;
+}
+
+.wdpro-form-textarea
+{
+	height: 100px;
+}
+
+.wdpro-form-spinner-buttons {
+	margin-left: 5px;
+}
+
+.wdpro-form-spinner-button {
+	cursor: pointer;
+}
+
+.wdpro-form-center {
+	position: absolute;
+	cursor: text;
+	margin-top: 3px;
+	margin-left: 3px;
+	opacity: 0.8;
+}

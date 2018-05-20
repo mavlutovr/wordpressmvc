@@ -1,0 +1,48 @@
+@import "../../css/mixins";
+
+@keyframes loadingAnimation {
+	from
+	{
+		background-position-x: 0;
+	}
+	to
+	{
+		background-position-x: 80px;
+	}
+}
+@-webkit-keyframes loadingAnimation {
+	from
+	{
+		background-position-x: 0;
+	}
+	to
+	{
+		background-position-x: 80px;
+	}
+}
+
+.loading
+{
+	background-color: #AAAAAA;
+	.rounded(3px);
+	border: 1px solid #AAAAAA;
+	position: absolute;
+	z-index: 1;
+}
+
+.loading, .loadingWhite
+{
+	background-image: data-uri("loading.png");
+	.animation(loadingAnimation, 2500ms, infinite, linear);
+	//.animation(loadingAnimation, 2500ms, infinite, linear);
+	//-webkit-animation: loadingAnimation 1s;
+	box-sizing: border-box;
+}
+.loadingWhite
+{
+	//background-image: data-uri("loading.png");
+}
+
+
+
+

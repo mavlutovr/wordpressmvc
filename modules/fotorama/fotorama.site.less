@@ -1,0 +1,41 @@
+.fotorama-fullscreen {
+	position: fixed;
+	left: 0;
+	right: 0;
+	width: 100%;
+	height: 100%;
+	background: fadeOut(black, 10%);
+	z-index: 1000;
+	
+	.fotorama-fullscreen-button-close {
+		position: absolute;
+		right: 20px;
+		top: 20px;
+		color: white;
+		font-size: 30px;
+		cursor: pointer;
+		opacity: 0.8;
+		text-shadow: 1px 1px 0 black;
+		z-index: 1100;
+
+		&:before {
+			content: '\2715';
+		}
+	}
+
+	/*._container {
+		display: inline-block;
+		vertical-align: middle;
+	}
+	
+	._helper {
+		vertical-align: middle;
+		display: inline-block;
+		height: 100%;
+	}
+	
+	._center {
+		height: 100%;
+		text-align: center;
+	}*/
+}

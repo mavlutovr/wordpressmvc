@@ -1,0 +1,261 @@
+@import "mixins";
+
+@wdpro_red: red;
+
+html, body {
+	min-height: 100%;
+}
+
+.g-inline-top
+{
+	display: inline-block;
+	vertical-align: top;
+}
+
+.g-inline
+{
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.g-nowrap {
+	white-space: nowrap;
+}
+
+.g-inline-bottom
+{
+	display: inline-block;
+	vertical-align: bottom;
+}
+
+// Нулевой шрифт, чтобы небыло всяких лишних пространств
+.g-font0
+{
+	font-size: 0;
+}
+
+.g-align-right
+{
+	text-align: right;
+}
+
+.g-hid
+{
+	display: none;
+}
+
+
+// Жирный текст
+.g-bold
+{
+	font-weight: bold;
+}
+
+// Наклонный текст
+.g-italic
+{
+	font-style: italic;
+}
+
+// Таблица без границ и без лишних отступов
+td
+{
+	margin: 0;
+	padding: 0;
+	empty-cells: show;
+}
+.table, .table_100
+{
+	border: 0;
+	border-collapse: collapse;
+}
+.table_100
+{
+	width: 100%;
+}
+.table_top > tbody > tr > td, .table_top > tr > td
+{
+	vertical-align: top;
+}
+.g-inline_block{
+	display: inline-block;
+	vertical-align: top;
+	zoom: 1;
+	*display: inline;
+}
+.g-inline_block_middle{
+	display: inline-block;
+	vertical-align: middle;
+	zoom: 1;
+	*display: inline;
+}
+
+
+
+// Преобразование слоев в таблицу
+.g-div_table
+{
+	display: table;
+}
+.g-div_tr
+{
+	display: table-row;
+}
+.g-div_td
+{
+	display: table-cell;
+}
+
+// Убирает у первого и последнего абзатцев отступы
+.clear_first_last_margin
+{
+	&:first-child
+	{
+		margin-top: 0;
+	}
+	&:last-child
+	{
+		margin-bottom: 0;
+	}
+}
+
+.p_margin_clear_first_last
+{
+	p
+	{
+		.clear_first_last_margin();
+	}
+}
+
+.wdpro-button-16
+{
+	.size(16);
+	cursor: pointer;
+	display: inline-block;
+	margin-left: 10px;
+}
+
+
+.wdpro-button-del
+{
+	color: @wdpro_red;
+	font-size: 20px;
+	vertical-align: top;
+	
+	&:before
+	{
+		// ✕
+		//content: '✕';
+		content: '\2715';
+	}
+	
+	&:hover
+	{
+		opacity: 0.8;
+	}
+}
+
+.g-block
+{
+	display: block;
+}
+
+.wdpro-image-border
+{
+	border: 5px solid #CCC;
+	padding: 1px;
+	outline: none;
+	
+	&a:hover
+	{
+		border-color: #DDD;
+	}
+	
+	img
+	{
+		display: block;
+	}
+}
+
+.g-mt10
+{
+	margin-top: 10px;
+}
+.g-mt5
+{
+	margin-top: 5px;
+}
+.g-mr20
+{
+	margin-right: 20px;
+}
+.g-mb20
+{
+	margin-bottom: 20px;
+}
+.g-ml10
+{
+	margin-left: 10px;
+}
+
+
+.g-nowrap
+{
+	white-space: nowrap;
+}
+
+.justify_blok
+{
+	text-align: justify;
+	overflow: hidden;
+	cursor: default;
+}
+.justify_blok .justify_dop
+{
+	display: inline-block;
+	position: relative;
+	width: 100%;
+	height: 0;
+}
+
+.g-inline-block, .g-inline-block-top, .g-inline-block-middle {
+	display: inline-block;
+}
+
+.g-inline-block-middle {
+	vertical-align: middle;
+}
+
+.g-inline-block-top {
+	vertical-align: top;
+}
+
+.g-align-center {
+	text-align: center;
+}
+
+.g-align-left {
+	text-align: left;
+}
+
+.g-clear {
+	clear: both;
+}
+
+.g-float-right {
+	float: right;
+}
+
+.g-float-left {
+	float: left;
+}
+
+:focus::-webkit-input-placeholder {color: transparent}
+:focus::-moz-placeholder          {color: transparent}
+:focus:-moz-placeholder           {color: transparent}
+:focus:-ms-input-placeholder      {color: transparent}
+
+
+.js-auto-show {
+	display: none;
+}

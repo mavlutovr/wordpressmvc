@@ -1,0 +1,44 @@
+{namespace dialog_templates}
+
+
+
+/**
+* Окошко
+*/
+{template .window}
+
+<div class="dialog">
+
+
+	// Шапка
+	<table class="table_100 table_top">
+	     <tr>
+			// Титл
+			<td class="dialog_title_td"><div class="JS_dialog_title"></div></td>
+			
+        	  // Закрыть
+        	 <td class="dialog_close_td"><div class="JS_dialog_close" title="Закрыть">✕</div></td>
+        </tr>
+	</table>
+
+
+	// Контент, устанавливается потом в dialog.js
+	<div class="JS_dialog_content">
+	
+	</div>
+	
+	
+</div>
+
+{/template}
+
+
+
+/**
+* Подложка, которая добавляется позади некоторых окошек
+*/
+{template .substrate}
+<div class="dialog_substrate"></div>
+{/template}
+
+

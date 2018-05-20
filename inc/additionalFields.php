@@ -1,0 +1,239 @@
+<?php
+
+// Можно доработать так
+// http://truemisha.ru/blog/wordpress/meta-boxes.html
+
+
+/**
+ * Показывает форму дополнительных полей для поста и страницы
+ * 
+ * @param $post
+ */
+function wdproShowMetaForm($post)
+{
+	
+	?>
+	<p>
+		<div><strong>Ссылка на другую страницу или другой сайт</strong>:</div>
+		<label><input type="text" name="wdpro[alternative_url]" value="<?php echo htmlspecialchars(get_post_meta($post->ID, 'alternative_url', 1)); ?>" style="width:100%" /></label>
+	</p>
+	<p>
+		<div><strong>Title</strong> (Заголовок вкладки браузера):</div>
+		<label><input type="text" name="wdpro[title]" value="<?php echo htmlspecialchars(get_post_meta($post->ID, 'title', 1)); ?>" style="width:100%" /></label>
+	</p>
+	<p>
+	<div><strong>H1</strong> (Заголовок на странице):</div>
+	<label><input type="text" name="wdpro[h1]" value="<?php echo htmlspecialchars(get_post_meta($post->ID, 'h1', 1)); ?>" style="width:100%" /></label>
+	</p>
+	<p>
+	<div><strong>Keywords</strong> (Ключевые слова):</div>
+	<label><input type="text" name="wdpro[keywords]" value="<?php echo htmlspecialchars(get_post_meta($post->ID, 'keywords', 1)); ?>" style="width:100%" /></label>
+	</p>
+	<p>
+		<div><strong>Description</strong> (Описание страницы):</div>
+		<input type="text" name="wdpro[description]" style="width:100%"
+		value="<?php echo htmlspecialchars(get_post_meta($post->ID, 'description', 1)); ?>"/>
+	</p>
+	<input type="hidden" name="wdpro_nonce" value="<?php echo wp_create_nonce(__FILE__); ?>" />
+	<p>
+		<div><strong>Ссылка на студию</strong> (Сделано в студии...)</div>
+		<label><textarea type="text" name="wdpro[madein]" style="width:100%"><?php echo htmlspecialchars(get_post_meta($post->ID, 'madein', 1)); ?></textarea></label>
+	</p>
+	<!--<p>
+		<div><strong>Перелинковка</strong></div>
+		<textarea style="width:100%;height:50px;" name="wdpro[links]" style="width:100%;height:50px;"><?php /*echo htmlspecialchars(get_post_meta($post->ID, 'links', 1)); */?></textarea>
+	</p>-->
+	
+<?php
+}
+
+
+// Добавляем поля в админку
+add_action('admin_init', function () {
+
+	if (get_option('wdpro_additional_remove') != 1)
+	{
+		add_meta_box('extra_fields',
+			'Дополнительно',
+			'wdproShowMetaForm',
+			'post',
+			'normal');
+	
+	
+		add_meta_box('extra_fields',
+			'Дополнительно',
+			'wdproShowMetaForm',
+			'page',
+			'normal');
+	}
+	
+}, 1);
+
+
+
+// Сохранение
+add_action('save_post', function ($postId) {
+	
+	// Если форма не прошла проверку
+	if ( (isset($_POST['wdpro_nonce']) 
+		&& !wp_verify_nonce( $_POST['wdpro_nonce'], __FILE__))
+			|| (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE)
+			|| !current_user_can('edit_post', $postId)
+			|| !(isset($_POST['wdpro']) && $_POST['wdpro'])
+	) {
+
+		// Завершаем процесс сохранения преждевременно
+		return false;
+	}
+	
+	
+	// Перебираем данные и сохраняем
+	foreach($_POST['wdpro'] as $key=>$value)
+	{
+		empty($value)
+			? delete_post_meta($postId, $key)
+			: update_post_meta($postId, $key, $value);
+	}
+	
+	return $postId;
+	
+}, 0);
+
+
+
+	
+/**
+ * Возвращает внутренности <head>
+ */
+function wdpro_the_header()
+{
+	$title = wdpro_get_post_meta('title');
+	if (!$title) {
+		$title = get_the_title();
+	}
+	$description = wdpro_get_post_meta('description');
+	$keywords = wdpro_get_post_meta('keywords');
+	
+?><title><?php echo($title); ?></title>
+	<meta name="description" content="<?php echo( $description ); ?>" />
+	<meta name="keywords" content="<?php echo( $keywords ); ?>" />
+
+	<meta charset="<?php bloginfo( 'charset' ); ?>" />
+	<link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>" />
+<?php
+	if (wdpro_get_option('wdpro_css_to_footer') != 1) { ?>
+	<link rel="stylesheet" href="<?php bloginfo('stylesheet_url'); ?>" type="text/css" media="screen" />
+
+<?php
+	}
+}
+
+
+function wdpro_the_footer() {
+	if (wdpro_get_option('wdpro_css_to_footer') == 1) { ?>
+		<link rel="stylesheet" href="<?php bloginfo('stylesheet_url'); ?>" type="text/css"
+		      media="screen"/>
+
+		<?php
+	}
+}
+	
+
+/**
+ * Возвращает заголовок страницы
+ * 
+ * @return bool|null|string
+ */
+function wdpro_the_h1()
+{
+	$h1 = wdpro_get_post_meta('h1');
+	
+	if ($h1 != '-' && $h1 != '—')
+	{
+		if (!$h1)
+		{
+			$h1 = wdpro_the_title_standart();
+		}
+		
+		return $h1;
+	}
+}
+	
+
+/**
+ * Возвращает стандартный Title
+ * 
+ * @return null|string
+ */
+function wdpro_the_title_standart()
+{
+	return get_the_title();
+}
+	
+
+/**
+ * Возвращает Meta данные поста
+ * 
+ * @param string $metaName Имя мета-данных
+ * @return mixed
+ */
+function wdpro_get_post_meta($metaName)
+{
+	$arr = get_post_meta(get_the_ID(), $metaName);
+	
+	if (is_array($arr) && isset($arr[0]) && $arr[0])
+	{
+		return $arr[0];
+	}
+}
+	
+
+/**
+ * Возвращает сблок перенинковки
+ * 
+ * @return mixed
+ */
+function wdpro_links()
+{
+	echo wdpro_get_post_meta('links');
+}
+
+
+function wdpro_counters() {
+
+	echo(\Wdpro\Counters\Controller::getCountersHtml());
+}
+	
+
+/**
+ * Возвращает ссылку на веб-студию
+ * 
+ * Рекоменудется устанавливать индексируемую ссылку на веб-студию только на главной 
+ * странице
+ * 
+ * @return mixed
+ */
+function wdpro_madein()
+{
+	echo wdpro_get_post_meta('madein');
+}
+
+
+/*// Страница с настройками
+add_action(
+	'admin_menu',
+
+	function () {
+		
+		// Options
+		add_options_page(
+			'Настройки WDPro',
+			'WDPro',
+			'administrator',
+			'wdproOptions',
+			function () {
+				echo('<h2>WDPro</h2>');
+			}
+		);
+	}
+);*/

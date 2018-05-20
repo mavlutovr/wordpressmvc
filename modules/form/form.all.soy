@@ -1,0 +1,563 @@
+{namespace wdpro.templates.forms}
+
+
+
+/**
+* Шаблон формы
+* @param form Данные формы
+* @param groups Группы элементов
+* @param params Параметры
+*/
+{template .form}
+<div class="wdpro-form">
+
+	// Контейнер сообщений
+	<div class="JS_messages_container"></div>
+
+	{if not $params['removeFormTag']}
+	<form action="{$form['action']}" method="{$form['method']}"
+	class="{$params['class']}">
+	{/if}
+
+		// Это слой, ширина которого равна не 100%, а ширине формы
+		// Он нужен для того, чтобы располагать элементы по левой или правой границе формы
+		<div class="wdpro-form-width JS_groups_container">
+
+			// Перебираем группы
+			{foreach $group in $groups}
+
+				// Выводим 1 группу
+				{$group|noAutoescape}
+
+			{/foreach}
+
+		</div>
+
+	{if not $params['removeFormTag']}
+	</form>
+	{/if}
+
+</div>
+{/template}
+
+
+
+/**
+* Ошибки
+* @param errorsPrefix Текст перед ошибками
+* @param errors Ошибки
+*/
+{template .errors}
+
+	// Заголовок или префикс
+	{$errorsPrefix}
+
+	// Ошибки
+	{if (isNonnull($errors) and length($errors))}
+	:{sp}{\n}{\n}
+		// Перебираем ошибки
+		{foreach $error in $errors}
+
+			// Запятая
+			{if (not(isFirst($error)))},{sp}{/if}
+
+			// 1 ошибка
+			{$error}
+
+		{/foreach}
+
+		.
+	{else}
+	!
+	{/if}
+
+{/template}
+
+
+
+/**
+* Группа
+* @param elements Элементы группы
+*/
+{template .group}
+
+	<div class="wdpro-form-group JS_group">
+
+		// Перебираем элементы
+		{foreach $element in $elements}
+
+			// 1 Элемент
+			{$element|noAutoescape}
+
+		{/foreach}
+
+	</div>
+
+{/template}
+
+
+
+/**
+* Элемент (Поле + текст)
+* @param data Данные элемента
+*/
+{template .element}
+
+	<div class="wdpro-form-element JS_element g-inline-top">
+
+
+		// Сверху
+		{if ($data['top'])}
+
+			<div class="wdpro-form-element-top">
+
+				// Левый пустой отступ, чтобы текст начинался от начала поля
+				{if ($data['leftExists'] or isNonnull($data['left']))}
+					<div class="JS_left g-inline-top wdpro-form-element-left JS_left_equalizing_target"></div>
+				{/if}
+
+				// Текст
+				<div class="wdpro-form-label g-inline-top
+				{if ($data['top']['class'])}{sp}{$data['top']['class']}{/if}"
+					{if ($data['top']['style'])}
+						{sp}style="{$data['top']['style']}"
+					{/if}
+				>
+				{if $data['top']['labelId']}<label for="{$data['top']['labelId']}">{/if}
+					{$data['top']['text']|noAutoescape}{if $data['top']['requiredStar']}{sp}{$data['top']['requiredStar']|noAutoescape}{/if}
+				{if $data['top']['labelId']}</label>{/if}
+				</div>
+
+			</div>
+
+		{/if}
+
+
+		// Middle
+		<div class="wdpro-form-element-middle">
+
+			// Левая часть
+			{if ($data['leftExists'] or isNonnull($data['left']))}
+
+				<div class="
+					JS_left_equalizing_source{sp}
+					{if ($data['autoLeft'])}
+						JS_left_text{sp}
+					{/if}
+					wdpro-form-element-left
+					g-inline-top
+				">
+					{if ($data['left'])}
+						<div class="wdpro-form-label
+							{if $data['left']['nowrap']} g-nowrap{/if}
+							{if ($data['left']['class'])}{sp}{$data['left']['class']}{/if}"
+							{if ($data['left']['style'])}
+								{sp}style="{$data['left']['style']}"
+							{/if}
+						>{if $data['left']['labelId']}<label for="{$data['left']['labelId']}">{/if}
+						{$data['left']['text']|noAutoescape}{if
+						$data['left']['requiredStar']}{sp}
+						{$data['left']['requiredStar']|noAutoescape}{/if}
+						{if $data['left']['labelId']}</label>{/if}</div>
+					{/if}
+				</div>
+
+			{/if}
+
+
+			// Поле
+			<div class="wdpro-form-element-input g-inline-top{if $data['error']} wdpro-form-element-error{/if}">
+
+				// Ошибка
+				{if $data['error']}
+				<div class="wdpro-form-error">
+					{$data['error']|noAutoescape}
+				</div>
+				{/if}
+
+				// Текст над полем, который исчезает при попадании фокуса в поле
+				{if ($data['center'])}
+				<div class="wdpro-form-center
+				js-field-center">{$data['center']['text']}{if
+				$data['center']['requiredStar']}{sp}{$data['center']['requiredStar']|noAutoescape}{/if}</div>
+				{/if}
+
+				// Само поле
+				<div class="wdpro-form-element-input_container JS_input_container
+					{if ($data['autoWidth'])}
+					{sp}JS_auto_width
+					{/if}
+				">
+					{$data['inputjQueryMarker']|noAutoescape}
+				</div>
+
+				// Дополнительный блок поля
+				<div class="JS_input_additional"></div>
+
+			</div>
+
+
+			// Правая часть
+			{if ($data['right'])}
+
+				<div class="wdpro-form-element-right g-inline-top">
+					<div class="wdpro-form-label
+					{if ($data['right']['class'])}{sp}{$data['right']['class']}{/if}"
+					{if ($data['right']['style'])}
+						{sp}style="{$data['right']['style']}"
+					{/if}
+					>
+						{if $data['right']['labelId']}<label for="{$data['right']['labelId']}">{/if}
+							{$data['right']['text']|noAutoescape}
+							{if $data['right']['requiredStar']}{sp}{$data['right']['requiredStar']|noAutoescape}{/if}
+						{if $data['right']['labelId']}</label>{/if}
+					</div>
+				</div>
+
+			{/if}
+
+		</div>
+
+
+		// Снизу
+		{if ($data['bottom'])}
+			<div class="wdpro-form-element-bottom">
+
+				// Левый пустой отступ, чтобы текст начинался от начала поля
+				{if ($data['leftExists'] or isNonnull($data['left']))}
+					<div class="JS_left inline-top wdpro-form-element-left JS_left_equalizing_target"></div>
+				{/if}
+
+
+				// Текст
+				<div class="wdpro-form-label g-inline-top
+					{if ($data['bottom']['class'])}{sp}{$data['bottom']['class']}{/if}"
+					{if ($data['bottom']['style'])}
+						{sp}style="{$data['bottom']['style']}"
+					{/if}
+				>{$data['bottom']['text']|noAutoescape}</div>
+			</div>
+		{/if}
+
+
+
+	</div>
+
+{/template}
+
+
+
+/**
+* Label
+* @param data Данные элемента
+*/
+{template .label}
+
+	<span>:{$data['label']}{if $data['required']} *{/if}</span>
+
+{/template}
+
+
+/**
+* Аттрибуты
+* @param attrs Аттрибуты
+*/
+{template .attrs}
+
+	// Перебираем аттрибуты
+	{foreach $attrName in keys($attrs)}
+
+		{if ($attrs[$attrName])}
+			// 1 Аттрибут
+			{sp}{$attrName}="{$attrs[$attrName]}"
+		{/if}
+
+	{/foreach}
+
+{/template}
+
+
+/**
+* Текстовое поле в 1 строку
+* @param data Данные элемента
+* @param attrs Аттрибуты
+*/
+{template .stringField}
+	{if ($data['nothing'])}{/if}
+
+	<input
+		type="text"
+		{call .attrs data="all" /}
+	/>
+
+{/template}
+
+
+/**
+* E-mail
+* @param data Данные элемента
+* @param attrs Аттрибуты
+*/
+{template .emailField}
+	{if ($data['nothing'])}{/if}
+
+	<input
+		type="email"
+		{call .attrs data="all" /}
+	/>
+
+{/template}
+
+
+/**
+* Дата
+* @param data Данные элемента
+* @param attrs Аттрибуты
+*/
+{template .dateField}
+	{if ($data['nothing'])}{/if}
+	<span>
+    	<input type="hidden" name="{$data['fieldName']}" value="" class="JS_field" />
+    	<input type="text"
+    	 	{call .attrs data="all" /}
+    	 	//value="{$data['value'] ? $data['value']: ''}"
+    	 />
+    </span>
+{/template}
+
+
+/**
+* Текстовое поле в 1 строку с кнопками + и - для увеличения / уменьшения колчичестваа
+* @param data Данные элемента
+* @param attrs Аттрибуты
+*/
+{template .spinnerField}
+	{if ($data['nothing'])}{/if}
+
+<div>
+	<div class="g-inline-block-top">
+		<input
+			type="text"
+			{call .attrs data="all" /}
+		/>
+	</div>
+	<div class="g-inline-block-top wdpro-form-spinner-buttons">
+		<div class="js-spinner-button wdpro-form-spinner-button" data-delta="1">+</div>
+		<div class="js-spinner-button wdpro-form-spinner-button" data-delta="-1">-</div>
+	</div>
+</div>
+
+{/template}
+
+
+
+/**
+* Текстовое поле в 1 строку
+* @param data Данные элемента
+* @param attrs Аттрибуты
+*/
+{template .passField}
+	{if ($data['nothing'])}{/if}
+
+	<input
+		type="password"
+		{call .attrs data="all" /}
+	/>
+
+{/template}
+
+
+
+/**
+* Текстовое поле в несколько строк
+* @param data Данные элемента
+* @param attrs Аттрибуты
+*/
+{template .textField}
+	{if ($data['nothing'])}{/if}
+
+	<textarea
+	 	{call .attrs data="all" /}
+	 >{$data['value'] ? $data['value']: ''}</textarea>
+
+{/template}
+
+
+
+/**
+* Чекбокс
+* @param data Данные элемента
+* @param attrs Аттрибуты
+*/
+{template .checkField}
+	{if ($data['nothing'])}{/if}
+<span>
+	<input type="hidden" name="{$data['fieldName']}" value="" />
+	<input type="checkbox"
+	 	{call .attrs data="all" /}
+	 	//value="{$data['value'] ? $data['value']: ''}"
+	 />
+	 <label for="{$data['labelId']}" class="checkbox_design"></label>
+</span>
+{/template}
+
+
+
+/**
+* Button
+* @param data Данные элемента
+* @param attrs Аттрибуты
+*/
+{template .buttonField}
+	{if ($data['nothing'])}{/if}
+
+	<input
+		type="button"
+		value="{$data['value'] ? $data['value'] : '' }"
+		{call .attrs data="all" /}
+	/>
+
+{/template}
+
+
+
+/**
+* Button
+* @param data Данные элемента
+* @param attrs Аттрибуты
+*/
+{template .buttonFieldButtonTag}
+	{if ($data['nothing'])}{/if}
+
+	<button {call .attrs data="all" /}
+	>{$data['value'] ? $data['value'] : '' }</button>
+
+{/template}
+
+
+
+/**
+* Submit
+* @param data Данные элемента
+* @param attrs Аттрибуты
+*/
+{template .submitField}
+	{if ($data['nothing'])}{/if}
+
+	<input
+		type="submit"
+		value="{$data['value'] ? $data['value'] : '' }"
+		{call .attrs data="all" /}
+	/>
+
+{/template}
+
+
+/**
+* Select
+* @param data Данные элемента
+* @param attrs Аттрибуты
+*/
+{template .selectField}
+{if ($attrs['nothing'])}{/if}
+<select {call .attrs data="all" /}>
+
+	{foreach $n in keys($data['options'])}
+		<option value="{$data['options'][$n][0]}"
+		{if $data['value'] == $data['options'][$n][0]} selected="selected"{/if}
+		>{$data['options'][$n][1]}</option>
+	{/foreach}
+
+</select>
+{/template}
+
+
+
+
+/**
+* Hidden
+* @param data Данные элемента
+* @param attrs Аттрибуты
+*/
+{template .hiddenField}
+{if ($data['nothing'])}{/if}
+	<input
+		type="hidden"
+		value="{$data['value'] ? $data['value'] : '' }"
+		{call .attrs data="all" /}
+	/>
+
+{/template}
+
+
+
+/**
+* File Field
+* @param data Данные элемента
+* @param attrs Аттрибуты
+*/
+{template .fileField}
+	{if ($data['nothing'])}{/if}
+
+<div>
+
+	<div>
+		<input
+			type="file"
+			value=""
+			{if $data['multiple']}multiple="multiple"{/if}
+			{call .attrs data="all" /}
+		/>
+		<input type="hidden" name="{$attrs['name']}"
+			class="js-file-name"
+			value="{$attrs['value']}" />
+	</div>
+
+	<div class="js-file_list">
+
+	</div>
+</div>
+{/template}
+
+
+
+
+/**
+* Звездочка "Обязательно для заполнения
+*/
+{template .requiredStar}
+<span class="required_star" title="Поле обязательно для заполнения">*</span>
+{/template}
+
+
+
+/**
+* Блок загруженного файла
+* @param name Имя файла
+* @param url Адрес файла
+*/
+{template .fileLoaded}
+<div class="g-mt5 js-sortable">
+	<div class="g-inline">
+		{if ($url) }<a href="{$url}" target="_blank">{/if}{$name}{if ($url) }</a>{/if}
+	</div>
+
+	<div class="wdpro-button-16 wdpro-button-del js-del" title="Удалить файл"></div>
+</div>
+{/template}
+
+
+
+/**
+* Блок загруженного фото
+* @param url Адрес файла
+*/
+{template .imageLoaded}
+<div class="g-mt10 g-inline-top g-mr20 js-sortable">
+	<div class="g-inline">
+		<a href="{$url}" target="_blank" class="g-block wdpro-image-border"></a>
+	</div>
+
+	<div class="wdpro-button-16 wdpro-button-del js-del" title="Удалить файл"></div>
+</div>
+{/template}
