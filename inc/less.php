@@ -34,12 +34,15 @@ function wdpro_less_compile($lessFile, $cssFile)
  */
 function wdpro_less_compile_try($lessFile, $cssFile)
 {
-	if (defined('WDPRO_LESS_COMPILE') && WDPRO_LESS_COMPILE) {
+	if (
+		defined('WDPRO_LESS_COMPILE') && WDPRO_LESS_COMPILE
+		|| !defined('WDPRO_LESS_COMPILE') && !is_file($cssFile)
+	) {
 		$key = 'wdpro-less-('.wdpro_path_remove_wp_content($lessFile).')';
 		$lastEditedTime = filemtime($lessFile);
 		$lastCompiledTime = get_option($key);
 
-		if ($lastEditedTime != $lastCompiledTime)
+		if ($lastEditedTime != $lastCompiledTime || !is_file($cssFile))
 		{
 			wdpro_less_compile($lessFile, $cssFile);
 			update_option($key, $lastEditedTime);
@@ -47,9 +50,16 @@ function wdpro_less_compile_try($lessFile, $cssFile)
 	}
 }
 
+$standartCssFile = __DIR__.'/../css/standart.less.css';
+
+//if (!is_file($standartCssFile) && !defined('WDPRO_LESS_COMPILE')) {
+//	define('WDPRO_LESS_COMPILE', true);
+//}
+
 wdpro_less_compile_try(
-	__DIR__.'/../css/standart.less', 
-	__DIR__.'/../css/standart.less.css'
+	__DIR__.'/../css/standart.less',
+	$standartCssFile
 );
-wdpro_add_css_to_console(__DIR__.'/../css/standart.less.css');
-wdpro_add_css_to_site(__DIR__.'/../css/standart.less.css');
+
+wdpro_add_css_to_console($standartCssFile);
+wdpro_add_css_to_site($standartCssFile);

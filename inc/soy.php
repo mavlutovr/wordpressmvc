@@ -49,7 +49,10 @@ function wdpro_closure_compile($soyFile, $jsFile)
  */
 function wdpro_closure_compile_try($soyFile, $jsFile)
 {
-	if (defined('WDPRO_SOY_COMPILE') && WDPRO_SOY_COMPILE) {
+	if (
+		defined('WDPRO_SOY_COMPILE') && WDPRO_SOY_COMPILE
+		|| !defined('WDPRO_SOY_COMPILE') && !is_file($jsFile)
+	) {
 
 		$key = 'wdpro-soy-('.wdpro_path_remove_wp_content($soyFile).')';
 		$lastEditedTime = filemtime($soyFile);
@@ -62,3 +65,4 @@ function wdpro_closure_compile_try($soyFile, $jsFile)
 		}
 	}
 }
+

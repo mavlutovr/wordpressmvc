@@ -1,10 +1,11 @@
 <?php
 /*
- * Plugin Name: WebDeveloper.pro Базовый
- * Description: Базовый плагин для разработки сайтов от <a href="http://webdeveloper.pro/" target="_blank">webdeveloper.pro</a>. Системные требования: PHP5.5
- * Version: 0.1.2
+ * Plugin Name: Wordpress Mvc
+ * Description: Easy MVC development on Wordpress <a href="https://github.com/mavlutovr/wordpressmvc"
+ * target="_blank">github.com/mavlutovr/wordpressmvc</a>. Required PHP5.5
+ * Version: 0.1.3
  * Author: Roman Mavlutov
- * Author URI: http://webdeveloper.pro/
+ * Author URI: https://vk.com/mavlutovr
  */
 
 // Standart Functions
@@ -25,7 +26,7 @@ require(__DIR__ . '/Templates.php');
 // Обработка ошибок
 require(__DIR__.'/inc/errors.php');
 
-// JavaScript
+// JavaScripts
 add_action('wp_enqueue_scripts', function ()
 {
 	wp_enqueue_script("jquery");
@@ -33,16 +34,14 @@ add_action('wp_enqueue_scripts', function ()
 	wp_enqueue_script('wdpro');
 });
 wdpro_add_script_to_console(__DIR__.'/js/core.all.js');
-//wdpro_add_script_to_site(__DIR__.'/js/core.all.js');
 wdpro_add_script_to_console(__DIR__.'/js/ready.all.js');
 wdpro_add_script_to_site(__DIR__.'/js/ready.all.js');
 wdpro_add_script_to_console(__DIR__.'/js/moment.js');
-//wdpro_add_script_to_console(__DIR__.'/js/jquery.serializeObject.min.js');
 
-// ClosureCcompiler(Soy)
+// Closure Compiler (Soy)
 require(__DIR__ . '/inc/soy.php');
 
-// ClosureCcompiler(Soy)
+// Less Compiler
 require(__DIR__ . '/inc/less.php');
 
 // Additional fields for pages (title, keywords, description, h1, перелинковка)
@@ -71,7 +70,7 @@ if (defined('DOING_AJAX') && DOING_AJAX)
 // Modules
 require(__DIR__ . '/Modules.php');
 
-// Добавление модулей
+// Add modules
 Wdpro\Modules::addWdpro('form');
 Wdpro\Modules::addWdpro('tools');
 Wdpro\Modules::addWdpro('page');
@@ -83,25 +82,18 @@ Wdpro\Modules::addWdpro('extra/downloadFile');
 Wdpro\Modules::addWdpro('extra/consoleWidget');
 Wdpro\Modules::addWdpro('extra/scriptsToFooter');
 
-// Админка
+// When it is Console
 if (is_admin())
 {
 	require('console.php');
 }
 
 
-// Сайт
+// When it is Site
 else
 {
 	require('site.php');
 }
-
-// Это можно удалить
-/*add_action('init', function () {
-
-	//do_action('wdpro-ready');
-	//do_action('app-ready');
-}, 90);*/
 
 
 // Выключение объединения скриптов

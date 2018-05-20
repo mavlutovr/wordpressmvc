@@ -11,8 +11,8 @@ add_action(
 
 				// Options
 				add_options_page(
-					'Настройки WDPro',
-					'WDPro',
+					'Настройки Wordpress MVC',
+					'Wordpress MVC',
 					'administrator',
 					'wdproOptions',
 					function () {
