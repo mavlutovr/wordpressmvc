@@ -24,7 +24,3 @@ Homepage: https://github.com/mavlutovr/wordpressmvc
 Шаблоны компилируются автоматом. Для этого в теме необходимо создать папку soy и в нее 
 складывать шаблоны .soy
 
-
-
-Preparation to first install.
-Move settings from configFile to settings
