@@ -1,6 +1,8 @@
 # WordpressMVC
 Development on wordpress by mvc.
 
+Homepage: https://github.com/mavlutovr/wordpressmvc
+
 Все делается путем добавления модулей.
 
 ## Тема
