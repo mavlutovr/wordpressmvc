@@ -147,7 +147,7 @@ class Menu
 	public static function addSettings($buttonParams, $formCallback=null)
 	{
 		static::$buttonN += 1;
-		
+
 		if (is_string($buttonParams))
 		{
 			$buttonParams = array(
@@ -163,7 +163,7 @@ class Menu
 			'page_title' => isset($buttonParams['label']) ? $buttonParams['label'] : '',
 			'menu_title' => isset($buttonParams['label']) ? $buttonParams['label'] : '',
 		), $buttonParams);
-		
+
 		if (!isset($buttonParams['menu_slug']) || !$buttonParams['menu_slug'])
 		{
 			$buttonParams['menu_slug'] = wdpro_text_to_file_name(
@@ -173,7 +173,7 @@ class Menu
 
 		add_action(
 			'admin_menu',
-			
+
 			function () use (&$buttonParams)
 			{
 				add_options_page(
@@ -181,7 +181,7 @@ class Menu
 					$buttonParams['menu_title'],
 					$buttonParams['capability'],
 					$buttonParams['menu_slug'],
-					
+
 					function () use (&$buttonParams) {
 
 						if ($buttonParams['menu_slug'] == $_GET['page']) {
@@ -221,8 +221,8 @@ class Menu
 								$form->setData($data);
 
 								$text .= '<div class="wdpro-settings-form">'
-									.$form->getHtml()
-									.'</div>';
+								         .$form->getHtml()
+								         .'</div>';
 
 								echo($text);
 							}
@@ -230,11 +230,11 @@ class Menu
 
 							// Обычная страница
 							else if (isset($buttonParams['open'])) {
-								
+
 								echo $buttonParams['open']();
 							}
 						}
-						
+
 					}
 				);
 			}

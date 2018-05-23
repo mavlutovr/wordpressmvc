@@ -3,7 +3,8 @@
 // Папка плагина
 define('WDPRO_DIR', realpath(__DIR__.'/../').'/');
 define('WDPRO_PATH', WDPRO_DIR);
-define('WDPRO_URL', plugins_url('wdpro').'/');
+define('WDPRO_URL', plugins_url('wordpressmvc').'/');
+define('WDPRO_CONSOLE_URL', admin_url());
 
 // Css классы синей кнопки
 // http://screenshot3.seobit.ru/roma.2015.09.02___19:32:1441211575.png

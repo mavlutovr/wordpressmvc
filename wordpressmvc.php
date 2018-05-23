@@ -1,11 +1,10 @@
 <?php
 /*
- * Plugin Name: Wordpress Mvc
- * Description: Easy MVC development on Wordpress <a href="https://github.com/mavlutovr/wordpressmvc"
- * target="_blank">github.com/mavlutovr/wordpressmvc</a>. Required PHP5.5
+ * Plugin Name: Wordpress MVC - Core
+ * Description: Easy MVC development on Wordpress
  * Version: 0.1.3
  * Author: Roman Mavlutov
- * Author URI: https://vk.com/mavlutovr
+ * Author URI: https://github.com/mavlutovr/wordpressmvc
  */
 
 // Standart Functions

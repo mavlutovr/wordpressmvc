@@ -1,9 +1,14 @@
 # WordpressMVC
 Development on wordpress by mvc.
 
-Homepage: https://github.com/mavlutovr/wordpressmvc
+And also:
 
-Все делается путем добавления модулей.
+* Soy templates
+* Less
+
+[Homepage](https://github.com/mavlutovr/wordpressmvc)
+
+[Install](docs/1. Install.md)
 
 ## Тема
 ### Javascript
@@ -16,7 +21,7 @@ Homepage: https://github.com/mavlutovr/wordpressmvc
 Автоматический подключаемый файл Less к теме:
 
 	ПАПКА_ТЕМЫ/style.less
-	
+
 Этот файл автоматически компилируется в **ПАПКА_ТЕМЫ/style.less.css** и подключается к 
 теме
 

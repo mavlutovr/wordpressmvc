@@ -16,7 +16,37 @@ add_action(
 					'administrator',
 					'wdproOptions',
 					function () {
-						echo('<h2>WDPro</h2>');
+						echo('<h1>Настройки Wordpress MVC</h1>');
+
+						if (!is_dir(__DIR__.'/../app')) {
+							if ($_GET['create_plugin_app']) {
+								wdpro_copy(__DIR__.'/modules/install/default/app_plugin',
+									__DIR__.'/../app');
+								echo('<p>Загатовка плагина-приложения создана. <a 
+class="button-primary"
+href="'.WDPRO_CONSOLE_URL.'plugins.php">Активировать плагин</a>
+</p>
+');
+							}
+							else {
+								echo('<p><a href="'.wdpro_current_url(['create_theme_app', 'create_plugin_app'])
+								     .'&create_plugin_app=1">Создать загатовку плагина-приложения App</a></p>');
+							}
+						}
+						if (!is_dir(__DIR__.'/../../themes/app')) {
+							if ($_GET['create_theme_app']) {
+								wdpro_copy(__DIR__.'/modules/install/default/app_theme',
+									__DIR__.'/../../themes/app');
+								echo('<p>Загатовка темы создана. <a 
+class="button-primary"
+href="'.WDPRO_CONSOLE_URL.'themes.php">Активировать тему</a>
+</p>');
+							}
+							else {
+								echo( '<p><a href="' . wdpro_current_url(['create_theme_app', 'create_plugin_app'])
+								      . '&create_theme_app=1">Создать загатовку темы</a></p>' );
+							}
+						}
 
 						/*$form = new wdproForm();
 						$form->add(array(
@@ -39,6 +69,63 @@ add_action(
 							'title'=>'Настройки',
 							'name'=>'options',
 							'elements' => array(
+								array(
+									'type'=>'html',
+									'html'=>'<h2>Компиляция</h2>',
+								),
+
+								array(
+									'type'=>'check',
+									'name'=>'wdpro_compile_soy',
+									'right'=>'Компилировать Soy шаблоны',
+								),
+
+								array(
+									'type'=>'check',
+									'name'=>'wdpro_compile_less',
+									'right'=>'Компилировать Less в Css',
+								),
+
+								array(
+									'type'=>'html',
+									'html'=>'<h2>Убрать лишние кнопки из меню</h2>',
+								),
+
+								array(
+									'name'=>'remove_edit-comments',
+									'right'=>'Комментарии',
+									'type'=>'checkbox',
+								),
+
+								array(
+									'name'=>'remove_upload',
+									'right'=>'Медиафайлы',
+									'type'=>'checkbox',
+								),
+
+								array(
+									'name'=>'remove_tools',
+									'right'=>'Инструменты',
+									'type'=>'checkbox',
+								),
+
+								array(
+									'name'=>'remove_edit',
+									'right'=>'Записи (блог)',
+									'type'=>'checkbox',
+								),
+
+								array(
+									'type'=>'html',
+									'html'=>'<h2>Другие</h2>',
+								),
+
+								array(
+									'name'=>'wdpro_dev_mode',
+									'right'=>'Включить модуль разработчика',
+									'type'=>'checkbox',
+								),
+
 								array(
 									'name'=>'wdpro_keep_standart_editor',
 									'right'=>'Оставить стандартный редактор',

@@ -10,7 +10,10 @@ class Controller extends \Wdpro\BaseController {
 	 */
 	public static function initConsole() {
 
-		if (defined('WDPRO_DEV_MODE') && WDPRO_DEV_MODE) {
+
+		if (wdpro_get_option('wdpro_dev_mode') ||
+		    (defined('WDPRO_DEV_MODE') &&  WDPRO_DEV_MODE))
+		{
 			\Wdpro\Console\Menu::add([
 				'roll'=>ConsoleRoll::class,
 				'n'=>0,

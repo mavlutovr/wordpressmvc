@@ -1881,6 +1881,29 @@ function wdpro_default_file($defaultFile, $file) {
 
 
 /**
+ * Рекурсивное копирование
+ *
+ * @param string $src Откуда
+ * @param string $dst Куда
+ */
+function wdpro_copy($src, $dst) {
+	$dir = opendir($src);
+	@mkdir($dst);
+	while(false !== ( $file = readdir($dir)) ) {
+		if (( $file != '.' ) && ( $file != '..' )) {
+			if ( is_dir($src . '/' . $file) ) {
+				wdpro_copy($src . '/' . $file,$dst . '/' . $file);
+			}
+			else {
+				copy($src . '/' . $file,$dst . '/' . $file);
+			}
+		}
+	}
+	closedir($dir);
+}
+
+
+/**
  * Создает страницу, если ее нету
  *
  * @param string $uri Адрес страницы

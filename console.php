@@ -43,6 +43,28 @@ Wdpro\Modules::run('runConsoleStart');
 do_action('app-ready');
 
 
+// Удаляем лишник кнопки
+add_action('admin_menu', function () {
+
+	if (wdpro_get_option('remove_edit')) {
+		remove_menu_page('edit.php');
+	}
+
+	if (wdpro_get_option('remove_edit-comments')) {
+		remove_menu_page( 'edit-comments.php' );
+	}
+
+	if (wdpro_get_option('remove_upload')) {
+		remove_menu_page( 'upload.php' );
+	}
+
+	if (wdpro_get_option('remove_tools')) {
+		remove_menu_page('tools.php');
+	}
+});
+
+
+
 register_activation_hook(__FILE__, function ()
 {
 	$permalink_structure = get_option('permalink_structure');
