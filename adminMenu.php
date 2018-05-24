@@ -117,6 +117,40 @@ href="'.WDPRO_CONSOLE_URL.'themes.php">Активировать тему</a>
 
 								array(
 									'type'=>'html',
+									'html'=>'<h2>СЕО</h2>',
+								),
+
+								array(
+									'type'=>'html',
+									'html'=>'<h3>Скрипты</h3>',
+								),
+
+								array(
+									'name'=>'wdpro_scripts_to_footer',
+									'right'=>'Переместить скрипты в футер',
+									'type'=>'checkbox',
+								),
+
+								array(
+									'name'=>'wdpro_scripts_to_footer_exclude_jquery',
+									'right'=>'Оставить jQuery в header',
+									'type'=>'checkbox',
+								),
+
+								array(
+									'name'=>'wdpro_scripts_to_noindex',
+									'right'=>'Переместить скрипты в noindex',
+									'type'=>'checkbox',
+								),
+
+								array(
+									'name'=>'wdpro_css_to_footer',
+									'right'=>'Переместить Css в футер',
+									'type'=>'checkbox',
+								),
+
+								array(
+									'type'=>'html',
 									'html'=>'<h2>Другие</h2>',
 								),
 

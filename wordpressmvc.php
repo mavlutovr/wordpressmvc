@@ -79,7 +79,7 @@ Wdpro\Modules::addWdpro('sender');
 Wdpro\Modules::addWdpro('counters');
 Wdpro\Modules::addWdpro('extra/downloadFile');
 Wdpro\Modules::addWdpro('extra/consoleWidget');
-Wdpro\Modules::addWdpro('extra/scriptsToFooter');
+Wdpro\Modules::addWdpro('extra/seo/scripts');
 
 // When it is Console
 if (is_admin())

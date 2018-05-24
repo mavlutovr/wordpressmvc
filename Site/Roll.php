@@ -5,6 +5,7 @@ use Wdpro\Exception;
 
 class Roll extends \Wdpro\BaseRoll {
 
+
 	/**
 	 * Класс таблицы, из которой происходит выборка
 	 * 

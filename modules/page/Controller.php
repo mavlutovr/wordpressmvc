@@ -218,14 +218,14 @@ class Controller extends \Wdpro\BaseController {
 		 * Скрипты
 		 */
 		add_action('wp_footer', function () {
-			echo '<script>
+			echo '<noindex><script>
 			if (window.wdpro) {
 				wdpro.postId = '.(int)get_the_ID().';
 				wdpro.WDPRO_TEMPLATE_URL = "'.WDPRO_TEMPLATE_URL.'";
 				wdpro.WDPRO_UPLOAD_IMAGES_URL = "'.WDPRO_UPLOAD_IMAGES_URL.'";
 				wdpro.WDPRO_HOME_URL = "'.home_url().'/";
 			}
-			</script>';
+			</script></noindex>';
 		});
 
 		
