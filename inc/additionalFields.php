@@ -107,6 +107,8 @@ add_action('save_post', function ($postId) {
  */
 function wdpro_the_header()
 {
+	remove_action( 'wp_head', '_wp_render_title_tag', 1 );
+
 	$title = wdpro_get_post_meta('title');
 	if (!$title) {
 		$title = get_the_title();
@@ -119,15 +121,46 @@ function wdpro_the_header()
 	<meta name="keywords" content="<?php echo( $keywords ); ?>" />
 
 	<meta charset="<?php bloginfo( 'charset' ); ?>" />
-	<link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>" />
 <?php
-	if (wdpro_get_option('wdpro_css_to_footer') != 1) { ?>
-	<link rel="stylesheet" href="<?php bloginfo('stylesheet_url'); ?>" type="text/css" media="screen" />
 
-<?php
+
+
+	//wdpro_css_header();
+	//wdpro_scripts_header();
+
+
+}
+
+
+/**
+ * Выводит скрипты, которые необходимо отобразить в <header>
+ */
+function wdpro_scripts_header() {
+	if (wdpro_get_option('wdpro_scripts_to_footer') != 1) {
+		wdpro_scripts();
 	}
 }
 
+/**
+ * Выводит скрипты, которые необходимо отобразить перед </body>
+ */
+function wdpro_scripts_footer() {
+	if (wdpro_get_option('wdpro_scripts_to_footer') == 1) {
+		wdpro_scripts();
+	}
+}
+
+// Выводит скрипты
+function wdpro_scripts() {
+	$noindex = wdpro_get_option('wdpro_scripts_to_noindex') == 1;
+	$noindex && noindex_start();
+
+	wp_enqueue_scripts();
+	wp_print_head_scripts();
+	wp_print_scripts();
+
+	$noindex && noindex_end();
+}
 
 function wdpro_the_footer() {
 	if (wdpro_get_option('wdpro_css_to_footer') == 1) { ?>
@@ -135,6 +168,38 @@ function wdpro_the_footer() {
 		      media="screen"/>
 
 		<?php
+	}
+}
+
+
+/**
+ * Выводит css
+ */
+function wdpro_css() {
+	?>
+	<link rel="stylesheet" href="<?php bloginfo('stylesheet_url'); ?>" type="text/css" media="screen" />
+	<?php
+	wp_print_styles();
+	locale_stylesheet();
+}
+
+
+/**
+ * Выводит css
+ */
+function wdpro_css_header() {
+	if (wdpro_get_option('wdpro_css_to_footer') != 1) {
+		wdpro_css();
+	}
+}
+
+
+/**
+ * Выводит css
+ */
+function wdpro_css_footer() {
+	if (wdpro_get_option('wdpro_css_to_footer') == 1) {
+		wdpro_css();
 	}
 }
 	

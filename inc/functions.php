@@ -2388,3 +2388,29 @@ function wdpro_phone_format($phone, $format, $mask = '#')
 
     return ($phone) ? trim(preg_replace($pattern, $format, $phone, 1)) : false;
 }
+
+/**
+ * Начало тега <noindex>
+ *
+ * Функции нужны для того, чтобы не выводить тег <noindex>, внутри которого ничего нету
+ */
+function noindex_start() {
+	global $noindexOb;
+	$noindexOb = '';
+
+	ob_start();
+}
+
+/**
+ * Конец тега </noindex>
+ */
+function noindex_end() {
+	global $noindexOb;
+	$content = ob_get_contents();
+	ob_end_clean();
+
+	if ($content) {
+		echo '<noindex>'.$content.'</noindex>';
+		//echo ''.$content.'';
+	}
+}
