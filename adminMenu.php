@@ -150,6 +150,12 @@ href="'.WDPRO_CONSOLE_URL.'themes.php">Активировать тему</a>
 								),
 
 								array(
+									'name'=>'wdpro_css_to_footer_w3tc',
+									'right'=>'Переместить Css в футер (когда W3 Total Cache)',
+									'type'=>'checkbox',
+								),
+
+								array(
 									'type'=>'html',
 									'html'=>'<h2>Другие</h2>',
 								),

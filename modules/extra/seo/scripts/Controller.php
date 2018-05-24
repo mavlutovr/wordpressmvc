@@ -8,13 +8,6 @@ class Controller extends \Wdpro\BaseController {
 	protected static $toNoindex = false;
 
 
-	/**
-	 * Дополнительная инициализация для сайта
-	 */
-	public static function initSite_ () {
-//		remove_action( 'wp_head', '_wp_render_title_tag', 1 );
-	}
-
 
 	/**
 	 * Выполнение скриптов после инициализаций всех модулей (на сайте)
@@ -29,8 +22,9 @@ class Controller extends \Wdpro\BaseController {
 		} );
 
 		// Css
-		if (wdpro_get_option('wdpro_css_to_footer') == 1) {
-			add_filter('w3tc_minify_processed', function ($buffer) {
+		add_filter('w3tc_minify_processed', function ($buffer) {
+
+			if (wdpro_get_option('wdpro_css_to_footer_w3tc') == 1) {
 
 				$buffer = preg_replace_callback(
 					'~<head><link rel="stylesheet" type="text/css" href="(.+?)" media="all" />~',
@@ -51,8 +45,12 @@ class Controller extends \Wdpro\BaseController {
 
 
 				return $buffer;
-			});
-		}
+
+			}
+
+
+		});
+
 
 		// Scripts Footer
 		if (wdpro_get_option('wdpro_scripts_to_footer') == 1) {

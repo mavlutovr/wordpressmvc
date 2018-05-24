@@ -637,13 +637,14 @@
 
 			// Получаем объект формы
 			this.jForm = this.html.find('form');
+			console.log('this.jForm', this.jForm);
 			this.jForm.attr('data-id', this.id);
 
 			// Контейнер сообщений
 			this.messagesContainer = this.html.find('.JS_messages_container');
 			
 			// При отправке формы
-			this.jForm.submit(function () {
+			this.jForm.submit(function (e) {
 				
 				if (self.forseSubmit)
 				{
@@ -652,6 +653,7 @@
 				// Обрабатываем отправку формы
 				//return self.submit();
 				self.submit();
+				e.preventDefault();
 				return false;
 			});
 
