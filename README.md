@@ -8,7 +8,7 @@
 
 ## Как работать сплагином?
 
-:man_teacher: Смотрите в папке [/docs/](https://github.com/mavlutovr/wordpressmvc/tree/master/docs)
+:book: Смотрите в папке [/docs/](https://github.com/mavlutovr/wordpressmvc/tree/master/docs)
 
 ## Что плагин дает?
 
