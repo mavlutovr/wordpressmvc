@@ -10,8 +10,8 @@ class SqlTable extends \Wdpro\BaseSqlTable
 		return array(
 			static::COLLS => array(
 				'id',
-				'data'=>'json',
 				'time'=>'int',
+				'data'=>'json',
 			)
 		);
 	}

@@ -71,7 +71,7 @@ href="'.WDPRO_CONSOLE_URL.'themes.php">Активировать тему</a>
 							'elements' => array(
 								array(
 									'type'=>'html',
-									'html'=>'<h2>Компиляция</h2>',
+									'html'=>'<h2>Компиляция (имеет смысл только на локальной машине)</h2>',
 								),
 
 								array(

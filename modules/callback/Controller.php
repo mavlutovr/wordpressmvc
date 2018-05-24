@@ -13,8 +13,14 @@ class Controller extends \Wdpro\BaseController {
 		SqlTable::init();
 
 		// Ajax
-		wdpro_ajax('callback-form', function ($data)
+		wdpro_ajax('callback-form', function ()
 		{
+			$data = $_POST;
+			if (!$data['form_text']) {
+				$data['form_text'] = '<p>Имя: '.$data['name'].'</p>'
+				                   .'<p>Телефон: '.$data['phone'].'</p>';
+			}
+
 			// Сохраняем
 			$callback = new Entity();
 			$callback->setData(array(
@@ -22,18 +28,14 @@ class Controller extends \Wdpro\BaseController {
 			));
 			$callback->save();
 			
-			$message = '<p>Имя: '.$data['name'].'</p>'
-				.'<p>Телефон: '.$data['phone'].'</p>';
-
 			// Отправляем сообщение админам
 			\Wdpro\AdminNotice\Controller::sendMessageHtml(
 				'Заказ обратного звонка',
-				$message
+				$data['form_text']
 			);
 			
 			// Отправляем событие о заказе звонка
 			do_action('wdpro_callback', [
-				'message'=>$message,
 				'data'=>$data,
 			]);
 

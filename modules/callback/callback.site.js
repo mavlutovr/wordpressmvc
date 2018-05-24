@@ -10,7 +10,8 @@
 			var dialog = new wdpro.dialogs.Dialog({
 				title: 'Заказ обратного звонка',
 				content: 'Загрузка...',
-				substrate: true
+				substrate: true,
+				maxWidth: 400
 			});
 			dialog.show();
 			
@@ -51,17 +52,24 @@
 			var form = new wdpro.forms.Form();
 			form.add({
 				'name': 'name',
-				'top': 'Ваше имя',
+				'center': 'Ваше имя',
 				'*': true
-			});
-			form.add({
+			},{
 				'name': 'phone',
-				'top': 'Телефон',
+				'center': 'Телефон',
+				'class': 'js-phone-mask',
 				'*': true
 			});
 			form.add({
 				'type': 'submit',
-				'text': 'Отправить'
+				'text': 'Заказать обратный звонок'
+			});
+			form.add({
+				'type': 'check',
+				'right': 'Я даю свое согласие на обработку персональных данных и соглашаюсь с условиями и <a href="/privacy/" target="_blank">политикой конфиденциальности</a>.',
+				'required': true,
+				'checked': true,
+				'containerClass': 'privacy-check-container'
 			});
 			
 			Return(form);
