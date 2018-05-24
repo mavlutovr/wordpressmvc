@@ -15,7 +15,9 @@ class Controller extends \Wdpro\BaseController {
 		{
 			foreach($sel as $row)
 			{
-				\Wdpro\Sender\Controller::sendEmail($row['email'], $subject, 
+				\Wdpro\Sender\Controller::sendEmail(
+					$row['email'],
+					$_SERVER['HTTP_HOST'].' - '.$subject,
 					$messageInHtmlFormat);
 			}
 		}
