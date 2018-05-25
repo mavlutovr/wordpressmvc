@@ -35,13 +35,26 @@ class Controller extends \Wdpro\BaseController {
 					$buffer
 				);
 
-				$buffer = str_replace(
-					'</body>',
-					'<link rel="stylesheet" type="text/css" href="'
-					.static::$cssFileUrl
-					.'" media="all" />'.PHP_EOL.'</body>',
-					$buffer
-				);
+				if (strstr($buffer, '<!-- cssPlace -->')) {
+					$buffer = str_replace(
+						'<!-- cssPlace -->',
+						'<link rel="stylesheet" type="text/css" href="'
+						.static::$cssFileUrl
+						.'" media="all" />'.PHP_EOL.'</body>',
+						$buffer
+					);
+				}
+
+				else {
+					$buffer = str_replace(
+						'</body>',
+						'<link rel="stylesheet" type="text/css" href="'
+						.static::$cssFileUrl
+						.'" media="all" />'.PHP_EOL.'</body>',
+						$buffer
+					);
+				}
+
 
 
 				return $buffer;
