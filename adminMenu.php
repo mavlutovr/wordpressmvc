@@ -171,9 +171,16 @@ href="'.WDPRO_CONSOLE_URL.'themes.php">Активировать тему</a>
 									'right'=>'Оставить стандартный редактор',
 									'type'=>'checkbox',
 								),
+
+								array(
+									'name'=>'wdpro_disable_revisions',
+									'right'=>'Отключить ревизии',
+									'type'=>'checkbox',
+								),
+
 								array(
 									'name'  => 'wdpro_additional_remove',
-									'right' => 'Убрать дополнительные поля для страниц и постов',
+									'right' => 'Убрать дополнительные поля для страниц и постов (метатеги)',
 									'type'  => 'checkbox'
 								),
 								array(

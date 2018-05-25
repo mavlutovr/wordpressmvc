@@ -86,3 +86,12 @@ if (is_file(__DIR__.'/../app/ckeditor.less')) {
 		__DIR__.'/../app/ckeditor.less', 
 		__DIR__.'/../app/ckeditor.less.css');
 }
+
+
+// Отключение ревизий
+if (wdpro_get_option('wdpro_disable_revisions')) {
+	function my_revisions_to_keep( $revisions ) {
+		return 0;
+	}
+	add_filter( 'wp_revisions_to_keep', 'my_revisions_to_keep' );
+}

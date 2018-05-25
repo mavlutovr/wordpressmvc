@@ -189,16 +189,20 @@ class Form
 				if ($langs = \Wdpro\Lang\Data::getUris()) {
 					foreach ($langs as $lang) {
 
-						$params2 = $params;
-						$params2['name'] = str_replace(
-							'[lang]',
-							\Wdpro\Lang\Data::getPrefix($lang),
-							$params2['name']
-						);
+						if (!isset($params['langs_skip'])
+						    || !in_array($lang, $params['langs_skip']))
+						{
+							$params2 = $params;
+							$params2['name'] = str_replace(
+								'[lang]',
+								\Wdpro\Lang\Data::getPrefix($lang),
+								$params2['name']
+							);
 
-						$params2['current_lang'] = $lang;
+							$params2['current_lang'] = $lang;
 
-						$add($params2);
+							$add($params2);
+						}
 					}
 				}
 				else {

@@ -33,13 +33,13 @@ class PagesRoll extends Roll
 		}
 
 		// Когда нету языков, то включаем обычный post_title
-		$controller = static::getController();
-		if (!$controller::isLang()) {
-			$supports[] = 'title';
-		}
+//		$controller = static::getController();
+//		if (!$controller::isLang()) {
+//			$supports[] = 'title';
+//		}
+		$supports[] = 'title';
 
 		return $supports;
-
 	}
 
 	
