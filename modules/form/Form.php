@@ -255,7 +255,10 @@ class Form
 	 */
 	public function getHtml()
 	{
-		return '<div class="js-wdpro-form"><div class="js-params g-hid">'
+		return '<div 
+			class="js-wdpro-form"><div class="js-params g-hid" 
+			style="display: none">
+'
 		.htmlspecialchars(json_encode(
 			$this->getParams(), 
 			JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE|JSON_HEX_QUOT
