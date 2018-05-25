@@ -32,7 +32,7 @@ class Controller extends \Wdpro\BaseController {
 				// media='all' />
 
 				$buffer = preg_replace_callback(
-					'~(<link.*?rel="stylesheet".*?href=".+?".*?/>)~',
+					'~(<link.*?rel=["\']stylesheet["\'].*?/>)~i',
 					function ($arr) {
 						static::$cssFileHtmls .= $arr[1];
 						return '';
