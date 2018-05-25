@@ -73,15 +73,20 @@ class Data {
 		if (isset(static::$data['uris'])) {
 			return static::$data['uris'];
 		}
+	}
 
-//		$uris = [];
-//		if (isset(static::$data['langs'])) {
-//			foreach (static::$data['langs'] as $item) {
-//				$uris[] = $item['uri'];
-//			}
-//		}
-//
-//		return $uris;
+
+	/**
+	 * Возвращает данные языков
+	 *
+	 * @return array
+	 */
+	public static function getData() {
+		static::init();
+
+		if (isset(static::$data['langs'])) {
+			return static::$data['langs'];
+		}
 	}
 
 
@@ -97,5 +102,22 @@ class Data {
 		if (isset(static::$data['time'])) {
 			return static::$data['time'];
 		}
+	}
+
+
+	/**
+	 * Возвращает суффикс с языком
+	 *
+	 * Это нужно, например, для того,
+	 * чтобы делать окончания названий полей в таблице в зависимости от зяыка
+	 *
+	 * @param $uri
+	 *
+	 * @return string
+	 */
+	public static function getPrefix($uri) {
+		if (!$uri) return '';
+
+		return '_'.$uri;
 	}
 }

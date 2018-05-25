@@ -167,22 +167,55 @@ class Form
 		foreach ($attrs as $params) {
 			if (is_string($params)) $params = array('type' => $params);
 
-			$this->params['elements'][$this->elementI] = $params;
+			// Добавление одного поля
+			$add = function ($params) use (&$group) {
+				$this->params['elements'][$this->elementI] = $params;
 
-			if ($element = $this->addElementByParams($params)) {
-				$group[] = $element;
-				$element->setFormI($this->elementI);
+				if ($element = $this->addElementByParams($params)) {
+					$group[] = $element;
+					$element->setFormI($this->elementI);
+				}
+
+				if (isset($params['name']) && $params['name']) {
+					$this->elementsByName[$this->getNameKey($params['name'])] = $element;
+				}
+
+				$this->elementI++;
+			};
+
+
+			// Языковые дубли
+			if (isset($params['name']) && strstr($params['name'], '[lang]')) {
+				if ($langs = \Wdpro\Lang\Data::getUris()) {
+					foreach ($langs as $lang) {
+
+						$params2 = $params;
+						$params2['name'] = str_replace(
+							'[lang]',
+							\Wdpro\Lang\Data::getPrefix($lang),
+							$params2['name']
+						);
+
+						$params2['current_lang'] = $lang;
+
+						$add($params2);
+					}
+				}
+				else {
+					throw new Exception('В форме '.get_class($this).' добавлены языковые поля. Однако, языки не настроены.');
+				}
 			}
 
-			if (isset($params['name']) && $params['name']) {
-				$this->elementsByName[$this->getNameKey($params['name'])] = $element;
+			else {
+				$add($params);
 			}
-
-			$this->elementI++;
 		}
 
 		$this->groups[] = $group;
 	}
+
+
+
 
 
 	/**

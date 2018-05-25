@@ -477,10 +477,13 @@ abstract class BaseSqlTable
 						if (strstr($field['name'], '[lang]')) {
 							foreach (\Wdpro\Lang\Data::getUris() as $lang) {
 
-								if ($lang) $lang = '_'.$lang;
 								$field2 = $field;
 
-								$fieldName = str_replace('[lang]', $lang, $field2['name']);
+								$fieldName = str_replace(
+									'[lang]',
+									\Wdpro\Lang\Data::getPrefix($lang),
+									$field2['name']
+								);
 								$field2['name'] = $fieldName;
 
 								$fields[$fieldName] = $field2;

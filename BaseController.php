@@ -7,6 +7,8 @@ class BaseController {
 	use Tools;
 
 	protected $dir;
+	protected static $lang = false;
+
 
 
 	/**
@@ -178,4 +180,15 @@ class BaseController {
 		static::setStatic('dir', $dir);
 		//$this->dir = $dir;
 	}
+
+
+	/**
+	 * Возвращает true, если в этом модуле включены языковые версии
+	 *
+	 * @return bool
+	 */
+	public static function isLang() {
+		return static::$lang;
+	}
+
 }

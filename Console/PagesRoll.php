@@ -15,7 +15,33 @@ class PagesRoll extends Roll
 	public function __construct() {
 		static:: $n ++;
 	}
-	
+
+
+	/**
+	 * Возвращает поддержку редактора, заголовка и других блоков
+	 */
+	public function getSupports() {
+		$supports = [
+			'revisions',
+			//'excerpt',
+			//'page-attributes',
+		];
+
+		// Когда надо оставитьстандартный редактор
+		if (get_option('wdpro_keep_standart_editor')) {
+			$supports[] = 'editor';
+		}
+
+		// Когда нету языков, то включаем обычный post_title
+		$controller = static::getController();
+		if (!$controller::isLang()) {
+			$supports[] = 'title';
+		}
+
+		return $supports;
+
+	}
+
 	
 	/**
 	 * Возвращает uri адрес для кнопки меню в админке
@@ -71,6 +97,9 @@ class PagesRoll extends Roll
 				// Запоминаем список для этой сущности
 				$entityClass::setConsoleRollClass(static::class);
 
+				// Поддержка всяких штук
+				$supports = $this->getSupports();
+
 				// Параметры списка
 				$params = $this->_params;
 				$params = wdpro_extend(
@@ -91,13 +120,7 @@ class PagesRoll extends Roll
 							'not_found_in_trash' => 'Не найдено в корзине',
 							'add_new_subitem'    => 'Добавить подраздел',
 						),
-						'supports'     => array(
-							'title',
-							'revisions',
-							//'editor',
-							//'excerpt',
-							//'page-attributes',
-						),
+						'supports'     => $supports,
 						'orderby'      => 'menu_order',
 						'order'        => 'ASC',
 						//'taxonomies'          => array( 'red_book_tax' ), // категории, которые мы создадим ниже
@@ -112,6 +135,7 @@ class PagesRoll extends Roll
 							'author'=>false,
 							'comments'=>false,
 						),
+						//'show_ui'=>false,
 					),
 					$params
 				);
@@ -133,6 +157,8 @@ class PagesRoll extends Roll
 				if (!get_option('wdpro_keep_standart_editor')) {
 					add_action( 'init', function () use (&$postType) {
 						remove_post_type_support( $postType, 'editor' );
+						//add_post_type_support( $postType, 'title' );
+						//remove_post_type_support( $postType, 'trackbacks' );
 					} );
 				}
 
@@ -191,7 +217,7 @@ class PagesRoll extends Roll
 					wdproObjectsTrace();
 					echo("\n\n------- INIT Wdpro\\Blog\\ConsoleRoll -------\n\n");
 				}*/
-				
+
 				// Действия
 				add_filter(
 					'page_row_actions',
@@ -321,17 +347,18 @@ class PagesRoll extends Roll
 				$params['editor']
 				&& !get_option('wdpro_keep_standart_editor')
 				&& add_action('admin_init', function ($post) use (&$postType) {
-					
-					
+
+
 					add_meta_box(
 						'post_content_editor',
 						'Текст страницы',
 						function () use (&$postType) {
 
-							$textHelp = isset($_GET['post']) ?
-								'<p><b>Вставка текста этой страницы в другую</b><BR>
-								[page_text id='
-								.$_GET['post'].']</p>' : false;
+//							$textHelp = isset($_GET['post']) ?
+//								'<p><b>Вставка текста этой страницы в другую</b><BR>
+//								[page_text id='
+//								.$_GET['post'].']</p>' : false;
+							$textHelp = '';
 
 							$textHelp = apply_filters('wdpro_text_help', $textHelp);
 							

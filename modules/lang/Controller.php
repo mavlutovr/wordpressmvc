@@ -18,7 +18,7 @@ class Controller extends \Wdpro\BaseController {
 
 
 	/**
-	 * Обновление данных о языках
+	 * Обновление данных о языка
 	 */
 	public static function updateData() {
 		if ($sel = SqlTable::select('ORDER BY sorting')) {
