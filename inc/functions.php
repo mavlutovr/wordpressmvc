@@ -949,9 +949,10 @@ function wdpro_gd_save_image($imgFile, $imgResource) {
 function wdpro_image_resize_rate($originalImageFile, $newImageFile, $width, $height=null, $rgb=0xFFFFFF, $quality=89)
 {
 	if ($height==null) { $height=10000; }
+	if (!$width) { $width=10000; }
 
 	// Imagick
-	if (false && class_exists('Imagick'))
+	if (class_exists('Imagick'))
 	{
 		$img = new Imagick(realpath($originalImageFile));
 		if ($img->getimagewidth() > $width || ($height != null && $img->getimageheight() > $height))

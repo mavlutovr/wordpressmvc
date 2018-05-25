@@ -23,6 +23,7 @@ abstract class BaseSqlTable
 	const MYISAM = 'MyISAM';
 	const INNODB = 'InnoDB';
 
+
 	/**
 	 * Типы полей
 	 * 
@@ -33,10 +34,12 @@ abstract class BaseSqlTable
 		'json'=>'\Wdpro\\SqlTypeJson',
 	);
 
+
 	/** @var string */
 	protected static $name;
 	//protected static $fieldsFormat;
 	//protected static $fieldsTypes = array();
+
 
 	/**
 	 * Возвращает массив данных из таблицы по Where запросу
@@ -338,7 +341,8 @@ abstract class BaseSqlTable
 	 * @return bool
 	 */
 	protected static function isStructureFileUpdated() {
-		
+
+		//
 		if (!static::issetStatic('isStructureFileUpdated'))
 		{
 			// Если версия таблицы поменялась, обновляем ее структуру
@@ -353,6 +357,29 @@ abstract class BaseSqlTable
 		}
 		
 		return static::getStatic('isStructureFileUpdated');
+	}
+
+
+	/**
+	 * Проверяет, поменялась ли структура языков
+	 */
+	protected static function isLangStructureUpdated() {
+		if (!static::issetStatic('isStructureLangUpdated'))
+		{
+			// Если версия таблицы поменялась, обновляем ее структуру
+			$lastEditedTime = get_option( 'sqlTableLangVersion:' . static::$name );
+			$currentFileTime = \Wdpro\Lang\Data::getLastUpdateTime();
+
+			if ($lastEditedTime < $currentFileTime)
+			{
+				static::setStatic('isStructureLangUpdated', $currentFileTime);
+			}
+			else {
+				static::setStatic('isStructureLangUpdated', false);
+			}
+		}
+
+		return static::getStatic('isStructureLangUpdated');
 	}
 
 
@@ -446,14 +473,34 @@ abstract class BaseSqlTable
 							}
 						}
 
-						$fields[$field['name']] = $field;
+						// Языковые поля
+						if (strstr($field['name'], '[lang]')) {
+							foreach (\Wdpro\Lang\Data::getUris() as $lang) {
 
-						$format[$field['name']] = $field['format'];
+								if ($lang) $lang = '_'.$lang;
+								$field2 = $field;
+
+								$fieldName = str_replace('[lang]', $lang, $field2['name']);
+								$field2['name'] = $fieldName;
+
+								$fields[$fieldName] = $field2;
+								$format[$fieldName] = $field2['format'];
+							}
+						}
+
+						// Без языков
+						else {
+							$fields[$field['name']] = $field;
+							$format[$field['name']] = $field['format'];
+						}
+
 					}
 				}
 
 				// Если файл таблицы поменялся, обновляем ее структуру
-				if (static::structureUpdateEnable() && $currentFileTime = static::isStructureFileUpdated())
+				if (static::structureUpdateEnable()
+				    && ($currentFileTime = static::isStructureFileUpdated()
+				    || $currentLangTime = static::isLangStructureUpdated()))
 				{
 					// Wordpress (стандартный метод)
 					if (isset($structure[static::SQL]) && $structure[static::SQL])
@@ -593,6 +640,9 @@ abstract class BaseSqlTable
 
 					update_option( 'sqlTableVersion:' . static::$name,
 						$currentFileTime );
+
+					$currentLangTime && update_option('sqlTableLangVersion:'.static::$name,
+						$currentLangTime);
 				}
 
 
@@ -797,6 +847,7 @@ abstract class BaseSqlTable
 		
 	}
 
+
 	/**
 	 * Включить автообновление структуры таблицы
 	 *
@@ -806,7 +857,6 @@ abstract class BaseSqlTable
 
 		return true;
 	}
-
 
 
 	/**
@@ -1136,6 +1186,7 @@ class SqlTypeJson extends SqlTypeBase
 	{
 		return wdpro_json_decode($value);
 	}
+
 		
 	public static function getType($fieldType)
 	{

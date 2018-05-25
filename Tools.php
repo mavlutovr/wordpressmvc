@@ -175,6 +175,7 @@ trait Tools
 		static::$eventsStatic[$eventNameFull][] = $callback;
 	}
 
+
 	/**
 	 * Запуск события
 	 *

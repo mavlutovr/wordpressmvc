@@ -65,6 +65,8 @@ if (defined('DOING_AJAX') && DOING_AJAX)
 }
 
 
+// Путь к языкам
+Wdpro\Autoload::add('Wdpro\Lang', __DIR__.'/modules/lang');
 
 // Modules
 require(__DIR__ . '/Modules.php');
