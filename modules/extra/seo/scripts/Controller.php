@@ -5,6 +5,7 @@ class Controller extends \Wdpro\BaseController {
 
 	protected static $headScripts = [];
 	protected static $cssFileUrl;
+	protected static $cssFileHtmls='';
 	protected static $toNoindex = false;
 
 
@@ -26,21 +27,25 @@ class Controller extends \Wdpro\BaseController {
 
 			if (wdpro_get_option('wdpro_css_to_footer_w3tc') == 1) {
 
+				// <link rel="stylesheet" type="text/css" href="..." media="all" />
+				// <link rel='stylesheet' id='bfa-font-awesome-css'  href='...' type='text/css'
+				// media='all' />
+
 				$buffer = preg_replace_callback(
-					'~<head><link rel="stylesheet" type="text/css" href="(.+?)" media="all" />~',
+					'~(<link.*?rel="stylesheet".*?href=".+?".*?/>)~',
 					function ($arr) {
-						static::$cssFileUrl = $arr[1];
-						return '<head>';
+						static::$cssFileHtmls .= $arr[1];
+						return '';
 					},
 					$buffer
 				);
 
+
+
 				if (strstr($buffer, '<!-- cssPlace -->')) {
 					$buffer = str_replace(
 						'<!-- cssPlace -->',
-						'<link rel="stylesheet" type="text/css" href="'
-						.static::$cssFileUrl
-						.'" media="all" />'.PHP_EOL.'</body>',
+						static::$cssFileHtmls.PHP_EOL,
 						$buffer
 					);
 				}
@@ -48,9 +53,7 @@ class Controller extends \Wdpro\BaseController {
 				else {
 					$buffer = str_replace(
 						'</body>',
-						'<link rel="stylesheet" type="text/css" href="'
-						.static::$cssFileUrl
-						.'" media="all" />'.PHP_EOL.'</body>',
+						static::$cssFileHtmls.PHP_EOL.'</body>',
 						$buffer
 					);
 				}
