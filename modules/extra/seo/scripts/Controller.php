@@ -115,12 +115,6 @@ class Controller extends \Wdpro\BaseController {
 			static::$toNoindex && noindex_end();
 		}, 1 );
 
-//		add_action('wp_'.$to, function ($handles=false) {
-//			static::$toNoindex && noindex_start();
-//			wp_print_scripts($handles);
-//			static::$toNoindex && noindex_end();
-//		} );
-
 		add_action('wp_'.$to, function () {
 			static::$toNoindex && noindex_start();
 			wp_print_head_scripts();
