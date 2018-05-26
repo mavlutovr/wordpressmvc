@@ -130,7 +130,7 @@ class PagesRoll extends Roll
 						'subsections'=>true,
 						'showposts'=>3,
 						'paged'=>true,
-						'editor'=>true,
+						'editor'=>false,
 						'columns'=>array(
 							'author'=>false,
 							'comments'=>false,
