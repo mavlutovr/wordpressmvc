@@ -1967,6 +1967,24 @@ function wdpro_is_absolute_url($url) {
 
 
 /**
+ * Возвращает сайта uri относительно домена
+ *
+ * @return string
+ */
+function wdpro_home_uri() {
+	$url = home_url();
+
+	$url = str_replace(
+		$_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'],
+		'',
+		$url
+	);
+
+	return $url;
+}
+
+
+/**
  * Запускает каллбэк при открытии страницы по заданному относительному адресу
  *
  * @param string $uri Адрес страницы
@@ -2241,6 +2259,11 @@ function output_file($file,$name)
 }
 
 
+/**
+ * Возвращает случайный пароль
+ *
+ * @return string
+ */
 function wdpro_generate_password() {
 	$alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
 	.'!@#$%^&*()-=_+[]/';

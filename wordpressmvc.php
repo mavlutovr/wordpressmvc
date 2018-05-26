@@ -128,15 +128,4 @@ if (defined('DOING_CRON') && DOING_CRON) {
 
 
 
-// Todo
-$_SERVER['REQUEST_URI'] = str_replace(
-	'/en/',
-	'/',
-	$_SERVER['REQUEST_URI']
-);
-$_SERVER['REDIRECT_URL'] = str_replace(
-	'/en/',
-	'/',
-	$_SERVER['REDIRECT_URL']
-);
 
