@@ -191,4 +191,14 @@ class BaseController {
 		return static::$lang;
 	}
 
+
+	/**
+	 * Включает / выключает языковость в модуле
+	 *
+	 * @param bool $enable true - включить
+	 */
+	public static function setLang($enable) {
+		static::$lang = $enable;
+	}
+
 }

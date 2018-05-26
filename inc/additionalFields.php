@@ -76,7 +76,7 @@ add_action('admin_init', function () {
 
 // Сохранение
 add_action('save_post', function ($postId) {
-	
+
 	// Если форма не прошла проверку
 	if ( (isset($_POST['wdpro_nonce']) 
 		&& !wp_verify_nonce( $_POST['wdpro_nonce'], __FILE__))

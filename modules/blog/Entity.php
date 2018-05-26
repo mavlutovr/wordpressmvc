@@ -50,4 +50,66 @@ class Entity extends \Wdpro\BasePage {
 	}
 
 
+	/**
+	 * Подготавливает данные для сохранения
+	 *
+	 * @param array $data Исходные данные
+	 *
+	 * @return array
+	 */
+	protected function prepareDataForSave ($data) {
+
+		// Теги
+		$tags = function ($lang) use (&$data) {
+
+			$suffix = \Wdpro\Lang\Data::getPrefix($lang);
+
+			if ($data['tags_string'.$suffix]) {
+				$saveTags = [];
+
+				$tags = explode(',', $data['tags_string'.$suffix]);
+				foreach ( $tags as $tag ) {
+					$tag = trim($tag);
+					$saveTags[] = $tag;
+				}
+
+				$data['tags'.$suffix] = $saveTags;
+			}
+		};
+
+		foreach(\Wdpro\Lang\Data::getUris() as $lang) {
+			$tags($lang);
+		}
+
+		return $data;
+	}
+
+
+	/**
+	 * Обработка данных после загрузки из базы
+	 *
+	 * @param array $data Данные
+	 *
+	 * @return array
+	 */
+	protected function prepareDataAfterLoad ($data) {
+
+
+		$tags = function ($lang) use (&$data) {
+
+			$suffix = \Wdpro\Lang\Data::getPrefix($lang);
+
+			if (is_array($data['tags'.$suffix])) {
+				$data['tags_string'.$suffix] = implode(', ', $data['tags'.$suffix]);
+			}
+		};
+
+		foreach(\Wdpro\Lang\Data::getUris() as $lang) {
+			$tags($lang);
+		}
+
+		return $data;
+	}
+
+
 }

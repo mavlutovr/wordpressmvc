@@ -427,6 +427,9 @@ abstract class BaseSqlTable
 							$field['name'] = 'id';
 							$field['format'] = '%d';
 							$field['type'] = 'int(11)';
+
+							$fields[$field['name']] = $field;
+							$format[$field['name']] = $field['format'];
 						}
 						
 						else {
@@ -459,42 +462,52 @@ abstract class BaseSqlTable
 								$field['format'] = '%f';
 							}
 
-							// Добавляем тип поля
-							static::addFieldType( $field['name'], $field['type'] );
+							// Добавление типа поля
+							$addType = function (&$field) {
 
-							// Если тип добавился и удалось его получить
-							if ($type = static::getFieldType($field['name']))
-							{
-								// Обновляем параметры поля (sql запрос на создание поля)
-								$field['params'] =
-									$type::getParams($field['params']);
-								$field['type'] =
-									$type::getType($field['type']);
+								// Добавляем тип поля
+								static::addFieldType( $field['name'], $field['type'] );
+
+								// Если тип добавился и удалось его получить
+								if ($type = static::getFieldType($field['name']))
+								{
+									// Обновляем параметры поля (sql запрос на создание поля)
+									$field['params'] =
+										$type::getParams($field['params']);
+									$field['type'] =
+										$type::getType($field['type']);
+								}
+							};
+
+
+							// Языковые поля
+							if (strstr($field['name'], '[lang]')) {
+								foreach (\Wdpro\Lang\Data::getUris() as $lang) {
+
+									$field2 = $field;
+
+									$fieldName = str_replace(
+										'[lang]',
+										\Wdpro\Lang\Data::getPrefix($lang),
+										$field2['name']
+									);
+									$field2['name'] = $fieldName;
+
+									$addType($field2);
+
+									$fields[$fieldName] = $field2;
+									$format[$fieldName] = $field2['format'];
+								}
 							}
-						}
 
-						// Языковые поля
-						if (strstr($field['name'], '[lang]')) {
-							foreach (\Wdpro\Lang\Data::getUris() as $lang) {
+							// Без языков
+							else {
+								$addType($field);
 
-								$field2 = $field;
-
-								$fieldName = str_replace(
-									'[lang]',
-									\Wdpro\Lang\Data::getPrefix($lang),
-									$field2['name']
-								);
-								$field2['name'] = $fieldName;
-
-								$fields[$fieldName] = $field2;
-								$format[$fieldName] = $field2['format'];
+								$fields[$field['name']] = $field;
+								$format[$field['name']] = $field['format'];
 							}
-						}
 
-						// Без языков
-						else {
-							$fields[$field['name']] = $field;
-							$format[$field['name']] = $field['format'];
 						}
 
 					}

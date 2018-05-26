@@ -227,5 +227,30 @@ class Modules
 			}
 		}
 	}
+
+
+	/**
+	 * Проверка, включен ли модуль по папке
+	 *
+	 * @param string $pathToModuleDir Папка модуля
+	 *
+	 * @return bool
+	 */
+	public static function exists($pathToModuleDir) {
+		return isset(static::$addedModules[$pathToModuleDir])
+			&& static::$addedModules[$pathToModuleDir];
+	}
+
+
+	/**
+	 * Проверка, включен ли модуль Wdpro
+	 *
+	 * @param string $moduleName Папка модуля в /modules
+	 *
+	 * @return bool
+	 */
+	public static function existsWdpro($moduleName) {
+		return static::exists(WDPRO_DIR.'modules/'.$moduleName);
+	}
 }
 

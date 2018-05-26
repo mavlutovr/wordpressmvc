@@ -160,6 +160,7 @@ class PagesRoll extends Roll
 					} );
 				}
 
+				// Языки
 				add_action('admin_bar_menu', function ($admin_bar) {
 
 					foreach (\Wdpro\Lang\Data::getData() as $lang) {

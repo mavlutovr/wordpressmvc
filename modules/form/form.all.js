@@ -123,6 +123,16 @@
 
 
 	/**
+	 * Выравнивает все формы
+	 */
+	wdpro.forms.align = function () {
+		wdpro.each(forms, function (form) {
+			form.align();
+		});
+	};
+
+
+	/**
 	 * Класс формы
 	 * 
 	 * @this {wdpro.forms.Form}
@@ -831,7 +841,7 @@
 				var elements = [];
 
 				// Набор элементов jQuery
-				var jQueryElements = $(this.html).find('.JS_element');
+				var jQueryElements = $(this.html).find('.JS_element:not(.js-form-align-disabe)');
 
 				// Количество колонок
 				var collsN = 0;

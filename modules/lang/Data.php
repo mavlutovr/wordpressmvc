@@ -66,6 +66,7 @@ class Data {
 		file_put_contents(__DIR__.'/'.static::$jsonFileName, $json);
 	}
 
+
 	/**
 	 * Возвращает массив адресов языков [ '', 'en', 'de' ]
 	 */
@@ -75,6 +76,8 @@ class Data {
 		if (isset(static::$data['uris'])) {
 			return static::$data['uris'];
 		}
+
+		return [''];
 	}
 
 

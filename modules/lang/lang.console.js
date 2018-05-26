@@ -57,9 +57,13 @@
 			buttons.removeClass('lang-selected');
 			buttonsoByLang[lang].addClass('lang-selected');
 
-			elements.removeClass('lang-visible');
-			elementsByLang[lang].addClass('lang-visible');
+			elements.removeClass('lang-visible')
+				.addClass('js-form-align-disabe');
+			elementsByLang[lang].addClass('lang-visible')
+				.removeClass('js-form-align-disabe');
 			console.log('elementsByLang[lang]', elementsByLang[lang]);
+
+			wdpro.forms.align();
 		};
 		select('');
 

@@ -15,7 +15,6 @@ class ConsoleForm extends \Wdpro\Form\Form {
 			$this->add([
 				'name'=>'post_title[lang]',
 				'left'=>'Заголовок',
-				//'lang'=>true,
 				'*'=>true,
 				'langs_skip'=>[''], // Не показывать в языках
 			]);
@@ -24,7 +23,7 @@ class ConsoleForm extends \Wdpro\Form\Form {
 		$this->add(array(
 			'name'=>'image',
 			'type'=>'image',
-			'top'=>'Картинка',
+			'left'=>'Картинка',
 			'resize'=>array(
 				array('width'=>150, 'height'=>150, 'type'=>'crop', 'dir'=>'lit'),
 				array('width'=>300),
@@ -34,6 +33,7 @@ class ConsoleForm extends \Wdpro\Form\Form {
 			'name'=>'anons[lang]',
 			'type'=>static::CKEDITOR_SMALL,
 			'top'=>'Текст в списке статей',
+			'autoLeft'=>false,
 		));
 		
 		$this->add([
@@ -56,7 +56,19 @@ class ConsoleForm extends \Wdpro\Form\Form {
 				'type'=>static::CKEDITOR,
 			]);
 		}
-		
+
+
+		if (Controller::isTags()) {
+			$this->add([
+				'name'=>'tags_string[lang]',
+				'left'=>'Теги',
+				'class'=>'js-blog-tags',
+				'bottom'=>'<div class="js-blog-tags-list">'
+				          .json_encode(Controller::getTagsList())
+				          .'</div>',
+			]);
+		}
+
 		do_action('blog_console_form', $this);
 		
 	}

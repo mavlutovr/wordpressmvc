@@ -1,9 +1,10 @@
 <?php
 namespace Wdpro\Blog;
 
-use App\Blog\SqlTable;
 
 class Controller extends \Wdpro\BaseController {
+
+	protected static $tags = false;
 
 	/**
 	 * Выполнение скриптов после инициализаций всех модулей (на сайте)
@@ -61,6 +62,48 @@ class Controller extends \Wdpro\BaseController {
 	}
 
 
+	/**
+	 * Включает теги
+	 *
+	 * @param bool $on true
+	 */
+	public static function setTags($on) {
+		static::$tags = $on;
+	}
+
+
+	/**
+	 * Проверяет, включены ли теги
+	 *
+	 * @return bool
+	 */
+	public static function isTags() {
+		return static::$tags;
+	}
+
+
+	/**
+	 * Возвращает список тегов
+	 *
+	 * @return array
+	 */
+	public static function getTagsList() {
+		$tags = [];
+
+		if ($sel = SqlTable::select('', 'tags')) {
+			foreach ($sel as $value) {
+				if (is_array($value['tags'])) {
+					foreach ($value['tags'] as $tag) {
+						$tags[$tag] = $tag;
+					}
+				}
+			}
+
+			sort($tags);
+		}
+
+		return array_values($tags);
+	}
 }
 
 return __NAMESPACE__;

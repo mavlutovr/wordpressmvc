@@ -126,8 +126,8 @@ abstract class BaseEntity
 	 */
 	public function setData($data)
 	{
-		$this->data = $data;
-		
+		$this->data = static::prepareDataAfterLoad($data);
+
 		return $this;
 	}
 
@@ -266,6 +266,18 @@ abstract class BaseEntity
 	 */
 	protected function prepareDataForSave($data)
 	{
+		return $data;
+	}
+
+
+	/**
+	 * Обработка данных после загрузки из базы
+	 *
+	 * @param array $data Данные
+	 *
+	 * @return array
+	 */
+	protected function prepareDataAfterLoad($data) {
 		return $data;
 	}
 
