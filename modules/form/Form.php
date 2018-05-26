@@ -200,6 +200,7 @@ class Form
 							);
 
 							$params2['current_lang'] = $lang;
+							$params2['icon'] = \Wdpro\Lang\Data::getFlagSrc($lang);
 
 							$add($params2);
 						}

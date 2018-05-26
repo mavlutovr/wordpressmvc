@@ -37,6 +37,7 @@ function wdpro_less_compile_try($lessFile, $cssFile)
 	if (
 		defined('WDPRO_LESS_COMPILE') && WDPRO_LESS_COMPILE
 		|| !defined('WDPRO_LESS_COMPILE') && !is_file($cssFile)
+		|| wdpro_get_option('wdpro_compile_less') == 1
 	) {
 		$key = 'wdpro-less-('.wdpro_path_remove_wp_content($lessFile).')';
 		$lastEditedTime = filemtime($lessFile);

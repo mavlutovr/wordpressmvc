@@ -52,10 +52,12 @@ class Data {
 
 		foreach ($data as $item) {
 			$uris[$item['uri']] = $item['uri'];
+
+			$langs[$item['uri']] = $item;
 		}
 
 		static::$data = [
-			'langs'=>$data,
+			'langs'=>$langs,
 			'time'=>time(),
 			'uris'=>$uris,
 		];
@@ -79,13 +81,22 @@ class Data {
 	/**
 	 * Возвращает данные языков
 	 *
+	 * @param string $lang Только для языка
+	 *
 	 * @return array
 	 */
-	public static function getData() {
+	public static function getData($lang=null) {
 		static::init();
 
 		if (isset(static::$data['langs'])) {
-			return static::$data['langs'];
+			if ($lang!==null) {
+				if (isset(static::$data['langs'][$lang])) {
+					return static::$data['langs'][$lang];
+				}
+			}
+			else {
+				return static::$data['langs'];
+			}
 		}
 	}
 
@@ -119,5 +130,19 @@ class Data {
 		if (!$uri) return '';
 
 		return '_'.$uri;
+	}
+
+
+	/**
+	 * Возвращает адрес флага для языка
+	 *
+	 * @param $lang
+	 *
+	 * @return string
+	 */
+	public static function getFlagSrc($lang) {
+		if ($data = static::getData($lang)) {
+			return WDPRO_UPLOAD_IMAGES_URL.$data['flag'];
+		}
 	}
 }

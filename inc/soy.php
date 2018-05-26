@@ -52,6 +52,7 @@ function wdpro_closure_compile_try($soyFile, $jsFile)
 	if (
 		defined('WDPRO_SOY_COMPILE') && WDPRO_SOY_COMPILE
 		|| !defined('WDPRO_SOY_COMPILE') && !is_file($jsFile)
+		|| wdpro_get_option('wdpro_compile_soy') == 1
 	) {
 
 		$key = 'wdpro-soy-('.wdpro_path_remove_wp_content($soyFile).')';
