@@ -160,6 +160,26 @@ class PagesRoll extends Roll
 					} );
 				}
 
+				add_action('admin_bar_menu', function ($admin_bar) {
+
+					foreach (\Wdpro\Lang\Data::getData() as $lang) {
+						$admin_bar->add_menu( array(
+							'id'    => 'lang-'.$lang['uri'],
+							'title' => '<img src="'
+							           . WDPRO_UPLOAD_IMAGES_URL
+							           . $lang['flag'].'" /> ',
+							'href'  => '#'.$lang['uri'],
+							'meta'  => array(
+								'class'=>'wdpro-lang-menu js-wdpro-lang-menu',
+								'data-lang'=>$lang['uri'],
+								//'title' => __('My Item'),
+							),
+						));
+					}
+
+
+				}, 100);
+
 				// Регистрируем тип страниц
 				add_action('init', function () use (&$params, $postType)
 				{

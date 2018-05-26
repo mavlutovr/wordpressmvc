@@ -1,7 +1,6 @@
 {namespace wdpro.templates.forms}
 
 
-
 /**
 * Шаблон формы
 * @param form Данные формы
@@ -103,7 +102,9 @@
 */
 {template .element}
 
-	<div class="wdpro-form-element JS_element g-inline-top">
+	<div class="wdpro-form-element JS_element g-inline-top{if ($data['lang'])}
+	{sp}js-lang-element lang-element{/if}"{if ($data['lang'])}
+	data-lang="{$data['current_lang']}"{/if}>
 
 
 		// Сверху
@@ -190,11 +191,11 @@
 				">
 
 					// Значек, который отображается слева от поля (например флаг страны)
-					{if ($data['icon'])}
-					<div class="wdpro-form-element-icon">
+					/*{if ($data['icon'])}
+					<span class="wdpro-form-element-icon">
 						<img src="{$data['icon']}" />
-					</div>
-					{/if}
+					</span>
+					{/if}*/
 
 					{$data['inputjQueryMarker']|noAutoescape}
 				</div>
@@ -251,6 +252,18 @@
 
 	</div>
 
+{/template}
+
+
+
+/**
+* Иконтка к тексту
+* @param data Данные иконки
+*/
+{template .icon}
+<span class="wdpro-form-element-icon">
+	<img src="{$data['icon']}" />
+</span>
 {/template}
 
 

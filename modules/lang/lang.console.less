@@ -1,0 +1,27 @@
+.lang-element:not(.lang-visible) {
+	position: absolute;
+	margin-left: -99999px;
+	max-width: 1000px;
+}
+
+
+
+body #wpadminbarul .lang-selected,
+#wpadminbar:not(.mobile) .ab-top-menu>li.lang-selected:hover>.ab-item,
+#wpadminbar:not(.mobile) .ab-top-menu>li.lang-selected>.ab-item {
+	background: fadeOut(white, 70%);
+	&:focus, &:hover {
+		background: fadeOut(white, 70%);
+	}
+}
+
+body #wpadminbar ul .wdpro-lang-menu {
+	padding: 3px;
+	box-sizing: border-box;
+
+	a {
+		height: auto;
+		padding: 4px 7px;
+		line-height: normal;
+	}
+}

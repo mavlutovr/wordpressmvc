@@ -11,6 +11,16 @@ class ConsoleForm extends \Wdpro\Form\Form {
 	 */
 	protected function initFields() {
 
+		if (\Wdpro\Lang\Controller::isLang()) {
+			$this->add([
+				'name'=>'post_title[lang]',
+				'left'=>'Заголовок',
+				//'lang'=>true,
+				'*'=>true,
+				'langs_skip'=>[''], // Не показывать в языках
+			]);
+		}
+
 		$this->add(array(
 			'name'=>'image',
 			'type'=>'image',
@@ -21,7 +31,7 @@ class ConsoleForm extends \Wdpro\Form\Form {
 			)
 		));
 		$this->add(array(
-			'name'=>'anons',
+			'name'=>'anons[lang]',
 			'type'=>static::CKEDITOR_SMALL,
 			'top'=>'Текст в списке статей',
 		));
@@ -37,6 +47,15 @@ class ConsoleForm extends \Wdpro\Form\Form {
 			'type'=>static::DATE,
 			'left'=>'Дата обновления',
 		]);
+
+		if (\Wdpro\Lang\Controller::isLang()) {
+			$this->add([
+				'name'=>'post_content[lang]',
+				'top'=>'Текст страницы',
+				'autoLeft'=>false,
+				'type'=>static::CKEDITOR,
+			]);
+		}
 		
 		do_action('blog_console_form', $this);
 		

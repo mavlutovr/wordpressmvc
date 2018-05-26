@@ -106,13 +106,19 @@
 	/**
 	 * Возвращает форму при ее появлении
 	 * 
-	 * @param name {string} Имя формы, которое в параметрах указывается как jsName
+	 * @param [name] {string} Имя формы, которое в параметрах указывается как jsName
 	 * @param Return {function} Каллбэк, принимающий форму
 	 */
 	wdpro.forms.onForm = function (name, Return) {
 
-		console.log('onForm', 'form-'+name);
-		wdpro.on('form-'+name, Return, true);
+		var args = wdpro.argumentsSortByTypes(arguments);
+
+		if (args['string']) {
+			wdpro.on('form-'+args['string'], args['function'], true);
+		}
+		else {
+			wdpro.on('form', args['function'], true);
+		}
 	};
 
 
@@ -196,6 +202,8 @@
 			if (this.params['jsName']) {
 				wdpro.trigger('form-'+this.params['jsName'], this);
 			}
+
+			wdpro.trigger('form', this);
 		},
 
 
@@ -1600,8 +1608,7 @@
 			// Css классы по-умолчанию
 			this.classArr = ['JS_field', 'input', 'wdpro-form-input'];
 
-			if (params)
-			{
+			if (params) {
 				this.initParams(params);
 			}
 		},
@@ -1639,6 +1646,37 @@
 			// Label
 			var labelIdText = '';
 
+			// Иконка
+			this.params['icon'] && (function () {
+
+				var icon = self.templates.icon({
+					data: self.params
+				});
+
+				if (self.params['top']) {
+					self.params['top'] += ' ' + icon;
+					return true;
+				}
+
+				if (self.params['left']) {
+					self.params['left'] += ' ' + icon;
+					return true;
+				}
+
+				if (self.params['right']) {
+					self.params['right'] += ' ' + icon;
+					return true;
+				}
+
+				if (self.params['bottom']) {
+					self.params['bottom'] += ' ' + icon;
+					return true;
+				}
+
+				self.params['left'] += ' ' + icon;
+
+			})();
+
 			// Обработка данных текстовых полей
 			var normalizeTextData = function (textData) {
 				if (textData)
@@ -1651,7 +1689,7 @@
 						};
 					}
 
-					// Если поле обязательно для заполнения 
+					// Если поле обязательно для заполнения
 					// и если звездочка еще не установлена
 					if (!requireStarSetted && params['required'])
 					{
