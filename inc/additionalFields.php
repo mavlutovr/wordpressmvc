@@ -11,40 +11,89 @@
  */
 function wdproShowMetaForm($post)
 {
-	
-	?>
-	<p>
+	$form = new \Wdpro\Form\Form('wdpro');
+
+	$form->add([
+		'name'=>'alternative_url',
+		'top'=>'Ссылка на другую страницу или другой сайт',
+	]);
+
+	$form->add([ 'name'=>'title[lang]', 'top'=>'Title' ]);
+	$form->add([ 'name'=>'h1[lang]', 'top'=>'H1' ]);
+	$form->add([ 'name'=>'keywords[lang]', 'top'=>'Keywords' ]);
+	$form->add([ 'name'=>'description[lang]', 'top'=>'Description' ]);
+	$form->add([ 'name'=>'madein[lang]', 'top'=>'Ссылка "Сделано в студии"',
+	             'type'=>$form::TEXT
+	]);
+
+	$formData = [];
+	$langs = \Wdpro\Lang\Data::getUris();
+
+	$addDataToForm = function ($name, $lang) use (&$formData, &$post) {
+		$name .= \Wdpro\Lang\Data::getPrefix($lang);
+		$formData[$name] = get_post_meta($post->ID, $name, 1);
+	};
+
+	foreach ( $langs as $lang ) {
+		$addDataToForm('alternative_url', $lang);
+		$addDataToForm('title', $lang);
+		$addDataToForm('h1', $lang);
+		$addDataToForm('keywords', $lang);
+		$addDataToForm('description', $lang);
+		$addDataToForm('madein', $lang);
+	}
+
+	$form->setData($formData);
+
+	$form->removeFormTag();
+	echo $form->getHtml();
+
+	if (false) {
+		?>
+		<p>
 		<div><strong>Ссылка на другую страницу или другой сайт</strong>:</div>
-		<label><input type="text" name="wdpro[alternative_url]" value="<?php echo htmlspecialchars(get_post_meta($post->ID, 'alternative_url', 1)); ?>" style="width:100%" /></label>
-	</p>
-	<p>
+		<label><input type="text" name="wdpro[alternative_url]"
+		              value="<?php echo htmlspecialchars(get_post_meta($post->ID,
+			              'alternative_url', 1)); ?>" style="width:100%"/></label>
+		</p>
+		<p>
 		<div><strong>Title</strong> (Заголовок вкладки браузера):</div>
-		<label><input type="text" name="wdpro[title]" value="<?php echo htmlspecialchars(get_post_meta($post->ID, 'title', 1)); ?>" style="width:100%" /></label>
-	</p>
-	<p>
-	<div><strong>H1</strong> (Заголовок на странице):</div>
-	<label><input type="text" name="wdpro[h1]" value="<?php echo htmlspecialchars(get_post_meta($post->ID, 'h1', 1)); ?>" style="width:100%" /></label>
-	</p>
-	<p>
-	<div><strong>Keywords</strong> (Ключевые слова):</div>
-	<label><input type="text" name="wdpro[keywords]" value="<?php echo htmlspecialchars(get_post_meta($post->ID, 'keywords', 1)); ?>" style="width:100%" /></label>
-	</p>
-	<p>
+		<label><input type="text" name="wdpro[title]"
+		              value="<?php echo htmlspecialchars(get_post_meta($post->ID, 'title',
+			              1)); ?>" style="width:100%"/></label>
+		</p>
+		<p>
+		<div><strong>H1</strong> (Заголовок на странице):</div>
+		<label><input type="text" name="wdpro[h1]"
+		              value="<?php echo htmlspecialchars(get_post_meta($post->ID, 'h1',
+			              1)); ?>" style="width:100%"/></label>
+		</p>
+		<p>
+		<div><strong>Keywords</strong> (Ключевые слова):</div>
+		<label><input type="text" name="wdpro[keywords]"
+		              value="<?php echo htmlspecialchars(get_post_meta($post->ID, 'keywords',
+			              1)); ?>" style="width:100%"/></label>
+		</p>
+		<p>
 		<div><strong>Description</strong> (Описание страницы):</div>
 		<input type="text" name="wdpro[description]" style="width:100%"
-		value="<?php echo htmlspecialchars(get_post_meta($post->ID, 'description', 1)); ?>"/>
-	</p>
-	<input type="hidden" name="wdpro_nonce" value="<?php echo wp_create_nonce(__FILE__); ?>" />
-	<p>
+		       value="<?php echo htmlspecialchars(get_post_meta($post->ID, 'description',
+			       1)); ?>"/>
+		</p>
+		<input type="hidden" name="wdpro_nonce"
+		       value="<?php echo wp_create_nonce(__FILE__); ?>"/>
+		<p>
 		<div><strong>Ссылка на студию</strong> (Сделано в студии...)</div>
-		<label><textarea type="text" name="wdpro[madein]" style="width:100%"><?php echo htmlspecialchars(get_post_meta($post->ID, 'madein', 1)); ?></textarea></label>
-	</p>
-	<!--<p>
+		<label><textarea type="text" name="wdpro[madein]"
+		                 style="width:100%"><?php echo htmlspecialchars(get_post_meta($post->ID,
+					'madein', 1)); ?></textarea></label>
+		</p>
+		<!--<p>
 		<div><strong>Перелинковка</strong></div>
-		<textarea style="width:100%;height:50px;" name="wdpro[links]" style="width:100%;height:50px;"><?php /*echo htmlspecialchars(get_post_meta($post->ID, 'links', 1)); */?></textarea>
+		<textarea style="width:100%;height:50px;" name="wdpro[links]" style="width:100%;height:50px;"><?php /*echo htmlspecialchars(get_post_meta($post->ID, 'links', 1)); */ ?></textarea>
 	</p>-->
-	
-<?php
+		<?php
+	}
 }
 
 

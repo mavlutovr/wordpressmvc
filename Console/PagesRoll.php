@@ -149,7 +149,7 @@ class PagesRoll extends Roll
 					echo 'У класса '.$entityClass.' слишком длинное название таблицы, больше 20 символов. Поэтому в него надо добавить: protected static $post_type = \'короткое_имя\';';
 				}
 
-				//echo $entityClass.' - '.$postType.'<BR><BR>';
+				// Регистрируем страницы в Wdpro
 				wdpro_register_post_type($entityClass);
 
 
@@ -157,8 +157,6 @@ class PagesRoll extends Roll
 				if (!get_option('wdpro_keep_standart_editor')) {
 					add_action( 'init', function () use (&$postType) {
 						remove_post_type_support( $postType, 'editor' );
-						//add_post_type_support( $postType, 'title' );
-						//remove_post_type_support( $postType, 'trackbacks' );
 					} );
 				}
 
@@ -353,26 +351,38 @@ class PagesRoll extends Roll
 						'post_content_editor',
 						'Текст страницы',
 						function () use (&$postType) {
-
-//							$textHelp = isset($_GET['post']) ?
-//								'<p><b>Вставка текста этой страницы в другую</b><BR>
-//								[page_text id='
-//								.$_GET['post'].']</p>' : false;
 							$textHelp = '';
 
 							$textHelp = apply_filters('wdpro_text_help', $textHelp);
-							
+
 							$form = new \Wdpro\Form\Form();
+
+							$editorName = 'post_content';
+							$controller = static::getController();
+							if ($controller::isLang()) {
+								$editorName .= '[lang]';
+							}
+
 							$form->add(array(
-								'name'=>'post_content',
+								'name'=>$editorName,
 								'type'=>'ckeditor',
 								'bottom'=>$textHelp));
 
 							if (isset($_GET['post'])) {
-								$post = get_post($_GET['post']);
-								$form->setData(array(
-									'post_content'=>$post->post_content,
-								));
+								$postWordpress = get_post($_GET['post']);
+
+								$formData = [
+									'post_content'=>$postWordpress->post_content,
+								];
+
+								if ($postWdpro = wdpro_get_post_by_id($_GET['post'])) {
+									$formData = array_merge(
+										$postWdpro->getData(),
+										$formData
+									);
+								}
+
+								$form->setData($formData);
 							}
 							$form->removeFormTag();
 							echo($form->getHtml());
