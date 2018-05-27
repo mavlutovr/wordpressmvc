@@ -62,7 +62,7 @@ class Entity extends \Wdpro\BasePage {
 		// Теги
 		$tags = function ($lang) use (&$data) {
 
-			$suffix = \Wdpro\Lang\Data::getPrefix($lang);
+			$suffix = \Wdpro\Lang\Data::getSuffix($lang);
 
 			if ($data['tags_string'.$suffix]) {
 				$saveTags = [];
@@ -97,7 +97,7 @@ class Entity extends \Wdpro\BasePage {
 
 		$tags = function ($lang) use (&$data) {
 
-			$suffix = \Wdpro\Lang\Data::getPrefix($lang);
+			$suffix = \Wdpro\Lang\Data::getSuffix($lang);
 
 			if (is_array($data['tags'.$suffix])) {
 				$data['tags_string'.$suffix] = implode(', ', $data['tags'.$suffix]);

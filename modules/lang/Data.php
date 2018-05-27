@@ -82,6 +82,29 @@ class Data {
 
 
 	/**
+	 * Возвращает массив суффиксов
+	 *
+	 * @return array
+	 */
+	public static function getSuffixes() {
+		static::init();
+
+		$ret = [];
+
+		if (isset(static::$data['uris'])) {
+			foreach ( static::$data['uris'] as $uri ) {
+				$ret[] = static::getSuffix($uri);
+			}
+		}
+		else {
+			$ret[] = '';
+		}
+
+		return $ret;
+	}
+
+
+	/**
 	 * Возвращает данные языков
 	 *
 	 * @param string $lang Только для языка
@@ -129,7 +152,7 @@ class Data {
 	 *
 	 * @return string
 	 */
-	public static function getPrefix($uri) {
+	public static function getSuffix($uri) {
 		if (!$uri) return '';
 
 		return '_'.$uri;

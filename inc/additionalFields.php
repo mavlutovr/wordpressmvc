@@ -30,7 +30,7 @@ function wdproShowMetaForm($post)
 	$langs = \Wdpro\Lang\Data::getUris();
 
 	$addDataToForm = function ($name, $lang) use (&$formData, &$post) {
-		$name .= \Wdpro\Lang\Data::getPrefix($lang);
+		$name .= \Wdpro\Lang\Data::getSuffix($lang);
 		$formData[$name] = get_post_meta($post->ID, $name, 1);
 	};
 

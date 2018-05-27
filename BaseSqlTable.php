@@ -488,7 +488,7 @@ abstract class BaseSqlTable
 
 									$fieldName = str_replace(
 										'[lang]',
-										\Wdpro\Lang\Data::getPrefix($lang),
+										\Wdpro\Lang\Data::getSuffix($lang),
 										$field2['name']
 									);
 									$field2['name'] = $fieldName;

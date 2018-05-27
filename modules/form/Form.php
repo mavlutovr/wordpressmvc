@@ -195,7 +195,7 @@ class Form
 							$params2 = $params;
 							$params2['name'] = str_replace(
 								'[lang]',
-								\Wdpro\Lang\Data::getPrefix($lang),
+								\Wdpro\Lang\Data::getSuffix($lang),
 								$params2['name']
 							);
 

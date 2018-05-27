@@ -90,11 +90,21 @@ class Controller extends \Wdpro\BaseController {
 	public static function getTagsList() {
 		$tags = [];
 
-		if ($sel = SqlTable::select('', 'tags')) {
+		$fields = '';
+		if ($langs = \Wdpro\Lang\Data::getSuffixes()) {
+			foreach ($langs as $lang) {
+				if ($fields) $fields .= ', ';
+				$fields .= 'tags'.$lang;
+			}
+		}
+
+		if ($sel = SqlTable::select('', $fields)) {
 			foreach ($sel as $value) {
-				if (is_array($value['tags'])) {
-					foreach ($value['tags'] as $tag) {
-						$tags[$tag] = $tag;
+				foreach ($langs as $lang) {
+					if (is_array($value['tags'.$lang])) {
+						foreach ($value['tags'.$lang] as $tag) {
+							$tags[$tag] = $tag;
+						}
 					}
 				}
 			}
