@@ -27,7 +27,6 @@ CKEDITOR.editorConfig = function( config ) {
 		 */
 		addStyle: function (style) {
 
-			console.log('addStyle', style);
 			wdpro.ckeditor.styles.push(style);
 
 			wdpro.each(CKEDITOR.wdproConfigs, function (data) {
@@ -143,11 +142,9 @@ CKEDITOR.editorConfig = function( config ) {
 		}
 	};
 	
-	console.log('window.ckeditorConfigEditor', window.ckeditorConfigEditor);
 	if (window.ckeditorConfigEditor) {
 
 		CKEDITOR.wdproConfigs = window.ckeditorConfigEditor(CKEDITOR.wdproConfigs);
-		console.log('CKEDITOR.wdproConfigs',CKEDITOR.wdproConfigs);
 	}
 	
 })(jQuery);

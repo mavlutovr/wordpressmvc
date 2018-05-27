@@ -568,13 +568,14 @@ class Controller extends \Wdpro\BaseController {
 					if ($form = $entity->getConsoleForm())
 					{
 						$form->removeFormTag();
+						$form->setJsName($entity->getType());
 
 						// Сама форма
 						add_action('add_meta_boxes', function () use (&$form, &$entity)
 						{
 							add_meta_box(
 								'additional_form',
-								'Параметры',
+								'Данные',
 
 								function () use (&$form, &$entity)
 								{

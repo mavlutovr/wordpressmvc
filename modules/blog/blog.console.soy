@@ -1,0 +1,13 @@
+{namespace blog_templates}
+
+/**
+* Теги
+* @param tags Теги
+*/
+{template .tags}
+<div>
+{foreach $tag in $tags}
+<span class="a">{$tag}</span>,{sp}
+{/foreach}
+</div>
+{/template}

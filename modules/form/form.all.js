@@ -123,6 +123,21 @@
 
 
 	/**
+	 * Возвращает форму, когда она уже была добавлена на странцу
+	 *
+	 * @param name {string} Имя формы
+	 * @param callback {function} Каллбэк, в который отправляется форма
+	 */
+	wdpro.forms.onFormAddedToPage = function (name, callback) {
+		wdpro.forms.onForm(name, function (form) {
+			form.on('addedToPage', function () {
+				callback(form);
+			}, true);
+		});
+	};
+
+
+	/**
 	 * Выравнивает все формы
 	 */
 	wdpro.forms.align = function () {
@@ -655,7 +670,6 @@
 
 			// Получаем объект формы
 			this.jForm = this.html.find('form');
-			console.log('this.jForm', this.jForm);
 			this.jForm.attr('data-id', this.id);
 
 			// Контейнер сообщений
@@ -1029,8 +1043,6 @@
 						});
 
 						text += elementsArr.join(', ');
-
-						console.log(text);
 					};
 
 
@@ -2532,9 +2544,7 @@
 			var attrs = this.getAttrs();
 			params['fieldName'] = this.getName();
 			delete attrs.name;
-			
-			console.log(params);
-			
+
 			callback(this.templates.dateField({
 				data:  params,
 				attrs: attrs
@@ -2740,7 +2750,6 @@
 					var editor = CKEDITOR.replace(self.htmlId, self.config);
 
 					self.on('prepareToGetData', function () {
-						console.log(editor.getData());
 						self.field.val(editor.getData());
 					});
 				}
@@ -3287,7 +3296,6 @@
 		 */
 		fileDel: function (fileName) {
 
-			console.log(this.settedValue, fileName);
 			this.settedValue = this.settedValue || [];
 			wdpro.arrayRemoveValue(this.settedValue, fileName);
 			this.showCurrentFiles();
@@ -3456,8 +3464,6 @@
 			{
 				var elementData = formData;
 				
-				console.log('elementData', elementData);
-
 				wdpro.each(this.params['name'], function (name) {
 
 					if (elementData)

@@ -61,7 +61,6 @@
 				.addClass('js-form-align-disabe');
 			elementsByLang[lang].addClass('lang-visible')
 				.removeClass('js-form-align-disabe');
-			console.log('elementsByLang[lang]', elementsByLang[lang]);
 
 			wdpro.forms.align();
 		};

@@ -63,8 +63,8 @@ class ConsoleForm extends \Wdpro\Form\Form {
 				'name'=>'tags_string[lang]',
 				'left'=>'Теги',
 				'class'=>'js-blog-tags',
-				'bottom'=>'<div class="js-blog-tags-list">'
-				          .json_encode(Controller::getTagsList())
+				'bottom'=>'<div class="js-blog-tags-list blog-tags-list">'
+				          .json_encode(Controller::getTagsList(), JSON_UNESCAPED_UNICODE)
 				          .'</div>',
 			]);
 		}
