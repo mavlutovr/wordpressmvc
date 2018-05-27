@@ -231,4 +231,41 @@ class BasePage extends BaseEntity
 		return 0;
 	}
 
+
+	/**
+	 * Подготавливает данные для сохранения перед первым сохранением черновика
+	 *
+	 * В вордпресс страницы сохраняются сразу, как только была открыта форма создания.
+	 * То есть еще до того, как заполнили форму создания.
+	 *
+	 * Этот метод обрабатывает данные еще до того, как форма была отправлена.
+	 * То есть сразу, как была открыта форма и еще не сохранялась.
+	 *
+	 * @param array $data Исходные данные
+	 * @return array
+	 *
+	 * @return mixed
+	 */
+	protected function prepareDataForCreateDraft($data) {
+		return $data;
+	}
+
+
+	/**
+	 * В BaseEntity и BasePage различается механизм запуска методов для обработки данных
+	 * перед первым сохранением (созданием) сущности в базу
+	 *
+	 * Именно за счет этого метода и реализован разный механизм
+	 *
+	 * @param $data
+	 *
+	 * @return mixed
+	 */
+	protected function _prepareData($data) {
+		$data = $this->prepareDataForCreateDraft($data);
+
+		return $data;
+	}
+
+
 }

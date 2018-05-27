@@ -3,6 +3,9 @@ CKEDITOR.editorConfig = function( config ) {
 	// config.language = 'fr';
 	// config.uiColor = '#AADC6E';
 
+	config.resize_dir = 'both';
+	config.resize_maxWidth = 800;
+	config.resize_maxHeight = 600;
 };
 
 (function ($) {
@@ -65,7 +68,7 @@ CKEDITOR.editorConfig = function( config ) {
 			'stylesSet': wdpro.ckeditor.styles,
 
 			// Доп Плагины
-			'extraPlugins': 'image,sourcedialog,simple_uploader,tabletools,tableresize,youtube,wpmore',
+			'extraPlugins': 'image,sourcedialog,simple_uploader,tabletools,tableresize,youtube,wpmore,resize',
 
 			// Панель
 			'toolbar': [
@@ -89,6 +92,8 @@ CKEDITOR.editorConfig = function( config ) {
 			],
 			
 			width: '100%',
+			resize_maxWidth: 800,
+			resize_enabled: true,
 
 			contentsCss: wdpro.ckeditor.contentsCss,
 
@@ -110,7 +115,7 @@ CKEDITOR.editorConfig = function( config ) {
 			'stylesSet': wdpro.ckeditor.styles,
 
 			// Доп Плагины
-			'extraPlugins': 'image,sourcedialog,simple_uploader,tabletools,tableresize,youtube',
+			'extraPlugins': 'image,sourcedialog,simple_uploader,tabletools,tableresize,youtube,resize',
 
 			// Панель
 			'toolbar': [
@@ -127,7 +132,10 @@ CKEDITOR.editorConfig = function( config ) {
 
 			//uiColor: '#F5F5F5',
 
-			width: '100%',
+			//width: '100%',
+			resize_maxWidth: 800,
+			resize_enabled: true,
+			resize_dir: 'both',
 			
 			height: '100px',
 

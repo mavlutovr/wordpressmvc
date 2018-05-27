@@ -57,7 +57,7 @@ add_action('admin_init', function () {
 	if (get_option('wdpro_additional_remove') != 1)
 	{
 		add_meta_box('extra_fields',
-			'Дополнительно',
+			'SEO',
 			'wdproShowMetaForm',
 			'post',
 			'normal');

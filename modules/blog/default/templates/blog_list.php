@@ -14,7 +14,7 @@
 									if (strstr($item['image'], 'http://')):
 										echo $item['image'];
 									else:
-										echo WDPRO_UPLOAD_IMAGES_URL.$item['image'];
+										echo WDPRO_UPLOAD_IMAGES_URL.'/lit/'.$item['image'];
 									endif;  ?>"
 								/></a>
 						</div>

@@ -1,6 +1,8 @@
 <?php
 namespace Wdpro\Blog;
 
+use Wdpro\Exception;
+
 class Entity extends \Wdpro\BasePage {
 
 	/**
@@ -80,6 +82,9 @@ class Entity extends \Wdpro\BasePage {
 		foreach(\Wdpro\Lang\Data::getUris() as $lang) {
 			$tags($lang);
 		}
+
+		// Добавление шорткода в родительскую страницу
+		wdpro_add_shortcode_to_post($this->getParent(), '[blog_posts]');
 
 		return $data;
 	}

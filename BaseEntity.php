@@ -167,6 +167,23 @@ abstract class BaseEntity
 
 
 	/**
+	 * В BaseEntity и BasePage различается механизм запуска методов для обработки данных
+	 * перед первым сохранением (созданием) сущности в базу
+	 *
+	 * Именно за счет этого метода и реализован разный механизм
+	 *
+	 * @param $data
+	 *
+	 * @return mixed
+	 */
+	protected function _prepareData($data) {
+		$data = $this->prepareDataForCreate($data);
+
+		return $data;
+	}
+
+
+	/**
 	 * Сохранение
 	 * 
 	 * @returns bool|array (false или сохраненные данные)
@@ -185,7 +202,7 @@ abstract class BaseEntity
 			$data = $this->prepareDataForSave($data);
 			if (!$this->existsInDb())
 			{
-				$data = $this->prepareDataForCreate($data);
+				$data = $this->_prepareData($data);
 				$created = true;
 			}
 			$this->_created = $created;
@@ -311,9 +328,16 @@ abstract class BaseEntity
 
 	/**
 	 * Подготавливает данные для сохранения перед первым сохранением в базе
+	 *
+	 * В вордпресс страницы сохраняются сразу, как только была открыта форма создания.
+	 * То есть еще до того, как заполнили форму создания.
+	 *
+	 * Этот метод обрабатывает данные как бы перед нормальным созданием. Когда уже
+	 * заполнили форму. И это обработка данных первого сохранение формы.
 	 * 
 	 * @param array $data Исходные данные
-	 * @return array|bool
+	 *
+	 * @return array
 	 */
 	protected function prepareDataForCreate($data)
 	{

@@ -35,7 +35,7 @@
 						tagsHtml.find('span').each(function () {
 							var span = $(this);
 							var tag = span.text();
-							if (addedTags.indexOf(tag) != -1) {
+							if (addedTags.length && addedTags.indexOf(tag) != -1) {
 								span.addClass('blog-tags-active');
 							}
 							else {

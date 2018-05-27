@@ -40,6 +40,7 @@ class ConsoleForm extends \Wdpro\Form\Form {
 			'name'=>'date_added',
 			'type'=>static::DATE,
 			'left'=>'Дата публикации',
+			'value'=>date('Y.m.d'),
 		]);
 		
 		$this->add([

@@ -566,7 +566,6 @@ function wdpro_gz_encode($sourceFile, $zipFile)
 }
 
 
-
 /**
  * Разорхивирует файл из формата .gz
  *
@@ -654,7 +653,6 @@ function wdpro_text_to_file_name($text, $toLowerCase=false)
 
 	return $text;
 }
-
 
 
 /**
@@ -892,6 +890,7 @@ function wdpro_image_watermark($fileFullName, $params) {
 	}
 }
 
+
 /**
  * Возвращает GD ресурс картинки
  *
@@ -913,6 +912,7 @@ function wdpro_gd_create_image($imageFile) {
 	}
 	return $icfunc($imageFile);
 }
+
 
 /**
  * Сохранение GD изображения
@@ -1207,6 +1207,7 @@ function wdproObjectsTrace() {
 	print_r($_wdproObjects);
 }
 
+
 /**
  * Возвращает объект, создавая его, если он еще не был создан
  *
@@ -1468,6 +1469,7 @@ function wdpro_register_post_type($entityClass)
 	$wdpro_register_post_type[$postType] = $entityClass;
 }
 
+
 function wdpro_get_controller_by_post_type($postType) {
 	if ($entityClass = wdpro_get_entity_by_post_type($postType)) {
 		$entityClass::getNameSpace();
@@ -1556,9 +1558,6 @@ function wdpro_ajax($actionName, $callback)
 }
 
 
-//$wdproConstArray = array();
-
-
 /**
  * Отправляет письма точно так же как и wp_mail, только в формате html
  *
@@ -1608,6 +1607,7 @@ function wdpro_rdate($param, $time=0) {
 	if(strpos($param,'M')===false) return date($param, $time);
 	else return date(str_replace('M',$MonthNames[date('n',$time)-1],$param), $time);
 }
+
 
 /**
  * Преобразует секунды в отображаемую дату
@@ -1800,6 +1800,7 @@ function wdpro_replace_or_append(&$text, $chunk, $add)
 
 	return $text;
 }
+
 
 /**
  * Заменяет в тексте заданную метку на значение, либо если метки нету, добавляет значение в начало текста
@@ -2037,6 +2038,7 @@ function wdpro_on_url($url, $callback) {
 		}
 	);
 }
+
 
 /**
  * Запускает каллбэк при открытии страницы по заданному адресу, и добавляет в текст то,
@@ -2341,12 +2343,14 @@ function print_r_pre($data, $return=false) {
 	echo($text);
 }
 
+
 /**
  * Открывает <pre>
  */
 function wdpro_pre() {
 	echo '<pre>';
 }
+
 
 /**
  * Закрывает </pre>
@@ -2413,6 +2417,7 @@ function wdpro_phone_format($phone, $format, $mask = '#')
     return ($phone) ? trim(preg_replace($pattern, $format, $phone, 1)) : false;
 }
 
+
 /**
  * Начало тега <noindex>
  *
@@ -2424,6 +2429,7 @@ function noindex_start() {
 
 	ob_start();
 }
+
 
 /**
  * Конец тега </noindex>
@@ -2437,4 +2443,79 @@ function noindex_end() {
 		echo '<noindex>'.$content.'</noindex>';
 		//echo ''.$content.'';
 	}
+}
+
+
+/**
+ * Добавление шорткода в текст страницы, если шорткода еще нету
+ *
+ * Это нужно, когда, например, добавляем новость на какую-нибудь страницу.
+ * То есть делаем на странице список новостей.
+ * А статьи отображаются на странице по шорткоду.
+ * Тогда надо делать, чтобы автоматом добавился шорткод на страницу, где отображать
+ * списокновостей.
+ *
+ * @param \Wdpro\BasePage $post Страница, на которую добавлять шорткод
+ * @param string $shortcode Сам шорткод
+ */
+function wdpro_add_shortcode_to_post($post, $shortcode) {
+	if ($post && $langs = \Wdpro\Lang\Data::getSuffixes()) {
+		$needSave = false;
+
+		foreach ($langs as $lang) {
+			$text = $post->getData('post_content'.$lang);
+			if (!strstr($text, $shortcode)) {
+				$needSave = true;
+				$text .= '<p>'.$shortcode.'</p>';
+				$post->mergeData([
+					'post_content'.$lang => $text,
+				]);
+			}
+		}
+
+		if ($needSave) {
+			$post->save();
+		}
+	}
+}
+
+
+/**
+ * Возвращает уровень вложенности, на котором находится добавляемый или редактируемый
+ * поств админке
+ *
+ * Это нужно в том числе для того, чтобы для разных уровней делать разные поля в форме
+ *
+ * @return int
+ */
+function wdpro_console_post_level() {
+
+	global $wdpro_console_post_level;
+	if (isset($wdpro_console_post_level))
+		return $wdpro_console_post_level;
+
+	$level = 0;
+
+	if ($_GET['sectionId']) {
+		$post = wdpro_get_post_by_id($_GET['sectionId']);
+		$level = 1;
+	}
+
+	else if ($_GET['post']) {
+		$post = wdpro_get_post_by_id($_GET['post']);
+		$level = 0;
+	}
+
+	else if ($_POST['post_ID']) {
+		$post = wdpro_get_post_by_id($_POST['post_ID']);
+		$level = 0;
+	}
+
+	if ($post) {
+		while($post = $post->getParent()) {
+			$level ++;
+		}
+	}
+
+	return $level;
 }

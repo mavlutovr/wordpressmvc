@@ -2728,11 +2728,12 @@
 			data = $.extend({
 				'config': 'standart',
 				'autoWidth': false,
+				'autoLeft': false
 			}, data);
 			
 			this._super(data);
 			
-			this.classArr = ['js-sckeditor', 'JS_field'];
+			this.classArr = ['js-sckeditor', 'wdpro-form-ckeditor', 'JS_field'];
 			
 			if (this.params['config'])
 			{
@@ -2803,7 +2804,8 @@
 		initParams: function (params) {
 			params = wdpro.extend({
 				'value':                  1,
-				'JS_class_for_container': 'checkbox_container'
+				'JS_class_for_container': 'checkbox_container',
+				'autoWidth': false
 			}, params);
 
 			this._super(params);
