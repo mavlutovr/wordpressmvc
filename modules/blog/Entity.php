@@ -5,6 +5,7 @@ use Wdpro\Exception;
 
 class Entity extends \Wdpro\BasePage {
 
+
 	/**
 	 * Текст страницы
 	 *

@@ -318,35 +318,7 @@ class PagesRoll extends Roll
 
 								// Подраздел
 								if ($params['subsections']) {
-									//unset($actions['edit']);s
-									/*$actions['wdpro_'.$postType] = '<a href="#">'
-										.$params['labels']['add_new_subitem']
-										.'</a>';*/
-
-									// Количество подразделов
-									$subsectionsCount = $entity->getSubsectionsCount();
-									if ($subsectionsCount) {
-										$subsectionsCount = '<span 
-										class="js-subsections-count">
-										<span class="js-children-count wdpro-rounded-count">'.$subsectionsCount.'</span></span>';
-									}
-									else {
-										$subsectionsCount = '';
-									}
-
-									// Список подразделов
-									$newActions['wdpro_subsections'] =
-										'<a href="edit.php?post_type=' .
-										$postType
-										. '&sectionId=' .
-										$post->ID . '" class="js-subsections"><span 
-									class="fa fa-folder"></span> Подразделы'.$subsectionsCount.'</a>';
-
-									// Добавить подраздел
-									/*$newActions['wdpro_addsubsection'] = 
-										'<a href="post-new.php?post_type='
-										.$postType.'&sectionId='.$post->ID
-										.'"><span class="dashicons dashicons-plus-alt"></span> Добавить подраздел</a>';*/
+									$newActions = $entity->addSubsectionsToActions($newActions);
 								}
 
 
@@ -604,6 +576,21 @@ class PagesRoll extends Roll
 	public function getPageCallback()
 	{
 		
+	}
+
+
+	/**
+	 * Является ли этот список подраздельным. То есть, можно ли в нем создавать подразделы.
+	 *
+	 * Это нужно знать для того, чтобы например, показывать или нет кнопку "Добавить
+	 * подраздел"
+	 *
+	 * @return bool
+	 */
+	public static function isSubsections() {
+		if ($params = static::params()) {
+			return !isset($params['subsections']) || $params['subsections'];
+		}
 	}
 }
 

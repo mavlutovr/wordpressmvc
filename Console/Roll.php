@@ -153,15 +153,29 @@ class Roll extends BaseRoll
 		// Родительские крошки
 		if (isset($_GET['sectionId']) && $_GET['sectionId']) {
 
-			$breadcrumbs->makeFrom(
-				wdpro_get_post_by_id($_GET['sectionId'])
-			);
-			//$breadcrumbs->removeLink();
-			$breadcrumbs->getPrepend( 0 )
-				->setComment( $params['labels']['label'] )
-				->setUri( wdpro_current_url( array(
-					'action' => null,
-				) ) );
+			$post = wdpro_get_post_by_id($_GET['sectionId']);
+
+			$breadcrumbs->makeFrom($post);
+			//$breadcrumbs->unremoveLink();
+
+			// Когда мы в дочерних простых элементах, например, в фотогалерее
+			if ($_GET['childsType'] || $_GET['breadParentOpenEdit']) {
+				// Добавляем "Фотогалерея" в конец хлебных крошек
+				$breadcrumbs->append($params['labels']['label']);
+
+				$breadcrumbs->getPrepend( 0 )->setUri($post->getEditUrl())
+					->setComment( 'Редактирование' );
+			}
+
+			else {
+				$breadcrumbs->getPrepend( 0 )
+					//->setComment( $params['labels']['label'] )
+					->setUri(wdpro_current_url(array(
+						'action' => null,
+					)))
+				;
+			}
+
 		}
 
 		// Сами по себе, не прикрепленные к странице

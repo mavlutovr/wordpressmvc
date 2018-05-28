@@ -580,7 +580,10 @@ class Controller extends \Wdpro\BaseController {
 								function () use (&$form, &$entity)
 								{
 									//$form->setData($entity->getData());
-									echo($form->getHtml());
+									if ($_GET['post']) {
+										echo $entity->getEditFormMenu();
+									}
+									echo $form->getHtml();
 								},
 
 								$entity->getType(),

@@ -542,6 +542,8 @@ abstract class BaseEntity
 	 * Добавляет к действиям страниц (удалить, изменить, свойства...)
 	 *
 	 * @param $actions
+	 *
+	 * @return mixed
 	 */
 	public function addChildsToActions($actions)
 	{
@@ -617,6 +619,37 @@ abstract class BaseEntity
 			}
 		}
 		
+		return $actions;
+	}
+
+
+	/**
+	 * Добавляет к действиям страниц подразделы
+	 *
+	 * @param $actions
+	 *
+	 * @return mixed
+	 */
+	public function addSubsectionsToActions($actions) {
+		// Количество подразделов
+		$subsectionsCount = $this->getSubsectionsCount();
+		if ($subsectionsCount) {
+			$subsectionsCount = '<span 
+										class="js-subsections-count">
+										<span class="js-children-count wdpro-rounded-count">'.$subsectionsCount.'</span></span>';
+		}
+		else {
+			$subsectionsCount = '';
+		}
+
+		// Список подразделов
+		$actions['wdpro_subsections'] =
+			'<a href="edit.php?post_type=' .
+			static::getType()
+			. '&sectionId=' .
+			$this->id() . '" class="js-subsections"><span 
+									class="fa fa-folder"></span> Подразделы'.$subsectionsCount.'</a>';
+
 		return $actions;
 	}
 

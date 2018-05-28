@@ -149,6 +149,38 @@ class BasePage extends BaseEntity
 
 
 	/**
+	 * Возвращает адрес редактирования
+	 *
+	 * @return string
+	 */
+	public function getEditUrl() {
+		return WDPRO_CONSOLE_URL.'post.php?post='.$this->id().'&action=edit';
+	}
+
+
+	/**
+	 * Возвращает адрес страницы для хлебных крошек
+	 *
+	 * @param string|null $childsType Тип дочерних элементов
+	 * У одного и того же раздела могут быть разные типы дочерних элементов. Например,
+	 * у одного и того же раздела каталога могут быть как товары, так и подразделы
+	 * каталога
+	 *
+	 * @return string
+	 */
+	public function getConsoleBreadcrumbsUri($childsType=null) {
+
+		// Если это фотогалерея, то возвращаем адрес редактироваания
+		if ($_GET['childsType']) {
+
+		}
+
+		// Если это что-то другое (подразделы), то возвращаем адрес с подразделами
+		return $this->getConsoleListUri($childsType);
+	}
+
+
+	/**
 	 * Возаращает текст кнопки этого поста
 	 *
 	 * @return string
@@ -248,6 +280,42 @@ class BasePage extends BaseEntity
 	 */
 	protected function prepareDataForCreateDraft($data) {
 		return $data;
+	}
+
+
+	/**
+	 * Возвращает меню редактирования страницы (кнопками на дочерные элементы)
+	 *
+	 * @return string
+	 */
+	public function getEditFormMenu() {
+
+		$html = '';
+
+		$actions = $this->addChildsToActions([]);
+
+		$roll = static::getConsoleRoll();
+		/*if ($roll::isSubsections()) {
+
+			$parentId = 0;
+			if ($parent = $this->getParent()) {
+				$parentId = $parent->id();
+			}
+
+
+			$actions['wdpro_subsections'] =
+				'<a href="'
+				.WDPRO_CONSOLE_URL.'edit.php?post_type='.static::getType().'&sectionId='
+				.$parentId
+				.'" class="js-subsections"><span 
+									class="fa fa-folder"></span> Подразделы</a>';
+		}*/
+
+		foreach ($actions as $link) {
+			$html .= '<li>'.$link.'</li>';
+		}
+
+		return '<ul class="wdpro-edit-menu">'.$html.'</ul>';
 	}
 
 
