@@ -156,6 +156,9 @@ function wdpro_breadcrumbs_init($breadcrumbs) {
 			'uri'=>home_url(),
 		));
 	}
+
+	$breadcrumbs->removeLast(true);
+	$breadcrumbs->unremoveLink();
 }
 
 // Получаем пост и инициализируем хлебные крошки

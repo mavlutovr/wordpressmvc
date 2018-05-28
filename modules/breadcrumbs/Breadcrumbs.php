@@ -13,7 +13,7 @@ class Breadcrumbs
 	protected $lastAddedEntity;
 	protected $lastElementsWithoutLinks = 1;
 	
-	protected static $min = 2;
+	protected static $min = 1;
 	protected static $removeLast = false;
 
 	/**
@@ -49,7 +49,7 @@ class Breadcrumbs
 	public function __construct() {
 		
 		// Шаблон по-умолчанию
-		$this->templateFilName = __DIR__.'/breadcrumbs_template.php';
+		$this->templateFilName = WDPRO_TEMPLATE_PATH.'breadcrumbs_template.php';
 	}
 
 
@@ -316,6 +316,14 @@ class Breadcrumbs
 
 
 	/**
+	 * Вернуть ссылку к последнему элементу, у которого есть ссылка
+	 */
+	public function unremoveLink() {
+		$this->lastElementsWithoutLinks --;
+	}
+
+
+	/**
 	 * Возвращает правый элемент левой части
 	 * 
 	 * @return Element
@@ -416,5 +424,15 @@ class Breadcrumbs
 	public function setTemplate($templateFileName) {
 		
 		$this->templateFilName = $templateFileName;
+	}
+
+
+	/**
+	 * Удаляет последний элемент (который такой же как заголовок)
+	 *
+	 * @param bool $remove true - убрать, false - вернуть
+	 */
+	public function removeLast($remove=true) {
+		static::$removeLast = $remove;
 	}
 }

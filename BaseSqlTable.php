@@ -12,7 +12,7 @@ $sqlFieldsTypes = array();
 abstract class BaseSqlTable
 {
 	use Tools;
-	
+
 	const COLLS = 'colls';
 	const SQL = 'sql';
 	const FORMAT = 'format';

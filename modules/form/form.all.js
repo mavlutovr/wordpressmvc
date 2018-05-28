@@ -2543,6 +2543,7 @@
 
 			var attrs = this.getAttrs();
 			params['fieldName'] = this.getName();
+
 			delete attrs.name;
 
 			callback(this.templates.dateField({
@@ -2567,11 +2568,14 @@
 			this.fieldDate.on('change', function () {
 				self.valueFronVisibleToHidden();
 			});
+			setTimeout(function () {
+				self.valueFronVisibleToHidden();
+			}, 500);
 		},
 
 
 		valueFronVisibleToHidden: function () {
-			
+
 			var stringVal = this.fieldDate.val();
 			
 			if (stringVal) {

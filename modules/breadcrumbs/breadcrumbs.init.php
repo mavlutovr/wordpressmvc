@@ -3,6 +3,9 @@ namespace Wdpro\Breadcrumbs;
 
 \Wdpro\Autoload::add('Wdpro\Breadcrumbs', __DIR__);
 
+wdpro_default_file(__DIR__.'/breadcrumbs_template.php',
+	WDPRO_TEMPLATE_PATH.'breadcrumbs_template.php');
+
 
 if (is_admin())
 {

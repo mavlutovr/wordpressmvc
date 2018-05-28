@@ -1615,9 +1615,35 @@ function wdpro_mail( $to,
  */
 function wdpro_rdate($param, $time=0) {
 	if(intval($time)==0)$time=time();
-	$MonthNames=array("января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря");
 	if(strpos($param,'M')===false) return date($param, $time);
-	else return date(str_replace('M',$MonthNames[date('n',$time)-1],$param), $time);
+	else return date(str_replace('M',wdpro_get_month($time),$param), $time);
+}
+
+
+/**
+ * Возвращает месяц указанного времени
+ *
+ * @param int $time Время
+ *
+ * @return string
+ */
+function wdpro_get_month($time) {
+	$MonthNames = array(
+		"января",
+		"февраля",
+		"марта",
+		"апреля",
+		"мая",
+		"июня",
+		"июля",
+		"августа",
+		"сентября",
+		"октября",
+		"ноября",
+		"декабря",
+	);
+
+	return $MonthNames[date('n',$time)-1];
 }
 
 
