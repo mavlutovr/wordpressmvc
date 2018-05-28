@@ -10,6 +10,30 @@ class Menu extends Roll
 	 * Возвращает html код меню
 	 * 
 	 * @param array|string $params Параметры
+	 *                             ---
+	 *                             'template' - Шаблон. Можно передать массив из 2-х
+	 *                             шаблонов. Тогда второй будет по-умолчанию. И если
+	 *                             первогоне будет, то первый будет создан по второму.
+	 *                             И помещен в папку с темой.
+	 *                             ---
+	 *                             'post_parent' - ID родительского поста.
+	 *                             ---
+	 *                             'entity' - Класс сущности страницы к которой относится
+	 *                              кнопка.
+	 *                             ---
+	 *                             'sqlTable' - Таблица, из которой брать кнопки.
+	 *                             ---
+	 *                             'fields' - Поля, которые необходимо взять из базы для
+	 *                             меню.
+	 *                             ---
+	 *                             'where' - Where запрос для получения кнопок.
+	 *                             ---
+	 *                             'type' - Тип постов
+	 *                             ---
+	 *                             'submenu' - Параметры для подменю.
+	 *                             Можно указать массив.
+	 *                             Или true. Тогда параметры будут скопированы из этих.
+	 *
 	 * @return string
 	 * @throws Exception
 	 */
@@ -17,6 +41,7 @@ class Menu extends Roll
 
 		if (is_numeric($params)) $params = array('post_parent'=>$params);
 
+		// Получаем данные кнопок
 		if ($list = static::getData($params)) {
 
 			if (!isset($params['template'])) {
@@ -33,6 +58,7 @@ class Menu extends Roll
 			return wdpro_render_php($template, $list, $templateDefault);
 		}
 	}
+
 
 	/**
 	 * Возвращает данные меню по параметрам
@@ -69,33 +95,14 @@ class Menu extends Roll
 
 
 		// Таблица
-		if (!isset($params['sqlTable'])) {
-			$params['sqlTable'] = static::sqlTable();
-		}
-
 		if (!isset($params['sqlTable']) && $entityClass)
 		{
 			$params['sqlTable'] = $entityClass::sqlTable();
 		}
-		/** @var \Wdpro\BaseSqlTable|null $entityClass */
-
-		/*$sqlTable = null;
-		if (isset($params['sqlTable']) && $params['sqlTable'])
-		{
-			$sqlTable = $params['sqlTable'];
+		if (!isset($params['sqlTable'])) {
+			$params['sqlTable'] = static::sqlTable();
 		}
-		if (!$sqlTable)
-		{
-			$sqlTable = \Wdpro\Page\SqlTable::class;
-		}*/
-
-		/*if (!isset($params['sqlTable']) || !$params['sqlTable'])
-		{
-			throw new Exception(
-				'Для получения меню необходимо указать сущность страниц, 
-				либо таблицу'
-			);
-		}*/
+		/** @var \Wdpro\BaseSqlTable|null $entityClass */
 		
 		// Тип постов
 		if (!isset($params['type']) && $params['sqlTable'])
@@ -113,31 +120,62 @@ class Menu extends Roll
 			throw new Exception('Для получения меню не был указан тип. Необходимо 
 			указать тип меню, таблицу или сущность страниц меню');
 		}
-		
+
+
+		// Fields
 		$params = wdpro_extend(array(
 			'post_parent'=>$params['post_parent'],
 			'fields'=>static::sqlFields(),
 		), $params);
-		
-		$params = wdpro_extend(array(
-			'where'=>array(
-				'WHERE post_type=%s
-				AND post_parent=%d
-				AND post_status="publish"
-				ORDER BY menu_order',
-				$params['type'],
-				$params['post_parent'],
-			),
-		), $params);
-		
+
+		// Заменяем ID на id, когда это не основная таблица
+		if ($params['sqlTable'] != '\Wdpro\Page\SqlTable') {
+			$params['fields'] = str_replace('ID', 'id', $params['fields']);
+		}
+
+
+		// Where
+		// Поле таблицы in_menu
+		// Которое обозначает кнопки, которые отображать в меню и которые нет
+		$inMenuSql = '';
+		$sqlTable = $params['sqlTable'];
+		/** @var $sqlTable \Wdpro\BaseSqlTable */
+		if ($sqlTable::isField('in_menu')) {
+			$inMenuSql = 'AND in_menu=1 ';
+		}
+
+		// Основная таблица
+		if ($params['sqlTable'] === '\Wdpro\Page\SqlTable') {
+			$params = wdpro_extend(array(
+				'where'=>array(
+					'WHERE post_type=%s
+					AND post_parent=%d
+					AND post_status="publish"
+					AND post_title[lang]!=""
+					'.$inMenuSql.'
+					ORDER BY menu_order',
+					$params['type'],
+					$params['post_parent'],
+				),
+			), $params);
+		}
+		else {
+			$params = wdpro_extend(array(
+				'where'=>array(
+					'WHERE post_parent=%d
+					AND post_status="publish"
+					AND post_title[lang]!=""
+					'.$inMenuSql.'
+					ORDER BY menu_order',
+					$params['post_parent'],
+				),
+			), $params);
+		}
+
 		$params = static::params($params);
-		
-		/*if (static::class == \App\Menu\Header\Menu::class)
-		{
-			print_r($params);
-			exit();
-		}*/
-		//print_r($params);
+
+		$params['where'] = \Wdpro\Lang\Data::replaceLangShortcode($params['where']);
+		$params['fields'] = \Wdpro\Lang\Data::replaceLangShortcode($params['fields']);
 
 		if ($sel = $params['sqlTable']::select($params['where'], $params['fields']))
 		{
@@ -162,9 +200,16 @@ class Menu extends Roll
 				
 				else
 				{
-					$row['url'] = home_url($row['post_name']);
+					//$row['url'] = home_url($row['post_name']);
+					$row['url'] = \Wdpro\Lang\Data::currentUrl().$row['post_name'];
 				}
 				$row['text'] = $row['post_title'];
+
+				// Active
+				if (wdpro_breadcrumbs()->isUri($row['post_name'])) {
+					$row['active'] = true;
+				}
+
 				
 				$row = static::prepareDataForTemplate($row);
 				
@@ -217,7 +262,7 @@ class Menu extends Roll
 	 * @example return "ID, post_title";
 	 */
 	public static function sqlFields() {
-		return 'ID, post_title, post_name';
+		return 'ID, post_title[lang] as post_title, post_name';
 	}
 
 

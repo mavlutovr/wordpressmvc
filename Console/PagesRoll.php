@@ -161,6 +161,7 @@ class PagesRoll extends Roll
 				}
 
 				// Языки
+				if (defined('WP_ADMIN'))
 				add_action('admin_bar_menu', function ($admin_bar) {
 
 					foreach (\Wdpro\Lang\Data::getData() as $lang) {
@@ -501,8 +502,7 @@ class PagesRoll extends Roll
 							
 							// В меню
 							if ($column == 'wdpro_in_menu') {
-								
-								if (get_post_meta($postId, 'in_menu', true)) {
+								if (wdpro_get_post_by_id($postId)->getData('in_menu')) {
 									echo '<i class="fa fa-check" aria-hidden="true" title="Эта страница отображается в меню"></i>';
 								}
 								//echo(get_post_meta($postId, 'in_menu', true));

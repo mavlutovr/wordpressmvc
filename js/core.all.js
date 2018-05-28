@@ -1878,14 +1878,14 @@ if (typeof Array.isArray === 'undefined') {
 	wdpro.ajax = function ($_GET_OR_ACTION, $_POST, callback) {
 		
 		var self = this;
-		
+
 		if (typeof $_GET_OR_ACTION === 'string')
 		{
 			$_GET_OR_ACTION = {
 				'action': $_GET_OR_ACTION
 			};
 		}
-		
+
 		var $_GET2 = wdpro.extend($_GET_OR_ACTION, {
 			'action': 'wdpro',
 			'wdproAction': $_GET_OR_ACTION['action']

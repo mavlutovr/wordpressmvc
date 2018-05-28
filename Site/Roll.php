@@ -47,7 +47,7 @@ class Roll extends \Wdpro\BaseRoll {
 	/**
 	 * Возвращает html код по запросу
 	 *
-	 * @param array $where Запрос типа array('WHERE id=%d', 123)
+	 * @param array|string $where Запрос типа array('WHERE id=%d', 123)
 	 * @return string
 	 * @throws Exception
 	 */
@@ -64,11 +64,15 @@ class Roll extends \Wdpro\BaseRoll {
 	/**
 	 * Возвращает данные по запросу
 	 *
-	 * @param array $where Запрос типа array('WHERE id=%d', 123)
+	 * @param array|string $where Запрос типа array('WHERE id=%d', 123)
 	 * @return array
 	 */
 	public static function getData($where) {
-		
+
+		if (is_string($where)) $where = [$where, []];
+
+		$where[0] = \Wdpro\Lang\Data::replaceLangShortcode($where[0]);
+
 		$table = static::sqlTable();
 		
 		if ($pagination = static::pagination()) {
@@ -76,8 +80,11 @@ class Roll extends \Wdpro\BaseRoll {
 			$pagination->initByWhere($where, $table);
 			$where[0] .= $pagination->getLimit();
 		}
-		
-		if ($sel = $table::select($where, static::sqlFields())) {
+
+		$fields = static::sqlFields();
+		$fields = \Wdpro\Lang\Data::replaceLangShortcode($fields);
+
+		if ($sel = $table::select($where, $fields)) {
 			
 			$data = array(
 				'list'=>array(),

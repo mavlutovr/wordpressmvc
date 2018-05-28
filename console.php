@@ -95,3 +95,14 @@ if (wdpro_get_option('wdpro_disable_revisions')) {
 	}
 	add_filter( 'wp_revisions_to_keep', 'my_revisions_to_keep' );
 }
+
+// Ajax
+add_action('admin_enqueue_scripts', function () {
+	wp_localize_script('wdpro.core.all', 'wdproData', array(
+		'ajaxUrl'=>wdpro_ajax_url(),
+		'homeUrl'=>home_url().'/',
+		'imagesUrl'=>WDPRO_UPLOAD_IMAGES_URL,
+	));
+});
+
+

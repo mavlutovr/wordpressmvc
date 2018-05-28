@@ -51,22 +51,23 @@ abstract class BaseSqlTable
 	 * @param string $fields Поля, которые выбрать из таблицы
 	 * @return array
 	 */
-	public static function select($where, $fields='*')
-	{
-	    global $wpdb;
-		
+	public static function select ($where, $fields = '*') {
+		global $wpdb;
+
 		static::check();
-	    
-	    if (is_array($where))
-	    {
-	        $where = static::prepare($where);
-	    }
-	    
-	    $query = 'SELECT '.$fields.' FROM '.static::getNameWithPrefix().' '.$where;
-	    
+
+		if ( is_array($where) ) {
+			$where = static::prepare($where);
+		}
+
+		$query = 'SELECT ' . $fields . ' FROM ' . static::getNameWithPrefix() . ' ' . $where;
+
+		$query = \Wdpro\Lang\Data::replaceLangShortcode($query);
+
 		$results = $wpdb->get_results($query, ARRAY_A);
 		$results = static::sqlToValueList($results);
-	    return $results;
+
+		return $results;
 	}
 
 
@@ -162,7 +163,7 @@ abstract class BaseSqlTable
 	 * Обновление данных
 	 * 
 	 * @param array $data Новые данные
-	 * @param array|string $where Параметры запроса
+	 * @param array|string $where Параметры запроса (Тут надо по-особенному задавать where)
 	 * array('id'=>3)
 	 * @param string|array $format Форматы обновляемых данных
 	 * array('%s', '%d', '%f');
@@ -191,6 +192,7 @@ abstract class BaseSqlTable
 				$whereFormat[] = static::getFieldFormat($key);
 			}
 		}
+
 
 		$wpdb->update(static::getNameWithPrefix(), $data, $where, $format, $whereFormat);
 	}
@@ -573,7 +575,7 @@ abstract class BaseSqlTable
 							}
 
 							$lastFieldName = null;
-							
+
 							// Перебираем новые поля
 							foreach($fields as $fieldN=>$field) {
 								
@@ -615,7 +617,7 @@ abstract class BaseSqlTable
 									{
 										$query .= ' FIRST';
 									}
-									
+
 									$wpdb->query($query);
 								}
 								

@@ -289,7 +289,9 @@ class Roll extends BaseRoll
 
 				if ($sel = static::sqlTable()->select($where))
 				{
-					$table = '<table class="wdpro-console-roll-table wp-list-table widefat fixed striped pages js-roll">';
+					$table = '<table 
+class="wdpro-console-roll-table wp-list-table widefat fixed striped pages js-roll" 
+id="wdpro-console-roll-'.static::getType().'">';
 
 					// Заголовки
 					if ($headers = $this->templateHeaders())
@@ -354,7 +356,9 @@ title="Удалить"></a>
 						}
 
 						$table .= '
-							<tr class="js-row">
+							<tr class="js-row" 
+							data-key="'.$entity->getKey().'" 
+							data-id="'.$row['id'].'">
 								'.$tds.'
 								<td class="g-align-right wdpro-row">'.$buts.'</td>
 							</tr>';

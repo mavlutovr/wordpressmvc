@@ -94,14 +94,20 @@ function wdpro_path_absolute_to_relative($path) {
 /**
  * Подключение JavaScript файла к консоли
  *
- * @param string $absolutePath абсолютный путь к файлу
+ * @param string      $absolutePath абсолютный путь к файлу
+ * @param null|string $handle       Название скрипта в системе. Потом по этому имени
+ *                                  можно делать всякие штуки, типа, поставить на
+ *                                  добавление скрипта событие и сделать что-то еще
+ *                                  после того, как скрипт уже добавлен.
+ *                                  Наверное, работает так, я точно не разбирался.
  */
-function wdpro_add_script_to_console($absolutePath)
+function wdpro_add_script_to_console($absolutePath, $handle=null)
 {
-	add_action( 'admin_enqueue_scripts', function () use ($absolutePath)
+	add_action( 'admin_enqueue_scripts', function () use ($absolutePath, $handle)
 	{
 		$file = wdpro_path_remove_root($absolutePath);
-		wp_enqueue_script( $file, $file );
+		if (!$handle) $handle = $file;
+		wp_enqueue_script( $handle, $file );
 	});
 }
 
@@ -124,15 +130,21 @@ function wdpro_add_script_to_console_external($absolutePath)
  * Подключение JavaScript файла к сайту
  *
  * @param string $absolutePath абсолютный путь к файлу
+ * @param null|string $handle       Название скрипта в системе. Потом по этому имени
+ *                                  можно делать всякие штуки, типа, поставить на
+ *                                  добавление скрипта событие и сделать что-то еще
+ *                                  после того, как скрипт уже добавлен.
+ *                                  Наверное, работает так, я точно не разбирался.
  */
-function wdpro_add_script_to_site($absolutePath)
+function wdpro_add_script_to_site($absolutePath, $handle=null)
 {
-	add_action( 'wp_enqueue_scripts', function () use ($absolutePath)
+	add_action( 'wp_enqueue_scripts', function () use ($absolutePath, $handle)
 	{
 		if (is_file($absolutePath))
 		{
 			$file = wdpro_path_remove_root($absolutePath);
-			wp_enqueue_script( $file, $file );
+			if (!$handle) $handle = $file;
+			wp_enqueue_script( $handle, $file );
 		}
 	});
 }
@@ -1953,21 +1965,6 @@ function wdpro_is_absolute_url($url) {
 
 
 /**
- * Запускает каллбэк при открытии страницы по заданному адресу
- *
- * @param string $uri Адрес страницы
- * @param callback $callback Каллбэк, получающий объект поста при открытии страницы
- */
-/*function wdpro_on_url($uri, $callback) {
-
-	if ($_SERVER['PHP_SELF'] == $uri) {
-
-		$callback();
-	}
-}*/
-
-
-/**
  * Возвращает сайта uri относительно домена
  *
  * @return string
@@ -1982,6 +1979,16 @@ function wdpro_home_uri() {
 	);
 
 	return $url;
+}
+
+
+/**
+ * Возвращает uri главной страницы текущего языка
+ *
+ * @return string
+ */
+function wdpro_home_url_with_lang() {
+	return \Wdpro\Lang\Data::currentUrl();
 }
 
 
@@ -2370,6 +2377,9 @@ function wdpro_pre_close() {
  */
 function wdpro_get_option($optionName, $defaultValue=null) {
 
+	if (strstr($optionName, '[lang]')) {
+		$optionName = str_replace('[lang]', \Wdpro\Lang\Data::getCurrentSuffix(), $optionName);
+	}
 	$value = get_option($optionName);
 
 	if (!$value && $defaultValue !== null) {

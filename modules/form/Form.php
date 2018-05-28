@@ -155,6 +155,19 @@ class Form
 
 
 	/**
+	 * Добавляет заголовок (Актуально для админки, на сайте лучше не добавлять)
+	 *
+	 * @param $headerText
+	 */
+	public function addHeader($headerText) {
+		$this->add([
+			'type'=>static::HTML,
+			'html'=>'<h2>'.$headerText.'</h2>',
+		]);
+	}
+
+
+	/**
 	 * Добавляет поле в форму
 	 *
 	 * @param array $params Параметры

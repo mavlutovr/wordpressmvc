@@ -105,6 +105,69 @@ class Data {
 
 
 	/**
+	 * Заменяет [lang] в строке на суффикс текущего языка
+	 *
+	 * Это нужно, например, при получении данных кнопок меню для текущего языка.
+	 * Чтобы за запросе Where подставились нужные поля, а так же сами выбираемые поля
+	 * получились теми, которые нужно.
+	 *
+	 * Например, запрос
+	 * WHERE post_title[lang] != ''
+	 * на английской версии превратиться в
+	 * WHERE post_title_en != ''
+	 *
+	 * @param $string
+	 *
+	 * @return mixed
+	 */
+	public static function replaceLangShortcode($string) {
+		$suffix = static::getSuffix(Controller::getCurrentLangUri());
+		$string = str_replace('[lang]', $suffix, $string);
+		return $string;
+	}
+
+
+	/**
+	 * Возвращает адрес главной страницы текущего языка
+	 *
+	 * @return string
+	 */
+	public static function currentUrl() {
+		$url = home_url().'/';
+		$lang = Controller::getCurrentLangUri();
+
+		if ($lang) {
+			$url .= $lang.'/';
+		}
+
+		return $url;
+	}
+
+
+	/**
+	 * Возвращает суффикс текущего языка
+	 *
+	 * Это например, нужно, чтобы выбирать из настроек с помощью wdpro_get_option
+	 * настройку текущего языка.
+	 *
+	 * @return string
+	 */
+	public static function getCurrentSuffix() {
+		return static::getSuffix(Controller::getCurrentLangUri());
+	}
+
+
+	/**
+	 * Возвращает текущий язык
+	 *
+	 * @return string
+	 */
+	public static function getCurrentLangUri() {
+		return Controller::getCurrentLangUri();
+	}
+
+
+	/**
 	 * Возвращает данные языков
 	 *
 	 * @param string $lang Только для языка
@@ -124,6 +187,30 @@ class Data {
 				return static::$data['langs'];
 			}
 		}
+	}
+
+
+	/**
+	 * Возвращает данные для языкового меню на сайте
+	 *
+	 * @return array
+	 */
+	public static function getDataForMenu() {
+		$data = static::getData();
+
+		foreach($data as $i=>$datum) {
+			if (Controller::getCurrentLangUri() == $datum['uri']) {
+				$data[$i]['active'] = true;
+			}
+
+			$url = home_url().'/';
+			if ($datum['uri']) {
+				$url .= $datum['uri'].'/';
+			}
+			$data[$i]['url'] = $url;
+		}
+
+		return $data;
 	}
 
 

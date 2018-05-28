@@ -32,7 +32,7 @@ add_action('wp_enqueue_scripts', function ()
 	wp_register_script('wdpro', WDPRO_URL.'js/core.all.js');
 	wp_enqueue_script('wdpro');
 });
-wdpro_add_script_to_console(__DIR__.'/js/core.all.js');
+wdpro_add_script_to_console(__DIR__.'/js/core.all.js', 'wdpro.core.all');
 wdpro_add_script_to_console(__DIR__.'/js/ready.all.js');
 wdpro_add_script_to_site(__DIR__.'/js/ready.all.js');
 wdpro_add_script_to_console(__DIR__.'/js/moment.js');

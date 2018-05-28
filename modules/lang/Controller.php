@@ -47,6 +47,16 @@ class Controller extends \Wdpro\BaseController {
 
 
 	/**
+	 * Возвращает текущий язык
+	 *
+	 * @return string
+	 */
+	public static function getCurrentLangUri() {
+		return static::$currentLang;
+	}
+
+
+	/**
 	 * Обновление данных о языка
 	 */
 	public static function updateData() {

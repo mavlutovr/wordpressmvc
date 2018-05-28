@@ -55,6 +55,7 @@ class Element
 	public function isUri($uri) {
 		if (isset($this->params['uri']) && !$this->params['uri'])
 		{
+			echo $this->params['uri'].' == '.$uri.PHP_EOL.PHP_EOL;
 			return $this->params['uri'] == $uri;
 		}
 	}

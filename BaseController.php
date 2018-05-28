@@ -201,4 +201,38 @@ class BaseController {
 		static::$lang = $enable;
 	}
 
+
+	/**
+	 * Возвращает options для select
+	 *
+	 * @param null|array|string $paramsOrWhere Параметры
+	 *
+	 * @return array
+	 */
+	public static function getOptions($paramsOrWhere=null) {
+
+		if (is_string($paramsOrWhere)) {
+			$paramsOrWhere = [
+				'where'=>'ORDER BY menu_order DESC',
+			];
+		}
+
+		$paramsOrWhere = wdpro_extend([
+			'where'=>'ORDER BY menu_order DESC',
+		], $paramsOrWhere);
+
+		if (!isset($paramsOrWhere['options'])) {
+			$paramsOrWhere['options'] = [ '' =>''];
+		}
+
+		$sqlTable = static::sqlTable();
+		if ($sel = $sqlTable::select($paramsOrWhere['where'], 'id, post_title')) {
+			foreach($sel as $row) {
+				$paramsOrWhere['options'][] = [$row['id'], $row['post_title']];
+			}
+
+			return $paramsOrWhere['options'];
+		}
+	}
+
 }
