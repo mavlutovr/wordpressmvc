@@ -22,6 +22,10 @@ class Pagination {
 				WDPRO_TEMPLATE_PATH.'pagination.php');*/
 			$template = WDPRO_TEMPLATE_PATH.'pagination.php';
 		}
+
+		if (isset($params['n'])) {
+			$params['pageSize'] = $params['n'];
+		}
 		
 		$this->params = wdpro_extend(array(
 			'key'=>'pagination', // Имя параметра в QUERY_STRING
