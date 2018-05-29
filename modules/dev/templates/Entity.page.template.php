@@ -4,6 +4,6 @@ namespace <?php echo $namespace; ?>;
 /**
  * Основная сущность модуля
  */
-class Entity extends \Wdpro\BasePage {
+class Entity extends \<?=$data['parent_namespace']?>\BasePage {
 
 }

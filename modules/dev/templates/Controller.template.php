@@ -1,7 +1,7 @@
 <?php echo '<?php'.PHP_EOL; ?>
 namespace <?php echo $namespace; ?>;
 
-class Controller extends \Wdpro\BaseController {
+class Controller extends \<?=$data['parent_namespace']?>\BaseController {
 
 }
 

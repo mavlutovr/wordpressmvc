@@ -4,7 +4,7 @@ namespace <?php echo $namespace; ?>;
 /*
  * Основная Mysql таблица модуля
  */
-class SqlTable extends \Wdpro\BaseSqlTable {
+class SqlTable extends \<?=$data['parent_namespace']?>\BaseSqlTable {
 
 	/**
 	 * Имя таблицы

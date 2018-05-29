@@ -188,6 +188,15 @@ class ConsoleRoll extends \Wdpro\Console\Roll {
 			mkdir($moduleDir, 0777, true);
 
 
+			// Родительское пространство имен
+			if ($data['plugin'] == 'app') {
+				$data['parent_namespace'] = 'App';
+			}
+			else {
+				$data['parent_namespace'] = 'Wdpro';
+			}
+
+
 			// Создавалка файлов
 			$create = function ($className, $type=null) use (&$moduleDir, &$data) {
 

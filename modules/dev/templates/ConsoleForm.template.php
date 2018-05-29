@@ -1,7 +1,9 @@
 <?php echo '<?php'.PHP_EOL; ?>
 namespace <?php echo $data['namespace']; ?>;
 
-class ConsoleForm extends \Wdpro\Form\Form {
+class ConsoleForm extends \<?=(
+	$data['parent_namespace'] == 'App' ? 'App\BaseForm' : 'Wdpro\Form\Form'
+)?> {
 
 	/**
 	 * Инициализация полей
