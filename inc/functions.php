@@ -1715,7 +1715,7 @@ function wdpro_content($callback, $priority=10) {
  * Запускает каллбэк при появлении контента и отправляем в каллбэк обхект страницы
  * \Wdpro\BasePage
  *
- * @param callback $callback Каллбэк
+ * @param callback $callback Каллбэк function($content, $postWdpro)
  * @param int $priority Приоритет
  */
 function wdpro_on_content($callback, $priority=10) {

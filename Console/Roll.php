@@ -160,11 +160,27 @@ class Roll extends BaseRoll
 
 			// Когда мы в дочерних простых элементах, например, в фотогалерее
 			if ($_GET['childsType'] || $_GET['breadParentOpenEdit']) {
-				// Добавляем "Фотогалерея" в конец хлебных крошек
-				$breadcrumbs->append($params['labels']['label']);
 
-				$breadcrumbs->getPrepend( 0 )->setUri($post->getEditUrl())
-					->setComment( 'Редактирование' );
+				// page=App.Equipment.Items.ConsoleRoll&sectionId=109&sectionType=equipment_sections&childsType=app_equipment
+				// page=App.Equipment.Items.ConsoleRoll&sectionId=109&sectionType=equipment_sections&childsType=app_equipment&action=form&id=3
+
+				// Редактирование простого элемента
+				// Тогда добавляем с адресом
+				if ( isset($_GET['action']) && $_GET['action'] == 'form' ) {
+					// Добавляем "Фотогалерея" в конец хлебных крошек
+					$breadcrumbs->append([
+						'text' => $params['labels']['label'],
+						'uri'  => wdpro_current_url(['id'=>null, 'action'=>null]),
+					]);
+				}
+
+				else {
+					// Добавляем "Фотогалерея" в конец хлебных крошек
+					$breadcrumbs->append($params['labels']['label']);
+				}
+
+				$breadcrumbs->getPrepend(0)->setUri($post->getEditUrl())
+				            ->setComment('Редактирование');
 			}
 
 			else {
