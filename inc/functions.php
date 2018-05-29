@@ -2537,22 +2537,22 @@ function wdpro_console_post_level() {
 
 	$level = 0;
 
-	if ($_GET['sectionId']) {
+	if (isset($_GET['sectionId']) && $_GET['sectionId']) {
 		$post = wdpro_get_post_by_id($_GET['sectionId']);
 		$level = 1;
 	}
 
-	else if ($_GET['post']) {
+	else if (isset($_GET['post']) && $_GET['post']) {
 		$post = wdpro_get_post_by_id($_GET['post']);
 		$level = 0;
 	}
 
-	else if ($_POST['post_ID']) {
+	else if (isset($_POST['post_ID']) && $_POST['post_ID']) {
 		$post = wdpro_get_post_by_id($_POST['post_ID']);
 		$level = 0;
 	}
 
-	if ($post) {
+	if (isset($post) && $post) {
 		while($post = $post->getParent()) {
 			$level ++;
 		}
