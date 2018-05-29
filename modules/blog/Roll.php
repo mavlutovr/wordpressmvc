@@ -3,16 +3,7 @@ namespace Wdpro\Blog;
 
 class Roll extends \Wdpro\Site\Roll {
 
-	/**
-	 * Необходимые для списка поля
-	 *
-	 * @return string
-	 * @example return "ID, post_title";
-	 */
-	public static function sqlFields__DELETE() {
-
-		return '`ID`, `post_name`, `post_title`, `post_date`, `anons`';
-	}
+	protected static $paginationParams;
 
 
 	/**
@@ -39,13 +30,41 @@ class Roll extends \Wdpro\Site\Roll {
 
 
 	/**
+	 * Дополнительная обработка данных для шаблона
+	 *
+	 * @param array $row Строка из базы
+	 *
+	 * @return array Строка для шаблона
+	 */
+	public static function prepareDataForTemplate ($row) {
+
+		if (is_array($row['tags'])
+		    && (!count($row['tags']) || !isset($row[0]) || !$row[0])) {
+			$row['tags'] = null;
+		}
+
+		return $row;
+	}
+
+
+	/**
 	 * Возвращает объект постраничности для использования в списке
 	 *
 	 * @return void|\Wdpro\Tools\Pagination
 	 */
 	public static function pagination() {
 
-		return new \Wdpro\Tools\Pagination();
+		return new \Wdpro\Tools\Pagination(static::$paginationParams);
+	}
+
+
+	/**
+	 * Установить параметры пагинации
+	 *
+	 * @param array $params Параметры
+	 */
+	public static function setPaginationParams($params) {
+		static::$paginationParams = $params;
 	}
 
 

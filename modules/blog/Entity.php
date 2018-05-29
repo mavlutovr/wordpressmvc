@@ -67,7 +67,7 @@ class Entity extends \Wdpro\BasePage {
 
 			$suffix = \Wdpro\Lang\Data::getSuffix($lang);
 
-			if ($data['tags_string'.$suffix]) {
+			if (isset($data['tags_string'.$suffix])) {
 				$saveTags = [];
 
 				$tags = explode(',', $data['tags_string'.$suffix]);
