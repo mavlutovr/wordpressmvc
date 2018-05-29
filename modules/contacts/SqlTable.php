@@ -15,7 +15,7 @@ class SqlTable extends \Wdpro\BaseSqlTable {
 		return array(
 			static::COLLS => array(
 				'id',
-				'text'=>'text',
+				'text[lang]'=>'text',
 				'map'=>'text',
 				'sorting'=>'int',
 			),

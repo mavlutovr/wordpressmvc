@@ -161,6 +161,10 @@ abstract class BaseEntity
 		}
 		else
 		{
+			if (strstr($key, '[lang]')) {
+				$key = \Wdpro\Lang\Data::replaceLangShortcode($key);
+			}
+
 			if (isset($this->data[$key])) return $this->data[$key];
 		}
 	}

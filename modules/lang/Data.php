@@ -199,6 +199,7 @@ class Data {
 		$data = static::getData();
 
 		foreach($data as $i=>$datum) {
+			$data[$i]['active'] = false;
 			if (Controller::getCurrentLangUri() == $datum['uri']) {
 				$data[$i]['active'] = true;
 			}

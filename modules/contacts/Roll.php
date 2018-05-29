@@ -39,4 +39,15 @@ class Roll extends \Wdpro\Site\Roll {
 	}
 
 
+	/**
+	 * Необходимые для списка поля
+	 *
+	 * @return string
+	 * @example return "ID, post_title";
+	 */
+	public static function sqlFields () {
+		return 'id, text[lang] as text, map';
+	}
+
+
 }

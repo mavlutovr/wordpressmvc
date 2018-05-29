@@ -12,9 +12,9 @@ class ConsoleForm extends \Wdpro\Form\Form {
 	protected function initFields() {
 
 		$this->add(array(
-			'name'=>'text',
+			'name'=>'text[lang]',
 			'top'=>'Адрес, контакты',
-			'*',
+			//'*',
 			'type'=>'ckeditor',
 			//'config'=>WDPRO_FORM_CKEDITOR_SMALL,
 			'autoLeft'=>false,

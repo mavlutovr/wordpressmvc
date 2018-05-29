@@ -197,6 +197,10 @@ class Controller extends \Wdpro\BaseController {
 		// Карточка страницы
 		wdpro_on_content(function ($content, $page) {
 
+			/** @var $page \Wdpro\BasePage */
+			if (isset($page->data['post_content']))
+			$content = $page->getData('post_content[lang]');
+
 			/** @var \Wdpro\BasePage $page */
 			if ($page) {
 

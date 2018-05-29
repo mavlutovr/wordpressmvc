@@ -103,7 +103,7 @@ class Controller extends \Wdpro\BaseController {
 					}
 				}
 
-				if ($params['type'] == 'submit') {
+				if (isset($params['type']) && $params['type'] == 'submit') {
 					$value = wdpro_get_option('contacts_form_element_submit[lang]');
 					if ($value) {
 						$element->mergeParams(['value'=>$value]);
