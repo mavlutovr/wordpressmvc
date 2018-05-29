@@ -1925,8 +1925,10 @@ function wdpro_default_file($defaultFile, $file) {
  *
  * @param string $src Откуда
  * @param string $dst Куда
+ * @param null|callback $callbackFilenameMod Каллбэк, с помощью которого можно менять
+ *                                           имена файлов
  */
-function wdpro_copy($src, $dst) {
+function wdpro_copy($src, $dst, $callbackFilenameMod=null) {
 	$dir = opendir($src);
 	@mkdir($dst);
 	while(false !== ( $file = readdir($dir)) ) {
@@ -1935,7 +1937,10 @@ function wdpro_copy($src, $dst) {
 				wdpro_copy($src . '/' . $file,$dst . '/' . $file);
 			}
 			else {
-				copy($src . '/' . $file,$dst . '/' . $file);
+				$target = $file;
+				if ($callbackFilenameMod)
+				$target = $callbackFilenameMod($file);
+				copy($src . '/' . $file,$dst . '/' . $target);
 			}
 		}
 	}

@@ -20,8 +20,14 @@ add_action(
 
 						if (!is_dir(__DIR__.'/../app')) {
 							if ($_GET['create_plugin_app']) {
-								wdpro_copy(__DIR__.'/modules/install/default/app_plugin',
-									__DIR__.'/../app');
+								wdpro_copy(
+									__DIR__.'/modules/install/default/app_plugin',
+									__DIR__.'/../app',
+									function ($fileName) {
+										return str_replace('.php.html', '.php', $fileName);
+									});
+
+
 								echo('<p>Загатовка плагина-приложения создана. <a 
 class="button-primary"
 href="'.WDPRO_CONSOLE_URL.'plugins.php">Активировать плагин</a>
