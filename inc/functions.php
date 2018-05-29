@@ -935,6 +935,7 @@ function wdpro_gd_create_image($imageFile) {
 function wdpro_gd_save_image($imgFile, $imgResource) {
 
 	// Создаем изображение
+	$size = getimagesize($imgFile);
 	$format = strtolower(substr($size['mime'], strpos($size['mime'], '/')+1));
 
 	if ($format == 'png') {
@@ -1545,7 +1546,12 @@ function wdpro_ajax($actionName, $callback)
 
 		if (isset($_GET['action']) && $_GET['action'] === 'wdpro')
 		{
+
 			add_action('init', function () use (&$actionName, &$callback) {
+
+				if (isset($_GET['lang'])) {
+					\Wdpro\Lang\Controller::setCurrentLang($_GET['lang']);
+				}
 				$wdproAction = $_GET['wdproAction'] ? $_GET['wdproAction'] : '';
 				if ($wdproAction == $actionName) {
 					$result = $callback($_GET);

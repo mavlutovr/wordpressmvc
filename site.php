@@ -300,6 +300,7 @@ add_action('wp_enqueue_scripts', function () {
 		'ajaxUrl'=>wdpro_ajax_url(),
 		'homeUrl'=>home_url().'/',
 		'imagesUrl'=>WDPRO_UPLOAD_IMAGES_URL,
+		'lang'=>\Wdpro\Lang\Data::getCurrentLangUri(),
 	));
 });
 

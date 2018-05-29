@@ -38,10 +38,7 @@ class Roll extends \Wdpro\Site\Roll {
 	 */
 	public static function prepareDataForTemplate ($row) {
 
-		if (is_array($row['tags'])
-		    && (!count($row['tags']) || !isset($row[0]) || !$row[0])) {
-			$row['tags'] = null;
-		}
+		$row['tags'] = Controller::prepareTagsForTemplate($row['tags']);
 
 		return $row;
 	}

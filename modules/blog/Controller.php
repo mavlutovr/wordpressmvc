@@ -6,6 +6,21 @@ class Controller extends \Wdpro\BaseController {
 
 	protected static $tags = false;
 
+
+	/**
+	 * Инициализация модуля
+	 */
+	public static function init () {
+		// http://localhost/heavy-lift2.ru/blog_tags?tag=Скиддинг
+		\Wdpro\Page\Controller::defaultPage(
+			'blog_tags',
+			function () {
+				return require __DIR__.'/default/pages/tags.php';
+			}
+		);
+	}
+
+
 	/**
 	 * Выполнение скриптов после инициализаций всех модулей (на сайте)
 	 */
@@ -20,6 +35,15 @@ class Controller extends \Wdpro\BaseController {
 				AND `in_menu`=1
 				ORDER BY `menu_order` DESC', $post->ID]
 			);
+		});
+
+
+		// Статьи по тегам
+		add_shortcode('blog_tag_list', function () {
+			return Roll::getHtml([
+				'WHERE post_status="publish" AND in_menu=1 AND tags LIKE %s ORDER BY date_added',
+				['%"'.$_GET['tag'].'"%']
+			]);
 		});
 	}
 
@@ -41,6 +65,10 @@ class Controller extends \Wdpro\BaseController {
 			$form->add([
 				'name'=>'blog_codes',
 				'top'=>'Вставить html код под статью',
+				'bottom'=>'Сервисы социальных кнопок:
+<a href="https://usocial.pro/" target="_blank">social.pro</a>, 
+<a href="https://tech.yandex.ru/share/" target="_blank">tech.yandex.ru/share/</a>
+',
 				'type'=>$form::TEXT,
 				'width'=>600,
 			]);
@@ -113,6 +141,23 @@ class Controller extends \Wdpro\BaseController {
 		}
 
 		return array_values($tags);
+	}
+
+
+	/**
+	 * Обработка тегов для шаблона
+	 *
+	 * @param array $tags Теги
+	 *
+	 * @return array
+	 */
+	public static function prepareTagsForTemplate($tags) {
+		if (is_array($tags)
+		    && (!count($tags) || !isset($tags[0]) || !$tags[0])) {
+			$tags = null;
+		}
+
+		return $tags;
 	}
 }
 

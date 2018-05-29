@@ -1888,7 +1888,8 @@ if (typeof Array.isArray === 'undefined') {
 
 		var $_GET2 = wdpro.extend($_GET_OR_ACTION, {
 			'action': 'wdpro',
-			'wdproAction': $_GET_OR_ACTION['action']
+			'wdproAction': $_GET_OR_ACTION['action'],
+			'lang': wdpro.data.lang
 		});
 		
 		if (typeof $_POST === 'function')

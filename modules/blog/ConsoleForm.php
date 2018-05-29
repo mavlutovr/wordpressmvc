@@ -71,6 +71,8 @@ class ConsoleForm extends \Wdpro\Form\Form {
 		}
 
 		do_action('blog_console_form', $this);
+
+		//print_r($this->getElementByName('image')); exit();
 		
 	}
 

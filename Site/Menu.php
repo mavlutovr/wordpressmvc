@@ -187,14 +187,22 @@ class Menu extends Roll
 				{
 					$row['id'] = $row['ID'];
 				}
-				
+
+				$row['attrs'] = '';
+				$row['before'] = '';
+				$row['after'] = '';
 				$alternativeUrl = get_post_field('alternative_url', $row['id']);
 				if ($alternativeUrl)
 				{
-					if (!preg_match('~^http://~', $alternativeUrl))
-					{
+					if (preg_match('~^http://~', $alternativeUrl)) {
+						$row['attrs'] .= ' target="_blank" rel="nofollow"';
+						$row['before'] = '<noindex>';
+						$row['after'] = '</noindex>';
+					}
+					else {
 						$alternativeUrl = home_url($alternativeUrl);
 					}
+
 					$row['url'] = $alternativeUrl;
 				}
 				
