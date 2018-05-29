@@ -2555,3 +2555,27 @@ function wdpro_console_post_level() {
 
 	return $level;
 }
+
+
+/**
+ * Возвращает html код options
+ *
+ * @param  array $options_array Массив options [ [id, text], [id, text], ... ]
+ * @param null   $selected_id
+ *
+ * @return string
+ */
+function wdpro_options_html ($options_array, $selected_id = null) {
+	if ( is_array($options_array) ) {
+		$html = '';
+		foreach ( $options_array as $option ) {
+			$selected = '';
+			if ( $selected_id !== null && $option[0] == $selected_id ) {
+				$selected = ' selected="selected"';
+			}
+			$html .= '<option value="' . $option[0] . '"' . $selected . '>' . $option[1] . '</option>';
+		}
+
+		return $html;
+	}
+}

@@ -279,10 +279,12 @@ abstract class BaseSqlTable
 		static::check();
 
 		$where = static::prepare($where);
-		
-		return $wpdb->get_var(
+
+		$return = $wpdb->get_var(
 			'SELECT count(*) FROM `'.static::getNameWithPrefix().'` '.$where
 		);
+
+		return (int) $return;
 	}
 
 
@@ -294,16 +296,65 @@ abstract class BaseSqlTable
 	 * Когда параметры: array('SELECT * FROM my_table WHERE id=%d', 10)
 	 * @return string
 	 */
-	public static function prepare($query)
-	{
-	    global $wpdb;
-	    
-	    if (is_array($query) && isset($query[0]) && is_string($query[0]))
-	    {
-	        $query = call_user_func_array(array($wpdb, 'prepare'), $query);
-	    }
-	    
-	    return $query;
+	public static function prepare ($query) {
+		global $wpdb;
+
+		// Когда данные в формате array('where %d %s', 1, 'a')
+		// или array('where %d %s', array (1, 'a') )
+		if ( is_array($query) ) {
+
+			// Если есть первый элемент (Where)
+			if (isset($query[0])) {
+				// Когда второй параметр, это массив
+				if ( is_array($query[1]) ) {
+					return static::prepareByData($query[0], $query[1]);
+				}
+
+				// Когда второй параметр это элемент
+				else {
+					// Есть данные, которые надо вставить в запрос
+					if ( isset($query[1]) ) {
+						$data = [];
+						for ( $i = 1; $i < count($query); $i ++ ) {
+							$data[] = $query[ $i ];
+						}
+
+						return static::prepareByData($query[0], $data);
+					}
+				}
+			}
+
+			else {
+				return '';
+			}
+		}
+
+		// Строка
+		else {
+			return $query;
+		}
+
+
+		return $query;
+	}
+
+
+	/**
+	 * Обработка запроса с помощью 2-х параметров: запроса и данных
+	 *
+	 * @param string $query Запрос
+	 * @param array $data Данные
+	 *
+	 * @return mixed
+	 */
+	public static function prepareByData($query, $data) {
+		global $wpdb;
+
+		if (count($data)) {
+			$query = $wpdb->prepare($query, $data);
+		}
+
+		return $query;
 	}
 
 
@@ -659,7 +710,9 @@ abstract class BaseSqlTable
 					update_option( 'sqlTableVersion:' . static::$name,
 						$currentFileTime );
 
-					$currentLangTime && update_option('sqlTableLangVersion:'.static::$name,
+					isset($currentLangTime)
+					&& $currentLangTime
+					&& update_option('sqlTableLangVersion:'.static::$name,
 						$currentLangTime);
 				}
 

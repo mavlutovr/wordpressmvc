@@ -47,7 +47,6 @@ class BasePage extends BaseEntity
 	 */
 	public function getCard(&$content) {
 
-
 	}
 
 

@@ -183,7 +183,7 @@ class Menu extends Roll
 			
 			foreach($sel as $row)
 			{
-				if ($row['ID'])
+				if (isset($row['ID']) && $row['ID'])
 				{
 					$row['id'] = $row['ID'];
 				}
@@ -208,6 +208,9 @@ class Menu extends Roll
 				// Active
 				if (wdpro_breadcrumbs()->isUri($row['post_name'])) {
 					$row['active'] = true;
+				}
+				else {
+					$row['active'] = false;
 				}
 
 				

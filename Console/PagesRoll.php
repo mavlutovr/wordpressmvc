@@ -278,7 +278,7 @@ class PagesRoll extends Roll
 								);
 
 								// Перейти
-								$actions['view'] = preg_replace(
+								/*$actions['view'] = preg_replace(
 									'~(>[^<]*</a>)~',
 									'></a>',
 									$actions['view'] );
@@ -297,7 +297,10 @@ class PagesRoll extends Roll
 										'$1../../' . $post->post_name . '$3',
 										$actions['view']
 									);
-								}
+								}*/
+								$actions['view'] = '<a href="' . home_url($post->post_name) . '"
+ class="dashicons dashicons-external js-post-link_"
+ target="_blank"></a>';
 
 								// Редактировать
 								$actions['edit'] = preg_replace(
