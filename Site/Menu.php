@@ -209,7 +209,7 @@ class Menu extends Roll
 				else
 				{
 					//$row['url'] = home_url($row['post_name']);
-					$row['url'] = \Wdpro\Lang\Data::currentUrl().$row['post_name'];
+					$row['url'] = \Wdpro\Lang\Data::currentUrl().$row['post_name'].'/';
 				}
 				$row['text'] = $row['post_title'];
 

@@ -335,4 +335,12 @@ class BasePage extends BaseEntity
 	}
 
 
+	/**
+	 * Возвращает title
+	 *
+	 * @return string
+	 */
+	public function getTitle() {
+		return $this->getData('post_title[lang]');
+	}
 }

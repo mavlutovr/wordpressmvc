@@ -18,6 +18,8 @@ class Controller extends \Wdpro\BaseController {
 			if (strstr($uri, '/'.$langUri.'/')) {
 				$uri = str_replace('/'.$langUri.'/', '/', $uri);
 				$_SERVER['REQUEST_URI'] = $uri;
+				//$_SERVER['REDIRECT_URL'] = $uri;
+				//print_r($_SERVER); exit();
 				static::setCurrentLang($langUri);
 			}
 		}

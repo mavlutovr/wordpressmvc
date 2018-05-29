@@ -151,7 +151,7 @@ abstract class BaseEntity
 	 *
 	 * @param null|string $key Ключ данных, которые необходимо получить.
 	 * Если ключ не указывать, то будут возвращены все данные
-	 * @return array
+	 * @return array|mixed
 	 */
 	public function getData($key=null)
 	{

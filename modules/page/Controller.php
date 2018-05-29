@@ -177,6 +177,7 @@ class Controller extends \Wdpro\BaseController {
 				'post_parent'=>$post->ID,
 				'type'=>$post->post_type,
 				'template'=>WDPRO_TEMPLATE_PATH.'submenu_standart.php',
+				'entity'=>wdpro_get_entity_class_by_post_type($post->post_type),
 			));
 		});
 		

@@ -1,4 +1,5 @@
-<?php foreach($data as $item): ?>
-	<p><a href="<?php echo home_url($item['post_name']); ?>" class="a_big"><?php echo
-			$item['post_title']; ?></a></p>
-<?php endforeach; ?>
+<ul>
+	<?php foreach ( $data['list'] as $item ): ?>
+		<li><a href="<?=$item['url']?>"><?=$item['post_title']?></a></li>
+	<?php endforeach; ?>
+</ul>

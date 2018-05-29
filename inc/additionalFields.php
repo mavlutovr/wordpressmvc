@@ -114,7 +114,7 @@ function wdpro_the_header()
 
 	$title = wdpro_get_post_meta('title');
 	if (!$title) {
-		$title = get_the_title();
+		$title = wdpro_the_title_standart();
 	}
 	$description = wdpro_get_post_meta('description');
 	$keywords = wdpro_get_post_meta('keywords');
@@ -235,7 +235,8 @@ function wdpro_the_h1()
  */
 function wdpro_the_title_standart()
 {
-	return get_the_title();
+	return wdpro_current_page()->getTitle();
+	//return get_the_title();
 }
 	
 
@@ -247,7 +248,7 @@ function wdpro_the_title_standart()
  */
 function wdpro_get_post_meta($metaName)
 {
-	$arr = get_post_meta(get_the_ID(), $metaName);
+	$arr = get_post_meta(get_the_ID(), $metaName.\Wdpro\Lang\Data::getCurrentSuffix());
 	
 	if (is_array($arr) && isset($arr[0]) && $arr[0])
 	{

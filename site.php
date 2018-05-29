@@ -152,8 +152,8 @@ function wdpro_breadcrumbs_init($breadcrumbs) {
 
 	if (!is_front_page()) {
 		$breadcrumbs->prepend(array(
-			'text'=>'Главная',
-			'uri'=>home_url(),
+			'text'=>wdpro_get_option('wdpro_breadcrumbs_home[lang]', 'Главная'),
+			'uri'=>wdpro_home_url_with_lang(),
 		));
 	}
 
