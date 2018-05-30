@@ -2607,6 +2607,11 @@ function wdpro_get_roll_by_get_page($page) {
 }
 
 
+/**
+ * Создание поста
+ *
+ * @param array $data Данные поста
+ */
 function wdpro_create_post($data) {
 	// Добавляем страницу
 	$data['id'] = wp_insert_post($data);
@@ -2614,4 +2619,13 @@ function wdpro_create_post($data) {
 	$entityClass = wdpro_get_entity_class_by_post_type($data['post_type']);
 	$entity = new $entityClass($data);
 	$entity->save();
+}
+
+/**
+ * True, если это даминка
+ *
+ * @return bool
+ */
+function wdpro_is_admin() {
+	return defined('WP_ADMIN') && WD_ADMIN;
 }
