@@ -55,7 +55,7 @@ class ConsoleRoll extends \Wdpro\Console\Roll {
 	public function template($data, $entity) {
 
 		return [
-			$data['<?php echo $ConsoleRoll_sorting_field; ?>'],
+			$this->getSortingField($data)
 		];
 	}
 

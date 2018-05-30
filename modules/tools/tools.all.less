@@ -21,6 +21,7 @@
 	}
 }
 
+
 .loading
 {
 	background-color: #AAAAAA;
@@ -32,8 +33,13 @@
 
 .loading, .loadingWhite
 {
+	animation-name: loadingAnimation;
+	animation-duration: 4s;
+	animation-iteration-count: infinite;
+	animation-timing-function: steps(16);
+
 	background-image: data-uri("loading.png");
-	.animation(loadingAnimation, 2500ms, infinite, linear);
+	//.animation(loadingAnimation, 2500ms, infinite, linear);
 	//.animation(loadingAnimation, 2500ms, infinite, linear);
 	//-webkit-animation: loadingAnimation 1s;
 	box-sizing: border-box;

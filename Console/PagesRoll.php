@@ -472,7 +472,7 @@ class PagesRoll extends Roll
 
 							// № п.п.
 							if ($column == 'wdpro_menu_order_column') {
-								echo \Wdpro\Tools\Controller::getOrderColumnRow($postId);
+								echo \Wdpro\Tools\Controller::getOrderColumnRowPost($postId);
 							}
 							
 							// В меню

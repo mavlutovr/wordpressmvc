@@ -2590,3 +2590,18 @@ function wdpro_options_html ($options_array, $selected_id = null) {
 		return $html;
 	}
 }
+
+
+/**
+ * Возвращает roll по адресу, который ?page=App.Gallery.ConsoleRoll
+ *
+ * @param string $page Адрес $_GET['page']
+ *
+ * @return \Wdpro\Console\Roll
+ */
+function wdpro_get_roll_by_get_page($page) {
+	$page = str_replace('.', '\\', $page);
+	$page = '\\'.$page;
+
+	return new $page;
+}

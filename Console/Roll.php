@@ -3,6 +3,7 @@ namespace Wdpro\Console;
 
 use Wdpro\BaseRoll;
 use Wdpro\Exception;
+use Wdpro\Pay\SqlTable;
 
 /**
  * Список объектов админки
@@ -24,6 +25,7 @@ class Roll extends BaseRoll
 	
 	protected $_inited = false;
 	protected $_params;
+	protected $_is_sorting = false;
 
 
 	/**
@@ -320,7 +322,7 @@ class Roll extends BaseRoll
 				if ($sel = static::sqlTable()->select($where))
 				{
 					$table = '<table 
-class="wdpro-console-roll-table wp-list-table widefat fixed striped pages js-roll" 
+class="wdpro-console-roll-table__wdpro_sorting_class_replace_mark__ wp-list-table widefat fixed striped pages js-roll" 
 id="wdpro-console-roll-'.static::getType().'">';
 
 					// Заголовки
@@ -401,6 +403,15 @@ title="Удалить"></a>
 					);
 
 					$table .= '</tbody></table>';
+
+					// Класс сортировки
+					$sortingClass = '';
+					if ($this->_is_sorting) {
+						$sortingClass = ' js-wdpro-elements-sorting';
+					}
+					$table = str_replace('__wdpro_sorting_class_replace_mark__', $sortingClass, $table);
+
+
 					$text .= $table;
 
 					$text .= $paginationHtml;
@@ -787,6 +798,101 @@ title="Удалить"></a>
 	 */
 	public function getSortingWhere($get) {
 		return $this->getWhere();
+	}
+
+
+	/**
+	 * Возвращает поле сортировки
+	 *
+	 * @param array $elementData Данные элемента
+	 *
+	 * @return string
+	 */
+	public function getSortingField($elementData) {
+		$this->_is_sorting = true;
+		return \Wdpro\Tools\Controller::getOrderColumnRowElement($elementData);
+	}
+
+
+	/**
+	 * Обновление сортировки
+	 *
+	 * @param array $post Данные из javascript
+	 *
+	 * @return array
+	 */
+	public function updateSorting($post) {
+
+		$newSorting = [];
+		$menu_order = 0;
+		$change = $post['change'];
+
+
+		$_GET = $post['get'];
+		$where = $this->getSortingWhere($post['get']);
+		$table = static::sqlTable();
+
+		$currentRow = null;
+
+		$sortingField = $table::isField('sorting') ? 'sorting' : 'menu_order';
+
+		if ($sel = $table::select($where, 'id, '.$sortingField)) {
+
+			// Сначала получаем перемещаемую строку
+			foreach($sel as $row) {
+				// Если это перемещенная строка
+				if ($change['row'] == $row['id']) {
+					// Просто запоминаем пока строку
+					$currentRow = $row;
+				}
+			}
+
+			$replaced = false;
+
+			// Расстановка
+			foreach($sel as $n=>$row) {
+
+				// Если это строка, перед которой надо поставить перемещенную
+				if (!$replaced && $row['id'] == $change['next']) {
+					// Ставим перед
+					$menu_order += 10;
+					$newSorting[] = ['id'=>$currentRow['id'], 'menu_order'=>$menu_order];
+					$replaced = true;
+				}
+
+				// Если это не перемещенная строка
+				if ($row['id'] != $change['row']) {
+					$menu_order += 10;
+					$newSorting[] = ['id'=>$row['id'], 'menu_order'=>$menu_order];
+				}
+
+				// Если это строка, после которой поставили перемещенную
+				if (!$replaced && $row['id'] == $change['prev']) {
+					// Ставим после
+					$menu_order += 10;
+					$newSorting[] = ['id'=>$currentRow['id'], 'menu_order'=>$menu_order];
+					$replaced = true;
+				}
+
+			}
+
+			// Возвращаемые в страницу обновленные номера
+			$ret = [];
+
+			// Обновление
+			$entityTable = static::sqlTable();
+			foreach($newSorting as $sortingRow) {
+
+				$entityTable::update([
+					$sortingField => $sortingRow['menu_order'],
+				], ['id'=>$sortingRow['id']]);
+
+
+				$ret[$sortingRow['id']] = $sortingRow['menu_order'];
+			}
+
+			return $ret;
+		}
 	}
 
 

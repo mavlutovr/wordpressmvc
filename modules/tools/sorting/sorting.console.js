@@ -1,20 +1,22 @@
 (function ($) {
 	$(document).ready(function () {
 
-		$('.js-wdpro-sorting').each(function () {
 
-			var source = $(this);
+		// Сортировка
+		var sortable = function (params) {
+			var table = params.table;
+			var container = params.container;
+			var numbers = params.numbers;
+			var rows = params.rows;
+
 
 			// Сортировка
-			var table = source.closest('table');
 			if (table.is('.js-sortable-inited')) return false;
 			table.addClass('js-sortable-inited');
-			var container = table.children('#the-list');
 			if (!container.length) {
 				container = table;
 			}
-			var numbers = container.find('.js-wdpro-sorting-number');
-			var rows = numbers.closest('tr');
+			//var rows = numbers.closest('tr');
 			var forward = true;
 
 			// Определяем направление сортировки
@@ -33,27 +35,30 @@
 
 			container.sortable({
 				'axis': 'y',
-				'forceHelperSize': true,
-				'forcePlaceholderSize': true,
+				//'forceHelperSize': true,
+				//'forcePlaceholderSize': true,
 				'handle': '.js-wdpro-sorting-number',
 				'items': rows,
 				'placeholder': "sortable-placeholder",
 				//'helper': "clone",
 				'_':'_',
 
-				'start': function () {
+				/*'start': function () {
 					var width = rows.width();
 					console.log('width', width);
 					rows.width('100%');
-				},
+				},*/
 
-				'update': function (event) {
+				'update': function (event, ui) {
 
-					var rowReplaced = $(event['toElement']);
+					console.log('ui', ui);
+
+					var rowReplaced = $(ui['item']);
 
 					// В зависимости от направления сортировки указываем разные prev и next
 					var up = rowReplaced.prev().find('.js-wdpro-sorting-number').attr('data-id');
 					var down = rowReplaced.next().find('.js-wdpro-sorting-number').attr('data-id');
+					console.log('number', rowReplaced.prev().find('.js-wdpro-sorting-number'));
 
 					var post = {
 						'change': {
@@ -66,6 +71,8 @@
 
 					rowReplaced.loading();
 
+					console.log('post', post);
+
 					wdpro.ajax('wdpro_sorting', post, function (ret) {
 
 						wdpro.each(ret['update'], function (sorting, id) {
@@ -75,7 +82,47 @@
 						rowReplaced.loadingStop();
 					});
 				}
-			})
+			});
+		};
+
+
+		// Элементы
+		$('.js-wdpro-elements-sorting').each(function () {
+
+			var table = $(this);
+			var container = table.children('tbody');
+			if (!container.length) container = table;
+			var numbers = container.find('.js-wdpro-sorting-number');
+
+			var params = {
+				table: table,
+				container: container,
+				numbers: numbers,
+				rows: numbers.closest('.js-row'),
+			};
+
+			sortable(params);
+		});
+
+
+		// Страницы
+		$('.js-wdpro-sorting').each(function () {
+
+			var source = $(this);
+
+			var table = source.closest('table');
+			//var container = table.children('#the-list');
+			var numbers = container.find('.js-wdpro-sorting-number');
+
+			var params = {
+				table: table,
+				container: table.children('tbody'),
+				numbers: numbers,
+				rows: numbers.closest('.js-row'),
+			};
+
+			sortable(params);
+
 		});
 
 	});
