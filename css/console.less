@@ -343,3 +343,24 @@ a:hover {
 		text-decoration: none;
 	}
 }
+
+.sortable-placeholder {
+	@color: desaturate(lighten(spin(#0073aa, 180), 50%), 40%);
+	background: @color;
+
+	td {
+		background: @color;
+		padding: 40px;
+	}
+}
+
+.wdpro-sorting-number {
+	cursor: row-resize;
+}
+
+.ui-sortable-helper {
+	background: white;
+	box-shadow: 0 0 4px rgba(0,0,0,.3);
+	td {
+	}
+}

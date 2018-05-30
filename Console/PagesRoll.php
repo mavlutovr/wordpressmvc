@@ -452,7 +452,8 @@ class PagesRoll extends Roll
 							$wdproColumns['wdpro_in_menu'] = 'Меню';
 						}
 
-						$wdproColumns['wdpro_menu_order_column'] = '№ п.п.';
+						$wdproColumns['wdpro_menu_order_column'] = '№ п.п.'
+						.\Wdpro\Tools\Controller::getOrderColumnHeader();
 
 						return array_merge( $columns,
 							$wdproColumns
@@ -463,7 +464,6 @@ class PagesRoll extends Roll
 					$manage_pages_custom_column = function ( $column, $postId ) 
 					use ( $postType, &$params ) 
 					{
-
 						if (get_post_field( 'post_type', $postId ) == $postType) {
 
 							if (isset($params['columns'][$column])) {
@@ -472,7 +472,7 @@ class PagesRoll extends Roll
 
 							// № п.п.
 							if ($column == 'wdpro_menu_order_column') {
-								echo(get_post_field( 'menu_order', $postId ) . ' ');
+								echo \Wdpro\Tools\Controller::getOrderColumnRow($postId);
 							}
 							
 							// В меню
@@ -485,6 +485,9 @@ class PagesRoll extends Roll
 						}
 					};
 
+
+					// Тут нужно эти штуки добавить 2 раза, чтобы работало
+					// Это для постов
 					add_action(
 						'manage_posts_columns',
 						$manage_posts_columns,
@@ -497,6 +500,7 @@ class PagesRoll extends Roll
 						2
 					);
 
+					// А это для обычных страниц
 					add_action(
 						'manage_pages_columns',
 						$manage_posts_columns,
@@ -523,6 +527,127 @@ class PagesRoll extends Roll
 		}
 		
 		return $ret;
+	}
+
+
+	/**
+	 * Возвращает Where для сортировки
+	 *
+	 * Это чтобы выбрать элементы, между которыми производить сортировку,
+	 * когда мы перетаскиваем элементы в админке, сортируя их.
+	 *
+	 * Мы перетаскиваем две штуки. Их мы знаем. Но сортировка сделана таким образом,
+	 * чтобы заново переустановить сортировку у всех элементов. И для этого нужно Where,
+	 * чтобы получить из таблицы только элементы данного списка, которые нужно
+	 * отсортировать.
+	 *
+	 * @param array $get Параметры queryString
+	 *
+	 * @return string
+	 */
+	public function getSortingWhere($get) {
+		$where = $this->getWhere();
+
+		if (!$where) {
+			if ($params = $this->getParams()) {
+
+				$where = '';
+				$whereData = [];
+
+				if (isset($get['sectionId'])) {
+					$where .= 'WHERE post_parent=%d';
+					$whereData[] = $get['sectionId'];
+				}
+
+				if (isset($params['orderby'])) {
+					$where .= ' ORDER BY '.$params['orderby'];
+
+					if (isset($params['order'])) {
+						//$where .= ' ' . $params['order'];
+						$where .= ' ASC';
+					}
+
+					$sql = static::sqlTable();
+					$where = $sql::prepare([$where, $whereData]);
+				}
+			}
+		}
+
+		return $where;
+	}
+
+
+	/**
+	 * Обновление сортировки
+	 *
+	 * @param array $post Данные из javascript
+	 *
+	 * @return array
+	 */
+	public function updateSorting($post) {
+		$newSorting = [];
+		$menu_order = 0;
+		$change = $post['change'];
+
+		$where = $this->getSortingWhere($post['get']);
+		$table = static::sqlTable();
+
+		$currentRow = null;
+
+		if ($sel = $table::select($where, 'id, menu_order')) {
+
+			// Сначала получаем перемещаемую строку
+			foreach($sel as $row) {
+				// Если это перемещенная строка
+				if ($change['row'] == $row['id']) {
+					// Просто запоминаем пока строку
+					$currentRow = $row;
+				}
+			}
+
+			$replaced = false;
+
+			// Расстановка
+			foreach($sel as $n=>$row) {
+
+				// Если это строка, перед которой надо поставить перемещенную
+				if (!$replaced && $row['id'] == $change['next']) {
+					// Ставим перед
+					$menu_order += 10;
+					$newSorting[] = ['id'=>$currentRow['id'], 'menu_order'=>$menu_order];
+					$replaced = true;
+				}
+
+				// Если это не перемещенная строка
+				if ($row['id'] != $change['row']) {
+					$menu_order += 10;
+					$newSorting[] = ['id'=>$row['id'], 'menu_order'=>$menu_order];
+				}
+
+				// Если это строка, после которой поставили перемещенную
+				if (!$replaced && $row['id'] == $change['prev']) {
+					// Ставим после
+					$menu_order += 10;
+					$newSorting[] = ['id'=>$currentRow['id'], 'menu_order'=>$menu_order];
+					$replaced = true;
+				}
+
+			}
+
+			// Возвращаемые в страницу обновленные номера
+			$ret = [];
+
+			// Обновление
+			foreach($newSorting as $sortingRow) {
+				$post = wdpro_get_post_by_id($sortingRow['id']);
+				/** @var $post \App\BasePage */
+				$post->setMenuOrder($sortingRow['menu_order']);
+
+				$ret[$sortingRow['id']] = $sortingRow['menu_order'];
+			}
+
+			return $ret;
+		}
 	}
 
 
@@ -554,7 +679,7 @@ class PagesRoll extends Roll
 		{
 			$typeSql = ' AND post_type=%s ';
 		}
-		
+
 		return \Wdpro\Page\SqlTable::count(array(
 			'WHERE post_parent=%d '.$typeSql
 			.' AND post_status!="trash" AND post_status!="auto-draft"',

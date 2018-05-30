@@ -343,4 +343,20 @@ class BasePage extends BaseEntity
 	public function getTitle() {
 		return $this->getData('post_title[lang]');
 	}
+
+
+	/**
+	 * Обновляет позицию в меню
+	 *
+	 * @param int $menu_order Позиция
+	 */
+	public function setMenuOrder($menu_order) {
+		$this->data['menu_order'] = $menu_order;
+		$this->save();
+
+		wp_update_post([
+			'ID'=>$this->id(),
+			'menu_order'=>$menu_order,
+		]);
+	}
 }
