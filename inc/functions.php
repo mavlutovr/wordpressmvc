@@ -1455,7 +1455,7 @@ function wdpro_get_class_by_post_type($postType)
  * Возвращает класс страницы по типу поста
  *
  * @param string $postType Тип поста
- * @return string|void
+ * @return \App\BaseEntity
  */
 function wdpro_get_entity_class_by_post_type($postType) {
 	global $wdpro_register_post_type;
@@ -2604,4 +2604,14 @@ function wdpro_get_roll_by_get_page($page) {
 	$page = '\\'.$page;
 
 	return new $page;
+}
+
+
+function wdpro_create_post($data) {
+	// Добавляем страницу
+	$data['id'] = wp_insert_post($data);
+
+	$entityClass = wdpro_get_entity_class_by_post_type($data['post_type']);
+	$entity = new $entityClass($data);
+	$entity->save();
 }

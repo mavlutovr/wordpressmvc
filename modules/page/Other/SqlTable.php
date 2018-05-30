@@ -20,7 +20,8 @@ class SqlTable extends \Wdpro\BaseSqlTable {
 				'post_name',
 				'template', // Выбранный шаблон
 				'menu_order'=>'int',
-				'post_title',
+				'post_title[lang]',
+				'post_content[lang]',
 			),
 			
 			static::ENGINE => static::INNODB,

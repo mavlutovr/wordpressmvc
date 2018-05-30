@@ -13,7 +13,7 @@ class Controller extends \Wdpro\BaseController {
 	public static function init () {
 		// http://localhost/heavy-lift2.ru/blog_tags?tag=Скиддинг
 		\Wdpro\Page\Controller::defaultPage(
-			'blog_tags',
+			'blog_tag_list',
 			function () {
 				return require __DIR__.'/default/pages/tags.php';
 			}
@@ -37,12 +37,11 @@ class Controller extends \Wdpro\BaseController {
 			);
 		});
 
-
 		// Статьи по тегам
 		add_shortcode('blog_tag_list', function () {
 			return Roll::getHtml([
 				'WHERE post_status="publish" AND in_menu=1 AND tags LIKE %s ORDER BY date_added',
-				['%"'.$_GET['tag'].'"%']
+				['%"'.$_GET['tags'].'"%']
 			]);
 		});
 	}

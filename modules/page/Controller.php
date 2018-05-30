@@ -114,7 +114,7 @@ class Controller extends \Wdpro\BaseController {
 		
 		// 404 ошибка
 		add_action('template_redirect', function () {
-			
+
 			global $wp_query, $post;
 			
 			if ($wp_query->is_404) {
@@ -772,7 +772,9 @@ class Controller extends \Wdpro\BaseController {
 					$currentPage = wdpro_get_post_by_name($data['post_name']);
 					if (!$currentPage) {
 						// Добавляем страницу
-						wp_insert_post($data);
+						//wp_insert_post($data);
+
+						wdpro_create_post($data);
 
 						// Редирект
 						wdpro_location(wdpro_current_url(['postAdded'=>1]));

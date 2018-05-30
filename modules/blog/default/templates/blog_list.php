@@ -9,7 +9,7 @@
 					<!-- Картинка -->
 					<?php if (isset($item['image']) && $item['image']): ?>
 						<div class="blog-row-1 blog-item-coll">
-							<a href="<?php echo home_url($item['post_name']); ?>"><img
+							<a href="<?=$item['url']?>"><img
 									src="<?php
 									if (strstr($item['image'], 'http://')):
 										echo $item['image'];
@@ -24,7 +24,7 @@
 					<div class="glog-row-2 blog-item-coll">
 						<!-- Название статьи -->
 						<div class="blog-row-name">
-							<a href="<?php echo home_url($item['post_name']); ?>"><?php
+							<a href="<?=$item['url']?>"><?php
 								echo $item['post_title']; ?></a>
 						</div>
 
@@ -43,6 +43,22 @@
 
 						<!-- Анонс -->
 						<?php echo $item['anons']; ?>
+
+						<?php if ( is_array($item['tags']) ): ?>
+							<div class="blog_tags_wr">
+								<div class="blog_tags_icn"></div>
+								<div class="blog_tags">
+
+									<?php foreach ( $item['tags'] as $tag ): ?>
+										<a href="<?= wdpro_home_url_with_lang() . 'blog_tag_list/?tags=' .
+										             urlencode($tag) ?>"
+										   class="tl-tag"><span><?= $tag ?></span></a>
+									<?php endforeach; ?>
+
+
+								</div>
+							</div>
+						<?endif; ?>
 					</div>
 					<div class="g-clear"></div>
 				</div>

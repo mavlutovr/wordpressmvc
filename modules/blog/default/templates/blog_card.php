@@ -19,6 +19,22 @@
 	<!-- Текст статьи -->
 	<div class="blog-text"><?php echo $post_content; ?></div>
 
+	<?php if ( is_array($item['tags']) ): ?>
+		<div class="blog_tags_wr">
+			<div class="blog_tags_icn"></div>
+			<div class="blog_tags">
+
+				<?php foreach ( $item['tags'] as $tag ): ?>
+					<a href="<?= wdpro_home_url_with_lang() . 'blog_tag_list/?tags=' .
+					             urlencode($tag) ?>"
+					   class="tl-tag"><span><?= $tag ?></span></a>
+				<?php endforeach; ?>
+
+
+			</div>
+		</div>
+	<?endif; ?>
+
 	<!-- Всякие сервисы -->
 	<div class="blog-codes"><?php echo wdpro_get_option('blog_codes'); ?></div>
 </div>

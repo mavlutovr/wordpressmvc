@@ -95,10 +95,14 @@ class Roll extends \Wdpro\BaseRoll {
 				$data['pagination'] = $pagination->getHtml();
 			}
 			
-			foreach($sel as $row) {
+			foreach($sel as $n=>$row) {
+				if ( isset($row['post_name'])  && ! isset($row['url'])) {
+					$row['url'] = \Wdpro\Lang\Data::currentUrl() . $row['post_name'] . '/';
+				}
+
 				$data['list'][] = static::prepareDataForTemplate($row);
 			}
-			
+
 			return $data;
 		}
 	}
