@@ -55,7 +55,11 @@ class Menu extends Roll
 				$template = $template[0];
 			}
 
-			return wdpro_render_php($template, ['list'=>$list], $templateDefault);
+			return wdpro_render_php($template, [
+				'list'=>$list,
+				'params'=>$params,
+				'pagination'=>'',
+			], $templateDefault);
 		}
 	}
 

@@ -201,4 +201,14 @@ class Pagination {
 			$this->params['key'] => $pageNumber > 1 ? $pageNumber : null,
 		));
 	}
+
+
+	/**
+	 * Установка количества элементов на странице
+	 *
+	 * @param string $elementsOnPage Количество элементов на странице
+	 */
+	public function setPageSize($elementsOnPage) {
+		$this->params['pageSize'] = $elementsOnPage;
+	}
 }

@@ -75,7 +75,7 @@ class Roll extends \Wdpro\BaseRoll {
 
 		$table = static::sqlTable();
 		
-		if ($pagination = static::pagination()) {
+		if (!strstr($where[0], 'LIMIT ') && $pagination = static::pagination()) {
 			
 			$pagination->initByWhere($where, $table);
 			$where[0] .= $pagination->getLimit();
@@ -89,8 +89,9 @@ class Roll extends \Wdpro\BaseRoll {
 			$data = array(
 				'list'=>array(),
 			);
-			
-			if ($pagination) {
+
+			$data['pagination'] = '';
+			if (isset($pagination) && $pagination) {
 				$data['pagination'] = $pagination->getHtml();
 			}
 			
