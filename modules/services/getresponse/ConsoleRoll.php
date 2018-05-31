@@ -17,7 +17,7 @@ class ConsoleRoll extends \Wdpro\Console\Roll {
 	 *  'orderby'=>'menu_order',
 	 *  'icon'=>WDPRO_ICONS_PRODUCTS,
 	 *      // https://developer.wordpress.org/resource/dashicons/#lock
-	 *        // http://fontawesome.io/icons/
+	 *        // https://fontawesome.com/v4.7.0/icons/
 	 *
 	 *  'subsections'=>false,
 	 *  'where'=>["WHERE ... %d, %d", [1, 2]],

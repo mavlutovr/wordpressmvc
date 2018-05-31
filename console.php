@@ -28,6 +28,8 @@ wdpro_add_css_to_console(__DIR__.'/css/console.less.css');
 // Font Avesome
 // https://fontawesome.com/v4.7.0/
 wdpro_add_css_to_console(__DIR__.'/css/font-awesome.min.css');
+// 5
+//wdpro_add_css_to_console(__DIR__.'/fonts/awesome5/css/fontawesome-all.min.css');
 
 $appConsoleCssFile = APP_PATH.'console.less';
 if (is_file($appConsoleCssFile)) {

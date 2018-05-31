@@ -7,7 +7,7 @@ class Controller extends \Wdpro\BaseController {
 	 *
 	 * Иконки:
 	 * https://developer.wordpress.org/resource/dashicons/#forms
-	 * http://fontawesome.io/icon/file-o/
+	 * https://fontawesome.com/v4.7.0/icons/
 	 */
 	public static function initConsole () {
 		\Wdpro\Console\Menu::add([

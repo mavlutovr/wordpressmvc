@@ -135,7 +135,7 @@ class ConsoleRoll extends \Wdpro\Console\Roll {
 			'name'=>'ConsoleRoll_icon',
 			'left'=>'<a href="https://developer.wordpress.org/resource/dashicons/"
 			            target="_blank">Иконка wordpress</a>,
-			            <a href="http://fontawesome.io/icons/" target="_blank">Awesome</a>',
+			            <a href="https://fontawesome.com/v4.7.0/icons/" target="_blank">Awesome</a>',
 		]);
 		$form->add([
 			'name'=>'ConsoleRoll_add_new',
