@@ -9,6 +9,8 @@
 			var numbers = params.numbers;
 			var rows = params.rows;
 
+			console.log('params', params);
+
 
 			// Сортировка
 			if (table.is('.js-sortable-inited')) return false;
@@ -75,6 +77,8 @@
 
 					wdpro.ajax('wdpro_sorting', post, function (ret) {
 
+						console.log('ret', ret);
+
 						wdpro.each(ret['update'], function (sorting, id) {
 							numbers.filter('[data-id="'+id+'"]').text(sorting);
 						});
@@ -111,14 +115,14 @@
 			var source = $(this);
 
 			var table = source.closest('table');
-			//var container = table.children('#the-list');
+			var container = table.children('tbody');
 			var numbers = container.find('.js-wdpro-sorting-number');
 
 			var params = {
 				table: table,
-				container: table.children('tbody'),
+				container: container,
 				numbers: numbers,
-				rows: numbers.closest('.js-row'),
+				rows: numbers.closest('.iedit')
 			};
 
 			sortable(params);

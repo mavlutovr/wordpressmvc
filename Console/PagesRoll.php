@@ -562,11 +562,13 @@ class PagesRoll extends Roll
 		if (!$where) {
 			if ($params = $this->getParams()) {
 
-				$where = '';
+				$where = 'WHERE post_status="publish"';
 				$whereData = [];
 
-				if (isset($get['sectionId'])) {
-					$where .= 'WHERE post_parent=%d';
+				$sql = static::sqlTable();
+
+				if ($sql::isField('post_parent')) {
+					$where .= ' AND post_parent=%d ';
 					$whereData[] = $get['sectionId'];
 				}
 
@@ -578,7 +580,6 @@ class PagesRoll extends Roll
 						$where .= ' ASC';
 					}
 
-					$sql = static::sqlTable();
 					$where = $sql::prepare([$where, $whereData]);
 				}
 			}
