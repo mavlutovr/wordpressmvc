@@ -161,7 +161,7 @@ class PagesRoll extends Roll
 				}
 
 				// Языки
-				if (defined('WP_ADMIN'))
+				if (wdpro_is_admin())
 				add_action('admin_bar_menu', function ($admin_bar) {
 
 					foreach (\Wdpro\Lang\Data::getData() as $lang) {
@@ -178,6 +178,17 @@ class PagesRoll extends Roll
 							),
 						));
 					}
+
+					$admin_bar->add_menu( array(
+						'id'    => 'lang-all',
+						'title' => 'All ',
+						'href'  => '#all',
+						'meta'  => array(
+							'class'=>'wdpro-lang-menu js-wdpro-lang-menu',
+							'data-lang'=>'all',
+							//'title' => __('My Item'),
+						),
+					));
 
 
 				}, 100);

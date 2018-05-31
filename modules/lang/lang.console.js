@@ -26,6 +26,7 @@
 				.addClass('js-lang-inited');
 		});
 
+
 		// Add Elements
 		var addElements = function (container) {
 
@@ -45,6 +46,7 @@
 			});
 		};
 
+
 		wdpro.forms.onForm(function (form) {
 			form.on('addedToPage', function () {
 				addElements(form.html);
@@ -55,16 +57,33 @@
 		// Select
 		var select = function (lang) {
 			buttons.removeClass('lang-selected');
+			console.log('lang', lang);
 			buttonsoByLang[lang].addClass('lang-selected');
 
-			elements.removeClass('lang-visible')
-				.addClass('js-form-align-disabe');
-			elementsByLang[lang].addClass('lang-visible')
-				.removeClass('js-form-align-disabe');
+			if (lang == 'all') {
+				elements.addClass('lang-visible')
+					.removeClass('js-form-align-disabe');
+			}
+			else {
+				elements.removeClass('lang-visible')
+					.addClass('js-form-align-disabe');
+				elementsByLang[lang].addClass('lang-visible')
+					.removeClass('js-form-align-disabe');
+			}
 
 			wdpro.forms.align();
+
+			window.localStorage.setItem('currentLang', lang);
 		};
-		select('');
+
+		var currentLang = window.localStorage.getItem('currentLang');
+		if (currentLang !== undefined && currentLang !== null)
+		{
+			select(currentLang);
+		}
+		else {
+			select('');
+		}
 
 
 		// Click

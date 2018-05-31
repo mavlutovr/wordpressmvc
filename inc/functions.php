@@ -2627,5 +2627,5 @@ function wdpro_create_post($data) {
  * @return bool
  */
 function wdpro_is_admin() {
-	return defined('WP_ADMIN') && WD_ADMIN;
+	return defined('WP_ADMIN') && WP_ADMIN;
 }
