@@ -26,7 +26,7 @@ wdpro_less_compile_try(__DIR__.'/css/console.less', __DIR__.'/css/console.less.c
 wdpro_add_css_to_console(__DIR__.'/css/console.less.css');
 
 // Font Avesome
-// https://fortawesome.github.io/
+// https://fontawesome.com/v4.7.0/
 wdpro_add_css_to_console(__DIR__.'/css/font-awesome.min.css');
 
 $appConsoleCssFile = APP_PATH.'console.less';

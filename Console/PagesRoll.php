@@ -181,7 +181,7 @@ class PagesRoll extends Roll
 
 					$admin_bar->add_menu( array(
 						'id'    => 'lang-all',
-						'title' => 'All ',
+						'title' => '<i class="fa fa-globe" aria-hidden="true"></i>',
 						'href'  => '#all',
 						'meta'  => array(
 							'class'=>'wdpro-lang-menu js-wdpro-lang-menu',
