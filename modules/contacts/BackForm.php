@@ -40,6 +40,7 @@ class BackForm extends \Wdpro\Form\Form {
 			'containerClass'=>'privacy-check',
 			'checked'=>true,
 			'name'=>'privacy',
+			'*'=>true,
 		));
 	}
 
