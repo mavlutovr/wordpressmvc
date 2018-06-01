@@ -255,7 +255,7 @@ function wdpro_on_page_type($type, $callback) {
 	wdpro_get_current_page(function ($page) use (&$type, &$callback) {
 		/** @var \Wdpro\BasePage $page */
 
-		if ($page::getType() == $type) {
+		if ($page && $page::getType() == $type) {
 			$callback($page);
 		}
 	});

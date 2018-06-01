@@ -1455,7 +1455,7 @@ function wdpro_get_class_by_post_type($postType)
  * Возвращает класс страницы по типу поста
  *
  * @param string $postType Тип поста
- * @return \App\BaseEntity
+ * @return \App\BasePage
  */
 function wdpro_get_entity_class_by_post_type($postType) {
 	global $wdpro_register_post_type;

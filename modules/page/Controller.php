@@ -118,18 +118,17 @@ class Controller extends \Wdpro\BaseController {
 			global $wp_query, $post;
 			
 			if ($wp_query->is_404) {
-				
-				$uri = $wp_query->query['name'];
 
-				if (has_action('wdpro_pages_default:'.$uri)) {
-					do_action('wdpro_pages_default:'.$uri);
+				if ( isset($wp_query->query['name'])
+				     && has_action('wdpro_pages_default:' . $wp_query->query['name']) ) {
+					do_action('wdpro_pages_default:' . $wp_query->query['name']);
 				}
 				
 				else {
-					do_action('wdpro_pages_default:error-404');
+					do_action('wdpro_pages_default:error404');
 					/** @var \WP_Query $wp_query */
 					$wp_query->set_404();
-					$page = wdpro_get_post_by_name('error-404');
+					$page = wdpro_get_post_by_name('error404');
 					$GLOBALS['post'] = get_post($page->id());
 					$wp_query->have_posts();
 					global $post;
@@ -146,7 +145,7 @@ class Controller extends \Wdpro\BaseController {
 
 		// Страницы по-умолчанию
 		// 404
-		\Wdpro\Page\Controller::defaultPage('error-404', function () {
+		\Wdpro\Page\Controller::defaultPage('error404', function () {
 			return require __DIR__.'/default/page_404.php';
 		});
 		
@@ -805,6 +804,33 @@ class Controller extends \Wdpro\BaseController {
 		)) {
 			
 			return wdpro_get_post_by_id($pageData['id']);
+		}
+
+		// Когда страница есть в базе WP, но нету в MVC
+		else {
+
+			echo 123;
+
+			if ($postData = \Wdpro\Page\SqlTable::getRow([
+					'WHERE post_name = %s',
+				[$postName]
+			])) {
+
+				print_r($postData);
+
+				// Получаем класс страниц по типу
+				if ($class = wdpro_get_entity_class_by_post_type($postData['post_type'])) {
+					/** @var \App\BasePage $obj */
+
+					$postData['id'] = $postData['ID'];
+
+					$obj = new $class($postData);
+
+					$obj->save();
+
+					return $obj;
+				}
+			}
 		}
 	}
 
