@@ -50,6 +50,13 @@ class Controller extends \Wdpro\BaseController {
 						]);
 					}
 
+					if (isset($params['right'])) {
+						$form->add([
+							'name'=>'contacts_form_element_'.$params['name'].'_right[lang]',
+							'top'=>$params['right'],
+						]);
+					}
+
 				}
 
 				if (isset($params['type']) && $params['type'] == 'submit') {
@@ -100,6 +107,11 @@ class Controller extends \Wdpro\BaseController {
 					$left = wdpro_get_option('contacts_form_element_'.$params['name'].'_left[lang]');
 					if ($left) {
 						$element->mergeParams(['left'=>$left]);
+					}
+
+					$right = wdpro_get_option('contacts_form_element_'.$params['name'].'_right[lang]');
+					if ($right) {
+						$element->mergeParams(['right'=>$right]);
 					}
 				}
 

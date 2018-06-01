@@ -33,6 +33,11 @@ class BackForm extends \Wdpro\Form\Form {
 			'type'=>'submit',
 			'text'=>'Отправить',
 		));
+		$this->add(array(
+			'type'=>static::CHECK,
+			'right'=>'Я даю свое согласие на обработку персональных данных и соглашаюсь с условиями и 
+<a href=\'/privacy/\' target=\'_blank\'>политикой конфиденциальности</a>'
+		));
 	}
 
 
