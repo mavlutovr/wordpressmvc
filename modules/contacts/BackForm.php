@@ -39,6 +39,7 @@ class BackForm extends \Wdpro\Form\Form {
 <a href=\'/privacy/\' target=\'_blank\'>политикой конфиденциальности</a>',
 			'containerClass'=>'privacy-check',
 			'checked'=>true,
+			'name'=>'privacy',
 		));
 	}
 
