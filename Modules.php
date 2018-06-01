@@ -252,5 +252,15 @@ class Modules
 	public static function existsWdpro($moduleName) {
 		return static::exists(WDPRO_DIR.'modules/'.$moduleName);
 	}
+
+
+	/**
+	 * Возвращает массив контроллеров
+	 *
+	 * @return \App\BaseController[]
+	 */
+	public static function getControllers() {
+		return static::$controllers;
+	}
 }
 

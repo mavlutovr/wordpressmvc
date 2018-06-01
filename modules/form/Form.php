@@ -10,6 +10,7 @@ use Wdpro\Exception;
 class Form
 {
 	protected $params = [];
+	/** @var \Wdpro\Form\Elements\Base */
 	protected $elements = [];
 	protected $elementsByName = [];
 	protected $elementI = 0;
@@ -723,6 +724,48 @@ class Form
 			'message'=>$message,
 			'params'=>$params,
 		];
+	}
+
+
+	/**
+	 * Есть ли у формы картинки с водяными знаками
+	 *
+	 * Это нужно для того, чтобы определять, перерисовывать водяные знаки для этой формы
+	 * во время перерисовки всех знаков или нет.
+	 *
+	 * @return bool
+	 */
+	public function haveWatermark() {
+		foreach($this->elements as $element) {
+			if (method_exists($element, 'haveWatermark')) {
+				if ($element->haveWatermark()) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+
+	/**
+	 * Возвращает элементы (поля картинок), у которых есть водяные знаки и которые могут
+	 * быть перерисованы
+	 *
+	 * @return \Wdpro\Form\Elements\Image[]
+	 */
+	public function getWatermarkRedrawingElements() {
+		$elements = [];
+
+		foreach($this->elements as $element) {
+			if (method_exists($element, 'canRedrawWatermark') && $element->canRedrawWatermark()) {
+				$elements[] = $element;
+			}
+		}
+
+		if (count($elements)) {
+			return $elements;
+		}
 	}
 }
 

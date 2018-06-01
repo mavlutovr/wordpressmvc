@@ -805,12 +805,32 @@ function wdpro_image_watermark($fileFullName, $params) {
 	ini_set('display_errors', 'on');
 	error_reporting(7);
 
+	if (!isset($params['opacity'])) $params['opacity'] = 1;
+
+	if (!isset($params['file'])) {
+		$params['file']
+			= WDPRO_UPLOAD_IMAGES_PATH.wdpro_get_option('wdpro_watermark');
+	}
+
+	// Сохранение оригинального рисунка
+	if ($params['original']) {
+		$originalPath = pathinfo($fileFullName);
+
+		wdpro_copy_file($fileFullName,
+			$originalPath['dirname']
+			. '/' . $params['original']
+			. '/' . $originalPath['basename']);
+	}
+
 	if ($fileFullName && is_file($fileFullName) && is_file($params['file'])) {
 
 		// Imagick
 		if (class_exists('Imagick')) {
 			// Водяной знак
 			$watermark = new Imagick($params['file']);
+			if ($params['opacity']) {
+				$watermark->setImageOpacity($params['opacity']);
+			}
 
 			// Оригинальное изображение
 			$image = new Imagick($fileFullName);
@@ -851,7 +871,9 @@ function wdpro_image_watermark($fileFullName, $params) {
 			//$image->setImageAlphaChannel(Imagick::ALPHACHANNEL_REMOVE);
 			//$image->mergeImageLayers(Imagick::LAYERMETHOD_FLATTEN);
 			//$image->setImageCompressionQuality(90);
+
 			@unlink($fileFullName);
+
 			$image->writeImage($fileFullName);
 			// $image->writeImage('test.jpg');
 		}
@@ -860,9 +882,13 @@ function wdpro_image_watermark($fileFullName, $params) {
 		else {
 			// Картинка
 			$img = wdpro_gd_create_image($fileFullName);
+			/*imagealphablending($img, false);
+			imagesavealpha($img,true);*/
 
 			// Водяной знак
 			$watermark = wdpro_gd_create_image($params['file']);
+			/*imagealphablending($watermark, false);
+			imagesavealpha($watermark,true);*/
 
 			// Размеры
 			$imgSize = [
@@ -887,7 +913,20 @@ function wdpro_image_watermark($fileFullName, $params) {
 			if (!isset($params['top'])) $params['top'] = 0;
 
 			// Наложение водяного знака
-			imagecopy($img,
+
+			// Здесь почему-то появляется черный квадрат у водяного знака
+			/*imagecopymerge(
+				$img,
+				$watermark,
+				$params['left'],
+				$params['top'],
+				0,
+				0,
+				$watermarkSize['width'],
+				$watermarkSize['height'],
+				50);*/
+			imagecopy(
+				$img,
 				$watermark,
 				$params['left'],
 				$params['top'],
@@ -1955,6 +1994,27 @@ function wdpro_copy($src, $dst, $callbackFilenameMod=null) {
 
 
 /**
+ * Копирует файл и при необходимости создает папки
+ *
+ * @param string $from Откуда (полный путь)
+ * @param string $to Куда (полный путь)
+ *
+ * @return bool
+ */
+function wdpro_copy_file($from, $to) {
+	//$pathFrom = pathinfo($from);
+
+	$pathTo = pathinfo($to);
+
+	if (!is_dir($pathTo['dirname'])) {
+		mkdir($pathTo['dirname'], 0777, true);
+	}
+
+	return copy($from, $to);
+}
+
+
+/**
  * Создает страницу, если ее нету
  *
  * @param string $uri Адрес страницы
@@ -2628,4 +2688,14 @@ function wdpro_create_post($data) {
  */
 function wdpro_is_admin() {
 	return defined('WP_ADMIN') && WP_ADMIN;
+}
+
+
+/**
+ * Добавляет слэш в конец строки, если его нету
+ *
+ * @param string $str Строка
+ */
+function wdpro_add_slash_to_end(&$str) {
+	$str = rtrim($str, '/') . '/';
 }

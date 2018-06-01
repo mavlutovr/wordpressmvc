@@ -61,9 +61,10 @@ class Image extends File
 						$targetDir.$fileName,
 						$resize
 					);
-					
+
 					// Водяной знак
 					if (isset($resize['watermark']) && $resize['watermark']) {
+
 						wdpro_image_watermark(
 							$targetDir.$fileName,
 							$resize['watermark']
@@ -81,4 +82,74 @@ class Image extends File
 			}
 		}
 	}
+
+
+	/**
+	 * Проверяет, может ли это поле перерисовывать водяные знаки
+	 *
+	 * Это нужно, чтобы определить, нужно ли перерисовывать водяные знаки в этом поле при
+	 * полной перерисовке водяных знаков.
+	 *
+	 * @return bool
+	 */
+	public function canRedrawWatermark() {
+		foreach ($this->params['resize'] as $param) {
+			if (isset($param['watermark']['original']) && $param['watermark']['original']) {
+				return true;
+			}
+		}
+	}
+
+
+	/**
+	 * Перерисовывает водяные знаки
+	 */
+	public function redrawWatermarks($data) {
+
+		$key = $this->params['name'];
+
+		// Тут надо еще сделать языки
+
+
+		if (isset($data[$key])) {
+			$file = $data[$key];
+
+			if ($file) {
+
+				// Перебираем resize
+				foreach ( $this->params['resize'] as $resize ) {
+
+					// Если есть водяной знак
+					if (isset($resize['watermark']['original'])) {
+
+						$path = WDPRO_UPLOAD_IMAGES_PATH;
+						if (isset($resize['dir'])) $path .= $resize['dir'];
+
+						wdpro_add_slash_to_end($path);
+						$originalDir = $path;
+						$path .= $file;
+
+						// Возврат к оригинальному файлу
+						$originalPath = $originalDir . $resize['watermark']['original'];
+						wdpro_add_slash_to_end($originalPath);
+						$originalPath .= $file;
+
+						if (is_file($originalPath)) {
+							unlink($path);
+							copy($originalPath, $path);
+						}
+
+						if (is_file($path)) {
+							wdpro_image_watermark($path, $resize['watermark']);
+						}
+					}
+				}
+
+
+			}
+		}
+
+	}
+
+
 }
