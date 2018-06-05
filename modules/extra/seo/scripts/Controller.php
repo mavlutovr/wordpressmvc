@@ -77,19 +77,34 @@ class Controller extends \Wdpro\BaseController {
 			// Скрипты в noindex
 			if (wdpro_get_option('wdpro_scripts_to_noindex') == 1) {
 
+				// Убираем пробелы между скриптами
 				$html = preg_replace(
-					'~(</script>\s+<script)~i',
+					'~(</script>\s*<script)~i',
 					'</script><script',
 					$html
 				);
 
+				// Заключаем скрипты в noindex
 				$html = preg_replace(
 					'~(<script[\S\s]*?</script>)~i',
 					'<noindex>$1</noindex>',
 					$html
 				);
+				// Заключаем nosctipt в noindex
+				$html = preg_replace(
+					'~(<noscript[\S\s]*?</noscript>)~i',
+					'<noindex>$1</noindex>',
+					$html
+				);
 
+				/*$html = preg_replace(
+					'~(</noindex>\s*<noindex>)~',
+					'',
+					$html
+				);*/
 				$html = str_replace('</noindex><noindex>', '', $html);
+
+
 			}
 
 

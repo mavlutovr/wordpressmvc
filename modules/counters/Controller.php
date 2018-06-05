@@ -36,7 +36,8 @@ class Controller extends \Wdpro\BaseController {
 		}
 
 		if ($counters) {
-			return '<noindex>'.$counters.'</noindex>';
+			return $counters;
+			//return '<noindex>'.$counters.'</noindex>';
 		}
 	}
 }

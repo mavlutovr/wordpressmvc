@@ -155,14 +155,14 @@ function wdpro_scripts_footer() {
 
 // Выводит скрипты
 function wdpro_scripts() {
-	$noindex = wdpro_get_option('wdpro_scripts_to_noindex') == 1;
-	$noindex && noindex_start();
+	//$noindex = wdpro_get_option('wdpro_scripts_to_noindex') == 1;
+	//$noindex && noindex_start();
 
 	wp_enqueue_scripts();
 	wp_print_head_scripts();
 	wp_print_scripts();
 
-	$noindex && noindex_end();
+	//$noindex && noindex_end();
 }
 
 function wdpro_the_footer() {
