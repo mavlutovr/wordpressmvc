@@ -99,6 +99,20 @@ class Controller extends \Wdpro\BaseController {
 					$html
 				);
 
+				// Убиаем noscript из head
+				$html = preg_replace_callback(
+					'~<head>[\s\S]*</head>~i',
+					function ($arr) {
+
+						$head = $arr[0];
+						$head = str_replace('<noindex>', '', $head);
+						$head = str_replace('</noindex>', '', $head);
+
+						return $head;
+					},
+					$html
+				);
+
 				/*$html = preg_replace(
 					'~(</noindex>\s*<noindex>)~',
 					'',
