@@ -1,0 +1,248 @@
+/*---------------------------------------------------
+    LESS Elements 0.6
+  ---------------------------------------------------
+    A set of useful LESS mixins by Dmitry Fadeyev
+    Special thanks for mixin suggestions to:
+      Kris Van Herzeele,
+      Benoit Adam,
+      Portenart Emile-Victor,
+      Ryan Faerman
+
+    More info at: http://lesselements.com
+-----------------------------------------------------*/
+.box-sizing {
+  -moz-box-sizing: border-box;
+  /*Firefox 1+*/
+  -webkit-box-sizing: border-box;
+  /*Safari 3+, Chrome 1+*/
+  box-sizing: border-box;
+  /*Opera 7+, IE8+*/
+}
+.clear_first_last_margin:first-child {
+  margin-top: 0;
+}
+.clear_first_last_margin:last-child {
+  margin-bottom: 0;
+}
+.p_margin_clear_first_last p:first-child {
+  margin-top: 0;
+}
+.p_margin_clear_first_last p:last-child {
+  margin-bottom: 0;
+}
+#adminmenu,
+#adminmenu .wp-submenu,
+#adminmenuback,
+#adminmenuwrap {
+  width: 200px;
+}
+#wpcontent,
+#wpfooter {
+  margin-left: 200px;
+}
+#adminmenu .wp-submenu {
+  left: 200px;
+}
+.breadcrumbs {
+  margin-top: 20px;
+}
+.breadcrumbs_element {
+  display: inline-block;
+}
+#wdpro_menu_order_column {
+  width: 80px;
+}
+th#wdpro_in_menu {
+  width: 50px;
+}
+.wp-list-table .column-date {
+  width: 150px;
+}
+.wp-list-table {
+  opacity: 0.1;
+}
+.wdpro-form-width,
+.wdpro-form-group,
+.wdpro-form-element-ckeditor {
+  width: 100%;
+}
+.wdpro-form-element-ckeditor .wdpro-form-element-input,
+.wdpro-form-element-ckeditor .wdpro-form-element-middle {
+  width: 100%;
+}
+.wdpro-form-element-ckeditor {
+  margin-bottom: 20px;
+}
+.wdpro-row span.trash a {
+  color: #a00;
+}
+.wdpro-console-roll-table {
+  width: auto;
+}
+.wdpro-settings-form {
+  padding-top: 20px;
+}
+.wdpro-settings-form .wdpro-form-input {
+  width: 400px;
+}
+.wdpro-about {
+  max-width: 700px;
+  padding-bottom: 10px;
+}
+.wdpro-pagination {
+  margin-top: 30px;
+}
+.wdpro-pagination-pages a {
+  font-size: 16px;
+  padding: 8px;
+  display: inline-block;
+}
+.wdpro-pagination-pages a.wdpro-pagination-selected {
+  border: 1px solid #CCC;
+  background: white;
+  color: black;
+  text-decoration: none;
+}
+.wdpro-form-center {
+  margin-top: 5px;
+  margin-left: 7px;
+  opacity: 0.6;
+}
+/*
+.tablenav .no-pages, .tablenav .one-page .pagination-links {
+	//display: inherit;
+}*/
+.row-actions {
+  padding-left: 20px;
+}
+.wdpro-info {
+  margin: 30px 0;
+}
+.wdpro-row-title-separator {
+  display: inline-block;
+  color: #ddd;
+  font-size: 13px;
+  margin: 0 10px;
+  vertical-align: middle;
+}
+.wdpro-row-title-separator:before {
+  content: '|';
+}
+.row-title .fa {
+  margin-right: 10px;
+}
+.column-date {
+  display: none;
+}
+.wdpro-console-post-name {
+  color: #777;
+  margin-left: 5px;
+}
+#adminmenu .fa {
+  position: absolute;
+  margin-left: -36px;
+  margin-top: 1px;
+  font-size: 14px;
+  color: rgba(240, 245, 250, 0.6);
+  width: 36px;
+  text-align: center;
+}
+#adminmenu a:focus .fa {
+  color: #00b9eb;
+}
+#adminmenu a:hover .fa,
+#adminmenu a:active .fa {
+  color: #00a0d2;
+}
+#adminmenu li.current .fa {
+  color: white;
+}
+.folded #adminmenu .fa {
+  margin-left: 999px;
+}
+.wdpro-rounded-count {
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  -moz-background-clip: padding;
+  -webkit-background-clip: padding-box;
+  background-clip: padding-box;
+  display: inline-block;
+  padding: 0;
+  background: #FFD48B;
+  color: black;
+  margin-left: 5px;
+  min-width: 16px;
+  text-align: center;
+  line-height: 150%;
+  font-size: 80%;
+  padding: 0 3px;
+  box-sizing: border-box;
+}
+.wdpro-row-title-child .fa {
+  vertical-align: middle;
+}
+a:hover .wdpro-rounded-count {
+  background: #ffe7be;
+}
+.wdpro-console-roll-table {
+  max-width: 100%;
+}
+.wdpro-console-roll-td {
+  overflow: hidden;
+}
+#wdpro_info_widget {
+  background: lightyellow;
+}
+.admin-color-light #adminmenu .fa {
+  color: #999;
+}
+.admin-color-light #adminmenu a:hover .fa,
+.admin-color-light #adminmenu a:active .fa {
+  color: #ccc;
+}
+.admin-color-blue #adminmenu .fa {
+  color: #e5f8ff;
+}
+.admin-color-blue #adminmenu a:hover .fa,
+.admin-color-blue #adminmenu a:active .fa {
+  color: #f1f1f1;
+}
+.admin-color-coffee #adminmenu .fa {
+  color: #f3f2f1;
+}
+.admin-color-coffee #adminmenu a:hover .fa,
+.admin-color-coffee #adminmenu a:active .fa {
+  color: #fff;
+}
+.admin-color-ectoplasm #adminmenu .fa {
+  color: #ece6f6;
+}
+.admin-color-ectoplasm #adminmenu a:hover .fa,
+.admin-color-ectoplasm #adminmenu a:active .fa {
+  color: #fff;
+}
+.admin-color-midnight #adminmenu .fa {
+  color: #f1f2f3;
+}
+.admin-color-midnight #adminmenu a:hover .fa,
+.admin-color-midnight #adminmenu a:active .fa {
+  color: #fff;
+}
+.admin-color-ocean #adminmenu .fa {
+  color: #f2fcff;
+}
+.admin-color-ocean #adminmenu a:hover .fa,
+.admin-color-ocean #adminmenu a:active .fa {
+  color: #fff;
+}
+.admin-color-sunrise #adminmenu .fa {
+  color: #f3f1f1;
+}
+.admin-color-sunrise #adminmenu a:hover .fa,
+.admin-color-sunrise #adminmenu a:active .fa {
+  color: #fff;
+}
+.wp-submenu i.fa {
+  display: none;
+}

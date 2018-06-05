@@ -1,0 +1,24 @@
+.dialog {
+  position: absolute;
+  border: 3px #CCC solid;
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2);
+  z-index: 201;
+  background: #FFF;
+}
+.dialog_substrate {
+  position: fixed;
+  z-index: 200;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  background: rgba(0, 0, 0, 0.5);
+}
+.JS_dialog_close {
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+}
+.dialog_close_td {
+  width: 20px;
+}

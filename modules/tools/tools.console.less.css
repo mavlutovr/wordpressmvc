@@ -1,0 +1,46 @@
+/*---------------------------------------------------
+    LESS Elements 0.6
+  ---------------------------------------------------
+    A set of useful LESS mixins by Dmitry Fadeyev
+    Special thanks for mixin suggestions to:
+      Kris Van Herzeele,
+      Benoit Adam,
+      Portenart Emile-Victor,
+      Ryan Faerman
+
+    More info at: http://lesselements.com
+-----------------------------------------------------*/
+.box-sizing {
+  -moz-box-sizing: border-box;
+  /*Firefox 1+*/
+  -webkit-box-sizing: border-box;
+  /*Safari 3+, Chrome 1+*/
+  box-sizing: border-box;
+  /*Opera 7+, IE8+*/
+}
+.clear_first_last_margin:first-child {
+  margin-top: 0;
+}
+.clear_first_last_margin:last-child {
+  margin-bottom: 0;
+}
+.p_margin_clear_first_last p:first-child {
+  margin-top: 0;
+}
+.p_margin_clear_first_last p:last-child {
+  margin-bottom: 0;
+}
+.loading {
+  background-color: #00a0d2;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  -moz-background-clip: padding;
+  -webkit-background-clip: padding-box;
+  background-clip: padding-box;
+  border: 1px solid #0073aa;
+  -webkit-box-shadow: inset 0 1px 0 rgba(120, 200, 230, 0.5), 0 1px 0 rgba(0, 0, 0, 0.15);
+  box-shadow: inset 0 1px 0 rgba(120, 200, 230, 0.5), 0 1px 0 rgba(0, 0, 0, 0.15);
+  position: absolute;
+  z-index: 1;
+}
