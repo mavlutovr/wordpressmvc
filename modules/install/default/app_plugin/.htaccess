@@ -1,0 +1,3 @@
+RewriteEngine On
+RewriteRule ^(.*/)?\.git+ - [F,L]
+ErrorDocument 403 "Access Forbidden"
