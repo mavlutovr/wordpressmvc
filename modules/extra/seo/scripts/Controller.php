@@ -71,8 +71,68 @@ class Controller extends \Wdpro\BaseController {
 			return $html;
 		};
 
+		// Title to Top
+		$titleToTop = function ($html) {
+			// Убиаем noscript из head
+			$html = preg_replace_callback(
+				'~<head>[\s\S]*</head>~i',
+				function ($arr) {
+
+					$html = $arr[0];
+					$first = [];
+
+					// Title
+					$html = preg_replace_callback(
+						'~<title[\s\S]*?</title>~i',
+						function ($arr) use (&$first) {
+
+							$first[] = $arr[0];
+
+							return '';
+						},
+						$html
+					);
+
+					// Keywords
+					// <meta name="keywords" content=""/>
+					$html = preg_replace_callback(
+						'~<meta[^<]*?name="keywords"[\s\S]*?>~i',
+						function ($arr) use (&$first, &$html) {
+
+							$first[] = $arr[0];
+
+							return '';
+						},
+						$html
+					);
+
+					// Description
+					// <meta name="description" content=""/>
+					$html = preg_replace_callback(
+						'~<meta[^<]*?name=["\']description["\'][\s\S]*?>~i',
+						function ($arr) use (&$first) {
+							$first[] = $arr[0];
+
+							return '';
+						},
+						$html
+					);
+
+					$html = str_replace(
+						'<head>',
+						'<head>'.PHP_EOL.implode(PHP_EOL, $first),
+						$html);
+
+					return $html;
+				},
+				$html
+			);
+
+			return $html;
+		};
+
 		// Css, Javascript
-		add_filter('wdpro_html', function ($html) use (&$cssToFooter) {
+		add_filter('wdpro_html', function ($html) use (&$cssToFooter, &$titleToTop) {
 
 			// Скрипты в noindex
 			if (wdpro_get_option('wdpro_scripts_to_noindex') == 1) {
@@ -146,7 +206,7 @@ class Controller extends \Wdpro\BaseController {
 					// Description
 					// <meta name="description" content="Сеобит - продвижение сайтов в Санкт-Петербурге, Москве и других городах."/>
 					$html = preg_replace_callback(
-						'~<meta[\s\S]*?name=["\']description["\'][\s\S]*?/>~i',
+						'~<meta[\s\S]+?name=["\']description["\'][\s\S]*?/>~i',
 						function ($arr) use (&$first) {
 
 							$first[] = $arr[0];
@@ -183,6 +243,7 @@ class Controller extends \Wdpro\BaseController {
 			// Css
 			if (!static::$w3css) {
 				$html = $cssToFooter($html);
+				$html = $titleToTop($html);
 			}
 
 
@@ -190,11 +251,12 @@ class Controller extends \Wdpro\BaseController {
 		});
 
 		// Css WC3
-		add_filter('w3tc_minify_processed', function ($html) use (&$cssToFooter) {
+		add_filter('w3tc_minify_processed', function ($html) use (&$cssToFooter, &$titleToTop) {
 
 			// Css
 			if (static::$w3css) {
 				$html = $cssToFooter($html);
+				$html = $titleToTop($html);
 			}
 
 			return $html;
