@@ -143,11 +143,11 @@ href="'.WDPRO_CONSOLE_URL.'themes.php">Активировать тему</a>
 									'type'=>'checkbox',
 								),
 
-								array(
+								/*array(
 									'name'=>'wdpro_scripts_to_noindex',
 									'right'=>'Переместить скрипты в noindex (когда W3 Total Cache)',
 									'type'=>'checkbox',
-								),
+								),*/
 
 								array(
 									'name'=>'wdpro_css_to_footer',
