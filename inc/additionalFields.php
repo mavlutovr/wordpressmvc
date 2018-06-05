@@ -120,8 +120,9 @@ function wdpro_the_header()
 	$keywords = wdpro_get_post_meta('keywords');
 	
 ?><title><?php echo($title); ?></title>
-	<meta name="description" content="<?php echo( $description ); ?>" />
-	<meta name="keywords" content="<?php echo( $keywords ); ?>" />
+	<meta name="description" content="<?php echo( htmlspecialchars($description) );
+	?>" />
+	<meta name="keywords" content="<?php echo( htmlspecialchars($keywords) ); ?>" />
 
 	<meta charset="<?php bloginfo( 'charset' ); ?>" />
 <?php
