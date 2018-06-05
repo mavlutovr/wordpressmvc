@@ -123,6 +123,62 @@ class Controller extends \Wdpro\BaseController {
 
 			}
 
+			// Убиаем noscript из head
+			$html = preg_replace_callback(
+				'~<head>[\s\S]*</head>~i',
+				function ($arr) {
+
+					$html = $arr[0];
+					$first = [];
+
+					// Title
+					$html = preg_replace_callback(
+						'~<title[\s\S]*?</title>~i',
+						function ($arr) use (&$first) {
+
+							$first[] = $arr[0];
+
+							return '';
+						},
+						$html
+					);
+
+					// Description
+					// <meta name="description" content="Сеобит - продвижение сайтов в Санкт-Петербурге, Москве и других городах."/>
+					$html = preg_replace_callback(
+						'~<meta[\s\S]*?name=["\']description["\'][\s\S]*?/>~i',
+						function ($arr) use (&$first) {
+
+							$first[] = $arr[0];
+
+							return '';
+						},
+						$html
+					);
+
+					// Description
+					// <meta name="description" content="Сеобит - продвижение сайтов в Санкт-Петербурге, Москве и других городах."/>
+					$html = preg_replace_callback(
+						'~<meta[\s\S]*?name=["\']keywords["\'][\s\S]*?/>~i',
+						function ($arr) use (&$first) {
+
+							$first[] = $arr[0];
+
+							return '';
+						},
+						$html
+					);
+
+					$html = str_replace(
+						'<head>',
+						'<head>'.implode('', $first),
+						$html);
+
+					return $html;
+				},
+				$html
+			);
+
 
 			// Css
 			if (!static::$w3css) {
