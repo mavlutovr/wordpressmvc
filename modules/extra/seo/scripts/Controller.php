@@ -25,6 +25,7 @@ class Controller extends \Wdpro\BaseController {
 		// Css
 		add_filter('w3tc_minify_processed', function ($buffer) {
 
+			// Css To Footer
 			if (wdpro_get_option('wdpro_css_to_footer_w3tc') == 1) {
 
 				// <link rel="stylesheet" type="text/css" href="..." media="all" />
@@ -60,9 +61,9 @@ class Controller extends \Wdpro\BaseController {
 
 
 
-				return $buffer;
-
 			}
+
+			return $buffer;
 
 
 		});
