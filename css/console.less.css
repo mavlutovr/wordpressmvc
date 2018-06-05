@@ -246,3 +246,53 @@ a:hover .wdpro-rounded-count {
 .wp-submenu i.fa {
   display: none;
 }
+#ui-datepicker-div {
+  background: white;
+}
+.a {
+  color: #0073aa;
+  cursor: pointer;
+  border-bottom: 1px dashed #0073aa;
+}
+.a:hover {
+  color: #00a0d2;
+  border-bottom-color: #00a0d2;
+}
+.cke {
+  max-width: 800px;
+}
+.wdpro-edit-menu {
+  list-style: none;
+  padding: 10px 0;
+  margin-bottom: 25px;
+  border-bottom: 1px solid #DDD;
+}
+.wdpro-edit-menu li {
+  display: inline-block;
+  margin-right: 20px;
+}
+.wdpro-edit-menu a {
+  text-decoration: none;
+}
+.sortable-placeholder {
+  background: #eecbbb;
+}
+.sortable-placeholder td {
+  background: #eecbbb;
+  padding: 40px;
+}
+.wdpro-sorting-number {
+  cursor: row-resize;
+}
+.ui-sortable-helper {
+  background: white;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+}
+#wpadminbar .fa {
+  font: normal normal normal 18px/1 FontAwesome;
+}
+.wdpro-lang-menu img {
+  display: block;
+  border-radius: 5px;
+  border: 1px solid red;
+}

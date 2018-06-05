@@ -385,3 +385,17 @@ function remove_src_version ( $src ) {
 
 	return str_replace($version_str, '?u='.implode('-', $versions), $src);
 }
+
+
+// Ловим вывод и обрабатываем его
+// Например, помещаем скрипты в <noindex>
+ob_start();
+add_action('wp_footer', function () {
+
+	$html = ob_get_contents();
+
+	$html = apply_filters('wdpro_html', $html);
+
+	ob_clean();
+	echo $html;
+}, 1000);

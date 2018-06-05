@@ -7,6 +7,7 @@ class Controller extends \Wdpro\BaseController {
 	protected static $cssFileUrl;
 	protected static $cssFileHtmls='';
 	protected static $toNoindex = false;
+	protected static $w3css = false;
 
 
 
@@ -22,40 +23,44 @@ class Controller extends \Wdpro\BaseController {
 			static::printHead();
 		} );
 
-		// Css
-		add_filter('w3tc_minify_processed', function ($buffer) {
+		// W3 Total Cache
+		if (class_exists('\W3TC\Dispatcher')) {
+			static::$w3css = \W3TC\Dispatcher::config()->get_boolean( 'minify.css.enable' );
+		}
 
+		// Css to footer
+		$cssToFooter = function ($html) {
 			// Css To Footer
-			if (wdpro_get_option('wdpro_css_to_footer_w3tc') == 1) {
+			if (wdpro_get_option('wdpro_css_to_footer') == 1) {
 
 				// <link rel="stylesheet" type="text/css" href="..." media="all" />
 				// <link rel='stylesheet' id='bfa-font-awesome-css'  href='...' type='text/css'
 				// media='all' />
 
-				$buffer = preg_replace_callback(
+				$html = preg_replace_callback(
 					'~(<link.*?rel=["\']stylesheet["\'].*?>)~i',
 					function ($arr) {
 						static::$cssFileHtmls .= $arr[1];
 						return '';
 					},
-					$buffer
+					$html
 				);
 
 
 
-				if (strstr($buffer, '<!-- cssPlace -->')) {
-					$buffer = str_replace(
+				if (strstr($html, '<!-- cssPlace -->')) {
+					$html = str_replace(
 						'<!-- cssPlace -->',
 						static::$cssFileHtmls.PHP_EOL,
-						$buffer
+						$html
 					);
 				}
 
 				else {
-					$buffer = str_replace(
+					$html = str_replace(
 						'</body>',
 						static::$cssFileHtmls.PHP_EOL.'</body>',
-						$buffer
+						$html
 					);
 				}
 
@@ -63,9 +68,49 @@ class Controller extends \Wdpro\BaseController {
 
 			}
 
-			return $buffer;
+			return $html;
+		};
+
+		// Css, Javascript
+		add_filter('wdpro_html', function ($html) use (&$cssToFooter) {
+
+			// Скрипты в noindex
+			if (wdpro_get_option('wdpro_scripts_to_noindex') == 1) {
+
+				$html = preg_replace(
+					'~(</script>\s+<script)~i',
+					'</script><script',
+					$html
+				);
+
+				$html = preg_replace(
+					'~(<script[\S\s]*?</script>)~i',
+					'<noindex>$1</noindex>',
+					$html
+				);
+
+				$html = str_replace('</noindex><noindex>', '', $html);
+			}
 
 
+			// Css
+			if (!static::$w3css) {
+				$html = $cssToFooter($html);
+			}
+
+
+			return $html;
+		});
+
+		// Css WC3
+		add_filter('w3tc_minify_processed', function ($html) use (&$cssToFooter) {
+
+			// Css
+			if (static::$w3css) {
+				$html = $cssToFooter($html);
+			}
+
+			return $html;
 		});
 
 
@@ -111,15 +156,15 @@ class Controller extends \Wdpro\BaseController {
 
 		add_action('wp_'.$to, function () {
 		//	wp_print_styles();
-			static::$toNoindex && noindex_start();
+			//static::$toNoindex && noindex_start();
 			wp_enqueue_scripts();
-			static::$toNoindex && noindex_end();
+			//static::$toNoindex && noindex_end();
 		}, 1 );
 
 		add_action('wp_'.$to, function () {
-			static::$toNoindex && noindex_start();
+			//static::$toNoindex && noindex_start();
 			wp_print_head_scripts();
-			static::$toNoindex && noindex_end();
+			//static::$toNoindex && noindex_end();
 		}, 9 );
 
 	}

@@ -145,7 +145,7 @@ href="'.WDPRO_CONSOLE_URL.'themes.php">Активировать тему</a>
 
 								array(
 									'name'=>'wdpro_scripts_to_noindex',
-									'right'=>'Переместить скрипты в noindex',
+									'right'=>'Переместить скрипты в noindex (когда W3 Total Cache)',
 									'type'=>'checkbox',
 								),
 
