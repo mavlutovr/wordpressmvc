@@ -78,6 +78,8 @@ class Controller extends \Wdpro\BaseController {
 			if (wdpro_get_option('wdpro_scripts_to_noindex') == 1) {
 
 				// Убираем пробелы между скриптами
+				// Пробелы могут остаться в html коде, потому что после этого еще будут
+				// убираться html комментарии и заменяться на пробелы
 				$html = preg_replace(
 					'~(</script>\s*<script)~i',
 					'</script><script',
