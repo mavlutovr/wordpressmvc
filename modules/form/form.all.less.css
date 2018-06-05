@@ -39,6 +39,10 @@
 .wdpro-form-element .JS_left_text .wdpro-form-label {
   margin-left: 20px;
 }
+.wdpro-form-element-icon {
+  margin-right: 5px;
+  display: inline-block;
+}
 .wdpro-form-label {
   font-weight: bold;
 }

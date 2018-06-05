@@ -60,9 +60,10 @@
 }
 .loading,
 .loadingWhite {
+  animation-name: loadingAnimation;
+  animation-duration: 4s;
+  animation-iteration-count: infinite;
+  animation-timing-function: steps(16);
   background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQCAMAAAC5zwKfAAAADFBMVEUYV5L9//3+///////UOtrTAAAAA3RSTlMAYJ//OyGsAAAAf0lEQVR4Ae3MQQ3AMADEsKzhz3kUKjXPMwDzced4B+MR4xHjEeMR4xHjEeMR4xHjEeMR4xHjEeMR4xHjEeMR4xHjEeMR4xHjEeMR4xHjEeMR4xHjEeMR4xHjEeMR4xHjEeMR4xHjEeMR4xHjkROPvI0bN27cuHHjxo0bN27c+APRFiWBZzHP9wAAAABJRU5ErkJggg==");
-  -webkit-animation: loadingAnimation 2500ms infinite linear;
-  -moz-animation: loadingAnimation 2500ms infinite linear;
-  -ms-animation: loadingAnimation 2500ms infinite linear;
   box-sizing: border-box;
 }
