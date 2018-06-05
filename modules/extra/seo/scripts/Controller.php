@@ -131,9 +131,8 @@ class Controller extends \Wdpro\BaseController {
 			return $html;
 		};
 
-		// Css, Javascript
-		add_filter('wdpro_html', function ($html) use (&$cssToFooter, &$titleToTop) {
-
+		// Scripts To Noindex
+		$scriptsToNoindex = function ($html) {
 			// Скрипты в noindex
 			if (wdpro_get_option('wdpro_scripts_to_noindex') == 1) {
 
@@ -239,11 +238,17 @@ class Controller extends \Wdpro\BaseController {
 				$html
 			);
 
+			return $html;
+		};
 
-			// Css
+		// Css, Javascript
+		add_filter('wdpro_html', function ($html)
+		use (&$cssToFooter, &$titleToTop, &$scriptsToNoindex) {
+
 			if (!static::$w3css) {
 				$html = $cssToFooter($html);
 				$html = $titleToTop($html);
+				$html = $scriptsToNoindex($html);
 			}
 
 
@@ -251,12 +256,14 @@ class Controller extends \Wdpro\BaseController {
 		});
 
 		// Css WC3
-		add_filter('w3tc_minify_processed', function ($html) use (&$cssToFooter, &$titleToTop) {
+		add_filter('w3tc_minify_processed', function ($html)
+		use (&$cssToFooter, &$titleToTop, &$scriptsToNoindex) {
 
 			// Css
 			if (static::$w3css) {
 				$html = $cssToFooter($html);
 				$html = $titleToTop($html);
+				$html = $scriptsToNoindex($html);
 			}
 
 			return $html;
