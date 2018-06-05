@@ -46,6 +46,12 @@ if (is_file(WDPRO_TEMPLATE_PATH.'style.less'))
 		WDPRO_TEMPLATE_PATH.'style.less.css'
 	);
 	wdpro_add_css_to_site(WDPRO_TEMPLATE_PATH.'style.less.css');
+
+	// Удаляем из темы стандартный style.css
+	add_action('init', function () {
+		wp_dequeue_style('style.css');
+		wp_deregister_style('style.css');
+	});
 }
 
 

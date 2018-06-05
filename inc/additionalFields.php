@@ -166,7 +166,7 @@ function wdpro_scripts() {
 }
 
 function wdpro_the_footer() {
-	if (wdpro_get_option('wdpro_css_to_footer') == 1) { ?>
+	if (false && wdpro_get_option('wdpro_css_to_footer') == 1) { ?>
 		<link rel="stylesheet" href="<?php bloginfo('stylesheet_url'); ?>" type="text/css"
 		      media="screen"/>
 
