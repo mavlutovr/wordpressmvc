@@ -8,7 +8,7 @@
 
 ## Как работать сплагином?
 
-:book: Смотрите в папке [/docs/](https://github.com/mavlutovr/wordpressmvc/tree/master/docs)
+:book: Смотрите в папке [/Wiki/](https://github.com/mavlutovr/wordpressmvc/tree/master/Wiki)
 
 ## Что плагин дает?
 
