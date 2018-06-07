@@ -1,4 +1,4 @@
-[Страница плагина](https://github.com/mavlutovr/wordpressmvc)
+[Домашняя страница плагина](https://github.com/mavlutovr/wordpressmvc)
 
 # Wordpress MVC
 
