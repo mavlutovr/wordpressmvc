@@ -32,7 +32,7 @@ class EntityElement extends Element
 		}
 		return array(
 			'text'=>$text,
-			'uri'=>$this->entity->getUri($this->childsType),
+			'uri'=>$this->entity->getBreadcrumbsUrl($this->childsType),
 		);
 	}
 

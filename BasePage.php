@@ -129,6 +129,16 @@ class BasePage extends BaseEntity
 
 
 	/**
+	 * Возвращает адрес для хлебных крошек на сайте
+	 *
+	 * @return string
+	 */
+	public function getBreadcrumbsUrl() {
+		return wdpro_home_url_with_lang().$this->getData('post_name').'/';
+	}
+
+
+	/**
 	 * Возвращает адрес страницы с подразделами этого поста
 	 *
 	 * @param string|null $childsType Тип дочерних элементов
@@ -186,7 +196,8 @@ class BasePage extends BaseEntity
 	 */
 	public function getButtonText()
 	{
-		return get_post_field('post_title', $this->id());
+		return $this->getData('post_title[lang]');
+//		return get_post_field('post_title', $this->id());
 	}
 
 
