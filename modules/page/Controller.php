@@ -197,9 +197,13 @@ class Controller extends \Wdpro\BaseController {
 		// Карточка страницы
 		wdpro_on_content(function ($content, $page) {
 
+			// Преобразуем данные так, чтобы в основных данных были данные текущего языка
+			// То есть, если сейчас английский, то post_title будет английским, а не русским
+			$page->dataToCurrentLang();
+
 			/** @var $page \Wdpro\BasePage */
 			if (isset($page->data['post_content']))
-			$content = $page->getData('post_content[lang]');
+			$content = $page->getData('post_content');
 
 			/** @var \Wdpro\BasePage $page */
 			if ($page) {

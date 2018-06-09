@@ -535,6 +535,11 @@ abstract class BaseSqlTable
 
 							// Языковые поля
 							if (strstr($field['name'], '[lang]')) {
+								$fieldsLang = static::getStatic('fieldsLang');
+								if (!is_array($fieldsLang)) $fieldsLang = [];
+								$fieldsLang[] = str_replace('[lang]', '', $field['name']);
+								static::setStatic('fieldsLang', $fieldsLang);
+
 								foreach (\Wdpro\Lang\Data::getUris() as $lang) {
 
 									$field2 = $field;
@@ -1183,6 +1188,23 @@ abstract class BaseSqlTable
 		{
 			return '%s';
 		}
+	}
+
+
+	/**
+	 * Возвращает поля, которые имеют языки
+	 *
+	 * Этот массив содержит поля таблицы вместе с [lang], чтобы потом можно было
+	 * определить, какие данные преобразовывать к текущему языку. Например, открывается
+	 * страница на английском. И чтобы у нее post_title, post_content и другие штуки были
+	 * наанглийском, нужно определить, какие данные имеют перевод. И как раз для этого
+	 * нуженэтот массив
+	 *
+	 * @return array
+	 */
+	public static function getLangsFields() {
+		return static::getStatic('fieldsLang');
+//		return static::$fieldsLang;
 	}
 	
 }

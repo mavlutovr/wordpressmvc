@@ -17,12 +17,15 @@ class Entity extends \Wdpro\BasePage {
 		
 		// Дополнительная внешняя обработка текста
 		//$content = apply_filters('wdpro_blog_card_data', $content);
+		//$content = $this->data['post_content'.\Wdpro\Lang\Data::getCurrentSuffix()];
+
+		$data = $this->getDataWithPost();
 
 		// Возвращаем карточку страницы
 		$content = wdpro_render_php(
 			WDPRO_TEMPLATE_PATH.'blog_card.php',
 			// Дополнительная внешняя обработка текста
-			apply_filters('wdpro_blog_card_data', $this->getDataWithPost())
+			apply_filters('wdpro_blog_card_data', $data)
 		);
 	}
 

@@ -837,6 +837,18 @@ abstract class BaseEntity
 	}
 
 
+	/**
+	 * Преобразует данные таки образо, чтобы post_title, post_content и другие
+	 * переводимые на языки поля были равны текущему языку
+	 */
+	public function dataToCurrentLang() {
+		$table = static::sqlTable();
+
+		foreach ($table::getLangsFields() as $coll) {
+			$this->data[$coll] = $this->data[$coll.\Wdpro\Lang\Data::getCurrentSuffix()];
+		}
+	}
+
 }
 
 

@@ -26,13 +26,16 @@ class Controller extends \Wdpro\BaseController {
 	 */
 	public static function runSite() {
 
+		// Статьи
 		add_shortcode('blog_posts', function () {
 			
 			$post = get_post();
 			
 			return Roll::getHtml(
-				['WHERE `post_status`="publish" AND `post_parent`=%d
+				['WHERE `post_status`="publish" 
+				AND `post_parent`=%d
 				AND `in_menu`=1
+				AND `post_title[lang]`!=""
 				ORDER BY `menu_order` DESC', $post->ID]
 			);
 		});
