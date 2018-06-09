@@ -21,6 +21,9 @@ class Entity extends \Wdpro\BasePage {
 
 		$data = $this->getDataWithPost();
 
+		if (!count($data['tags']) ||
+		    (count($data['tags']) == 1 && !$data['tags'][0])) $data['tags'] = null;
+
 		// Возвращаем карточку страницы
 		$content = wdpro_render_php(
 			WDPRO_TEMPLATE_PATH.'blog_card.php',
