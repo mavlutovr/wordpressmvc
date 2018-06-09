@@ -677,13 +677,15 @@ abstract class BaseSqlTable
 							
 							
 							// Удаление
-							foreach($remove as $field)
-							{
-								$wpdb->query(
-									'ALTER TABLE `'
-									. static::getNameWithPrefix()
-									. '` DROP COLUMN ' . $field['Field']
-								);
+							if (wdpro_get_option('wdpro_sql_structure_drop_available')) {
+								foreach($remove as $field)
+								{
+									$wpdb->query(
+										'ALTER TABLE `'
+										. static::getNameWithPrefix()
+										. '` DROP COLUMN ' . $field['Field']
+									);
+								}
 							}
 						}
 					}
