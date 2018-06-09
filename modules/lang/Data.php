@@ -198,17 +198,40 @@ class Data {
 	public static function getDataForMenu() {
 		$data = static::getData();
 
+		$page = wdpro_current_page();
+
 		foreach($data as $i=>$datum) {
+
+			// Активный язык
 			$data[$i]['active'] = false;
 			if (Controller::getCurrentLangUri() == $datum['uri']) {
 				$data[$i]['active'] = true;
 			}
 
-			$url = home_url().'/';
+			// Определяем, есть ли перевод страницы на этот язык
+			$data[$i]['isLang'] = $page->isLang($datum['uri']);
+
+			// Главная
+			$isHome = $page->isHome();
+
+			// Адрес
+			// Главной на текущем языке
+			$homeUrl = home_url().'/';
 			if ($datum['uri']) {
-				$url .= $datum['uri'].'/';
+				$homeUrl .= $datum['uri'].'/';
 			}
-			$data[$i]['url'] = $url;
+
+			$data[$i]['homeUrl'] = $homeUrl;
+
+			// Адрес текущей страницы на этом языке
+			$data[$i]['pageUrl'] = $homeUrl;
+			if (!$isHome) {
+				$data[$i]['pageUrl'] .= $page->getUri().'/';
+			}
+
+			// Адрес для кнопки языка в зависимости от того, есть ли перевод или нет
+			$data[$i]['url'] = $data[$i]['isLang'] && !$isHome ?
+				$data[$i]['pageUrl'] : $homeUrl;
 		}
 
 		return $data;

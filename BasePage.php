@@ -359,4 +359,32 @@ class BasePage extends BaseEntity
 			'menu_order'=>$menu_order,
 		]);
 	}
+
+
+	/**
+	 * Проверяет, есть ли у страницы перевод на язык
+	 *
+	 * Это нужно, например, при формировании на сайте переключателя языков. Когда у
+	 * текущей страницы есть перевод на английский. То кнопка "EN" переключает на
+	 * английскуюверсию этой страницы. А если нет, то на главную.
+	 *
+	 * @param string $lang uri языка (ru, en)
+	 *
+	 * @return bool
+	 */
+	public function isLang($lang) {
+		$key = 'post_title'.\Wdpro\Lang\Data::getSuffix($lang);
+		return isset($this->data[$key]) && $this->data[$key];
+	}
+
+
+	/**
+	 * Возвращает true если это главная страница
+	 *
+	 * @return bool
+	 */
+	public function isHome() {
+		return get_option('show_on_front')
+		       && $this->id() == wdpro_get_option('page_on_front');
+	}
 }
