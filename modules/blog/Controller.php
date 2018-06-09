@@ -43,7 +43,7 @@ class Controller extends \Wdpro\BaseController {
 		// Статьи по тегам
 		add_shortcode('blog_tag_list', function () {
 			return Roll::getHtml([
-				'WHERE post_status="publish" AND in_menu=1 AND tags LIKE %s ORDER BY date_added',
+				'WHERE post_status="publish" AND in_menu=1 AND tags[lang] LIKE %s ORDER BY date_added',
 				['%"'.$_GET['tags'].'"%']
 			]);
 		});

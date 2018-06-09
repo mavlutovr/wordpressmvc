@@ -844,6 +844,7 @@
 		 * Выравнивание элементов в зависимости от ширины формы
 		 */
 		align: function () {
+
 			var self = this;
 			
 			if (this.params['align'])
@@ -861,7 +862,7 @@
 				var collsN = 0;
 
 				// Максимально количество попыток выравнивания
-				var alignMaxTryes = 30;
+				var alignMaxTryes = 40;
 
 				// Номер текущей попытки
 				var alignCurrentTry = 1;

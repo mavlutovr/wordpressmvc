@@ -1,4 +1,5 @@
 <?php
+
 namespace Wdpro\Lang;
 
 /**
@@ -12,8 +13,9 @@ namespace Wdpro\Lang;
 class Data {
 
 	protected static $jsonFileName = 'langs.json';
-	protected static $data=[];
+	protected static $data = [];
 	protected static $inited = false;
+	protected static $rootLangUri;
 
 
 	/**
@@ -21,13 +23,40 @@ class Data {
 	 *
 	 * @return bool
 	 */
-	protected static function init() {
-		if (static::$inited) return false;
+	protected static function init () {
+		if ( static::$inited ) {
+			return false;
+		}
 		static::$inited = true;
 
-		if (is_file(__DIR__.'/'.static::$jsonFileName)) {
-			$json = file_get_contents(__DIR__.'/'.static::$jsonFileName);
+		if ( is_file(__DIR__ . '/' . static::$jsonFileName) ) {
+			$json         = file_get_contents(__DIR__ . '/' . static::$jsonFileName);
 			static::$data = json_decode($json, 1);
+
+			// У первого языка делаем адреса без /ru/
+			$n = 0;
+			foreach ( static::$data['langs'] as $uri => $datum ) {
+
+				// Первый язык
+				if ( ! $n ) {
+					unset(static::$data['langs'][ $uri ]);
+					$datum['uri']              = '';
+					static::$data['langs'][''] = $datum;
+
+					// Запоминаем адрес главного языка, чтобы все-таки его знать
+					// Он нужен, например, при получении перевода Dictionary::get('...')
+					static::$rootLangUri = $uri;
+				}
+
+				// Другие языки
+				else {
+					// Это чтобы восстановить прежнюю сортировку
+					unset(static::$data['langs'][ $uri ]);
+					static::$data['langs'][ $uri ] = $datum;
+				}
+
+				$n ++;
+			}
 		}
 	}
 
@@ -42,42 +71,46 @@ class Data {
 	 *
 	 * @param array $data Данные
 	 */
-	public static function setData($data) {
-		static ::init();
+	public static function setData ($data) {
+		static::init();
 
-		$uris = [];
-		if (isset(static::$data['uris'])) {
+		if ( isset(static::$data['uris']) ) {
 			$uris = static::$data['uris'];
 		}
+		// Адрес первого языка делаем пустым
+		$uris[''] = '';
 
-		foreach ($data as $item) {
-			$uris[$item['uri']] = $item['uri'];
+		foreach ( $data as $n=>$item ) {
+			// Адрес не первого языка делаем обычный
+			if ($n) {
+				$uris[ $item['uri'] ] = $item['uri'];
+			}
 
-			$langs[$item['uri']] = $item;
+			$langs[ $item['uri'] ] = $item;
 		}
 
 		static::$data = [
-			'langs'=>$langs,
-			'time'=>time(),
-			'uris'=>$uris,
+			'langs' => $langs,
+			'time'  => time(),
+			'uris'  => $uris,
 		];
 
 		$json = json_encode(static::$data, JSON_PRETTY_PRINT);
-		file_put_contents(__DIR__.'/'.static::$jsonFileName, $json);
+		file_put_contents(__DIR__ . '/' . static::$jsonFileName, $json);
 	}
 
 
 	/**
 	 * Возвращает массив адресов языков [ '', 'en', 'de' ]
 	 */
-	public static function getUris() {
+	public static function getUris () {
 		static::init();
 
-		if (isset(static::$data['uris'])) {
+		if ( isset(static::$data['uris']) ) {
 			return static::$data['uris'];
 		}
 
-		return [''];
+		return [ '' ];
 	}
 
 
@@ -86,12 +119,12 @@ class Data {
 	 *
 	 * @return array
 	 */
-	public static function getSuffixes() {
+	public static function getSuffixes () {
 		static::init();
 
 		$ret = [];
 
-		if (isset(static::$data['uris'])) {
+		if ( isset(static::$data['uris']) ) {
 			foreach ( static::$data['uris'] as $uri ) {
 				$ret[] = static::getSuffix($uri);
 			}
@@ -120,9 +153,10 @@ class Data {
 	 *
 	 * @return mixed
 	 */
-	public static function replaceLangShortcode($string) {
+	public static function replaceLangShortcode ($string) {
 		$suffix = static::getSuffix(Controller::getCurrentLangUri());
 		$string = str_replace('[lang]', $suffix, $string);
+
 		return $string;
 	}
 
@@ -132,12 +166,12 @@ class Data {
 	 *
 	 * @return string
 	 */
-	public static function currentUrl() {
-		$url = home_url().'/';
+	public static function currentUrl () {
+		$url  = home_url() . '/';
 		$lang = Controller::getCurrentLangUri();
 
-		if ($lang) {
-			$url .= $lang.'/';
+		if ( $lang ) {
+			$url .= $lang . '/';
 		}
 
 		return $url;
@@ -152,7 +186,7 @@ class Data {
 	 *
 	 * @return string
 	 */
-	public static function getCurrentSuffix() {
+	public static function getCurrentSuffix () {
 		return static::getSuffix(Controller::getCurrentLangUri());
 	}
 
@@ -162,7 +196,7 @@ class Data {
 	 *
 	 * @return string
 	 */
-	public static function getCurrentLangUri() {
+	public static function getCurrentLangUri () {
 		return Controller::getCurrentLangUri();
 	}
 
@@ -174,13 +208,13 @@ class Data {
 	 *
 	 * @return array
 	 */
-	public static function getData($lang=null) {
+	public static function getData ($lang = null) {
 		static::init();
 
-		if (isset(static::$data['langs'])) {
-			if ($lang!==null) {
-				if (isset(static::$data['langs'][$lang])) {
-					return static::$data['langs'][$lang];
+		if ( isset(static::$data['langs']) ) {
+			if ( $lang !== null ) {
+				if ( isset(static::$data['langs'][ $lang ]) ) {
+					return static::$data['langs'][ $lang ];
 				}
 			}
 			else {
@@ -195,43 +229,43 @@ class Data {
 	 *
 	 * @return array
 	 */
-	public static function getDataForMenu() {
+	public static function getDataForMenu () {
 		$data = static::getData();
 
 		$page = wdpro_current_page();
 
-		foreach($data as $i=>$datum) {
+		foreach ( $data as $i => $datum ) {
 
 			// Активный язык
-			$data[$i]['active'] = false;
-			if (Controller::getCurrentLangUri() == $datum['uri']) {
-				$data[$i]['active'] = true;
+			$data[ $i ]['active'] = false;
+			if ( Controller::getCurrentLangUri() == $datum['uri'] ) {
+				$data[ $i ]['active'] = true;
 			}
 
 			// Определяем, есть ли перевод страницы на этот язык
-			$data[$i]['isLang'] = $page->isLang($datum['uri']);
+			$data[ $i ]['isLang'] = $page->isLang($datum['uri']);
 
 			// Главная
 			$isHome = $page->isHome();
 
 			// Адрес
 			// Главной на текущем языке
-			$homeUrl = home_url().'/';
-			if ($datum['uri']) {
-				$homeUrl .= $datum['uri'].'/';
+			$homeUrl = home_url() . '/';
+			if ( $datum['uri'] ) {
+				$homeUrl .= $datum['uri'] . '/';
 			}
 
-			$data[$i]['homeUrl'] = $homeUrl;
+			$data[ $i ]['homeUrl'] = $homeUrl;
 
 			// Адрес текущей страницы на этом языке
-			$data[$i]['pageUrl'] = $homeUrl;
-			if (!$isHome) {
-				$data[$i]['pageUrl'] .= $page->getUri().'/';
+			$data[ $i ]['pageUrl'] = $homeUrl;
+			if ( ! $isHome ) {
+				$data[ $i ]['pageUrl'] .= $page->getUri() . '/';
 			}
 
 			// Адрес для кнопки языка в зависимости от того, есть ли перевод или нет
-			$data[$i]['url'] = $data[$i]['isLang'] && !$isHome ?
-				$data[$i]['pageUrl'] : $homeUrl;
+			$data[ $i ]['url'] = $data[ $i ]['isLang'] && ! $isHome ?
+				$data[ $i ]['pageUrl'] : $homeUrl;
 		}
 
 		return $data;
@@ -246,8 +280,8 @@ class Data {
 	 *
 	 * @return int
 	 */
-	public static function getLastUpdateTime() {
-		if (isset(static::$data['time'])) {
+	public static function getLastUpdateTime () {
+		if ( isset(static::$data['time']) ) {
 			return static::$data['time'];
 		}
 	}
@@ -263,10 +297,12 @@ class Data {
 	 *
 	 * @return string
 	 */
-	public static function getSuffix($uri) {
-		if (!$uri) return '';
+	public static function getSuffix ($uri) {
+		if ( ! $uri ) {
+			return '';
+		}
 
-		return '_'.$uri;
+		return '_' . $uri;
 	}
 
 
@@ -277,9 +313,19 @@ class Data {
 	 *
 	 * @return string
 	 */
-	public static function getFlagSrc($lang) {
-		if ($data = static::getData($lang)) {
-			return WDPRO_UPLOAD_IMAGES_URL.$data['flag'];
+	public static function getFlagSrc ($lang) {
+		if ( $data = static::getData($lang) ) {
+			return WDPRO_UPLOAD_IMAGES_URL . $data['flag'];
 		}
+	}
+
+
+	/**
+	 * Возвращает адрес самого главного языка
+	 *
+	 * @return string
+	 */
+	public static function getRootLangUri () {
+		return static::$rootLangUri;
 	}
 }

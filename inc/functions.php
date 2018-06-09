@@ -1660,8 +1660,17 @@ function wdpro_mail( $to,
  */
 function wdpro_rdate($param, $time=0) {
 	if(intval($time)==0)$time=time();
-	if(strpos($param,'M')===false) return date($param, $time);
-	else return date(str_replace('M',wdpro_get_month($time),$param), $time);
+
+	if(strpos($param,'Month')===false) {
+		return date($param, $time);
+	}
+	else {
+		$param = str_replace('Month', '{{{---}}}', $param);
+		$month = wdpro_get_month($time);
+		$date = date($param, $time);
+
+		return str_replace('{{{---}}}', $month, $date);
+	}
 }
 
 
@@ -1673,22 +1682,8 @@ function wdpro_rdate($param, $time=0) {
  * @return string
  */
 function wdpro_get_month($time) {
-	$MonthNames = array(
-		"января",
-		"февраля",
-		"марта",
-		"апреля",
-		"мая",
-		"июня",
-		"июля",
-		"августа",
-		"сентября",
-		"октября",
-		"ноября",
-		"декабря",
-	);
 
-	return $MonthNames[date('n',$time)-1];
+	return \Wdpro\Lang\Dictionary::get('month_' . date('m',$time));
 }
 
 
@@ -1705,7 +1700,7 @@ function wdpro_date($time, $params=null)
 		'year'=>false,
 		'today'=>true,
 		'time'=>false,
-		'dateFormat'=>'d M Y',
+		'dateFormat'=>'d Month Y',
 		'timeFormat'=>', H:i',
 	), $params);
 

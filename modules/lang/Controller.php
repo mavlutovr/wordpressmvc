@@ -13,6 +13,7 @@ class Controller extends \Wdpro\BaseController {
 
 
 		$uri = $_SERVER['REQUEST_URI'];
+		$setted = false;
 
 		foreach(Data::getUris() as $langUri) {
 			if (strstr($uri, '/'.$langUri.'/')) {
@@ -21,7 +22,12 @@ class Controller extends \Wdpro\BaseController {
 				//$_SERVER['REDIRECT_URL'] = $uri;
 				//print_r($_SERVER); exit();
 				static::setCurrentLang($langUri);
+				$setted = true;
 			}
+		}
+
+		if (!$setted) {
+			static::setCurrentLang('');
 		}
 	}
 
