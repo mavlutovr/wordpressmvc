@@ -342,7 +342,8 @@ function wdpro_current_url($queryChanges=null)
 {
 	if ($queryChanges)
 	{
-		$uri = $_SERVER['REQUEST_URI_ORIGINAL'];
+		$uri = '';
+		if (isset($_SERVER['REQUEST_URI_ORIGINAL'])) $uri = $_SERVER['REQUEST_URI_ORIGINAL'];
 		if (!$uri) $uri = $_SERVER['REQUEST_URI'];
 
 		$arr = parse_url($uri);
