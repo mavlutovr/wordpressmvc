@@ -13,6 +13,7 @@ class Controller extends \Wdpro\BaseController {
 
 
 		$uri = $_SERVER['REQUEST_URI'];
+		$_SERVER['REQUEST_URI_ORIGINAL'] = $uri;
 		$setted = false;
 
 		foreach(Data::getUris() as $langUri) {
