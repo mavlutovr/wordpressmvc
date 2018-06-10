@@ -1193,7 +1193,7 @@
 								{
 									maxWidth =
 										Math.max(maxWidth,
-											$(element['autoWidth']).width());
+											$(element['autoWidth']).outerWidth(true));
 								}
 							}
 						});
@@ -1222,7 +1222,7 @@
 
 									// Передвигаем фиелд, увеличивая на данное значение ширину левого текста
 									// Получаем текущую ширину
-									var leftWidth = $(element.leftText).width();
+									var leftWidth = $(element.leftText).outerWidth(true);
 
 									// Увеличиваем текущую ширину
 									leftWidth += plus;
@@ -1231,12 +1231,12 @@
 									leftWidth = Math.round(leftWidth);
 
 									// Применяем новую ширину к левому блоку
-									$(element.leftText).width(leftWidth);
+									$(element.leftText).outerWidth(leftWidth);
 
 									//$(element.field).find('input,textarea').val('coll: '+columnN+', group:'+groupI);
 
 									// Применяем новую ширину к блоку фиелда
-									$(element['autoWidth']).width(maxWidth);
+									$(element['autoWidth']).outerWidth(maxWidth);
 								}
 
 								groupI++;
@@ -1353,8 +1353,8 @@
 
 					if ($(left).length)
 					{
-						var width = $(this).find('.JS_left_equalizing_source').width();
-						$(left).width(width);
+						var width = $(this).find('.JS_left_equalizing_source').outerWidth(true);
+						$(left).outerWidth(width);
 					}
 				});
 			}
