@@ -62,6 +62,16 @@ class Data {
 
 
 	/**
+	 * Возвращает true, если языки включены
+	 *
+	 * @return bool
+	 */
+	public static function enabled() {
+		return isset(static::$data['langs']);
+	}
+
+
+	/**
 	 * Сохранение данных о языках
 	 *
 	 * Здесь специально сделано так, чтобы из uris не удалялись данные. Чтобы при

@@ -161,7 +161,7 @@ class PagesRoll extends Roll
 				}
 
 				// Языки
-				if (wdpro_is_admin())
+				if (wdpro_is_admin() && \Wdpro\Lang\Data::enabled())
 				add_action('admin_bar_menu', function ($admin_bar) {
 
 					foreach (\Wdpro\Lang\Data::getData() as $lang) {
