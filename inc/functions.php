@@ -2696,3 +2696,30 @@ function wdpro_is_admin() {
 function wdpro_add_slash_to_end(&$str) {
 	$str = rtrim($str, '/') . '/';
 }
+
+
+$wdproData = [];
+
+/**
+ * Запоминает или возвращает что-нибудь
+ *
+ * Например, сначала можно что-то запомнить
+ * А потом вывести в шаблоне страницы
+ *
+ * @param string $name Имя данных
+ * @param string|mixed $value Значение
+ *
+ * @return string|mixed
+ */
+function wdpro_data($name, $value='WDPRO_NOT_SETTED_SO_RETURN_VALUE') {
+	global $wdproData;
+	if ($value === 'WDPRO_NOT_SETTED_SO_RETURN_VALUE') {
+		if (isset($wdproData[$name])) {
+			return $wdproData[$name];
+		}
+	}
+
+	else {
+		$wdproData[$name] = $value;
+	}
+}

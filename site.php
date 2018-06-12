@@ -173,10 +173,13 @@ wdpro_get_post(function ($post) {
 	if ($post) {
 		global $breadcrumbs;
 		$breadcrumbs = new \Wdpro\Breadcrumbs\Breadcrumbs();
-		$breadcrumbs->makeFrom(wdpro_object_by_post_id($post->ID));
+		$post = wdpro_object_by_post_id($post->ID);
+		$breadcrumbs->makeFrom($post);
 
 		// Дополнительная обработка хлебных крошек
 		do_action('wdpro_breadcrumbs_init', $breadcrumbs);
+
+		$post->initSite();
 	}
 });
 
