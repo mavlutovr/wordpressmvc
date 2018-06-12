@@ -338,4 +338,20 @@ class Data {
 	public static function getRootLangUri () {
 		return static::$rootLangUri;
 	}
+
+
+	/**
+	 * Возвращает адрес языка даже если он основной
+	 *
+	 * Так как адрес основного языка пустой. То есть не /en/, /de/, а /
+	 * То этот метод вместо пустоты возвращает ru
+	 *
+	 * @return string
+	 */
+	public static function getCurrentLangUriNotEmpty() {
+		$uri = static::getCurrentLangUri();
+		if (!$uri) $uri = static::getRootLangUri();
+
+		return $uri;
+	}
 }
