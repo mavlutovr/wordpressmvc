@@ -241,7 +241,7 @@ class Controller extends \Wdpro\BaseController {
 			return $html;
 		};
 
-		// Css, Javascript
+		// Css, Javascript, mail
 		add_filter('wdpro_html', function ($html)
 		use (&$cssToFooter, &$titleToTop, &$scriptsToNoindex) {
 
@@ -251,6 +251,55 @@ class Controller extends \Wdpro\BaseController {
 				$html = $scriptsToNoindex($html);
 			}
 
+			// Интиспам ящиков
+			if (wdpro_get_option('wdpro_mail_antispam')) {
+
+				$isMail = false;
+
+				$html = preg_replace_callback(
+
+					'~<a[^<]+?'
+
+					.'([\.\-a-zа-я0-9]+@[a-zа-я0-9\-]+\.[a-zа-я]+)'
+
+					.'[\s\S]+?</a>~ui',
+
+					function ($arr) use (&$isMail) {
+
+						$isMail = true;
+						$html = $arr[0];
+
+						$html = base64_encode($html);
+
+						return '<span class="js-mail-antispam-protect" style="display: none;">'
+						       .$html
+						       .'</span>';
+					},
+					$html
+				);
+
+				$html = preg_replace_callback(
+					'~'
+					//	.'>[^[<>"]]*?'
+					.'([\.\-a-zа-я0-9]+@[a-zа-я0-9\-]+\.[a-zа-я]+)'
+					//.'^[<>"]*?<'
+					.'~ui',
+					function ($arr) use (&$isMail) {
+
+						$isMail = true;
+						$html = $arr[0];
+						$html = base64_encode($html);
+						return '<span class="js-mail-antispam-protect" style="display: none;">'
+						       .$html
+						       .'</span>';
+					},
+					$html
+				);
+
+				if ($isMail) {
+					$html .= '<script>window.wdpro_mail_antispam = true;</script>';
+				}
+			}
 
 			return $html;
 		});

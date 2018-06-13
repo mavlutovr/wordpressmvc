@@ -8,7 +8,12 @@ var wdpro = {
 	// Константы
 	WDPRO_TEMPLATE_URL: '',
 	WDPRO_UPLOAD_IMAGES_URL: '',
-	WDPRO_HOME_URL: ''
+	WDPRO_HOME_URL: '',
+
+	// base64_decode
+	base64_decode: function (str) {
+		return decodeURIComponent(escape(window.atob( str )));
+	}
 };
 
 

@@ -173,6 +173,13 @@ href="'.WDPRO_CONSOLE_URL.'themes.php">Активировать тему</a>
 								),
 
 								array(
+									'name'=>'wdpro_mail_antispam',
+									'type'=>'checkbox',
+									'right'=>'Включить защиту ящиков, размещенных на сайте от спама',
+									'bottom'=>'Это имеет смысл, когда на сайте есть ящики, размещенные как ссылки. Например, <a href="mailto:info@'.str_replace('www.', '', $_SERVER['HTTP_HOST']).'">info@'.str_replace('www.', '', $_SERVER['HTTP_HOST']).'</a>. Чтобы потом спам боты не слали на эти ящики спам.',
+								),
+
+								array(
 									'name'=>'wdpro_keep_standart_editor',
 									'right'=>'Оставить стандартный редактор',
 									'type'=>'checkbox',
