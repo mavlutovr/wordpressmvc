@@ -482,6 +482,7 @@
 */
 {template .selectField}
 {if ($attrs['nothing'])}{/if}
+<div>
 <select {call .attrs data="all" /}>
 
 	{foreach $n in keys($data['options'])}
@@ -491,6 +492,10 @@
 	{/foreach}
 
 </select>
+{if ($data['multiple'])}
+<div class="wdpro-form-select-multiple-info">Удерживайте CTRL, чтобы выбрать несколько</div>
+{/if}
+</div>
 {/template}
 
 

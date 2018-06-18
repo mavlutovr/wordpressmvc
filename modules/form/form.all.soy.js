@@ -183,14 +183,14 @@ if (goog.DEBUG) {
 
 
 wdpro.templates.forms.selectField = function(opt_data, opt_ignored) {
-  var output = ((opt_data.attrs['nothing']) ? '' : '') + '<select ' + wdpro.templates.forms.attrs(opt_data) + '>';
+  var output = ((opt_data.attrs['nothing']) ? '' : '') + '<div><select ' + wdpro.templates.forms.attrs(opt_data) + '>';
   var nList315 = soy.$$getMapKeys(opt_data.data['options']);
   var nListLen315 = nList315.length;
   for (var nIndex315 = 0; nIndex315 < nListLen315; nIndex315++) {
     var nData315 = nList315[nIndex315];
     output += '<option value="' + soy.$$escapeHtml(opt_data.data['options'][nData315][0]) + '"' + ((opt_data.data['value'] == opt_data.data['options'][nData315][0]) ? ' selected="selected"' : '') + '>' + soy.$$escapeHtml(opt_data.data['options'][nData315][1]) + '</option>';
   }
-  output += '</select>';
+  output += '</select>' + ((opt_data.data['multiple']) ? '<div class="wdpro-form-select-multiple-info">\u0423\u0434\u0435\u0440\u0436\u0438\u0432\u0430\u0439\u0442\u0435 CTRL, \u0447\u0442\u043E\u0431\u044B \u0432\u044B\u0431\u0440\u0430\u0442\u044C \u043D\u0435\u0441\u043A\u043E\u043B\u044C\u043A\u043E</div>' : '') + '</div>';
   return output;
 };
 if (goog.DEBUG) {
