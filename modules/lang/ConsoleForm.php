@@ -38,6 +38,12 @@ class ConsoleForm extends \Wdpro\Form\Form {
 			'type'=>static::IMAGE,
 		]);
 
+		$this->add([
+			'name'=>'visible',
+			'left'=>'Показывать на сайте',
+			'type'=>static::CHECK,
+		]);
+
 		$this->add(static::SORTING);
 
 		$this->add(static::SUBMIT_SAVE);

@@ -244,41 +244,52 @@ class Data {
 
 		$page = wdpro_current_page();
 
-		foreach ( $data as $i => $datum ) {
+		$return = [];
 
-			// Активный язык
-			$data[ $i ]['active'] = false;
-			if ( Controller::getCurrentLangUri() == $datum['uri'] ) {
-				$data[ $i ]['active'] = true;
+		foreach ( $data as $datum ) {
+
+			// Если язык включен
+			if ($datum['visible'] == 1) {
+				// Активный язык
+				$datum['active'] = false;
+				if ( Controller::getCurrentLangUri() == $datum['uri'] ) {
+					$datum['active'] = true;
+				}
+
+				// Определяем, есть ли перевод страницы на этот язык
+				$datum['isLang'] = $page->isLang($datum['uri']);
+
+				// Главная
+				$isHome = $page->isHome();
+
+				// Адрес
+				// Главной на текущем языке
+				$homeUrl = home_url() . '/';
+				if ( $datum['uri'] ) {
+					$homeUrl .= $datum['uri'] . '/';
+				}
+
+				$datum['homeUrl'] = $homeUrl;
+
+				// Адрес текущей страницы на этом языке
+				$datum['pageUrl'] = $homeUrl;
+				if ( ! $isHome ) {
+					$datum['pageUrl'] .= $page->getUri() . '/';
+				}
+
+				// Адрес для кнопки языка в зависимости от того, есть ли перевод или нет
+				$datum['url'] = $datum['isLang'] && ! $isHome ?
+					$datum['pageUrl'] : $homeUrl;
+
+				$return[] = $datum;
 			}
-
-			// Определяем, есть ли перевод страницы на этот язык
-			$data[ $i ]['isLang'] = $page->isLang($datum['uri']);
-
-			// Главная
-			$isHome = $page->isHome();
-
-			// Адрес
-			// Главной на текущем языке
-			$homeUrl = home_url() . '/';
-			if ( $datum['uri'] ) {
-				$homeUrl .= $datum['uri'] . '/';
-			}
-
-			$data[ $i ]['homeUrl'] = $homeUrl;
-
-			// Адрес текущей страницы на этом языке
-			$data[ $i ]['pageUrl'] = $homeUrl;
-			if ( ! $isHome ) {
-				$data[ $i ]['pageUrl'] .= $page->getUri() . '/';
-			}
-
-			// Адрес для кнопки языка в зависимости от того, есть ли перевод или нет
-			$data[ $i ]['url'] = $data[ $i ]['isLang'] && ! $isHome ?
-				$data[ $i ]['pageUrl'] : $homeUrl;
 		}
 
-		return $data;
+		if (count($return) > 1) {
+			return $return;
+		}
+
+		return [];
 	}
 
 

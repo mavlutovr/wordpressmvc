@@ -5,6 +5,7 @@ namespace Wdpro\Lang;
  * Основная сущность модуля
  */
 class Entity extends \Wdpro\BaseEntity {
+
 	/**
 	 * Срабатывает после сохранения
 	 */

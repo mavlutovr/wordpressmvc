@@ -2723,3 +2723,18 @@ function wdpro_data($name, $value='WDPRO_NOT_SETTED_SO_RETURN_VALUE') {
 		$wdproData[$name] = $value;
 	}
 }
+
+
+/**
+ * Возвращает html код калочки
+ *
+ * @param string $visible true, 1 - Отображать галочку
+ * @param string $title   Текст всплаывающей подсказки
+ *
+ * @return string
+ */
+function wdpro_check_html($visible, $title='') {
+	if ($visible) {
+		return '<i class="fa fa-check" aria-hidden="true" title="'.$title.'"></i>';
+	}
+}

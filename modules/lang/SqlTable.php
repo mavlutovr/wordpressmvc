@@ -32,6 +32,7 @@ class SqlTable extends \Wdpro\BaseSqlTable {
 		return [
 			static::COLLS => [
 				'id',
+				'visible'=>'tinyint',
 				'sorting'=>'int',
 				'uri',
 				'name',

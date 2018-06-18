@@ -488,10 +488,9 @@ class PagesRoll extends Roll
 							
 							// В меню
 							if ($column == 'wdpro_in_menu') {
-								if (wdpro_get_post_by_id($postId)->getData('in_menu')) {
-									echo '<i class="fa fa-check" aria-hidden="true" title="Эта страница отображается в меню"></i>';
-								}
-								//echo(get_post_meta($postId, 'in_menu', true));
+								echo wdpro_check_html(
+									wdpro_get_post_by_id($postId)->getData('in_menu'),
+									'Эта страница отображается в меню');
 							}
 						}
 					};
