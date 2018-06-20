@@ -195,7 +195,9 @@ class Menu extends Roll
 				$row['attrs'] = '';
 				$row['before'] = '';
 				$row['after'] = '';
-				$alternativeUrl = get_post_field('alternative_url', $row['id']);
+				$alternativeUrl = get_post_field(
+					'alternative_url'.\Wdpro\Lang\Data::getCurrentSuffix(),
+					$row['id']);
 				if ($alternativeUrl)
 				{
 					if (preg_match('~^http://~', $alternativeUrl)) {

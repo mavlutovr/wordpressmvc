@@ -14,7 +14,7 @@ function wdproShowMetaForm($post)
 	$form = new \Wdpro\Form\Form('wdpro');
 
 	$form->add([
-		'name'=>'alternative_url',
+		'name'=>'alternative_url[lang]',
 		'top'=>'Ссылка на другую страницу или другой сайт',
 	]);
 
