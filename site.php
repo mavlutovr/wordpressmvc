@@ -179,6 +179,7 @@ wdpro_get_post(function ($post) {
 		// Дополнительная обработка хлебных крошек
 		do_action('wdpro_breadcrumbs_init', $breadcrumbs);
 
+		if (method_exists($post, 'initSite'))
 		$post->initSite();
 	}
 });

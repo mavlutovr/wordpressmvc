@@ -1,7 +1,9 @@
 <?php
+
 namespace App\Menu\Top;
 
-class ConsoleForm extends \Wdpro\Form\Form {
+class ConsoleForm extends \Wdpro\Form\Form
+{
 
 	/**
 	 * Инициализация полей
@@ -9,8 +11,14 @@ class ConsoleForm extends \Wdpro\Form\Form {
 	 * Здесь поля добавляются в дочерних классах через $this->add(array(...)) когда они
 	 * не добавлены через конструктор
 	 */
-	protected function initFields() {
+	protected function initFields()
+	{
 
+		$this->add([
+			'name' => 'post_content[lang]',
+			'top' => 'Текст страницы',
+			'type' => static::CKEDITOR,
+		]);
 	}
 
 

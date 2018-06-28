@@ -1203,7 +1203,9 @@ abstract class BaseSqlTable
 	 * @return array
 	 */
 	public static function getLangsFields() {
-		return static::getStatic('fieldsLang');
+		$langFields = static::getStatic('fieldsLang');
+		if (!$langFields) $langFields = [];
+		return $langFields;
 //		return static::$fieldsLang;
 	}
 	

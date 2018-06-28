@@ -37,7 +37,7 @@ class SqlTable extends \Wdpro\BaseSqlTable {
 				'post_status',
 				'post_title',
 				'post_name',
-
+				'post_content'=>'longtext',
 			],
 
 			static::ENGINE => static::INNODB,
