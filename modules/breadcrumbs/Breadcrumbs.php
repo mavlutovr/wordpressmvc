@@ -435,4 +435,14 @@ class Breadcrumbs
 	public function removeLast($remove=true) {
 		static::$removeLast = $remove;
 	}
+
+
+	/**
+	 * Установка минимального количества элементов в хлебных крошках, когда хлебные крошки отображаются
+	 *
+	 * @param $min
+	 */
+	public function setMin($min) {
+		static::$min = $min;
+	}
 }
