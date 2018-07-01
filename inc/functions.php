@@ -2738,3 +2738,19 @@ function wdpro_check_html($visible, $title='') {
 		return '<i class="fa fa-check" aria-hidden="true" title="'.$title.'"></i>';
 	}
 }
+
+
+/**
+ * Срабатывает после инициализации страницы
+ *
+ * Когда уже известно, что за страница открыта, что в хлебных крошках...
+ *
+ * @param callable $callback Каллбэк, в который отправляется объект страницы
+ */
+function wdpro_on_page_init($callback) {
+	add_action('wdpro_breadcrumbs_init', function ($breadcrumbs) use (&$callback) {
+		/** @var $breadcrumbs \Wdpro\Breadcrumbs\Breadcrumbs */
+
+		$callback($breadcrumbs->getFirstEntity());
+	});
+}

@@ -309,9 +309,17 @@ class PagesRoll extends Roll
 										$actions['view']
 									);
 								}*/
-								$actions['view'] = '<a href="' . home_url($post->post_name) . '"
+
+								// Удаляе параметры, которые редактируются без открытия страницы редактироваания
+								// Это чтобы адрес менялся только из формы редактирования
+								// И он нормально обрабатывался, сохраняясь везде где нужно
+								unset($actions['inline hide-if-no-js']);
+
+								// Адрес страницы
+								$actions['view'] = '<div class="g-inline-block" title="Адрес страницы">
+<a href="' . home_url($post->post_name) . '"
  class="dashicons dashicons-external js-post-link_"
- target="_blank"></a>';
+ target="_blank"></a> ' . $post->post_name . '</div>';
 
 								// Редактировать
 								$actions['edit'] = preg_replace(
