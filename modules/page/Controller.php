@@ -782,7 +782,7 @@ class Controller extends \Wdpro\BaseController {
 						wdpro_create_post($data);
 
 						// Редирект
-						wdpro_location(wdpro_current_url(['postAdded'=>1]));
+						wdpro_location(wdpro_current_uri(['postAdded'=>1]));
 					}
 				}
 				

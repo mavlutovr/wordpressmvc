@@ -197,7 +197,7 @@ class Pagination {
 	
 	public function getUrlForPage($pageNumber) {
 		
-		return wdpro_current_url(array(
+		return wdpro_current_uri(array(
 			$this->params['key'] => $pageNumber > 1 ? $pageNumber : null,
 		));
 	}

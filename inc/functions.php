@@ -333,12 +333,12 @@ function wdpro_array_remove_by_value(&$array, $value) {
 
 
 /**
- * Возвращает адрес текущей страницы
+ * Возвращает относительный адрес текущей страницы
  *
  * @param null|array $queryChanges Изменить параметры QUERY_STRING согласно этому массиву
  * @return string
  */
-function wdpro_current_url($queryChanges=null)
+function wdpro_current_uri($queryChanges=null)
 {
 	if ($queryChanges)
 	{
@@ -386,6 +386,19 @@ function wdpro_current_url($queryChanges=null)
 	{
 		return $_SERVER['REQUEST_URI'];
 	}
+}
+
+
+/**
+ * Возвращает абсолютный адрес текущей страницы
+ *
+ * @param null|array $queryChanges Изменить параметры QUERY_STRING согласно этому массиву
+ * @return string
+ */
+function wdpro_current_url($queryChanges=null) {
+	$uri = wdpro_current_uri($queryChanges);
+
+	return home_url().$uri;
 }
 
 
