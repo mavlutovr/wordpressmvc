@@ -55,14 +55,17 @@ class Breadcrumbs
 
 	/**
 	 * Создание структуры пути хлебных крошек
-	 * 
+	 *
 	 * @param \Wdpro\BasePage $entity Конечная (текущая) страница
+	 * @throws \Exception
 	 */
 	public function makeFrom($entity)
 	{
 		if ($entity)
 		{
+			if (!isset($this->firstEntity))
 			$this->firstEntity = $entity;
+
 			$element = new EntityElement($entity);
 			$this->prepend($element);
 			
@@ -182,12 +185,23 @@ class Breadcrumbs
 
 	/**
 	 * Возвращает объект самой первой страницы в пути страниц
-	 * 
+	 *
 	 * @return \Wdpro\BaseEntity
 	 */
 	public function getFirstEntity()
 	{
 		return $this->firstEntity;
+	}
+
+
+	/**
+	 * Возвращает объект текущей страницы
+	 *
+	 * @return \Wdpro\BaseEntity
+	 */
+	public function getCurrentPage()
+	{
+		return $this->getFirstEntity();
 	}
 
 
