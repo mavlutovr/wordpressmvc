@@ -192,6 +192,14 @@ class Controller extends \Wdpro\BaseController {
 				return do_shortcode($post->post_content);
 			}
 		});
+
+
+		// Инициализация страницы до отправки html кода в браузер
+		wdpro_on_page_init(function ($page) {
+			/** @var $page \App\BasePage */
+
+			$page->initCard();
+		});
 		
 		
 		// Карточка страницы

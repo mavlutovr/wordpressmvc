@@ -51,6 +51,17 @@ class BasePage extends BaseEntity
 
 
 	/**
+	 * Инициализация страницы до отправки html кода в браузер
+	 */
+	public function initCard() {
+
+		if (isset($this->data['image']) && $this->data['image']) {
+			wdpro_data('ogImage', WDPRO_UPLOAD_IMAGES_URL.$this->data['image']);
+		}
+	}
+
+
+	/**
 	 * Инициализация текущей страницы, когда она открывается
 	 *
 	 * Этот метод срабатывает еще до getCard
