@@ -114,7 +114,8 @@ class Data {
 		];
 
 		$json = json_encode(static::$data, JSON_PRETTY_PRINT);
-		file_put_contents(__DIR__ . '/' . static::getJsonFileName(), $json);
+		$path = __DIR__ . '/' . static::getJsonFileName();
+		file_put_contents($path, $json);
 	}
 
 
