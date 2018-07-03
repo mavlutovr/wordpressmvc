@@ -6,7 +6,7 @@ namespace Wdpro;
  * 
  * @package Wdpro
  */
-class BaseRoll
+abstract class BaseRoll
 {
 	use Tools;
 }

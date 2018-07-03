@@ -2,7 +2,7 @@
 namespace Wdpro;
 
 
-class BaseController {
+abstract class BaseController {
 
 	use Tools;
 

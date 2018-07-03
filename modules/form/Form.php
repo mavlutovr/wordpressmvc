@@ -171,7 +171,7 @@ class Form
 	/**
 	 * Добавляет поле в форму
 	 *
-	 * @param array $params Параметры
+	 * @param array|string $params Параметры
 	 */
 	public function add($params)
 	{

@@ -2,7 +2,7 @@
 namespace Wdpro;
 
 
-class BasePage extends BaseEntity
+abstract class BasePage extends BaseEntity
 {
 
 	/**
