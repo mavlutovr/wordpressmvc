@@ -118,6 +118,24 @@ function wdpro_the_header()
 	}
 	$description = wdpro_get_post_meta('description');
 	$keywords = wdpro_get_post_meta('keywords');
+
+	// Картинка для Поделиться
+	// Из Wdpro
+	$ogImage = wdpro_data('ogImage');
+	if (!$ogImage) {
+		$page = wdpro_current_page();
+		if (isset($page->data['image'])) {
+			$ogImage = WDPRO_UPLOAD_IMAGES_URL.$page->data['image'];
+		}
+	}
+	// Стандартная
+	if (!$ogImage) {
+		$post = get_post();
+		if ($post) {
+			$image = wp_get_attachment_image_src(get_post_thumbnail_id($post->ID), 'single-post-thumbnail');
+			$ogImage = $image[0];
+		}
+	}
 	
 ?><title><?php echo($title); ?></title>
 	<meta name="description" content="<?php echo( htmlspecialchars($description) );
@@ -125,6 +143,10 @@ function wdpro_the_header()
 	<meta name="keywords" content="<?php echo( htmlspecialchars($keywords) ); ?>" />
 
 	<meta charset="<?php bloginfo( 'charset' ); ?>" />
+	<meta property="og:title" content="<?=$title?>">
+	<meta property="og:description" content="<?=htmlspecialchars($description)?>">
+	<meta property="og:image" content="<?=$ogImage?>">
+	<meta property="og:url" content="<?=wdpro_current_url()?>">
 <?php
 
 

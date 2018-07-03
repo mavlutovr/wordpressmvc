@@ -172,7 +172,7 @@ class Roll extends BaseRoll
 					// Добавляем "Фотогалерея" в конец хлебных крошек
 					$breadcrumbs->append([
 						'text' => $params['labels']['label'],
-						'uri'  => wdpro_current_url(['id'=>null, 'action'=>null]),
+						'uri'  => wdpro_current_uri(['id'=>null, 'action'=>null]),
 					]);
 				}
 
@@ -188,7 +188,7 @@ class Roll extends BaseRoll
 			else {
 				$breadcrumbs->getPrepend( 0 )
 					//->setComment( $params['labels']['label'] )
-					->setUri(wdpro_current_url(array(
+					->setUri(wdpro_current_uri(array(
 						'action' => null,
 					)))
 				;
@@ -199,7 +199,7 @@ class Roll extends BaseRoll
 		// Сами по себе, не прикрепленные к странице
 		else {
 			$breadcrumbs->append(array(
-				'uri'=>wdpro_current_url( array(
+				'uri'=>wdpro_current_uri( array(
 					'action' => null,
 				)),
 				'text'=>$params['labels']['label'],
@@ -264,7 +264,7 @@ class Roll extends BaseRoll
 
 				// Переход к предыдущей странице
 				wdpro_location(
-					wdpro_current_url(array(
+					wdpro_current_uri(array(
 						'action'=>null,
 						'id'=>null,
 						'mes'=>'added',
@@ -285,7 +285,7 @@ class Roll extends BaseRoll
 				static::getEntity($_GET['id'])->remove();
 
 				wdpro_location(
-					wdpro_current_url(array(
+					wdpro_current_uri(array(
 						'action'=>null,
 						'id'=>null,
 						'mes'=>'removed',
@@ -360,7 +360,7 @@ id="wdpro-console-roll-'.static::getType().'">';
 						// Редактировать
 						if ($formIsset) {
 							$buts .= '<a href="'
-								.wdpro_current_url(array(
+								.wdpro_current_uri(array(
 									'action'=>'form',
 									'id'=>$row['id'],
 								))
@@ -370,7 +370,7 @@ id="wdpro-console-roll-'.static::getType().'">';
 
 						// Удалить
 						$buts .= '<span class="trash g-ml10 g-nowrap"><a href="'
-							.wdpro_current_url(array(
+							.wdpro_current_uri(array(
 								'action'=>'remove',
 								'id'=>$row['id'],
 							))
@@ -720,7 +720,7 @@ title="Удалить"></a>
 		{
 			//$href = 'admin.php?page='.$_GET['page'].'&action=form';
 			
-			$href = wdpro_current_url(array(
+			$href = wdpro_current_uri(array(
 				'action'=>'form',
 				'id'=>null,
 			));

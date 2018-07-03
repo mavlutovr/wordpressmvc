@@ -13,6 +13,7 @@ namespace Wdpro\Lang;
 class Data {
 
 	protected static $jsonFileName = 'langs.json';
+	protected static $jsonFileNameProd = 'langs.prod.json';
 	protected static $data = [];
 	protected static $inited = false;
 	protected static $rootLangUri;
@@ -29,8 +30,10 @@ class Data {
 		}
 		static::$inited = true;
 
-		if ( is_file(__DIR__ . '/' . static::$jsonFileName) ) {
-			$json         = file_get_contents(__DIR__ . '/' . static::$jsonFileName);
+		$jsonFile = static::getJsonFileName();
+
+		if ( is_file(__DIR__ . '/' . $jsonFile) ) {
+			$json         = file_get_contents(__DIR__ . '/' . $jsonFile);
 			static::$data = json_decode($json, 1);
 
 			// У первого языка делаем адреса без /ru/
@@ -71,6 +74,11 @@ class Data {
 	}
 
 
+	protected static function getJsonFileName() {
+		return wdpro_local() ? static::$jsonFileName : static::$jsonFileNameProd;
+	}
+
+
 	/**
 	 * Сохранение данных о языках
 	 *
@@ -106,7 +114,8 @@ class Data {
 		];
 
 		$json = json_encode(static::$data, JSON_PRETTY_PRINT);
-		file_put_contents(__DIR__ . '/' . static::$jsonFileName, $json);
+		$path = __DIR__ . '/' . static::getJsonFileName();
+		file_put_contents($path, $json);
 	}
 
 

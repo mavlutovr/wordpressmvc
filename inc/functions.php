@@ -333,12 +333,12 @@ function wdpro_array_remove_by_value(&$array, $value) {
 
 
 /**
- * Возвращает адрес текущей страницы
+ * Возвращает относительный адрес текущей страницы
  *
  * @param null|array $queryChanges Изменить параметры QUERY_STRING согласно этому массиву
  * @return string
  */
-function wdpro_current_url($queryChanges=null)
+function wdpro_current_uri($queryChanges=null)
 {
 	if ($queryChanges)
 	{
@@ -390,6 +390,19 @@ function wdpro_current_url($queryChanges=null)
 
 
 /**
+ * Возвращает абсолютный адрес текущей страницы
+ *
+ * @param null|array $queryChanges Изменить параметры QUERY_STRING согласно этому массиву
+ * @return string
+ */
+function wdpro_current_url($queryChanges=null) {
+	$uri = wdpro_current_uri($queryChanges);
+
+	return home_url().$uri;
+}
+
+
+/**
  * Проверяет, что это адрес текущей страниц (той, которая открыта)
  *
  * @param string $postName Проверяемый адрес
@@ -419,6 +432,23 @@ function wdpro_is_current_post_type($postType) {
 	}
 
 	return false;
+}
+
+
+/**
+ * True, если это локальная машина
+ *
+ * Это нужно для тог, чтобы например, для модуля переключателя языков.
+ * Этот модуль использует для хранения информации файл. Так надо :)
+ * И чтобы при копировании всех файлов на боевой сервер файл на сервере не затирался локальными
+ * данными, на боевом сервере используется другой файл. И теперь можно хоть сколько копировать
+ * файлы на сервер, данные на сервере не затрутся локальными.
+ *
+ * @return bool
+ */
+function wdpro_local() {
+	return $_SERVER['HTTP_HOST'] == 'localhost'
+			|| (defined('WDPRO_LOCALHOST') && WDPRO_LOCALHOST);
 }
 
 

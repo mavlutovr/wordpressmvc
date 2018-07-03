@@ -10,6 +10,7 @@ class Entity extends \Wdpro\BasePage {
 	 * Текст страницы
 	 *
 	 * @param string $content Текущий текст страницы
+	 * @throws \Exception
 	 */
 	public function getCard( &$content ) {
 		
@@ -31,6 +32,7 @@ class Entity extends \Wdpro\BasePage {
 			apply_filters('wdpro_blog_card_data', $data)
 		);
 	}
+
 
 
 	/**

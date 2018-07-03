@@ -11,7 +11,7 @@ function wdproOptionsForm($formParams)
 {
 	// Создание формы
 	$form = new Wdpro\Form\Form($formParams);
-	$form->setAction(wdpro_current_url());
+	$form->setAction(wdpro_current_uri());
 
 	// Сохранение
 	$form->onSubmit(function ($data) {

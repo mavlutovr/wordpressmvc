@@ -192,6 +192,14 @@ class Controller extends \Wdpro\BaseController {
 				return do_shortcode($post->post_content);
 			}
 		});
+
+
+		// Инициализация страницы до отправки html кода в браузер
+		wdpro_on_page_init(function ($page) {
+			/** @var $page \App\BasePage */
+
+			$page->initCard();
+		});
 		
 		
 		// Карточка страницы
@@ -782,7 +790,7 @@ class Controller extends \Wdpro\BaseController {
 						wdpro_create_post($data);
 
 						// Редирект
-						wdpro_location(wdpro_current_url(['postAdded'=>1]));
+						wdpro_location(wdpro_current_uri(['postAdded'=>1]));
 					}
 				}
 				

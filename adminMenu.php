@@ -35,7 +35,7 @@ href="'.WDPRO_CONSOLE_URL.'plugins.php">Активировать плагин</a
 ');
 							}
 							else {
-								echo('<p><a href="'.wdpro_current_url(['create_theme_app', 'create_plugin_app'])
+								echo('<p><a href="'.wdpro_current_uri(['create_theme_app', 'create_plugin_app'])
 								     .'&create_plugin_app=1">Создать загатовку плагина-приложения App</a></p>');
 							}
 						}
@@ -49,7 +49,7 @@ href="'.WDPRO_CONSOLE_URL.'themes.php">Активировать тему</a>
 </p>');
 							}
 							else {
-								echo( '<p><a href="' . wdpro_current_url(['create_theme_app', 'create_plugin_app'])
+								echo( '<p><a href="' . wdpro_current_uri(['create_theme_app', 'create_plugin_app'])
 								      . '&create_theme_app=1">Создать загатовку темы</a></p>' );
 							}
 						}

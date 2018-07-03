@@ -13,7 +13,7 @@ function wdpro_error($subject, $message) {
 		\Wdpro\AdminNotice\Controller::sendMessageHtml(
 			$_SERVER['HTTP_HOST'].' - Ошибка',
 			'
-			<p>'.wdpro_current_url().'</p>
+			<p>'.wdpro_current_uri().'</p>
 			<p>'.$subject.'</p>
 			<p>'.print_r($message, 1).'</p>
 			'
@@ -91,7 +91,7 @@ if (get_option('wdpro_send_errors_to_admins_emails') == 1) {
 			\Wdpro\AdminNotice\Controller::sendMessageHtml(
 				$_SERVER['HTTP_HOST'].' - Ошибка',
 				'
-				<p>'.wdpro_current_url().'</p>
+				<p>'.wdpro_current_uri().'</p>
 				<p>Тип ошибки: '.FriendlyErrorType($errorId).'</p>
 				<p>'.$message.'</p>
 				<p>Файл: '.$file.'</p>
@@ -121,7 +121,7 @@ if (get_option('wdpro_send_errors_to_admins_emails') == 1) {
 				$_SERVER['HTTP_HOST'].' - Ошибка',
 				'
 			<p>Тип ошибки: '.FriendlyErrorType($error['id']).'</p>
-			<p>'.wdpro_current_url().'</p>
+			<p>'.wdpro_current_uri().'</p>
 			<p>'.$error['message'].'</p>
 			<p>Файл: '.$error['file'].'</p>
 			<p>Строка: '.$error['line'].'</p>
