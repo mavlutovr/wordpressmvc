@@ -298,7 +298,7 @@ class Menu extends Roll
 	 * 
 	 * @return \Wdpro\BasePage
 	 */
-	protected static function getEntityClass()
+	public static function getEntityClass()
 	{
 		
 	}
