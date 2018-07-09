@@ -647,7 +647,7 @@ function wdpro_gz_decode($zipFile, $targetFile)
  */
 function wdpro_json_encode($data)
 {
-	return json_encode($data, JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE);
+	return json_encode($data, JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
 }
 
 
@@ -1476,7 +1476,9 @@ function wdpro_key_parse($key=null)
 	else {
 		if (is_string($key))
 		{
-			// Создаем строку ключа
+			$key = str_replace('\\\\', '\\', $key);
+
+		// Создаем строку ключа
 			$infoString = $key;
 
 			// Создаем массив ключа
@@ -1496,6 +1498,9 @@ function wdpro_key_parse($key=null)
 			}
 		}
 	}
+
+	//$infoArr['name'] = str_replace('\\\\', '\\', $infoArr['name']);
+	//$infoString = str_replace('\\\\', '\\', $infoString);
 
 	return array(
 		'key'    => $infoString,

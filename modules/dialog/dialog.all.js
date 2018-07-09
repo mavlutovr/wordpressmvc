@@ -166,13 +166,57 @@
 					this.params.positioning(this.html);
 				}
 
+
+				// Url
+				if (this.params.url) {
+					this.load(this.params.url);
+				}
+
+
 				this.show();
 
 				this.processingContent();
 
 				$(window).on('resize', function () {
 					self.updatePos();
-				})
+				});
+			},
+
+
+			/**
+			* Загружает адрес
+			*/
+			load: function (url) {
+				var self = this;
+
+				this.loadingStart();
+
+				console.log(url);
+
+				wdpro.ajax(url, function (data) {
+
+					console.log('data', data);
+
+					self.loadingStop();
+
+					self.setContent(data['html']);
+				});
+			},
+
+
+			/**
+			* Показывает Loading...
+			*/
+			loadingStart: function () {
+				this.setContent('Загрузка...');
+			},
+
+
+			/**
+			* Убирает Loading...
+			*/
+			loadingStop: function() {
+				this.setContent('');
 			},
 
 
@@ -187,6 +231,9 @@
 
 					self.close();
 				});
+
+				// Отправляем событие, чтобы можно было обрабатывать контент другим скриптам через wdpro.on('content', function...);
+				wdpro.trigger('content', this.html);
 			},
 
 

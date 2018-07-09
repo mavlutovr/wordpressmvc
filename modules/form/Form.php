@@ -312,11 +312,21 @@ class Form
 			class="js-wdpro-form"><div class="js-params g-hid" 
 			style="display: none">
 '
-		.htmlspecialchars(json_encode(
+		.htmlspecialchars($this->getJson())
+		.'</div></div>';
+	}
+
+
+	/**
+	* Возвращает Json строку с данными формы
+	* 
+	* Чтобы потом на странице с помощью js превратить данные в саму форму
+	*/
+	public function getJson() {
+		return json_encode(
 			$this->getParams(), 
 			JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE|JSON_HEX_QUOT
-		))
-		.'</div></div>';
+		);
 	}
 
 

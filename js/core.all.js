@@ -1883,41 +1883,60 @@ if (typeof Array.isArray === 'undefined') {
 	wdpro.ajax = function ($_GET_OR_ACTION, $_POST, callback) {
 		
 		var self = this;
+		var url;
 
-		if (typeof $_GET_OR_ACTION === 'string')
-		{
-			$_GET_OR_ACTION = {
-				'action': $_GET_OR_ACTION
-			};
+		// Когда указан конкретный адрес
+		if ($_GET_OR_ACTION.match(/^\/\//)
+			|| $_GET_OR_ACTION.match(/^http:\/\//)
+			|| $_GET_OR_ACTION.match(/^http:\/\//)) {
+			url = $_GET_OR_ACTION;
 		}
 
-		var $_GET2 = wdpro.extend($_GET_OR_ACTION, {
-			'action': 'wdpro',
-			'wdproAction': $_GET_OR_ACTION['action'],
-			'lang': wdpro.data.lang
-		});
-		
+		// Когда указаны действия или еще чего
+		else {
+			if (typeof $_GET_OR_ACTION === 'string')
+			{
+				$_GET_OR_ACTION = {
+					'action': $_GET_OR_ACTION
+				};
+			}
+
+			var $_GET2 = wdpro.extend($_GET_OR_ACTION, {
+				'action': 'wdpro',
+				'wdproAction': $_GET_OR_ACTION['action'],
+				'lang': wdpro.data.lang
+			});
+
+			url = this.data['ajaxUrl']+'?'+ $.param($_GET2);
+		}
+			
 		if (typeof $_POST === 'function')
 		{
 			callback = $_POST;
 			$_POST = null;
 		}
 		
+
+		// ?action=wdpro&wdproAction=http%3A%2F%2Flocalhost%2Fcrm%2Fwp-admin%2Fadmin-ajax.php%3Faction%3Dwdpro%26entity%3Dname%253AApp%255CUsers%255CAccess%255CEntity%252Cid%253Anull%26wdproAction%3DgetForm&lang=
+
 		var params = {
-			'url': this.data['ajaxUrl']+'?'+ $.param($_GET2),
+			'url': url,
 			'type': 'POST',
 			'data': $_POST,
 			'success': function (json) {
+				console.log('json', json);
 
 				var data = self.parseJSON(json);
 				wdpro.trigger('ajaxData', data);
-				
+			
 				if (callback)
 				{
 					callback(data);
 				}
 			}
 		};
+
+		console.log('params', params);
 		
 		$.ajax(params);
 	};

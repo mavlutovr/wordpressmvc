@@ -7,6 +7,34 @@
 	wdpro.forms = {};
 
 
+	/**
+	* Вревращалка слоя с данными формы в саму форму
+	*/
+	$.fn.wdproForm = function () {
+
+		$(this).each(function ()
+		{
+			var container = $(this);
+
+			// Получаем параметры формы
+			var jsonDiv = container.find('.js-params');
+			var json = jsonDiv.text();
+			var data = wdpro.parseJSON(json);
+
+			// Создаем форму
+			var form = new wdpro.forms.Form(data);
+
+			form.getHtml(function (html) {
+				container.append(html);
+			});
+			
+			
+		});
+
+		return this;
+	};
+
+
 	$(document).on('DOMNodeInserted', function (e)
 	{
 		for(var i in e.target.classList)
