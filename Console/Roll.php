@@ -551,17 +551,6 @@ title="Удалить"></a>
 		return wdpro_text_to_file_name($pageName);
 	}
 
-	
-	/**
-	 * Возвращает класс сущностей данного списка
-	 *
-	 * @return \Wdpro\BaseEntity
-	 */
-	public static function getEntityClass()
-	{
-		return static::getNamespace().'\\Entity';
-	}
-
 
 	/**
 	 * Возвращает тип сущностей этого списка
@@ -611,26 +600,6 @@ title="Удалить"></a>
 		else
 		{
 			throw new RollException('Нет класса сущностей для списка '.get_called_class());
-		}
-	}
-
-
-	/**
-	 * Возвращает объект сущности списка
-	 *
-	 * @param int|array|null|bool $entityIdOrData IШвили данные объекта
-	 * @return \Wdpro\BasePage|void
-	 * @throws \Exception
-	 */
-	public static function getEntity($entityIdOrData=null)
-	{
-		if ($entityIdOrData)
-		{
-			if ($entityIdOrData === true)
-			{
-				$entityIdOrData = null;
-			}
-			return wdpro_object(static::getEntityClass(), $entityIdOrData);
 		}
 	}
 

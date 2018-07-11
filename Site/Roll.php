@@ -49,7 +49,7 @@ class Roll extends \Wdpro\BaseRoll {
 	 *
 	 * @param array|string $where Запрос типа array('WHERE id=%d', 123)
 	 * @return string
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	public static function getHtml($where) {
 		
@@ -66,6 +66,7 @@ class Roll extends \Wdpro\BaseRoll {
 	 *
 	 * @param array|string $where Запрос типа array('WHERE id=%d', 123)
 	 * @return array
+	 * @throws \Exception
 	 */
 	public static function getData($where) {
 
