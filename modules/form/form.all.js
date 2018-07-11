@@ -846,6 +846,9 @@
 		align: function () {
 
 			var self = this;
+
+			// Обновляем позицию Dialog, когда форма в окошке
+			self.updateDialogPos();
 			
 			if (this.params['align'])
 			{
@@ -1341,6 +1344,9 @@
 						// Запускаем выравнивание заново
 						alignAllColls();
 					}
+					else {
+						self.updateDialogPos();
+					}
 				};
 
 
@@ -1358,6 +1364,17 @@
 					}
 				});
 			}
+		},
+
+
+		/**
+		* Обновляет позицию диалогового окна, в котором находится форма
+		*/
+		updateDialogPos: function () {
+			// Обновляем позицию Dialog, когда форма в окошке
+			this.html.closest('.js-dialog').trigger('updatePos');
+
+			console.log('js-dialog', this.html.closest('.js-dialog'));
 		},
 
 

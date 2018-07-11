@@ -172,7 +172,11 @@
 
 				$(window).on('resize', function () {
 					self.updatePos();
-				})
+				});
+
+				this.html.on('updatePos', function () {
+					self.updatePos();
+				});
 			},
 
 
