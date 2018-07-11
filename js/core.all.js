@@ -1924,7 +1924,6 @@ if (typeof Array.isArray === 'undefined') {
 			'type': 'POST',
 			'data': $_POST,
 			'success': function (json) {
-				console.log('json', json);
 
 				var data = self.parseJSON(json);
 				wdpro.trigger('ajaxData', data);

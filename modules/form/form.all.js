@@ -257,6 +257,10 @@
 			}
 
 			wdpro.trigger('form', this);
+
+			this.on('addedToPage', function () {
+				self.updateDialogPos();
+			});
 		},
 
 

@@ -199,8 +199,6 @@
 
 				wdpro.ajax(url, function (data) {
 
-					console.log('data', data);
-
 					self.loadingStop();
 
 					self.setContent(data['html']);
