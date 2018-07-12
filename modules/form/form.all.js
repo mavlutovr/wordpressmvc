@@ -261,6 +261,23 @@
 			this.on('addedToPage', function () {
 				self.updateDialogPos();
 			});
+
+
+			// Ajax
+			if (this.params['ajax']) {
+				this.ajax(function (data) {
+					self.loading();
+
+					wdpro.ajax(self.params['action'], data, function (response) {
+
+						self.loadingStop();
+
+						if (response['reloadPage']) {
+							wdpro.reloadPage();
+						}
+					});
+				});
+			}
 		},
 
 

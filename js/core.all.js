@@ -1873,6 +1873,14 @@ if (typeof Array.isArray === 'undefined') {
 
 
 	/**
+	* Обновляет страницу
+	*/
+	wdpro.reloadPage = function () {
+		window.location = window.location;
+	};
+
+
+	/**
 	 * Выполняет ajax запрос
 	 * 
 	 * @param $_GET_OR_ACTION {{}|string} Имя события, по которой модуль поймает этот запрос
