@@ -1877,6 +1877,7 @@ if (typeof Array.isArray === 'undefined') {
 	*/
 	wdpro.reloadPage = function () {
 		window.location = window.location;
+		console.log('window.location', window.location);
 	};
 
 
@@ -1942,8 +1943,6 @@ if (typeof Array.isArray === 'undefined') {
 				}
 			}
 		};
-
-		console.log('params', params);
 		
 		$.ajax(params);
 	};

@@ -569,7 +569,7 @@ title="Удалить"></a>
 	 * @return \Wdpro\BaseSqlTable
 	 * @throws \Exception
 	 */
-	public function sqlTable()
+	public static function sqlTable()
 	{
 		if ($objectClass = static::getEntityClass())
 		{

@@ -381,42 +381,6 @@ abstract class BaseEntity
 		return $this;
 	}
 
-
-	/**
-	 * Возвращает объект таблицы сущности
-	 * 
-	 * @return \Wdpro\BaseSqlTable
-	 * @throws EntityException
-	 */
-	public static function sqlTable()
-	{
-		if ($tableClass = static::getSqlTableClass())
-		{
-			//return $tableClass;
-			return wdpro_object($tableClass);
-		}
-		
-		else
-		{
-			throw new EntityException(
-				'У сущности '.get_called_class().' не указано класс таблицы в методе 
-				getSqlTableClass()'
-			);
-		}
-	}
-
-	
-	/**
-	 * Дополнительная таблица
-	 *
-	 * @return \Wdpro\BaseSqlTable
-	 */
-	public static function getSqlTableClass()
-	{
-		return static::getNamespace().'\\SqlTable';
-	}
-
-
 	/**
 	 * Аналог $this->sqlTable();
 	 * 
@@ -847,6 +811,14 @@ abstract class BaseEntity
 		foreach ($table::getLangsFields() as $coll) {
 			$this->data[$coll] = $this->data[$coll.\Wdpro\Lang\Data::getCurrentSuffix()];
 		}
+	}
+
+
+	/**
+	* Возвращает true, когда это новая сущность и ее нет в базе
+	*/
+	public function isNew() {
+		return $this->id();
 	}
 
 }

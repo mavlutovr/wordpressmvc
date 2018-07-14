@@ -86,6 +86,42 @@ trait Tools
 
 
 	/**
+	 * Возвращает объект таблицы сущности
+	 * 
+	 * @return \Wdpro\BaseSqlTable
+	 * @throws EntityException
+	 */
+	public static function sqlTable()
+	{
+		if ($tableClass = static::getSqlTableClass())
+		{
+			//return $tableClass;
+			return wdpro_object($tableClass);
+		}
+		
+		else
+		{
+			throw new EntityException(
+				'У сущности '.get_called_class().' не указано класс таблицы в методе 
+				getSqlTableClass()'
+			);
+		}
+	}
+
+	
+	/**
+	 * Дополнительная таблица
+	 *
+	 * @return \Wdpro\BaseSqlTable
+	 */
+	public static function getSqlTableClass()
+	{
+		return static::getNamespace().'\\SqlTable';
+	}
+
+
+
+	/**
 	 * Возвращает имя класса контроллера
 	 * 
 	 * @return \Wdpro\BaseController
@@ -113,8 +149,7 @@ trait Tools
 	 *
 	 * Не надо удалять, т.к. сюда отправляются данные из функции keyObj()
 	 *
-	 * @param string $key
-	 *            Ключ
+	 * @param string $key Ключ
 	 */
 	public function setKey($key) {
 

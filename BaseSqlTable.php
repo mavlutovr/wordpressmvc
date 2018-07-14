@@ -734,6 +734,8 @@ abstract class BaseSqlTable
 	/**
 	 * Проверяет наличие колонки
 	 * 
+	 * Аналог isColl
+	 * 
 	 * @param string $fieldName Название колонки
 	 * @return bool
 	 */
@@ -743,6 +745,19 @@ abstract class BaseSqlTable
 		
 		global $sqlFieldsFormat;
 		return isset($sqlFieldsFormat[static::getName()][$fieldName]);
+	}
+
+
+	/**
+	 * Проверяет наличие колонки
+	 * 
+	 * Аналог isField
+	 * 
+	 * @param string $fieldName Название колонки
+	 * @return bool
+	 */
+	public static function isColl($collName) {
+		return static::isField($collName);
 	}
 
 
