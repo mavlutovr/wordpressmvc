@@ -44,9 +44,6 @@ abstract class BaseRoll
 	}
 
 
-	
-
-
 
 	public function getKey() {
 		
