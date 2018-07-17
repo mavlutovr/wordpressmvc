@@ -1882,6 +1882,26 @@ if (typeof Array.isArray === 'undefined') {
 
 
 	/**
+	 * Возвращает адрес для ajax запроса
+	 * 
+	 * @param  {{}} params Данные запроса
+	 * 
+	 * @return {string}
+	 */
+	wdpro.ajaxUrl = function (params) {
+
+		var query = wdpro.extend(params, {
+				'action': 'wdpro',
+				'wdproAction': params['action'],
+				'lang': wdpro.data.lang
+			});
+
+			return this.data['ajaxUrl']+'?'+ $.param(query);
+	};
+
+
+
+	/**
 	 * Выполняет ajax запрос
 	 * 
 	 * @param $_GET_OR_ACTION {{}|string} Имя события, по которой модуль поймает этот запрос
