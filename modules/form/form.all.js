@@ -271,10 +271,6 @@
 					wdpro.ajax(self.params['action'], data, function (response) {
 
 						self.loadingStop();
-
-						if (response['reloadPage']) {
-							wdpro.reloadPage();
-						}
 					});
 				});
 			}

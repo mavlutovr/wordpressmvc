@@ -1915,9 +1915,11 @@ if (typeof Array.isArray === 'undefined') {
 		var url;
 
 		// Когда указан конкретный адрес
-		if ($_GET_OR_ACTION.match(/^\/\//)
-			|| $_GET_OR_ACTION.match(/^http:\/\//)
-			|| $_GET_OR_ACTION.match(/^http:\/\//)) {
+		if (typeof $_GET_OR_ACTION === 'string'
+			&& ($_GET_OR_ACTION.match(/^\/\//)
+				|| $_GET_OR_ACTION.match(/^http:\/\//)
+				|| $_GET_OR_ACTION.match(/^http:\/\//))
+			) {
 			url = $_GET_OR_ACTION;
 		}
 
@@ -1946,8 +1948,6 @@ if (typeof Array.isArray === 'undefined') {
 		}
 		
 
-		// ?action=wdpro&wdproAction=http%3A%2F%2Flocalhost%2Fcrm%2Fwp-admin%2Fadmin-ajax.php%3Faction%3Dwdpro%26entity%3Dname%253AApp%255CUsers%255CAccess%255CEntity%252Cid%253Anull%26wdproAction%3DgetForm&lang=
-
 		var params = {
 			'url': url,
 			'type': 'POST',
@@ -1956,6 +1956,10 @@ if (typeof Array.isArray === 'undefined') {
 
 				var data = self.parseJSON(json);
 				wdpro.trigger('ajaxData', data);
+
+				if (data['reloadPage']) {
+					wdpro.reloadPage();
+				}
 			
 				if (callback)
 				{
