@@ -3267,7 +3267,8 @@
 						// Ошибка
 						else
 						{
-							console.error('При загрузке файла произошла ошибка', response.error);
+							self.field.loadingStop();
+							self.fileBlockContainer.append('<p>При загрузке файла произошла ошибка: ' + response.error+'</p>');
 						}
 					},
 					
