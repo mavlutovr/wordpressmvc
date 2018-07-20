@@ -67,10 +67,20 @@ add_action('wp_ajax_form_file_upload', function () {
 			$zipFileName = $fileName.'_'.$n.'.gz';
 		}
 
-		// Создаем архив с файлом
-		wdpro_gz_encode($fileData['tmp_name'], $tmpDir.$zipFileName);
+		// Есть загруженный файл
+		if ($fileData['tmp_name']) {
+			// Создаем архив с файлом
+			wdpro_gz_encode($fileData['tmp_name'], $tmpDir.$zipFileName);
 
-		$retFiles['files'][] = $zipFileName;
+			$retFiles['files'][] = $zipFileName;
+		}
+		
+		// Нет загруженного файла
+		else {
+			// Вовзращаем ошибку
+			$upload_max_size = ini_get('upload_max_filesize');
+			$retFiles['error'] = 'Не удалось загрузить файл. Возможно, нужно увеличить upload_max_filesize в php.ini. Сейчас максимальный размер загружаемых файлов равен '.$upload_max_size;
+		}
 	}
 	
 
