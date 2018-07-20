@@ -184,6 +184,8 @@
 				this.html.on('updatePos', function () {
 					self.updatePos();
 				});
+
+				this.html.draggable();
 			},
 
 
@@ -195,15 +197,16 @@
 
 				this.loadingStart();
 
-				console.log(url);
-
 				wdpro.ajax(url, function (data) {
-
 					console.log('data', data);
 
 					self.loadingStop();
 
 					self.setContent(data['html']);
+
+					/*if (data['reloadPage']) {
+						wdpro.reloadPage();
+					}*/
 				});
 			},
 

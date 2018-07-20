@@ -1873,6 +1873,35 @@ if (typeof Array.isArray === 'undefined') {
 
 
 	/**
+	* Обновляет страницу
+	*/
+	wdpro.reloadPage = function () {
+		window.location = window.location;
+		console.log('window.location', window.location);
+	};
+
+
+	/**
+	 * Возвращает адрес для ajax запроса
+	 * 
+	 * @param  {{}} params Данные запроса
+	 * 
+	 * @return {string}
+	 */
+	wdpro.ajaxUrl = function (params) {
+
+		var query = wdpro.extend(params, {
+				'action': 'wdpro',
+				'wdproAction': params['action'],
+				'lang': wdpro.data.lang
+			});
+
+			return this.data['ajaxUrl']+'?'+ $.param(query);
+	};
+
+
+
+	/**
 	 * Выполняет ajax запрос
 	 * 
 	 * @param $_GET_OR_ACTION {{}|string} Имя события, по которой модуль поймает этот запрос
@@ -1924,7 +1953,6 @@ if (typeof Array.isArray === 'undefined') {
 			'type': 'POST',
 			'data': $_POST,
 			'success': function (json) {
-				console.log('json', json);
 
 				var data = self.parseJSON(json);
 				wdpro.trigger('ajaxData', data);
@@ -1935,8 +1963,6 @@ if (typeof Array.isArray === 'undefined') {
 				}
 			}
 		};
-
-		console.log('params', params);
 		
 		$.ajax(params);
 	};

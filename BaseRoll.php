@@ -43,4 +43,10 @@ abstract class BaseRoll
 		return static::getNamespace().'\\Entity';
 	}
 
+
+
+	public function getKey() {
+		
+	}
+
 }

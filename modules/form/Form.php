@@ -405,6 +405,16 @@ class Form
 
 
 	/**
+	* Переключает в режим ajax
+	* 
+	* @param boolean $ajax
+	*/
+	public function setAjax($ajax=true) {
+		$this->params['ajax'] = $ajax;
+	}
+
+
+	/**
 	 * Перебор параметров элеменов
 	 *
 	 * @param callback $callback Каллбэк, принимающий параметры каждого элемента
