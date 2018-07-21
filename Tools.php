@@ -162,6 +162,17 @@ trait Tools
 
 
 	/**
+	 * Возвращает значение ключа
+	 *
+	 * @param string $key ключ ключа
+	 * @return mixed
+	 */
+	public function keyValue($key) {
+		return $this->_key['object'][$key];
+	}
+
+
+	/**
 	 * Прослушка события
 	 * 
 	 * @param string $eventName Имя события
