@@ -767,12 +767,31 @@ abstract class BaseEntity
 
 	/**
 	 * Удаление сущности
+	 *
+	 * @throws \Exception
 	 */
 	public function remove()
 	{
 		if ($id = $this->id())
 		{
-			static::getSqlTable()->delete(array(static::idField()=>$id), array('%d'));
+			$table = static::getSqlTable();
+			
+			// Удаление дочерних элементов
+			if ($table::isColl('post_parent')) {
+				if ($selChilds = $table::select([
+					'WHERE post_parent=%d',
+					[$id]
+				])) {
+					foreach ($selChilds as $childRow) {
+						$child = wdpro_object(get_class($this), $childRow);
+						/** @var \Wdpro\BaseEntity $child */
+						$child->remove();
+					}
+				}
+			}
+
+
+			$table->delete(array(static::idField()=>$id), array('%d'));
 			
 			$this->_removed = true;
 			
