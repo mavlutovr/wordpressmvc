@@ -4,6 +4,7 @@ var wdproData = typeof wdproData !== 'undefined' ? wdproData : null;
 var wdpro = {
 	templates: {},
 	data: wdproData,
+	speed: 200, // Скорость эффектов (там, там, где используется)
 	
 	// Константы
 	WDPRO_TEMPLATE_URL: '',
