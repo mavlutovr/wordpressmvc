@@ -270,6 +270,10 @@
 
 					wdpro.ajax(self.params['action'], data, function (response) {
 
+						if (response['dialogClose']) {
+							self.closeDialog();
+						}
+
 						self.loadingStop();
 					});
 				});
@@ -1418,8 +1422,14 @@
 		updateDialogPos: function () {
 			// Обновляем позицию Dialog, когда форма в окошке
 			this.html.closest('.js-dialog').trigger('updatePos');
+		},
 
-			console.log('js-dialog', this.html.closest('.js-dialog'));
+
+		/**
+		 * Закрывает диалоговое окно, в котором находится
+		 */
+		closeDialog: function () {
+			this.html.closest('.js-dialog').trigger('close');
 		},
 
 
