@@ -243,6 +243,15 @@ abstract class BaseEntity
 			// Данные не были загружены из таблицы
 			else
 			{
+				// Если это новая сущность, удаляем ее из списка объектов, как новую сущность
+				// Чтобы потом при обращении к пустой сущности не загружалась эта не пустая сущность
+				$new = false;
+				// А создавалась новая пустая сущность
+				if (true || !$this->id()) {
+					$new = true;
+					wdpro_object_remove_from_cache($this);
+				}
+
 				if (!isset($data[static::idField()]) && $this->id())
 				{
 					$data[static::idField()] =  $this->id();
@@ -250,6 +259,11 @@ abstract class BaseEntity
 				
 				$this->_id = static::sqlTable()->insert($data);
 				$this->data[static::idField()] = $this->_id;
+
+				// Если это новая сущность, добавляе ее в кэш
+				if ($new) {
+					wdpro_object_add_to_cache($this);
+				}
 			}
 			
 			$this->onChange();
@@ -792,6 +806,8 @@ abstract class BaseEntity
 
 
 			$table->delete(array(static::idField()=>$id), array('%d'));
+
+			wdpro_object_remove_from_cache($this);
 			
 			$this->_removed = true;
 			
@@ -801,6 +817,17 @@ abstract class BaseEntity
 			$this->onRemove();
 			$this->trigger('remove', $this->id());
 		}
+	}
+
+
+	public function addToObjectsCache() {
+		global $_wdproObjects;
+
+	}
+
+
+	public function removeFromObjectsCache() {
+
 	}
 
 

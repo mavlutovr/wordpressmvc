@@ -1293,6 +1293,59 @@ function wdproObjectsTrace() {
 
 
 /**
+ * Добавляет объект в список объектов
+ *
+ * Для быстрого доступа к нему через wdpro_object(...)
+ *
+ * @param $object \Wdpro\BaseEntity
+ * @param int $key
+ */
+function wdpro_object_add_to_cache($object, $key=-1) {
+	global $_wdproObjects;
+
+	$className = '\\' . get_class($object);
+
+	if ($key === -1)
+	$key = $object->id();
+
+	if (!$key) {
+		$key = 0;
+	}
+
+
+	if (!isset($_wdproObjects[$className]))
+	{
+		$_wdproObjects[$className] = array();
+	}
+
+	if (!isset($_wdproObjects[$className][$key]))
+	{
+		$_wdproObjects[$className][$key] = $object;
+	}
+}
+
+
+/**
+ * Удаляет объект из списка объектов для быстрого доступа
+ *
+ * @param $object \Wdpro\BaseEntity
+ */
+function wdpro_object_remove_from_cache($object) {
+	global $_wdproObjects;
+	$className = '\\' . get_class($object);
+
+	$key = $object->id();
+
+	if (!$key) {
+		$key = 0;
+	}
+
+	unset($_wdproObjects[$className][$key]);
+
+}
+
+
+/**
  * Возвращает объект, создавая его, если он еще не был создан
  *
  * @param string $className Имя класса
@@ -1320,12 +1373,16 @@ function wdpro_object($className, $dataOrId=null)
 		$key = $dataOrId;
 	}
 
+	if (!$key) {
+		$key = 0;
+	}
+
 	if (substr($className, 0, 1) != '\\')
 		$className = '\\'.$className;
 
 	if (is_string($className))
 	{
-		if (!isset($_wdproObjects[$className]))
+		/*if (!isset($_wdproObjects[$className]))
 		{
 			$_wdproObjects[$className] = array();
 		}
@@ -1333,7 +1390,9 @@ function wdpro_object($className, $dataOrId=null)
 		if (!isset($_wdproObjects[$className][$key]))
 		{
 			$_wdproObjects[$className][$key] = new $className($dataOrId);
-		}
+		}*/
+
+		wdpro_object_add_to_cache(new $className($dataOrId), $key);
 
 		return $_wdproObjects[$className][$key];
 	}
