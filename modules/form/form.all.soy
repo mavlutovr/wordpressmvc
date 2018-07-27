@@ -500,6 +500,56 @@
 
 
 
+/**
+ * Checks
+ * @param data Данные элемента
+ * @param attrs Аттрибуты
+ */
+{template .checksField}
+	{if ($attrs['nothing'])}{/if}
+
+	<div>
+	  <div class="js-checks-hiddens"></div>
+		{if ($data['options'])}
+			{call .checksLevel}
+				{param options: $data['options']/}
+			{/call}
+		{/if}
+	</div>
+{/template}
+
+/**
+ * Checks Level
+ * @param options Список чекбоксов
+ */
+{template .checksLevel private="true"}
+<div class="wdpro-form-checks-level">
+	{foreach $option in $options}
+
+		// Чекбокс
+		<div class=""><label>
+
+			{if ($option['value'])}
+				<input type="checkbox" data-value="{$option['value']}" class="js-checks-check" />{sp}
+			{/if}
+
+			// Текст
+			{$option['text']}
+
+		</label></div>
+
+		// Подразделы
+		{if ($option['options'])}
+			{call .checksLevel}
+				{param options: $option['options']/}
+			{/call}
+		{/if}
+
+	{/foreach}
+</div>
+{/template}
+
+
 
 /**
 * Hidden

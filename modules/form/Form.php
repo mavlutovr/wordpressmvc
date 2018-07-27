@@ -20,6 +20,7 @@ class Form
 	const CKEDITOR = 'ckeditor';
 	const CKEDITOR_SMALL = 'ckeditorSmall';
 	const CHECK = 'check';
+	const CHECKS = 'checks';
 	const SORTING = 'sorting';
 	const SORTING_TOP = 'sortingTop';
 	const TEXT = 'text';
@@ -48,7 +49,9 @@ class Form
 		'sortingTop'=>'\Wdpro\Form\Elements\SortingTop',
 		'text'=>'\Wdpro\Form\Elements\Text',
 		'check'=>'\Wdpro\Form\Elements\Check',
+		'checks'=>'\Wdpro\Form\Elements\Checks',
 		'checkbox'=>'\Wdpro\Form\Elements\Check',
+		'checkboxes'=>'\Wdpro\Form\Elements\Checks',
 		'pass'=>'\Wdpro\Form\Elements\Pass',
 		'hidden'=>'\Wdpro\Form\Elements\Hidden',
 		'file'=>'\Wdpro\Form\Elements\File',

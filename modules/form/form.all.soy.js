@@ -198,6 +198,30 @@ if (goog.DEBUG) {
 }
 
 
+wdpro.templates.forms.checksField = function(opt_data, opt_ignored) {
+  return ((opt_data.attrs['nothing']) ? '' : '') + '<div><div class="js-checks-hiddens"></div>' + ((opt_data.data['options']) ? wdpro.templates.forms.checksLevel({options: opt_data.data['options']}) : '') + '</div>';
+};
+if (goog.DEBUG) {
+  wdpro.templates.forms.checksField.soyTemplateName = 'wdpro.templates.forms.checksField';
+}
+
+
+wdpro.templates.forms.checksLevel = function(opt_data, opt_ignored) {
+  var output = '<div class="wdpro-form-checks-level">';
+  var optionList342 = opt_data.options;
+  var optionListLen342 = optionList342.length;
+  for (var optionIndex342 = 0; optionIndex342 < optionListLen342; optionIndex342++) {
+    var optionData342 = optionList342[optionIndex342];
+    output += '<div class=""><label>' + ((optionData342['value']) ? '<input type="checkbox" data-value="' + soy.$$escapeHtml(optionData342['value']) + '" class="js-checks-check" /> ' : '') + soy.$$escapeHtml(optionData342['text']) + '</label></div>' + ((optionData342['options']) ? wdpro.templates.forms.checksLevel({options: optionData342['options']}) : '');
+  }
+  output += '</div>';
+  return output;
+};
+if (goog.DEBUG) {
+  wdpro.templates.forms.checksLevel.soyTemplateName = 'wdpro.templates.forms.checksLevel';
+}
+
+
 wdpro.templates.forms.hiddenField = function(opt_data, opt_ignored) {
   return ((opt_data.data['nothing']) ? '' : '') + '<input type="hidden" value="' + soy.$$escapeHtml(opt_data.data['value'] ? opt_data.data['value'] : '') + '"' + wdpro.templates.forms.attrs(opt_data) + '/>';
 };

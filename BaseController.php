@@ -73,6 +73,19 @@ abstract class BaseController {
 	}
 
 
+	/**
+	 * Возвращает сущность по данным или id
+	 *
+	 * @param null|int|string|array $dataOrId ID или данные объекта
+	 *
+	 * @return \Wdpro\BaseEntity
+	 * @throws \Exception
+	 */
+	public static function entity($dataOrId) {
+		return wdpro_object(static::getModuleClass('Entity'), $dataOrId);
+	}
+
+
 	public static function initSiteStart() {
 
 		// Список (Это здесь, чтобы инициировались типы страниц)
