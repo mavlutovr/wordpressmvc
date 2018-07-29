@@ -184,6 +184,8 @@ class Menu extends Roll
 		if ($sel = $params['sqlTable']::select($params['where'], $params['fields']))
 		{
 			$data = array();
+
+			$homePageId = wdpro_get_option('page_on_front');
 			
 			foreach($sel as $row)
 			{
@@ -215,7 +217,16 @@ class Menu extends Roll
 				else
 				{
 					//$row['url'] = home_url($row['post_name']);
-					$row['url'] = \Wdpro\Lang\Data::currentUrl().$row['post_name'].'/';
+
+					$post_name = $row['post_name'];
+					if ($row['id'] == $homePageId) {
+						$post_name = '';
+					}
+					else {
+						$post_name .= '/';
+					}
+
+					$row['url'] = \Wdpro\Lang\Data::currentUrl().$post_name;
 				}
 				$row['text'] = $row['post_title'];
 

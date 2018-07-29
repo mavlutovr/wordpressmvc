@@ -24,16 +24,18 @@ abstract class BasePage extends BaseEntity
 			) );
 		});
 
-		$type = static::getType();
-
 		// Это чтобы главная загружалась
 		add_action('pre_get_posts', function ($query) use (&$type) {
+
 			if(
 				(!isset($query->query_vars['post_type'])
 					||'' == $query->query_vars['post_type'])
 				&& isset($query->query_vars['page_id'])
-				&& 0 != $query->query_vars['page_id'])
-				$query->query_vars['post_type'] = array( 'page', $type);
+				&& 0 != $query->query_vars['page_id']) {
+
+				$post = wdpro_get_post_by_id($query->query_vars['page_id']);
+				$query->query_vars['post_type'] = array( 'page', $post->getType());
+			}
 
 			return $query;
 		});
