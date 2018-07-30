@@ -540,6 +540,7 @@
 					self.align();
 					
 					// Через секунду
+					setTimeout(function () { self.align(); }, 10);
 					setTimeout(function () { self.align(); }, 1000);
 
 					// Инициализируем созданную форму
