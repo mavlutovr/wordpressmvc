@@ -1569,6 +1569,27 @@ function wdpro_key_parse($key=null)
 }
 
 
+/**
+ * Добавляет значение в ключ
+ *
+ * @param string|array $key Ключь
+ * @param array $values
+ * @return array
+ */
+function wdpro_key_add_values($key, $values) {
+	$key = wdpro_key_parse($key);
+
+	if (is_array($values)) {
+		foreach ($values as $newKey => $newValue) {
+			$key['key'] .= ','.$newKey.':'.$newValue;
+			$key['object'][$newKey] = $newValue;
+		}
+	}
+
+	return $key;
+}
+
+
 
 $_wdproPostClassesByPostType = array();
 

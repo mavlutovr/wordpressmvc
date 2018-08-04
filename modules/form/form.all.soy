@@ -15,7 +15,12 @@
 
 	{if not $params['removeFormTag']}
 	<form action="{$form['action']}" method="{$form['method']}"
-	class="{$params['class']}">
+	class="{$params['class']}"
+
+		{foreach $attrName in keys($params['attributes'])}
+			{sp}{$attrName}="{$params['attributes'][$attrName]}"
+		{/foreach}
+	>
 	{/if}
 
 		// Это слой, ширина которого равна не 100%, а ширине формы

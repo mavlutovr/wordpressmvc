@@ -16,6 +16,7 @@ class Form
 	protected $elementI = 0;
 	protected $groups = [];
 	protected $saveErrorsToOptions = false;
+	protected static $defaultMethod = 'POST';
 	
 	const CKEDITOR = 'ckeditor';
 	const CKEDITOR_SMALL = 'ckeditorSmall';
@@ -83,8 +84,9 @@ class Form
 		
 		$this->params = wdpro_extend(array(
 			'action'=>'',
-			'method'=>'POST',
-			'elements'=>array(),
+			'method'=>static::$defaultMethod,
+			'elements'=>[],
+			'attributes'=>[],
 		), $params);
 		
 		foreach($this->params['elements'] as $elementParams)
@@ -238,7 +240,15 @@ class Form
 	}
 
 
-
+	/**
+	 * Добавление аттрибута в форму
+	 *
+	 * @param string $name Имя атррибута
+	 * @param string|number|mixed $value Значение
+	 */
+	public function addAttribute($name, $value) {
+		$this->params['attributes'][$name] = $value;
+	}
 
 
 	/**
@@ -480,8 +490,9 @@ class Form
 	 * Запускает каллбэк при получении данных из формы
 	 *
 	 * @param callback $validCallback каллбэк, получающий данные, которые были запущены формой
+	 * @param callback|null $noSubmitCallback каллбэк, который срабатывает, если форма не была отправлена
 	 */
-	public function onSubmit($validCallback)
+	public function onSubmit($validCallback, $noSubmitCallback=null)
 	{
 		$data = $this->getData();
 
@@ -490,6 +501,11 @@ class Form
 			if ($this->valid())
 			{
 				$validCallback($data);
+			}
+		}
+		else {
+			if ($noSubmitCallback) {
+				$noSubmitCallback();
 			}
 		}
 	}
@@ -789,6 +805,16 @@ class Form
 		if (count($elements)) {
 			return $elements;
 		}
+	}
+
+
+	/**
+	 * Устанавливаем метод отправки
+	 *
+	 * @param string $method Метод (POST, GET)
+	 */
+	public function setMethod($method) {
+		$this->params['method'] = $method;
 	}
 }
 

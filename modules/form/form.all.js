@@ -166,6 +166,20 @@
 
 
 	/**
+	 * Возвращает объект формы по ее html коду (jquery)
+	 *
+	 * @param html {jQuery} Html блок формы
+	 * @returns {wdpro.forms.Form}
+	 */
+	wdpro.forms.getFormObjectByHtml = function (html) {
+		var id = Number(html.attr('data-id'));
+		if (forms[id]) {
+			return forms[id];
+		}
+	};
+
+
+	/**
 	 * Выравнивает все формы
 	 */
 	wdpro.forms.align = function () {
@@ -528,6 +542,9 @@
 					
 					// Получаем шаблон формы
 					self.html = $(self.templates.form(templateData));
+
+					// Устанавливааем номер формы
+					self.html.attr('data-form-n', self.id);
 
 					// Расставляем по всем меткам соответствующие элементы
 					wdpro.jQueryToHtmlRun(self.html, 'form');

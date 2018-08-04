@@ -11,12 +11,23 @@ if (typeof wdpro.templates.forms == 'undefined') { wdpro.templates.forms = {}; }
 
 
 wdpro.templates.forms.form = function(opt_data, opt_ignored) {
-  var output = '<div class="wdpro-form"><div class="JS_messages_container"></div>' + ((! opt_data.params['removeFormTag']) ? '<form action="' + soy.$$escapeHtml(opt_data.form['action']) + '" method="' + soy.$$escapeHtml(opt_data.form['method']) + '" class="' + soy.$$escapeHtml(opt_data.params['class']) + '">' : '') + '<div class="wdpro-form-width JS_groups_container">';
-  var groupList14 = opt_data.groups;
-  var groupListLen14 = groupList14.length;
-  for (var groupIndex14 = 0; groupIndex14 < groupListLen14; groupIndex14++) {
-    var groupData14 = groupList14[groupIndex14];
-    output += soy.$$filterNoAutoescape(groupData14);
+  var output = '<div class="wdpro-form"><div class="JS_messages_container"></div>';
+  if (! opt_data.params['removeFormTag']) {
+    output += '<form action="' + soy.$$escapeHtml(opt_data.form['action']) + '" method="' + soy.$$escapeHtml(opt_data.form['method']) + '" class="' + soy.$$escapeHtml(opt_data.params['class']) + '"';
+    var attrNameList13 = soy.$$getMapKeys(opt_data.params['attributes']);
+    var attrNameListLen13 = attrNameList13.length;
+    for (var attrNameIndex13 = 0; attrNameIndex13 < attrNameListLen13; attrNameIndex13++) {
+      var attrNameData13 = attrNameList13[attrNameIndex13];
+      output += ' ' + soy.$$escapeHtml(attrNameData13) + '="' + soy.$$escapeHtml(opt_data.params['attributes'][attrNameData13]) + '"';
+    }
+    output += '>';
+  }
+  output += '<div class="wdpro-form-width JS_groups_container">';
+  var groupList22 = opt_data.groups;
+  var groupListLen22 = groupList22.length;
+  for (var groupIndex22 = 0; groupIndex22 < groupListLen22; groupIndex22++) {
+    var groupData22 = groupList22[groupIndex22];
+    output += soy.$$filterNoAutoescape(groupData22);
   }
   output += '</div>' + ((! opt_data.params['removeFormTag']) ? '</form>' : '') + '</div>';
   return output;
@@ -30,11 +41,11 @@ wdpro.templates.forms.errors = function(opt_data, opt_ignored) {
   var output = '' + soy.$$escapeHtml(opt_data.errorsPrefix);
   if (opt_data.errors != null && opt_data.errors.length) {
     output += ': \n\n';
-    var errorList28 = opt_data.errors;
-    var errorListLen28 = errorList28.length;
-    for (var errorIndex28 = 0; errorIndex28 < errorListLen28; errorIndex28++) {
-      var errorData28 = errorList28[errorIndex28];
-      output += ((! (errorIndex28 == 0)) ? ', ' : '') + soy.$$escapeHtml(errorData28);
+    var errorList36 = opt_data.errors;
+    var errorListLen36 = errorList36.length;
+    for (var errorIndex36 = 0; errorIndex36 < errorListLen36; errorIndex36++) {
+      var errorData36 = errorList36[errorIndex36];
+      output += ((! (errorIndex36 == 0)) ? ', ' : '') + soy.$$escapeHtml(errorData36);
     }
     output += '.';
   } else {
@@ -49,11 +60,11 @@ if (goog.DEBUG) {
 
 wdpro.templates.forms.group = function(opt_data, opt_ignored) {
   var output = '<div class="wdpro-form-group JS_group">';
-  var elementList39 = opt_data.elements;
-  var elementListLen39 = elementList39.length;
-  for (var elementIndex39 = 0; elementIndex39 < elementListLen39; elementIndex39++) {
-    var elementData39 = elementList39[elementIndex39];
-    output += soy.$$filterNoAutoescape(elementData39);
+  var elementList47 = opt_data.elements;
+  var elementListLen47 = elementList47.length;
+  for (var elementIndex47 = 0; elementIndex47 < elementListLen47; elementIndex47++) {
+    var elementData47 = elementList47[elementIndex47];
+    output += soy.$$filterNoAutoescape(elementData47);
   }
   output += '</div>';
   return output;
@@ -89,11 +100,11 @@ if (goog.DEBUG) {
 
 wdpro.templates.forms.attrs = function(opt_data, opt_ignored) {
   var output = '';
-  var attrNameList226 = soy.$$getMapKeys(opt_data.attrs);
-  var attrNameListLen226 = attrNameList226.length;
-  for (var attrNameIndex226 = 0; attrNameIndex226 < attrNameListLen226; attrNameIndex226++) {
-    var attrNameData226 = attrNameList226[attrNameIndex226];
-    output += (opt_data.attrs[attrNameData226]) ? ' ' + soy.$$escapeHtml(attrNameData226) + '="' + soy.$$escapeHtml(opt_data.attrs[attrNameData226]) + '"' : '';
+  var attrNameList234 = soy.$$getMapKeys(opt_data.attrs);
+  var attrNameListLen234 = attrNameList234.length;
+  for (var attrNameIndex234 = 0; attrNameIndex234 < attrNameListLen234; attrNameIndex234++) {
+    var attrNameData234 = attrNameList234[attrNameIndex234];
+    output += (opt_data.attrs[attrNameData234]) ? ' ' + soy.$$escapeHtml(attrNameData234) + '="' + soy.$$escapeHtml(opt_data.attrs[attrNameData234]) + '"' : '';
   }
   return output;
 };
@@ -184,11 +195,11 @@ if (goog.DEBUG) {
 
 wdpro.templates.forms.selectField = function(opt_data, opt_ignored) {
   var output = ((opt_data.attrs['nothing']) ? '' : '') + '<div><select ' + wdpro.templates.forms.attrs(opt_data) + '>';
-  var nList315 = soy.$$getMapKeys(opt_data.data['options']);
-  var nListLen315 = nList315.length;
-  for (var nIndex315 = 0; nIndex315 < nListLen315; nIndex315++) {
-    var nData315 = nList315[nIndex315];
-    output += '<option value="' + soy.$$escapeHtml(opt_data.data['options'][nData315][0]) + '"' + ((opt_data.data['value'] == opt_data.data['options'][nData315][0]) ? ' selected="selected"' : '') + '>' + soy.$$escapeHtml(opt_data.data['options'][nData315][1]) + '</option>';
+  var nList323 = soy.$$getMapKeys(opt_data.data['options']);
+  var nListLen323 = nList323.length;
+  for (var nIndex323 = 0; nIndex323 < nListLen323; nIndex323++) {
+    var nData323 = nList323[nIndex323];
+    output += '<option value="' + soy.$$escapeHtml(opt_data.data['options'][nData323][0]) + '"' + ((opt_data.data['value'] == opt_data.data['options'][nData323][0]) ? ' selected="selected"' : '') + '>' + soy.$$escapeHtml(opt_data.data['options'][nData323][1]) + '</option>';
   }
   output += '</select>' + ((opt_data.data['multiple']) ? '<div class="wdpro-form-select-multiple-info">\u0423\u0434\u0435\u0440\u0436\u0438\u0432\u0430\u0439\u0442\u0435 CTRL, \u0447\u0442\u043E\u0431\u044B \u0432\u044B\u0431\u0440\u0430\u0442\u044C \u043D\u0435\u0441\u043A\u043E\u043B\u044C\u043A\u043E</div>' : '') + '</div>';
   return output;
@@ -208,11 +219,11 @@ if (goog.DEBUG) {
 
 wdpro.templates.forms.checksLevel = function(opt_data, opt_ignored) {
   var output = '<div class="wdpro-form-checks-level">';
-  var optionList342 = opt_data.options;
-  var optionListLen342 = optionList342.length;
-  for (var optionIndex342 = 0; optionIndex342 < optionListLen342; optionIndex342++) {
-    var optionData342 = optionList342[optionIndex342];
-    output += '<div class=""><label>' + ((optionData342['value']) ? '<input type="checkbox" data-value="' + soy.$$escapeHtml(optionData342['value']) + '" class="js-checks-check" /> ' : '') + soy.$$escapeHtml(optionData342['text']) + '</label></div>' + ((optionData342['options']) ? wdpro.templates.forms.checksLevel({options: optionData342['options']}) : '');
+  var optionList350 = opt_data.options;
+  var optionListLen350 = optionList350.length;
+  for (var optionIndex350 = 0; optionIndex350 < optionListLen350; optionIndex350++) {
+    var optionData350 = optionList350[optionIndex350];
+    output += '<div class=""><label>' + ((optionData350['value']) ? '<input type="checkbox" data-value="' + soy.$$escapeHtml(optionData350['value']) + '" class="js-checks-check" /> ' : '') + soy.$$escapeHtml(optionData350['text']) + '</label></div>' + ((optionData350['options']) ? wdpro.templates.forms.checksLevel({options: optionData350['options']}) : '');
   }
   output += '</div>';
   return output;
