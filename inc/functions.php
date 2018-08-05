@@ -1581,10 +1581,12 @@ function wdpro_key_add_values($key, $values) {
 
 	if (is_array($values)) {
 		foreach ($values as $newKey => $newValue) {
-			$key['key'] .= ','.$newKey.':'.$newValue;
+			//$key['key'] .= ','.$newKey.':'.$newValue;
 			$key['object'][$newKey] = $newValue;
 		}
 	}
+
+	$key = wdpro_key_parse($key['object']);
 
 	return $key;
 }

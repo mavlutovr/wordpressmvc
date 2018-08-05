@@ -2219,11 +2219,10 @@ if (typeof Array.isArray === 'undefined') {
 		var key = wdpro.keyParse(originalKey);
 
 		$.each(newData, function (newKey, newValue) {
-			key['key'] += ','+newKey+':'+newValue;
 			key['object'][newKey] = newValue;
 		});
 
-		return key;
+		return wdpro.keyParse(key['object']);
 	};
 
 
