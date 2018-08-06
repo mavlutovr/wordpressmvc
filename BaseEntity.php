@@ -86,13 +86,18 @@ abstract class BaseEntity
 	/**
 	 * Загрузка данных из базы
 	 * 
-	 * @param int $id ID сущности
+	 * @param int|null $id ID сущности
 	 * @return bool true, если данные загрузились
 	 * @throws EntityException
 	 */
-	public function loadData($id)
+	public function loadData($id=null)
 	{
-		$this->_id = $id;
+		if ($id) {
+			$this->_id = $id;
+		}
+		else {
+			$id = $this->id();
+		}
 
 		if ($data = static::sqlTable()->getRow(
 			array('WHERE id=%d', $id)
@@ -366,7 +371,7 @@ abstract class BaseEntity
 	/**
 	 * Берет следующий порядковый номер и добавляет его в данные
 	 *
-	 * @param string $where WHERE запрос, по которомустроиться список этих сущностей, в 
+	 * @param string $where WHERE запрос, по которому строиться список этих сущностей, в
 	 * котором идет сортировка
 	 * @return $this
 	 * @throws EntityException

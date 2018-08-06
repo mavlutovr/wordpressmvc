@@ -240,8 +240,14 @@ abstract class BaseController {
 
 		$sqlTable = static::sqlTable();
 
-		$nameField = $sqlTable::isColl('post_title') ? 'post_title' : 'name';
-		
+		if (isset($paramsOrWhere['field']) && $paramsOrWhere['field']) {
+			$nameField = $paramsOrWhere['field'];
+		}
+
+		else {
+			$nameField = $sqlTable::isColl('post_title') ? 'post_title' : 'name';
+		}
+
 		if ($sel = $sqlTable::select($paramsOrWhere['where'], 'id, '.$nameField)) {
 			foreach($sel as $row) {
 				$paramsOrWhere['options'][] = [$row['id'], $row[$nameField]];

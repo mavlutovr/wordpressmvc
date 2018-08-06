@@ -2871,3 +2871,21 @@ function wdpro_on_page_init($callback) {
 		$callback($breadcrumbs->getFirstEntity());
 	});
 }
+
+
+/**
+ * Возвращает домен без www из адреса.
+ *
+ * Или если это просто строка, а не адрес. То возвращает ее без изменений.
+ *
+ * @param string $url Url
+ * @return string
+ */
+function wdpro_get_domain_from_url($url) {
+	$parsed = parse_url($url);
+	if (isset($parsed['host'])) {
+		return str_replace('www.', '', $parsed['host']);
+	}
+
+	return $url;
+}
