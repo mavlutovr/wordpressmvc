@@ -26,6 +26,7 @@ add_action(
 									'type'=>'text',
 									'top'=>'Дополнительные мета-теги в head',
 									'name'=>'wdpro_head_additional',
+									'width'=>600,
 								),
 
 								array(
