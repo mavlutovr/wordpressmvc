@@ -157,10 +157,7 @@ add_action('wdpro_breadcrumbs_init', 'wdpro_breadcrumbs_init');
 function wdpro_breadcrumbs_init($breadcrumbs) {
 
 	if (!is_front_page()) {
-		$breadcrumbs->prepend(array(
-			'text'=>wdpro_get_option('wdpro_breadcrumbs_home[lang]', 'Главная'),
-			'uri'=>wdpro_home_url_with_lang(),
-		));
+		$breadcrumbs->prependFrontPage();
 	}
 
 	$breadcrumbs->removeLast(true);

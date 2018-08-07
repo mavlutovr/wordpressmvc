@@ -53,6 +53,17 @@ class Breadcrumbs
 	}
 
 
+	public function removeAll() {
+		$this->firstEntity = null;
+		$this->root = [];
+		$this->prepended = [];
+		$this->appended = [];
+		$this->lastAddedEntity = null;
+		$this->lastElementsWithoutLinks = 1;
+		$this->parentByType = [];
+	}
+
+
 	/**
 	 * Создание структуры пути хлебных крошек
 	 *
@@ -116,6 +127,17 @@ class Breadcrumbs
 	public function prepend($element)
 	{
 		$this->prepended[] = $this->getElement($element);
+	}
+
+
+	/**
+	 * Добавляет главную страницу
+	 */
+	public function prependFrontPage() {
+		$this->prepend(array(
+			'text'=>wdpro_get_option('wdpro_breadcrumbs_home[lang]', 'Главная'),
+			'uri'=>wdpro_home_url_with_lang(),
+		));
 	}
 
 
