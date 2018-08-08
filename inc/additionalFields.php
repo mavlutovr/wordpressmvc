@@ -112,6 +112,9 @@ function wdpro_the_header()
 {
 	remove_action( 'wp_head', '_wp_render_title_tag', 1 );
 
+	$title = wdpro_data('title');
+
+	if (!$title)
 	$title = wdpro_get_post_meta('title');
 	if (!$title) {
 		$title = wdpro_the_title_standart();
