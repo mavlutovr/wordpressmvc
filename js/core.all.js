@@ -53,15 +53,55 @@ if (typeof Array.isArray === 'undefined') {
 };
 
 (function ($) {
-	
-	// Аналог $(document).ready()
-	wdpro.ready = function (callback) {
-		
-		$(document).ready(function () {
-			
-			callback($);
-		});
+
+	var readyFns = [];
+	var readyInited = false;
+
+	/**
+	 * Запускает каллбэк при готовности страницы к выколнению скриптов
+	 *
+	 * Аналог $(document).ready()
+	 *
+	 * @param [n] {number} Порядковый номер выполнения. Актуален до первого срабатывания каллбков.
+	 * Дальше будет срабатывать сразу
+	 * @param callback {function} Каллбэк, которые запускается
+	 */
+	wdpro.ready = function (n, callback) {
+
+		var args = wdpro.argumentsSortByTypes(arguments);
+
+		if (readyInited) {
+			args['function']($);
+		}
+
+		else {
+			// Номер
+			if (!args['number']) {
+				args['number'] = 10;
+			}
+
+			readyFns.push(args);
+		}
+
 	};
+
+	$(document).ready(function () {
+		readyInited = true;
+
+		readyFns.sort(function (a, b) {
+			if (a['number'] > b['number']) {
+				return 1;
+			}
+			if (a['number'] < b['number']) {
+				return -1;
+			}
+			return 0;
+		});
+
+		$.each(readyFns, function (i, object) {
+			object['function']($);
+		});
+	});
 
 
 
@@ -1054,66 +1094,57 @@ if (typeof Array.isArray === 'undefined') {
 		 * @param actionName {string} Имя события с пространством имен в формате name.namespace
 		 * @returns {Event}
 		 */
-		off: function(actionName)
-		     {
-			     var self = this;
+		off: function (actionName) {
+			var self = this;
 
-			     // Парсим имя события
-			     var action = this.eventParseName(actionName);
+			// Парсим имя события
+			var action = this.eventParseName(actionName);
 
-			     // Удаление по пространству имен
-			     if (action.namespace)
-			     {
-				     // Если есть каллбэки для данного пространства имен
-				     if (this.removeByNamespace && this.removeByNamespace.isset(actionName))
-				     {
-					     // Получаем список номеров каллбэков пространства имен
-					     var ns = this.removeByNamespace.unset(actionName);
+			// Удаление по пространству имен
+			if (action.namespace) {
+				// Если есть каллбэки для данного пространства имен
+				if (this.removeByNamespace && this.removeByNamespace.isset(actionName)) {
+					// Получаем список номеров каллбэков пространства имен
+					var ns = this.removeByNamespace.unset(actionName);
 
-					     // Получаем список вызываемых каллбэков
-					     var callbacks = self.callbacks.get(action.name);
+					// Получаем список вызываемых каллбэков
+					var callbacks = self.callbacks.get(action.name);
 
-					     // Если есть список вызываемых каллбэков
-					     if (callbacks)
-					     {
-						     // Перебираем номера каллбэков
-						     ns.each(function(n)
-						     {
-							     // Удаляем этот каллбэк по номеру
-							     callbacks.unset(n);
-						     });
-					     }
-				     }
-			     }
+					// Если есть список вызываемых каллбэков
+					if (callbacks) {
+						// Перебираем номера каллбэков
+						ns.each(function (n) {
+							// Удаляем этот каллбэк по номеру
+							callbacks.unset(n);
+						});
+					}
+				}
+			}
 
 
-			     // Удаление без пространства имен
-			     else
-			     {
-				     // Удаляем все каллбэки из списка каллбэков по имени события
-				     if (this.callbacks)
-				     {
-					     this.callbacks.unset(action.name);
-				     }
+			// Удаление без пространства имен
+			else {
+				// Удаляем все каллбэки из списка каллбэков по имени события
+				if (this.callbacks) {
+					this.callbacks.unset(action.name);
+				}
 
-				     // Удаляем инфу о каллбэках по пространствам имен
-				     this.removeByNamespace && this.removeByNamespace.each(function (ns, actionName)
-				     {
-					     // Парсим имя события
-					     var action = self.eventParseName(actionName);
+				// Удаляем инфу о каллбэках по пространствам имен
+				this.removeByNamespace && this.removeByNamespace.each(function (ns, actionName) {
+					// Парсим имя события
+					var action = self.eventParseName(actionName);
 
-					     // Если имя совпадает с удаляемым
-					     if (action.name == actionName)
-					     {
-						     // Удаляем номера этого каллбэка из списка номеров для удаления по пространству имен
-						     self.removeByNamespace.unset(actionName);
-					     }
-				     });
-			     }
+					// Если имя совпадает с удаляемым
+					if (action.name == actionName) {
+						// Удаляем номера этого каллбэка из списка номеров для удаления по пространству имен
+						self.removeByNamespace.unset(actionName);
+					}
+				});
+			}
 
 
-			     return this;
-		     },
+			return this;
+		},
 
 
 		/**
@@ -1123,45 +1154,39 @@ if (typeof Array.isArray === 'undefined') {
 		 * @param [data] {{}} Данные, отправляемые в прослушки события
 		 * @returns {number} Количество запущенных прослушек в данный момент
 		 */
-		trigger: function (actionName, data)
-		         {
-			         // Количество запущенных каллбэков
-			         var ret = 0;
+		trigger: function (actionName, data) {
+			// Количество запущенных каллбэков
+			var ret = 0;
 
-			         // Если есть список прослушек
-			         if (this.callbacks)
-			         {
-				         // Получаем список прослушек для этого события
-				         var callbacks = this.callbacks.get(actionName);
+			// Если есть список прослушек
+			if (this.callbacks) {
+				// Получаем список прослушек для этого события
+				var callbacks = this.callbacks.get(actionName);
 
-				         // Если есть прослушки на данное событие
-				         if (callbacks)
-				         {
-					         // Перебираем прослушки
-					         callbacks.each(function(callback)
-					         {
-						         if (typeof callback.fn == 'function')
-						         {
-							         // Запускаем прослушку
-							         callback.fn(data);
+				// Если есть прослушки на данное событие
+				if (callbacks) {
+					// Перебираем прослушки
+					callbacks.each(function (callback) {
+						if (typeof callback.fn == 'function') {
+							// Запускаем прослушку
+							callback.fn(data);
 
-							         // Увеличиваем счетчик запущенных каллбэков
-							         ret ++;
-						         }
-					         });
-				         }
-			         }
+							// Увеличиваем счетчик запущенных каллбэков
+							ret++;
+						}
+					});
+				}
+			}
 
-			         // Запоминаем данное событие для прослушек, которые будут установлены после,
-			         // но которые по параметрам будут требовать данное событие
-			         if (!this.prevEvents)
-			         {
-				         this.prevEvents = new List();
-			         }
-			         this.prevEvents.set(actionName, data);
+			// Запоминаем данное событие для прослушек, которые будут установлены после,
+			// но которые по параметрам будут требовать данное событие
+			if (!this.prevEvents) {
+				this.prevEvents = new List();
+			}
+			this.prevEvents.set(actionName, data);
 
-			         return ret;
-		         },
+			return ret;
+		},
 
 
 		/**
@@ -1170,30 +1195,25 @@ if (typeof Array.isArray === 'undefined') {
 		 * @param [list] {{}} Объект, содержащий прослушки
 		 * @param [keyInList] {*} Ключ списка прослушек в этом объекте (когда объект не список прослушек, а список всяких штук, одной из штук которого является список прослушек)
 		 */
-		onList: function(list, keyInList)
-		        {
-			        var self = this;
+		onList: function (list, keyInList) {
+			var self = this;
 
-			        if (typeof list == 'object')
-			        {
-				        // Список каллбэков в ключе
-				        if (keyInList)
-				        {
-					        list = list[keyInList];
-				        }
+			if (typeof list == 'object') {
+				// Список каллбэков в ключе
+				if (keyInList) {
+					list = list[keyInList];
+				}
 
-				        // Если есть такой список калббэков
-				        if (list && typeof list == 'object')
-				        {
-					        // Перебираем прослушки
-					        each(list, function (eventCallback, eventName)
-					        {
-						        // Добавляем прослушку события
-						        self.on(eventName, eventCallback);
-					        });
-				        }
-			        }
-		        },
+				// Если есть такой список калббэков
+				if (list && typeof list == 'object') {
+					// Перебираем прослушки
+					each(list, function (eventCallback, eventName) {
+						// Добавляем прослушку события
+						self.on(eventName, eventCallback);
+					});
+				}
+			}
+		},
 
 
 		/**
@@ -1202,15 +1222,14 @@ if (typeof Array.isArray === 'undefined') {
 		 * @param name {string}
 		 * @returns {{name: string, namespace: string}}
 		 */
-		eventParseName: function(name)
-		                {
-			                var pieces = name.split('.');
+		eventParseName: function (name) {
+			var pieces = name.split('.');
 
-			                return {
-				                name: pieces[0],
-				                namespace: pieces[1]
-			                };
-		                }
+			return {
+				name: pieces[0],
+				namespace: pieces[1]
+			};
+		}
 	});
 
 
@@ -2247,6 +2266,16 @@ if (typeof Array.isArray === 'undefined') {
 
 
 	/**
+	 * Возвращает данные query string в виде объекта
+	 *
+	 * @returns {{}}
+	 */
+	wdpro.getQueryStringObject = function () {
+		return wdpro.parseParams(window.location.search);s
+	};
+
+
+	/**
 	 * Заменяет в адресе search строку на новую
 	 *
 	 * @param url {string} Url
@@ -2309,7 +2338,7 @@ if (typeof Array.isArray === 'undefined') {
 		var decode = function (str) {
 			return decodeURIComponent(str.replace(/\+/g, ' '));
 		};
-		$.parseParams = function (query) {
+		$.parseParams = wdpro.parseParams = function (query) {
 			// recursive function to construct the result object
 			function createElement(params, key, value) {
 				key = key + '';
