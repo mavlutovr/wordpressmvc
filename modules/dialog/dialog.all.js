@@ -100,7 +100,7 @@
 				// Добавляем обработчик закрытия
 				if (typeof this.params.close == 'function')
 				{
-					self.on('close', this.params.close);
+					self.on('closed', this.params.close);
 				}
 
 
@@ -186,6 +186,10 @@
 				});
 
 				this.html.draggable();
+
+				this.html.on('close', function () {
+					self.close();
+				});
 			},
 
 
@@ -198,7 +202,6 @@
 				this.loadingStart();
 
 				wdpro.ajax(url, function (data) {
-					console.log('data', data);
 
 					self.loadingStop();
 
@@ -254,7 +257,7 @@
 				if (typeof this.params.close == 'function')
 				{
 					// запускаем каллбэки закрытия
-					this.trigger('close', this);
+					this.trigger('closed', this);
 				}
 
 

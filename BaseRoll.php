@@ -49,4 +49,9 @@ abstract class BaseRoll
 		
 	}
 
+
+	public function id() {
+
+	}
+
 }

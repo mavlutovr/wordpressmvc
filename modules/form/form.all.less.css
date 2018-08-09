@@ -139,3 +139,9 @@
 .wdpro-form-select-multiple-info {
   font-size: 80%;
 }
+.wdpro-form-checks-level {
+  margin: 10px 0;
+}
+.wdpro-form-checks-level .wdpro-form-checks-level {
+  margin-left: 20px;
+}

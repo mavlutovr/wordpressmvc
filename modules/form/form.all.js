@@ -166,6 +166,20 @@
 
 
 	/**
+	 * Возвращает объект формы по ее html коду (jquery)
+	 *
+	 * @param html {jQuery} Html блок формы
+	 * @returns {wdpro.forms.Form}
+	 */
+	wdpro.forms.getFormObjectByHtml = function (html) {
+		var id = Number(html.attr('data-id'));
+		if (forms[id]) {
+			return forms[id];
+		}
+	};
+
+
+	/**
 	 * Выравнивает все формы
 	 */
 	wdpro.forms.align = function () {
@@ -270,11 +284,11 @@
 
 					wdpro.ajax(self.params['action'], data, function (response) {
 
-						self.loadingStop();
-
-						if (response['reloadPage']) {
-							wdpro.reloadPage();
+						if (response['dialogClose']) {
+							self.closeDialog();
 						}
+
+						self.loadingStop();
 					});
 				});
 			}
@@ -529,6 +543,9 @@
 					// Получаем шаблон формы
 					self.html = $(self.templates.form(templateData));
 
+					// Устанавливааем номер формы
+					self.html.attr('data-form-n', self.id);
+
 					// Расставляем по всем меткам соответствующие элементы
 					wdpro.jQueryToHtmlRun(self.html, 'form');
 
@@ -540,6 +557,7 @@
 					self.align();
 					
 					// Через секунду
+					setTimeout(function () { self.align(); }, 10);
 					setTimeout(function () { self.align(); }, 1000);
 
 					// Инициализируем созданную форму
@@ -581,7 +599,7 @@
 			this.eachElements(function (element) {
 				element.trigger('prepareToGetData');
 			});
-			
+
 			return this.jForm.serializeObject();
 		},
 
@@ -1422,8 +1440,14 @@
 		updateDialogPos: function () {
 			// Обновляем позицию Dialog, когда форма в окошке
 			this.html.closest('.js-dialog').trigger('updatePos');
+		},
 
-			console.log('js-dialog', this.html.closest('.js-dialog'));
+
+		/**
+		 * Закрывает диалоговое окно, в котором находится
+		 */
+		closeDialog: function () {
+			this.html.closest('.js-dialog').trigger('close');
 		},
 
 
@@ -3569,6 +3593,120 @@
 
 
 	/**
+	 * Checks
+	 *
+	 * Это примерно то же самое, что и select multyple, только несколько элементов можно выделять
+	 * чекбоксами
+	 */
+	wdpro.forms.ChecksElement = wdpro.forms.BaseElement.extend({
+
+		init: function (data) {
+			var self = this;
+
+			this._super(data);
+
+			/*if (data['value']) {
+				this.setValue(data['value']);
+			}*/
+
+			this.on('prepareToGetData', function () {
+				self.updateHiddenValue();
+			});
+		},
+
+
+
+		createField: function (callback) {
+
+			callback(this.templates.checksField({
+				data:  this.getParams(),
+				attrs: this.getAttrs()
+			}));
+		},
+
+
+		/**
+		 * Обработка уже jquery полей
+		 *
+		 * @param field
+		 */
+		onField: function (field) {
+			var self = this;
+
+			this.checks = field.find('.js-checks-check').on('change', function () {
+				self.updateHiddenValue();
+			});
+
+			this.hiddens = field.find('.js-checks-hiddens');
+
+			this.updateHiddenValue();
+
+			if (this.savedValues) {
+				this.setValue(this.savedValues);
+				this.savedValues = null;
+			}
+		},
+
+
+		/**
+		 * Установка значения
+		 *
+		 * @param values {array} Значения
+		 */
+		setValue: function (values) {
+			var self = this;
+
+			if (this.checks) {
+				this.checks.prop('checked', false);
+
+				wdpro.each(values, function (value) {
+					self.checks.filter('[data-value="'+value+'"]').prop('checked', true);
+				});
+
+				this.updateHiddenValue();
+			}
+
+			else {
+				this.savedValues = values;
+			}
+
+		},
+
+
+		/**
+		 * Обновление отправляемых данных исходя их отмеченных чекбоксов
+		 */
+		updateHiddenValue: function () {
+			var self = this;
+
+			this.hiddens.empty();
+			var i = 0;
+
+			this.checks.each(function () {
+				var check = $(this);
+
+				if (check.is(':checked')) {
+					var hidden = $('<input name="'+self.getName()+'['+i+']" type="hidden" />');
+					self.hiddens.append(hidden);
+					hidden.attr('value', check.attr('data-value'));
+					i ++;
+				}
+			});
+
+
+			// Ничего не выбрано
+			if (!i) {
+				var hidden = $('<input name="'+self.getName()+'['+i+']" type="hidden" value="null" />');
+				self.hiddens.append(hidden);
+			}
+
+		}
+
+	});
+
+
+
+	/**
 	 * Просто html блок в форме
 	 */
 	wdpro.forms.HtmlElement = wdpro.forms.BaseElement.extend({
@@ -3644,6 +3782,7 @@
 		'Submit': SubmitElement,
 		'SubmitSave': wdpro.forms.SubmitSaveElement,
 		'Check':  CheckElement,
+		'Checks':  wdpro.forms.ChecksElement,
 		'File':   wdpro.forms.FileElement,
 		'Image':  wdpro.forms.ImageElement,
 		'Ckeditor': wdpro.forms.CkeditorElement,

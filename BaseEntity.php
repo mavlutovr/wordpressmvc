@@ -86,13 +86,18 @@ abstract class BaseEntity
 	/**
 	 * Загрузка данных из базы
 	 * 
-	 * @param int $id ID сущности
+	 * @param int|null $id ID сущности
 	 * @return bool true, если данные загрузились
 	 * @throws EntityException
 	 */
-	public function loadData($id)
+	public function loadData($id=null)
 	{
-		$this->_id = $id;
+		if ($id) {
+			$this->_id = $id;
+		}
+		else {
+			$id = $this->id();
+		}
 
 		if ($data = static::sqlTable()->getRow(
 			array('WHERE id=%d', $id)
@@ -243,6 +248,15 @@ abstract class BaseEntity
 			// Данные не были загружены из таблицы
 			else
 			{
+				// Если это новая сущность, удаляем ее из списка объектов, как новую сущность
+				// Чтобы потом при обращении к пустой сущности не загружалась эта не пустая сущность
+				$new = false;
+				// А создавалась новая пустая сущность
+				if (true || !$this->id()) {
+					$new = true;
+					wdpro_object_remove_from_cache($this);
+				}
+
 				if (!isset($data[static::idField()]) && $this->id())
 				{
 					$data[static::idField()] =  $this->id();
@@ -250,6 +264,11 @@ abstract class BaseEntity
 				
 				$this->_id = static::sqlTable()->insert($data);
 				$this->data[static::idField()] = $this->_id;
+
+				// Если это новая сущность, добавляе ее в кэш
+				if ($new) {
+					wdpro_object_add_to_cache($this);
+				}
 			}
 			
 			$this->onChange();
@@ -352,7 +371,7 @@ abstract class BaseEntity
 	/**
 	 * Берет следующий порядковый номер и добавляет его в данные
 	 *
-	 * @param string $where WHERE запрос, по которомустроиться список этих сущностей, в 
+	 * @param string $where WHERE запрос, по которому строиться список этих сущностей, в
 	 * котором идет сортировка
 	 * @return $this
 	 * @throws EntityException
@@ -767,12 +786,33 @@ abstract class BaseEntity
 
 	/**
 	 * Удаление сущности
+	 *
+	 * @throws \Exception
 	 */
 	public function remove()
 	{
 		if ($id = $this->id())
 		{
-			static::getSqlTable()->delete(array(static::idField()=>$id), array('%d'));
+			$table = static::getSqlTable();
+			
+			// Удаление дочерних элементов
+			if ($table::isColl('post_parent')) {
+				if ($selChilds = $table::select([
+					'WHERE post_parent=%d',
+					[$id]
+				])) {
+					foreach ($selChilds as $childRow) {
+						$child = wdpro_object(get_class($this), $childRow);
+						/** @var \Wdpro\BaseEntity $child */
+						$child->remove();
+					}
+				}
+			}
+
+
+			$table->delete(array(static::idField()=>$id), array('%d'));
+
+			wdpro_object_remove_from_cache($this);
 			
 			$this->_removed = true;
 			
@@ -782,6 +822,17 @@ abstract class BaseEntity
 			$this->onRemove();
 			$this->trigger('remove', $this->id());
 		}
+	}
+
+
+	public function addToObjectsCache() {
+		global $_wdproObjects;
+
+	}
+
+
+	public function removeFromObjectsCache() {
+
 	}
 
 

@@ -20,6 +20,9 @@
 		{
 			var self = $(this);
 
+			// Ставим класс на сам объект, чтобы к нему можно было применять стили
+			self.addClass('loading-target');
+
 			// Увеличиваем ID Loading
 			loadingRectId ++;
 
@@ -99,6 +102,8 @@
 		$(this).each(function ()
 		{
 			var self = $(this);
+
+			self.addClass('loading-target');
 
 			self.removeData('loading');
 			self.css('opacity', 1);

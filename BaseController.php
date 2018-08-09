@@ -73,6 +73,19 @@ abstract class BaseController {
 	}
 
 
+	/**
+	 * Возвращает сущность по данным или id
+	 *
+	 * @param null|int|string|array $dataOrId ID или данные объекта
+	 *
+	 * @return \Wdpro\BaseEntity
+	 * @throws \Exception
+	 */
+	public static function entity($dataOrId) {
+		return wdpro_object(static::getModuleClass('Entity'), $dataOrId);
+	}
+
+
 	public static function initSiteStart() {
 
 		// Список (Это здесь, чтобы инициировались типы страниц)
@@ -226,9 +239,18 @@ abstract class BaseController {
 		}
 
 		$sqlTable = static::sqlTable();
-		if ($sel = $sqlTable::select($paramsOrWhere['where'], 'id, post_title')) {
+
+		if (isset($paramsOrWhere['field']) && $paramsOrWhere['field']) {
+			$nameField = $paramsOrWhere['field'];
+		}
+
+		else {
+			$nameField = $sqlTable::isColl('post_title') ? 'post_title' : 'name';
+		}
+
+		if ($sel = $sqlTable::select($paramsOrWhere['where'], 'id, '.$nameField)) {
 			foreach($sel as $row) {
-				$paramsOrWhere['options'][] = [$row['id'], $row['post_title']];
+				$paramsOrWhere['options'][] = [$row['id'], $row[$nameField]];
 			}
 
 			return $paramsOrWhere['options'];

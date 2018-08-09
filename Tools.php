@@ -149,7 +149,7 @@ trait Tools
 	 *
 	 * Не надо удалять, т.к. сюда отправляются данные из функции keyObj()
 	 *
-	 * @param string $key Ключ
+	 * @param string|array $key Ключ
 	 */
 	public function setKey($key) {
 
@@ -158,6 +158,18 @@ trait Tools
 
 		// Запоминаем ключ
 		$this->_key = $key;
+	}
+
+
+	/**
+	 * Возвращает значение ключа
+	 *
+	 * @param string $key ключ ключа
+	 * @return mixed
+	 */
+	public function keyValue($key) {
+		if (isset($this->_key['object'][$key]) && $this->_key['object'][$key])
+		return $this->_key['object'][$key];
 	}
 
 
