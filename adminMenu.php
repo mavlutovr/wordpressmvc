@@ -9,6 +9,36 @@ add_action(
 
 			function () {
 
+				add_options_page(
+					'Head',
+					'Head',
+					'administrator',
+					'wdproHead',
+					function () {
+						echo('<h1>Head</h1>');
+
+						wdproOptionsForm(array(
+							'title'=>'Настройки',
+							'name'=>'options',
+							'elements' => array(
+
+								array(
+									'type'=>'text',
+									'top'=>'Дополнительные мета-теги в head',
+									'name'=>'wdpro_head_additional',
+									'width'=>600,
+								),
+
+								array(
+									'type' => 'submit',
+									'text' => 'Сохранить',
+									'class'=>WDPRO_BUTTON_CSS_CLASS,
+								),
+							),
+						));
+					}
+				);
+
 				// Options
 				add_options_page(
 					'Настройки Wordpress MVC',
@@ -75,6 +105,18 @@ href="'.WDPRO_CONSOLE_URL.'themes.php">Активировать тему</a>
 							'title'=>'Настройки',
 							'name'=>'options',
 							'elements' => array(
+
+								array(
+									'type'=>'html',
+									'htm'=>'<h2>Head</h2>',
+								),
+
+								array(
+									'type'=>'text',
+									'top'=>'Дополнительные мета-теги в head',
+									'name'=>'wdpro_head_additional',
+								),
+
 								array(
 									'type'=>'html',
 									'html'=>'<h2>Компиляция (имеет смысл только на локальной машине)</h2>',

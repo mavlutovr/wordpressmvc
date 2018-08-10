@@ -153,6 +153,7 @@ function wdpro_the_header()
 <?php
 
 
+	echo wdpro_get_option('wdpro_head_additional');
 
 	//wdpro_css_header();
 	//wdpro_scripts_header();
