@@ -5,7 +5,7 @@ class Controller extends \Wdpro\BaseController {
 	
 	public static function runSite() {
 		
-		wdpro_add_css_to_site(__DIR__.'/css/fontawesome-all.min.css');
+		wdpro_add_css_to_site(__DIR__.'/css/all.min.css');
 	}
 }
 
