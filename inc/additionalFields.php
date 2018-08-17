@@ -116,11 +116,27 @@ function wdpro_the_header()
 
 	if (!$title)
 	$title = wdpro_get_post_meta('title');
+	$description = wdpro_get_post_meta('description');
+	$keywords = wdpro_get_post_meta('keywords');
+
+
+	$h1 = wdpro_the_h1(true);
+	$template = function ($string, $key) use (&$h1) {
+		if (!$string) {
+			$string = wdpro_get_option($key.'[lang]');
+			$string = str_replace('[h1]', $h1, $string);
+		}
+
+		return $string;
+	};
+
+	$title = $template($title, 'wdpro_title_template');
+	$description = $template($description, 'wdpro_description_template');
+	$keywords = $template($keywords, 'wdpro_keywords_template');
 	if (!$title) {
 		$title = wdpro_the_title_standart();
 	}
-	$description = wdpro_get_post_meta('description');
-	$keywords = wdpro_get_post_meta('keywords');
+
 
 	// Картинка для Поделиться
 	// Из Wdpro
@@ -232,21 +248,22 @@ function wdpro_css_footer() {
 		wdpro_css();
 	}
 }
-	
+
 
 /**
  * Возвращает заголовок страницы
- * 
+ *
+ * @param bool $force Возвратить заголовок, даже когда он выключен через "-"
  * @return bool|null|string
  */
-function wdpro_the_h1()
+function wdpro_the_h1($force=false)
 {
 	$h1 = wdpro_data('h1');
 
 	if (!$h1)
 	$h1 = wdpro_get_post_meta('h1');
 	
-	if ($h1 != '-' && $h1 != '—')
+	if ($h1 != '-' && $h1 != '—' || $force)
 	{
 		if (!$h1)
 		{

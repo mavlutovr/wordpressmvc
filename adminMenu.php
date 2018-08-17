@@ -15,7 +15,7 @@ add_action(
 					'administrator',
 					'wdproHead',
 					function () {
-						echo('<h1>Head</h1>');
+						echo('<h1>Head, seo</h1>');
 
 						wdproOptionsForm(array(
 							'title'=>'Настройки',
@@ -33,6 +33,29 @@ add_action(
 									'type' => 'submit',
 									'text' => 'Сохранить',
 									'class'=>WDPRO_BUTTON_CSS_CLASS,
+								),
+
+								array(
+									'type'=>'html',
+									'html'=>'<h2>Seo</h2>',
+								),
+
+								array(
+									'name'=>'wdpro_title_template[lang]',
+									'top'=>'Шаблон title',
+									'right'=>'[h1]',
+								),
+
+								array(
+									'name'=>'wdpro_description_template[lang]',
+									'top'=>'Шаблон description',
+									'right'=>'[h1]',
+								),
+
+								array(
+									'name'=>'wdpro_keywords_template[lang]',
+									'top'=>'Шаблон keywords',
+									'right'=>'[h1]',
 								),
 							),
 						));

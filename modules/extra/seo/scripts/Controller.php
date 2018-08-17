@@ -205,7 +205,7 @@ class Controller extends \Wdpro\BaseController {
 					// Description
 					// <meta name="description" content="Сеобит - продвижение сайтов в Санкт-Петербурге, Москве и других городах."/>
 					$html = preg_replace_callback(
-						'~<meta[\s\S]+?name=["\']description["\'][\s\S]*?/>~i',
+						'~<meta[\s]+?name=["\']description["\'][\s\S]*?/>~i',
 						function ($arr) use (&$first) {
 
 							$first[] = $arr[0];
@@ -215,10 +215,9 @@ class Controller extends \Wdpro\BaseController {
 						$html
 					);
 
-					// Description
-					// <meta name="description" content="Сеобит - продвижение сайтов в Санкт-Петербурге, Москве и других городах."/>
+					// Keywords
 					$html = preg_replace_callback(
-						'~<meta[\s\S]*?name=["\']keywords["\'][\s\S]*?/>~i',
+						'~<meta[\s]*?name=["\']keywords["\'][\s\S]*?/>~i',
 						function ($arr) use (&$first) {
 
 							$first[] = $arr[0];
@@ -227,10 +226,12 @@ class Controller extends \Wdpro\BaseController {
 						},
 						$html
 					);
+
+					//print_r($html); exit();
 
 					$html = str_replace(
 						'<head>',
-						'<head>'.implode('', $first),
+						'<head>'.PHP_EOL.implode(PHP_EOL, $first),
 						$html);
 
 					return $html;
