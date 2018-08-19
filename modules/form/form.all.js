@@ -3696,7 +3696,7 @@
 
 			// Ничего не выбрано
 			if (!i) {
-				var hidden = $('<input name="'+self.getName()+'['+i+']" type="hidden" value="null" />');
+				var hidden = $('<input name="'+self.getName()+'" type="hidden" value="null" />');
 				self.hiddens.append(hidden);
 			}
 
