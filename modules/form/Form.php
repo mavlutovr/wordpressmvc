@@ -670,7 +670,10 @@ class Form
 
 					if (isset($data[$rootName]) || $value) {
 
-						if (is_array($value) && is_array($fixedData[$rootName])) {
+						if (is_array($value)
+							&& isset($fixedData[$rootName])
+							&& is_array($fixedData[$rootName])) {
+
 							$fixedData[$rootName] = array_merge_recursive($fixedData[$rootName],
 								$value);
 						}
