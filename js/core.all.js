@@ -2270,8 +2270,11 @@ if (typeof Array.isArray === 'undefined') {
 	 *
 	 * @returns {{}}
 	 */
-	wdpro.getQueryStringObject = function () {
-		return wdpro.parseParams(window.location.search);s
+	wdpro.getQueryStringObject = function (queryString) {
+		if (!queryString) {
+			queryString = window.location.search;
+		}
+		return wdpro.parseParams(queryString);
 	};
 
 
@@ -2281,7 +2284,7 @@ if (typeof Array.isArray === 'undefined') {
 	 * @param url {string} Url
 	 * @param search {string|{}} Query String
 	 */
-	wdpro.replaceSearchInUrl = function (url, search) {
+	wdpro.replaceQueryStringInUrl = function (url, search) {
 		var urlData = wdpro.parseUrl(url);
 
 		if (typeof search === 'object') {
@@ -2294,6 +2297,39 @@ if (typeof Array.isArray === 'undefined') {
 			'?' + search;
 
 		return url;
+	};
+
+
+	/**
+	 * Обновляет Search строку в адресе
+	 *
+	 * @param url {string} Адрес
+	 * @param newSearchData {{}} Новые дынне в search строке
+	 * @returns {string}
+	 */
+	wdpro.updateQueryStringInUrl = function (url, newSearchData) {
+		var urlData = wdpro.parseUrl(url);
+		var search = wdpro.queryStringUpdate(urlData.search, newSearchData);
+
+		var returnUrl = urlData.protocol + '//' +
+			urlData.hostname +
+			urlData.pathname +
+			'?' + search;
+
+		return returnUrl;
+	};
+
+
+	/**
+	 * Возвращает данные QueryString из адреса в виде объекта
+	 *
+	 * @param url {string} Url адрес
+	 * @returns {{}}
+	 */
+	wdpro.getQueryStringDataFromUrl = function (url) {
+		var urlData = wdpro.parseUrl(url);
+
+		return $.parseParams(urlData.search);
 	};
 
 
