@@ -935,8 +935,7 @@ abstract class BaseSqlTable
 	 * 
 	 * @return array array('sql'=>'CREATE TABLE ...', 'format'=>array('field_name'=>'%d')
 	 */
-	protected static function structure()
-	{
+	protected static function structure() {
 		
 	}
 
