@@ -162,14 +162,28 @@ trait Tools
 
 
 	/**
-	 * Возвращает значение ключа
+	 * Возвращает значение ключа или задает, если указано значение
 	 *
 	 * @param string $key ключ ключа
+	 * @param string $value Значение
 	 * @return mixed
 	 */
-	public function keyValue($key) {
-		if (isset($this->_key['object'][$key]) && $this->_key['object'][$key])
-		return $this->_key['object'][$key];
+	public function keyValue($key, $value='---noValue---') {
+
+		// Возвращает значение ключа
+		if ($value === '---noValue---') {
+			if (isset($this->_key['object'][$key]) && $this->_key['object'][$key])
+				return $this->_key['object'][$key];
+		}
+
+		// Устанавливает значение внутри ключа
+		else {
+			$this->setKey(
+				wdpro_key_add_values($this->getKey(), [
+					$key=>$value,
+				])
+			);
+		}
 	}
 
 
