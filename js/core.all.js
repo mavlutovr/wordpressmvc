@@ -1938,7 +1938,7 @@ if (typeof Array.isArray === 'undefined') {
 		if (typeof $_GET_OR_ACTION === 'string'
 			&& ($_GET_OR_ACTION.match(/^\/\//)
 				|| $_GET_OR_ACTION.match(/^http:\/\//)
-				|| $_GET_OR_ACTION.match(/^http:\/\//))
+				|| $_GET_OR_ACTION.match(/^https:\/\//))
 			) {
 			url = $_GET_OR_ACTION;
 		}
@@ -1987,7 +1987,7 @@ if (typeof Array.isArray === 'undefined') {
 				}
 			}
 		};
-		
+
 		$.ajax(params);
 	};
 	
