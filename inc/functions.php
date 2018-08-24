@@ -1526,7 +1526,7 @@ function wdpro_key_parse($key=null)
 			{
 				$infoString .= ',';
 			}
-			$infoString .= $i . ':' . $value;
+			$infoString .= $i . ':' . wdpro_key_escape($value);
 		}
 	}
 
@@ -1553,7 +1553,7 @@ function wdpro_key_parse($key=null)
 				$elementParts = explode(':', $element);
 
 				// Добавляем часть в массив
-				$infoArr[$elementParts[0]] = $elementParts[1];
+				$infoArr[$elementParts[0]] = wdpro_key_unescape($elementParts[1]);
 			}
 		}
 	}
@@ -1582,13 +1582,41 @@ function wdpro_key_add_values($key, $values) {
 	if (is_array($values)) {
 		foreach ($values as $newKey => $newValue) {
 			//$key['key'] .= ','.$newKey.':'.$newValue;
-			$key['object'][$newKey] = $newValue;
+			$key['object'][$newKey] = wdpro_key_escape($newValue);
 		}
 	}
 
 	$key = wdpro_key_parse($key['object']);
 
 	return $key;
+}
+
+
+/**
+ * Экранирование значения ключа
+ *
+ * Чтобы один ключ можно было вставлять в другой
+ *
+ * @param string $value Значение ключа в виде строки
+ * @return string
+ */
+function wdpro_key_escape($value) {
+	$value = str_replace(',', '&', $value);
+	$value = str_replace(':', '=', $value);
+	return $value;
+}
+
+
+/**
+ * Разэкронирование значение ключа
+ *
+ * @param string $value Значение ключа в виде строки
+ * @return string
+ */
+function wdpro_key_unescape($value) {
+	$value = str_replace('&', ',', $value);
+	$value = str_replace('=', ':', $value);
+	return $value;
 }
 
 
@@ -2888,4 +2916,35 @@ function wdpro_get_domain_from_url($url) {
 	}
 
 	return $url;
+}
+
+
+/**
+ * Возвращает класс объекта, чтобы в начале всегда был символ \
+ *
+ * @param object $object Объект
+ * @return string
+ */
+function wdpro_get_class($object) {
+	$class = get_class($object);
+
+	$class = wdpro_root_namespace($class);
+
+	return $class;
+}
+
+
+/**
+ * Возвращает путь от самого начала (ставит в начале \, если его нету)
+ *
+ * @param string $path путь до класса
+ * @return string
+ */
+function wdpro_root_namespace($path) {
+
+	if (strpos($path, '\\') !== 0) {
+		$path = '\\'.$path;
+	}
+
+	return $path;
 }

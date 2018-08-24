@@ -140,7 +140,18 @@ trait Tools
 	 * @return string
 	 */
 	public function getKey() {
-		return 'name:' . get_class($this).',id:' . $this->id();
+
+		return 'name:' . wdpro_get_class($this).',id:' . $this->id();
+	}
+
+
+	/**
+	 * Возвращает ключ в виде массива
+	 *
+	 * @return array
+	 */
+	public function getKeyArray() {
+		return wdpro_key_parse($this->_key);
 	}
 
 
@@ -173,7 +184,7 @@ trait Tools
 		// Возвращает значение ключа
 		if ($value === '---noValue---') {
 			if (isset($this->_key['object'][$key]) && $this->_key['object'][$key])
-				return $this->_key['object'][$key];
+				return wdpro_key_unescape($this->_key['object'][$key]);
 		}
 
 		// Устанавливает значение внутри ключа
