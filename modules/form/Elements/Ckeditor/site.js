@@ -68,7 +68,7 @@ CKEDITOR.editorConfig = function( config ) {
 			'stylesSet': wdpro.ckeditor.styles,
 
 			// Доп Плагины
-			'extraPlugins': 'image,sourcedialog,simple_uploader,tabletools,tableresize,youtube,wpmore,resize',
+			'extraPlugins': 'image,sourcedialog,simple_uploader,tabletools,tableresize,youtube,wpmore,autogrow',
 
 			// Панель
 			'toolbar': [
@@ -115,7 +115,7 @@ CKEDITOR.editorConfig = function( config ) {
 			'stylesSet': wdpro.ckeditor.styles,
 
 			// Доп Плагины
-			'extraPlugins': 'image,sourcedialog,simple_uploader,tabletools,tableresize,youtube,resize',
+			'extraPlugins': 'image,sourcedialog,simple_uploader,tabletools,tableresize,youtube,autogrow',
 
 			// Панель
 			'toolbar': [
@@ -133,10 +133,14 @@ CKEDITOR.editorConfig = function( config ) {
 			//uiColor: '#F5F5F5',
 
 			//width: '100%',
-			resize_maxWidth: 800,
+			//resize_maxWidth: 800,
 			resize_enabled: true,
 			resize_dir: 'both',
-			
+
+			// https://ckeditor.com/docs/ckeditor4/latest/api/CKEDITOR_config.html#cfg-autoGrow_minHeight
+			autoGrow_maxHeight: 600,
+			autoGrow_minHeight: 100,
+
 			height: '100px',
 
 			removePlugins : 'elementspath',

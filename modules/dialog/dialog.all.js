@@ -185,7 +185,9 @@
 					self.updatePos();
 				});
 
-				this.html.draggable();
+				this.html.draggable({
+					'cancel': '.JS_input_container'
+				});
 
 				this.html.on('close', function () {
 					self.close();
