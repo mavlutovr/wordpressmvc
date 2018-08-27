@@ -230,15 +230,30 @@ abstract class BaseController {
 			];
 		}
 
-		$paramsOrWhere = wdpro_extend([
-			'where'=>'ORDER BY menu_order DESC',
-		], $paramsOrWhere);
+		$sqlTable = static::sqlTable();
+		$tree = $sqlTable::isColl('parent_id');
+
+		if ($tree) {
+			$paramsOrWhere = wdpro_extend([
+				'where'=>[
+					'WHERE parent_id=%d ORDER BY menu_order',
+					[
+						isset($paramsOrWhere['parent_id']) ? $paramsOrWhere['parent_id'] : 0,
+					]
+				],
+			], $paramsOrWhere);
+		}
+
+		else {
+			$paramsOrWhere = wdpro_extend([
+				'where'=>'ORDER BY menu_order',
+			], $paramsOrWhere);
+		}
+
 
 		if (!isset($paramsOrWhere['options'])) {
 			$paramsOrWhere['options'] = [ '' =>''];
 		}
-
-		$sqlTable = static::sqlTable();
 
 		if (isset($paramsOrWhere['field']) && $paramsOrWhere['field']) {
 			$nameField = $paramsOrWhere['field'];
@@ -249,8 +264,26 @@ abstract class BaseController {
 		}
 
 		if ($sel = $sqlTable::select($paramsOrWhere['where'], 'id, '.$nameField)) {
+
+			$prefix = isset($paramsOrWhere['prefix']) ? $paramsOrWhere['prefix'] : '';
+
 			foreach($sel as $row) {
-				$paramsOrWhere['options'][] = [$row['id'], $row[$nameField]];
+				$name = $prefix . $row[$nameField];
+				$paramsOrWhere['options'][] = [$row['id'], $name];
+
+				if ($tree) {
+
+					if ($subOptions = static::getOptions([
+						'options'=>[],
+						'parent_id'=>$row['id'],
+						'prefix'=>'- '.$prefix,
+					])) {
+
+						foreach ($subOptions as $subOption) {
+							$paramsOrWhere['options'][] = $subOption;
+						}
+					}
+				}
 			}
 
 			return $paramsOrWhere['options'];

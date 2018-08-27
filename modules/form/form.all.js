@@ -2834,10 +2834,15 @@
 			{
 				this.config = CKEDITOR.wdproConfigs[this.params['config']];
 			}
+			if (this.params['width']) {
+				this.config.width = this.params['width'];
+			}
 			if (this.params['configParams'])
 			{
 				this.config = wdpro.extend(this.config, this.params['configParams']);
 			}
+
+			console.log('this.config', this.config);
 			
 			this.on('addedToPage', function () {
 				
@@ -3696,7 +3701,7 @@
 
 			// Ничего не выбрано
 			if (!i) {
-				var hidden = $('<input name="'+self.getName()+'['+i+']" type="hidden" value="null" />');
+				var hidden = $('<input name="'+self.getName()+'" type="hidden" value="null" />');
 				self.hiddens.append(hidden);
 			}
 
