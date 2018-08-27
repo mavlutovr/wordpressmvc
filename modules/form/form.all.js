@@ -3258,7 +3258,7 @@
 				
 				// Отправляем данные на сервер
 				$.ajax({
-					url: 'admin-ajax.php',
+					url: wdpro.WDPRO_HOME_URL+'wp-admin/admin-ajax.php',
 					type: 'POST',
 					data: data,
 					cache: false,
