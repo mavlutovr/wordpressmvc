@@ -571,15 +571,29 @@ abstract class BaseEntity
 				if (!isset($childParams['icon'])) {
 					$childParams['icon'] = $rollParams['icon'];
 				}
+
 				if (isset($childParams['icon']) && $childParams['icon'])
 				{
-					if (strstr($childParams['icon'], 'fa-')) {
+					// Awesome 5
+					if (strstr($childParams['icon'], [
+						'fas ',
+						'far ',
+						'fal ',
+						'fab ',
+					])) {
+						$iconClasses = 'fa5 '.$childParams['icon'];
+					}
+
+					// Awesome 4
+					else if (strstr($childParams['icon'], 'fa-')) {
 						$iconClasses = 'fa '.$childParams['icon'];
 					}
+
 					else {
 						$iconClasses = 'dashicons '.$childParams['icon'];
 					}
 				}
+
 				$icon = '<i class="'.$iconClasses.'"></i> ';
 
 				// Текст кнопкии

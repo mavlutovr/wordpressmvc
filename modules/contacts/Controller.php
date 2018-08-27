@@ -15,7 +15,7 @@ class Controller extends \Wdpro\BaseController {
 		\Wdpro\Console\Menu::add(array(
 			'roll'=>ConsoleRoll::class,
 			'n'=>95,
-			'icon'=>'fas fa-map-marker',
+			'icon'=>'fas fa-map-marked',
 		));
 		
 		// Настройки

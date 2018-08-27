@@ -96,11 +96,26 @@ class Menu
 					// Иконки
 					$icon = '';
 					if (isset($buttonParams['icon']) && $buttonParams['icon']) {
-						if (strstr($buttonParams['icon'], 'fa-')) {
+
+						// Awesome 5
+						if (strstr($buttonParams['icon'], 'fas')
+						|| strstr($buttonParams['icon'], 'far')
+						|| strstr($buttonParams['icon'], 'fal')
+						|| strstr($buttonParams['icon'], 'fab')
+						) {
+							$buttonTitle = '<i class="fa5 '.$buttonParams['icon']
+								.'" aria-hidden="true"></i>'.$buttonTitle;
+							$icon = 'none';
+						}
+
+						// Awedome 4
+						else if (strstr($buttonParams['icon'], 'fa-')) {
 							$buttonTitle = '<i class="fa '.$buttonParams['icon']
 								.'" aria-hidden="true"></i>'.$buttonTitle;
 							$icon = 'none';
 						}
+
+						// Standard
 						else {
 							$icon = $buttonParams['icon'];
 						}

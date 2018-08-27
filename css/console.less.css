@@ -129,7 +129,8 @@ th#wdpro_in_menu {
 .wdpro-row-title-separator:before {
   content: '|';
 }
-.row-title .fa {
+.row-title .fa,
+.row-title .fa5 {
   margin-right: 10px;
 }
 .column-date {
@@ -139,7 +140,8 @@ th#wdpro_in_menu {
   color: #777;
   margin-left: 5px;
 }
-#adminmenu .fa {
+#adminmenu .fa,
+#adminmenu .fa5 {
   position: absolute;
   margin-left: -36px;
   margin-top: 1px;
@@ -148,17 +150,22 @@ th#wdpro_in_menu {
   width: 36px;
   text-align: center;
 }
-#adminmenu a:focus .fa {
+#adminmenu a:focus .fa,
+#adminmenu a:focus .fa5 {
   color: #00b9eb;
 }
 #adminmenu a:hover .fa,
-#adminmenu a:active .fa {
+#adminmenu a:active .fa,
+#adminmenu a:hover .fa5,
+#adminmenu a:active .fa5 {
   color: #00a0d2;
 }
-#adminmenu li.current .fa {
+#adminmenu li.current .fa,
+#adminmenu li.current .fa5 {
   color: white;
 }
-.folded #adminmenu .fa {
+.folded #adminmenu .fa,
+.folded #adminmenu .fa5 {
   margin-left: 999px;
 }
 .wdpro-rounded-count {
@@ -180,7 +187,8 @@ th#wdpro_in_menu {
   padding: 0 3px;
   box-sizing: border-box;
 }
-.wdpro-row-title-child .fa {
+.wdpro-row-title-child .fa,
+.wdpro-row-title-child .fa5 {
   vertical-align: middle;
 }
 a:hover .wdpro-rounded-count {
@@ -195,56 +203,78 @@ a:hover .wdpro-rounded-count {
 #wdpro_info_widget {
   background: lightyellow;
 }
-.admin-color-light #adminmenu .fa {
+.admin-color-light #adminmenu .fa,
+.admin-color-light #adminmenu .fa5 {
   color: #999;
 }
 .admin-color-light #adminmenu a:hover .fa,
-.admin-color-light #adminmenu a:active .fa {
+.admin-color-light #adminmenu a:active .fa,
+.admin-color-light #adminmenu a:hover .fa5,
+.admin-color-light #adminmenu a:active .fa5 {
   color: #ccc;
 }
-.admin-color-blue #adminmenu .fa {
+.admin-color-blue #adminmenu .fa,
+.admin-color-blue #adminmenu .fa5 {
   color: #e5f8ff;
 }
 .admin-color-blue #adminmenu a:hover .fa,
-.admin-color-blue #adminmenu a:active .fa {
+.admin-color-blue #adminmenu a:active .fa,
+.admin-color-blue #adminmenu a:hover .fa5,
+.admin-color-blue #adminmenu a:active .fa5 {
   color: #f1f1f1;
 }
-.admin-color-coffee #adminmenu .fa {
+.admin-color-coffee #adminmenu .fa,
+.admin-color-coffee #adminmenu .fa5 {
   color: #f3f2f1;
 }
 .admin-color-coffee #adminmenu a:hover .fa,
-.admin-color-coffee #adminmenu a:active .fa {
+.admin-color-coffee #adminmenu a:active .fa,
+.admin-color-coffee #adminmenu a:hover .fa5,
+.admin-color-coffee #adminmenu a:active .fa5 {
   color: #fff;
 }
-.admin-color-ectoplasm #adminmenu .fa {
+.admin-color-ectoplasm #adminmenu .fa,
+.admin-color-ectoplasm #adminmenu .fa5 {
   color: #ece6f6;
 }
 .admin-color-ectoplasm #adminmenu a:hover .fa,
-.admin-color-ectoplasm #adminmenu a:active .fa {
+.admin-color-ectoplasm #adminmenu a:active .fa,
+.admin-color-ectoplasm #adminmenu a:hover .fa5,
+.admin-color-ectoplasm #adminmenu a:active .fa5 {
   color: #fff;
 }
-.admin-color-midnight #adminmenu .fa {
+.admin-color-midnight #adminmenu .fa,
+.admin-color-midnight #adminmenu .fa5 {
   color: #f1f2f3;
 }
 .admin-color-midnight #adminmenu a:hover .fa,
-.admin-color-midnight #adminmenu a:active .fa {
+.admin-color-midnight #adminmenu a:active .fa,
+.admin-color-midnight #adminmenu a:hover .fa5,
+.admin-color-midnight #adminmenu a:active .fa5 {
   color: #fff;
 }
-.admin-color-ocean #adminmenu .fa {
+.admin-color-ocean #adminmenu .fa,
+.admin-color-ocean #adminmenu .fa5 {
   color: #f2fcff;
 }
 .admin-color-ocean #adminmenu a:hover .fa,
-.admin-color-ocean #adminmenu a:active .fa {
+.admin-color-ocean #adminmenu a:active .fa,
+.admin-color-ocean #adminmenu a:hover .fa5,
+.admin-color-ocean #adminmenu a:active .fa5 {
   color: #fff;
 }
-.admin-color-sunrise #adminmenu .fa {
+.admin-color-sunrise #adminmenu .fa,
+.admin-color-sunrise #adminmenu .fa5 {
   color: #f3f1f1;
 }
 .admin-color-sunrise #adminmenu a:hover .fa,
-.admin-color-sunrise #adminmenu a:active .fa {
+.admin-color-sunrise #adminmenu a:active .fa,
+.admin-color-sunrise #adminmenu a:hover .fa5,
+.admin-color-sunrise #adminmenu a:active .fa5 {
   color: #fff;
 }
-.wp-submenu i.fa {
+.wp-submenu i.fa,
+.wp-submenu i.fa5 {
   display: none;
 }
 #ui-datepicker-div {
@@ -289,7 +319,8 @@ a:hover .wdpro-rounded-count {
   background: white;
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
 }
-#wpadminbar .fa {
+#wpadminbar .fa,
+#wpadminbar .fa5 {
   font: normal normal normal 18px/1 FontAwesome;
 }
 .wdpro-lang-menu img {
