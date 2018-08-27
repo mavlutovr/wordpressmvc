@@ -15,7 +15,7 @@ class Controller extends \Wdpro\BaseController {
 		\Wdpro\Console\Menu::add(array(
 			'roll'=>ConsoleRoll::class,
 			'n'=>95,
-			'icon'=>'dashicons-location',
+			'icon'=>'fas fa-map-marker',
 		));
 		
 		// Настройки
