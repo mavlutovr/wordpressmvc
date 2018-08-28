@@ -3608,11 +3608,19 @@
 		init: function (data) {
 			var self = this;
 
+			if (data['disabled']) {
+				var disabled = {};
+				wdpro.each(data['disabled'], function (id) {
+					disabled[id] = true;
+				});
+				data['disabled'] = disabled;
+			}
+
 			this._super(data);
 
-			/*if (data['value']) {
+			if (data['value']) {
 				this.setValue(data['value']);
-			}*/
+			}
 
 			this.on('prepareToGetData', function () {
 				self.updateHiddenValue();

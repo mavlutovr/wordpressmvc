@@ -517,7 +517,8 @@
 	  <div class="js-checks-hiddens"></div>
 		{if ($data['options'])}
 			{call .checksLevel}
-				{param options: $data['options']/}
+				{param options: $data['options'] /}
+				{param data: $data /}
 			{/call}
 		{/if}
 	</div>
@@ -525,7 +526,8 @@
 
 /**
  * Checks Level
- * @param options Список чекбоксов
+ * @param data Данные
+ * @param options Элементы
  */
 {template .checksLevel private="true"}
 <div class="wdpro-form-checks-level">
@@ -534,7 +536,7 @@
 		// Чекбокс
 		<div class=""><label>
 
-			{if ($option['value'])}
+			{if ($option['value'] and not $data['disabled'][$option['value']])}
 				<input type="checkbox" data-value="{$option['value']}" class="js-checks-check" />{sp}
 			{/if}
 
@@ -546,7 +548,8 @@
 		// Подразделы
 		{if ($option['options'])}
 			{call .checksLevel}
-				{param options: $option['options']/}
+				{param options: $option['options'] /}
+				{param data: $data /}
 			{/call}
 		{/if}
 

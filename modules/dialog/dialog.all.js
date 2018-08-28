@@ -205,6 +205,12 @@
 
 				wdpro.ajax(url, function (data) {
 
+					if (typeof data === 'string') {
+						data = {
+							'html': data
+						};
+					}
+
 					self.loadingStop();
 
 					self.setContent(data['html']);

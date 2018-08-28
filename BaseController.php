@@ -224,9 +224,11 @@ abstract class BaseController {
 	 */
 	public static function getOptions($paramsOrWhere=null) {
 
-		if (is_string($paramsOrWhere)) {
-			$paramsOrWhere = [
-				'where'=>'ORDER BY menu_order DESC',
+		$params = $paramsOrWhere;
+
+		if (is_string($params)) {
+			$params = [
+				'where'=>$params,
 			];
 		}
 
@@ -234,59 +236,111 @@ abstract class BaseController {
 		$tree = $sqlTable::isColl('parent_id');
 
 		if ($tree) {
-			$paramsOrWhere = wdpro_extend([
-				'where'=>[
-					'WHERE parent_id=%d ORDER BY menu_order',
-					[
-						isset($paramsOrWhere['parent_id']) ? $paramsOrWhere['parent_id'] : 0,
-					]
-				],
-			], $paramsOrWhere);
+
+			// Начиная с одного родительского элемента
+			if (isset($params['from_id']) && $params['from_id']) {
+				$params = wdpro_extend([
+					'where'=>[
+						'WHERE id=%d',
+						[
+							$params['from_id']
+						]
+					],
+				], $params);
+			}
+
+			// Начиная со списка
+			else {
+				$params = wdpro_extend([
+					'where'=>[
+						'WHERE parent_id=%d ORDER BY menu_order',
+						[
+							isset($params['parent_id']) ? $params['parent_id'] : 0,
+						]
+					],
+				], $params);
+			}
 		}
 
 		else {
-			$paramsOrWhere = wdpro_extend([
+			$params = wdpro_extend([
 				'where'=>'ORDER BY menu_order',
-			], $paramsOrWhere);
+			], $params);
 		}
 
 
-		if (!isset($paramsOrWhere['options'])) {
-			$paramsOrWhere['options'] = [ '' =>''];
+		if (!isset($params['checks'])) {
+			$params['checks'] = false;
 		}
 
-		if (isset($paramsOrWhere['field']) && $paramsOrWhere['field']) {
-			$nameField = $paramsOrWhere['field'];
+		if (!isset($params['options'])) {
+			$params['options'] = [];
+			if (!$params['checks']) {
+				$params['options'][''] = '';
+			}
+		}
+
+		if (isset($params['field']) && $params['field']) {
+			$nameField = $params['field'];
 		}
 
 		else {
 			$nameField = $sqlTable::isColl('post_title') ? 'post_title' : 'name';
 		}
 
-		if ($sel = $sqlTable::select($paramsOrWhere['where'], 'id, '.$nameField)) {
+		if ($sel = $sqlTable::select($params['where'], 'id, '.$nameField)) {
 
-			$prefix = isset($paramsOrWhere['prefix']) ? $paramsOrWhere['prefix'] : '';
+			$prefix = isset($params['prefix']) ? $params['prefix'] : '';
 
 			foreach($sel as $row) {
-				$name = $prefix . $row[$nameField];
-				$paramsOrWhere['options'][] = [$row['id'], $name];
+
+				$name = $row[$nameField];
+
+
+				// Для Checks
+				if ($params['checks']) {
+					$option = [
+						'value'=>$row['id'],
+						'text'=>$name,
+					];
+				}
+
+				// Для Select
+				else {
+					$name = $prefix . $name;
+					$params['options'][] = [ $row['id'], $name ];
+				}
 
 				if ($tree) {
 
 					if ($subOptions = static::getOptions([
 						'options'=>[],
+						'checks'=>$params['checks'],
 						'parent_id'=>$row['id'],
 						'prefix'=>'- '.$prefix,
 					])) {
 
-						foreach ($subOptions as $subOption) {
-							$paramsOrWhere['options'][] = $subOption;
+						// Checks
+						if ($params['checks']) {
+							$option['options'] = $subOptions;
+						}
+
+						// Select
+						else {
+							foreach ($subOptions as $subOption) {
+								$params['options'][] = $subOption;
+							}
 						}
 					}
 				}
+
+				// Checks
+				if ($params['checks']) {
+					$params['options'][] = $option;
+				}
 			}
 
-			return $paramsOrWhere['options'];
+			return $params['options'];
 		}
 	}
 
