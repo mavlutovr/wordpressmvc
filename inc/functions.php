@@ -2948,3 +2948,106 @@ function wdpro_root_namespace($path) {
 
 	return $path;
 }
+
+
+/**
+ * Обновление текста из редактора
+ *
+ * @param string $text Текст
+ * @return string
+ */
+function wdpro_text_from_editor_normalize($text)
+{
+	// Закомментировал это чтобы текст не ломался, не превращался в полностью
+	// htmlspecialchars, когда я вставляю в него html код, отображаемый как html код,
+	// например с подсветкой
+	/*if (strstr($text, '&lt;p'))
+	{
+		$text = htmlspecialchars_decode($text);
+		$htmlspecialchars = true;
+	}*/
+	// Неактивные ссылки в активные
+	$text = wdpro_link_text($text);
+
+	// Убираем фигню из ссылок
+	$text = preg_replace('/<a _src="([^"]+)"/', '<a', $text);
+
+	// Активные ссылки в новом окне
+	$text = preg_replace_callback('/<a href="([^"]+)">/', function ($arr)
+	{
+		$link = $arr[1];
+		$parsed = parse_url($link);
+
+		// Если это внешняя ссылка
+		if (isset($parsed['host'])) {
+			$host = str_replace('www.', '', $parsed['host']);
+			if ($host != str_replace('www.', '', $_SERVER['HTTP_HOST'])) {
+				$link = wdpro_redirect($link);
+
+				return '<a href="'.$link.'" target="_blank">';
+			}
+		}
+
+		// Внутренняя ссылка
+		return $arr[0];
+
+	}, $text);
+
+	return $text;
+}
+
+
+/**
+ * Делает в тексте ссылки активными
+ *
+ * @param string $text Текст
+ * @param bool $blank Открывать в новом окне
+ * @return string
+ */
+function wdpro_link_text($text, $blank=false)
+{
+	$blankTag = '';
+	if ($blank)
+	{
+		$blankTag = ' target="_blank"';
+	}
+
+	$text = str_replace('&nbsp;', ' [&nbsp;] ', $text);
+
+	$replace = function ($arr) use (&$blankTag) {
+		$link = $arr[3];
+		$text = $link;
+		if (strlen($text) > 50) {
+			$text = substr($text, 0, 40).'...';
+		}
+
+		return $arr[1].$arr[2].'<a href="'
+			.$link
+			.'"'.$blankTag.'>'.$text.'</a>';
+	};
+
+	$text= preg_replace_callback(
+		"/(^|[\n ]|<p>)([\w]*?)((ht|f)tp(s)?:\/\/[\w]+[^ \,\"\n\r\t<]*)/is",
+		$replace,
+		$text);
+
+	$text= preg_replace_callback(
+		"/(^|[\n ])([\w]*?)((www|ftp)\.[^ \,\"\t\n\r<]*)/is",
+		$replace,
+		$text);
+
+	$text = str_replace(' [&nbsp;] ', '&nbsp;', $text);
+
+	return $text;
+}
+
+
+/**
+ * Возвращает ссылку через редирект
+ *
+ * @param string $link Ссылка
+ * @return string
+ */
+function wdpro_redirect($link) {
+	return WDPRO_URL.'redirect.php?http='.urlencode($link);
+}
