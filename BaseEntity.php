@@ -593,12 +593,11 @@ abstract class BaseEntity
 				if (isset($childParams['icon']) && $childParams['icon'])
 				{
 					// Awesome 5
-					if (strstr($childParams['icon'], [
-						'fas ',
-						'far ',
-						'fal ',
-						'fab ',
-					])) {
+					if (strstr($childParams['icon'], 'fas')
+					|| strstr($childParams['icon'], 'far')
+					|| strstr($childParams['icon'], 'fal')
+					|| strstr($childParams['icon'], 'fab')) {
+						
 						$iconClasses = 'fa5 '.$childParams['icon'];
 					}
 

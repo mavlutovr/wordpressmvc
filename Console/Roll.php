@@ -3,7 +3,12 @@ namespace Wdpro\Console;
 
 use Wdpro\BaseRoll;
 use Wdpro\Exception;
-use Wdpro\Pay\SqlTable;
+
+
+
+
+
+
 
 /**
  * Список объектов админки
@@ -569,7 +574,7 @@ title="Удалить"></a>
 	 * @return \Wdpro\BaseSqlTable
 	 * @throws \Exception
 	 */
-	public static function sqlTable()
+	/*public static function sqlTable()
 	{
 		if ($objectClass = static::getEntityClass())
 		{
@@ -580,7 +585,7 @@ title="Удалить"></a>
 		{
 			throw new \Exception('Нет класса сущностей для списка '.get_called_class());
 		}
-	}
+	}*/
 
 
 	/**
