@@ -166,11 +166,29 @@ abstract class BaseEntity
 		}
 		else
 		{
-			if (strstr($key, '[lang]')) {
+			$keys = func_get_args();
+			$value = $this->data;
+
+			foreach ($keys as $key) {
+				if (strstr($key, '[lang]')) {
+					$key = \Wdpro\Lang\Data::replaceLangShortcode($key);
+				}
+
+				if (isset($value[$key])) {
+					$value = $value[$key];
+				}
+				else {
+					return null;
+				}
+			}
+
+			return $value;
+
+			/*if (strstr($key, '[lang]')) {
 				$key = \Wdpro\Lang\Data::replaceLangShortcode($key);
 			}
 
-			if (isset($this->data[$key])) return $this->data[$key];
+			if (isset($this->data[$key])) return $this->data[$key];*/
 		}
 	}
 

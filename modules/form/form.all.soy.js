@@ -210,7 +210,7 @@ if (goog.DEBUG) {
 
 
 wdpro.templates.forms.checksField = function(opt_data, opt_ignored) {
-  return ((opt_data.attrs['nothing']) ? '' : '') + '<div><div class="js-checks-hiddens"></div>' + ((opt_data.data['options']) ? wdpro.templates.forms.checksLevel({options: opt_data.data['options']}) : '') + '</div>';
+  return ((opt_data.attrs['nothing']) ? '' : '') + '<div><div class="js-checks-hiddens"></div>' + ((opt_data.data['options']) ? wdpro.templates.forms.checksLevel({options: opt_data.data['options'], data: opt_data.data}) : '') + '</div>';
 };
 if (goog.DEBUG) {
   wdpro.templates.forms.checksField.soyTemplateName = 'wdpro.templates.forms.checksField';
@@ -219,11 +219,11 @@ if (goog.DEBUG) {
 
 wdpro.templates.forms.checksLevel = function(opt_data, opt_ignored) {
   var output = '<div class="wdpro-form-checks-level">';
-  var optionList350 = opt_data.options;
-  var optionListLen350 = optionList350.length;
-  for (var optionIndex350 = 0; optionIndex350 < optionListLen350; optionIndex350++) {
-    var optionData350 = optionList350[optionIndex350];
-    output += '<div class=""><label>' + ((optionData350['value']) ? '<input type="checkbox" data-value="' + soy.$$escapeHtml(optionData350['value']) + '" class="js-checks-check" /> ' : '') + soy.$$escapeHtml(optionData350['text']) + '</label></div>' + ((optionData350['options']) ? wdpro.templates.forms.checksLevel({options: optionData350['options']}) : '');
+  var optionList351 = opt_data.options;
+  var optionListLen351 = optionList351.length;
+  for (var optionIndex351 = 0; optionIndex351 < optionListLen351; optionIndex351++) {
+    var optionData351 = optionList351[optionIndex351];
+    output += '<div class=""><label>' + ((optionData351['value'] && ! opt_data.data['disabled'][optionData351['value']]) ? '<input type="checkbox" data-value="' + soy.$$escapeHtml(optionData351['value']) + '" class="js-checks-check" /> ' : '') + soy.$$escapeHtml(optionData351['text']) + '</label></div>' + ((optionData351['options']) ? wdpro.templates.forms.checksLevel({options: optionData351['options'], data: opt_data.data}) : '');
   }
   output += '</div>';
   return output;
