@@ -319,9 +319,14 @@ a:hover .wdpro-rounded-count {
   background: white;
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
 }
-#wpadminbar .fa,
-#wpadminbar .fa5 {
+#wpadminbar .fa {
   font: normal normal normal 18px/1 FontAwesome;
+}
+#wpadminbar .fa5 {
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  line-height: 20px;
+  font-size: 20px;
 }
 .wdpro-lang-menu img {
   display: block;
