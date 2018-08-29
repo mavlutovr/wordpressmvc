@@ -3608,6 +3608,9 @@
 		init: function (data) {
 			var self = this;
 
+			if (!data['disabled']) {
+				data['disabled'] = [];
+			}
 			if (data['disabled']) {
 				var disabled = {};
 				wdpro.each(data['disabled'], function (id) {
@@ -3630,6 +3633,11 @@
 
 
 		createField: function (callback) {
+
+			console.log({
+				data:  this.getParams(),
+				attrs: this.getAttrs()
+			});
 
 			callback(this.templates.checksField({
 				data:  this.getParams(),
