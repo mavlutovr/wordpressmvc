@@ -202,7 +202,7 @@ class Menu extends Roll
 					$row['id']);
 				if ($alternativeUrl)
 				{
-					if (preg_match('~^http://~', $alternativeUrl)) {
+					if (preg_match('~^https?://~', $alternativeUrl)) {
 						$row['attrs'] .= ' target="_blank" rel="nofollow"';
 						$row['before'] = '<noindex>';
 						$row['after'] = '</noindex>';
