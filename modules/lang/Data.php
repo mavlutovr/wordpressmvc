@@ -16,7 +16,7 @@ class Data {
 	protected static $jsonFileNameProd = 'langs.prod.json';
 	protected static $data = [];
 	protected static $inited = false;
-	protected static $rootLangUri;
+	protected static $rootLangUri = 'ru';
 
 
 	/**
