@@ -14,7 +14,7 @@ class File extends Base
 		$params = wdpro_extend(
 			array(
 				'dir'=>wdpro_upload_dir('files'),
-				'ext'=>'jpg|jpeg|gif|png|doc|docx|name|zip|rar|swf|xls|xlsx|txt|csv|flv|crx|pdf',
+				'ext'=>'jpg|jpeg|gif|png|doc|docx|name|zip|rar|swf|xls|xlsx|txt|csv|flv|crx|pdf|md',
 			),
 			$params
 		);
