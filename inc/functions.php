@@ -333,6 +333,56 @@ function wdpro_array_remove_by_value(&$array, $value) {
 
 
 /**
+ * Заменяет в адресе query данные или добавляет их
+ *
+ * @param string $url URL
+ * @param array $queryParams Параметры
+ * @return string
+ */
+function wdpro_replace_query_params_in_url($url, $queryParams) {
+	$arr = parse_url($url);
+
+	$new = array();
+
+	$get = [];
+	parse_str($arr['query'], $get);
+
+
+	if (is_array($get)) {
+		foreach($get as $key=>$value)
+		{
+			if (array_key_exists($key, $queryParams))
+			{
+				if ($queryParams[$key])
+				{
+					$new[$key] = $queryParams[$key];
+				}
+			}
+
+			else
+			{
+				$new[$key] = $get[$key];
+			}
+
+			unset($queryParams[$key]);
+		}
+	}
+
+	if (is_array($queryParams)) {
+		foreach($queryParams as $key=>$value)
+		{
+			$new[$key] = $value;
+		}
+	}
+
+	$queryString = http_build_query($new);
+	if ($queryString) $queryString = '?'.$queryString;
+
+	return $arr['path'].$queryString;
+}
+
+
+/**
  * Возвращает относительный адрес текущей страницы
  *
  * @param null|array $queryChanges Изменить параметры QUERY_STRING согласно этому массиву
@@ -340,52 +390,16 @@ function wdpro_array_remove_by_value(&$array, $value) {
  */
 function wdpro_current_uri($queryChanges=null)
 {
+	$uri = '';
+	if (isset($_SERVER['REQUEST_URI_ORIGINAL'])) $uri = $_SERVER['REQUEST_URI_ORIGINAL'];
+	if (!$uri) $uri = $_SERVER['REQUEST_URI'];
+
 	if ($queryChanges)
 	{
-		$uri = '';
-		if (isset($_SERVER['REQUEST_URI_ORIGINAL'])) $uri = $_SERVER['REQUEST_URI_ORIGINAL'];
-		if (!$uri) $uri = $_SERVER['REQUEST_URI'];
-
-		$arr = parse_url($uri);
-
-		$new = array();
-		if (is_array($_GET)) {
-			foreach($_GET as $key=>$value)
-			{
-				if (array_key_exists($key, $queryChanges))
-				{
-					if ($queryChanges[$key])
-					{
-						$new[$key] = $queryChanges[$key];
-					}
-				}
-
-				else
-				{
-					$new[$key] = $_GET[$key];
-				}
-
-				unset($queryChanges[$key]);
-			}
-		}
-
-		if (is_array($queryChanges)) {
-			foreach($queryChanges as $key=>$value)
-			{
-				$new[$key] = $value;
-			}
-		}
-
-		$queryString = http_build_query($new);
-		if ($queryString) $queryString = '?'.$queryString;
-
-		return $arr['path'].$queryString;
+		$uri = wdpro_replace_query_params_in_url($uri, $queryChanges);
 	}
 
-	else
-	{
-		return $_SERVER['REQUEST_URI'];
-	}
+	return $uri;
 }
 
 
