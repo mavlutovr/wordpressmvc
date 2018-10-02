@@ -22,6 +22,7 @@ class ConsoleForm extends \Wdpro\Form\Form {
 		$this->add(array(
 			'name'=>'map',
 			'top'=>'Код карты',
+			'bottom'=>'<a href="https://yandex.ru/map-constructor/?from=mapstools" target="_blank">Конструктор карт</a>',
 			'type'=>'text',
 			'width'=>'700px',
 			'autoLeft'=>false,
