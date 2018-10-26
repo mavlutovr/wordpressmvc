@@ -38,22 +38,22 @@ function wdproOptionsForm($formParams)
 
 
 // Ajax загрузка файла
-add_action('wp_ajax_form_file_upload', function () {
-	
+wdpro_ajax('form_file_upload', function () {
+
+	//print_r($_REQUEST);
+	//print_r($_FILES);
+
+	ini_set('display_errors', 'on');
+	error_reporting(7);
+	ini_set('memory_limit', '512M');
+
+
 	$retFiles = array(
 		'files'=>array(),
 	);
 	
 	foreach($_FILES as $fileData)
 	{
-		/*print_r($_REQUEST);*/
-		//print_r($_FILES);
-		
-		ini_set('display_errors', 'on');
-		error_reporting(7);
-		ini_set('memory_limit', '512M');
-		
-
 		// Копируем файл во временную папку и архивируем его для безопасности
 		$tmpDir = wdpro_upload_dir('temp');
 		$fileName = wdpro_text_to_file_name(

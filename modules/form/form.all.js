@@ -3242,74 +3242,117 @@
 			
 			
 			// Change
-			this.field.on('change', function ()
+			this.field.on('change', function (e)
 			{
 				self.field.loading();
 				self.uploadInProcess = true;
 
 				// Данные для отправки
-				var files = this.files;
-				var data = new FormData();
-				$.each( files, function( key, value ){
-					data.append( key, value );
+				var files = e.target.files;
+				console.log('files', files);
+
+				var data = {
+					'action': 'form_file_upload',
+					'files': {}
+				};
+				var formData = new FormData();
+				var waiter = new wdpro.Waiter();
+
+				// Добавление файлов
+				$.each( files, function( key, file ){
+					waiter.wait(function (complete) {
+						formData.append('file_' + key, file, file.name);
+						complete();
+					});
+
+					/*waiter.wait(function (complete) {
+						var fr = new FileReader;
+						fr.onloadend = function (str) {
+
+							data['files'][key] = {
+								'image': fr.result,
+								'fileName': file.name
+							};
+							complete();
+						};
+						fr.readAsDataURL(file);
+					});
+
+					waiter.wait(function (complete) {
+						var fr = new FileReader;
+						fr.onloadend = function (binary) {
+
+							//formData.append('file_'+key, file, file.name);
+							complete();
+						};
+						fr.readAsBinaryString(file);
+					});*/
 				});
-				data.append('action', 'form_file_upload');
 
-				
-				// Отправляем данные на сервер
-				$.ajax({
-					url: wdpro.WDPRO_HOME_URL+'wp-admin/admin-ajax.php',
-					type: 'POST',
-					data: data,
-					cache: false,
-					//dataType: 'json',
-					processData: false,
-					contentType: false,
-					
-					// Ответ сервера
-					success: function (json) {
+				// При завершении добавления в данные всех файлов
+				waiter.run(function () {
 
-						var response = wdpro.parseJSON(json);
-						self.field.loadingStop();
+					// Отправляем данные на сервер
+					var ajax = {
+						url: wdpro.ajaxUrl({
+							'action': 'form_file_upload',
+						}),
+						type: 'POST',
+						data: formData,
+						cache: false,
+						processData: false,
+						contentType: false,
+						//contentType: 'multipart/form-data',
 
-						// Все верно
-						if (typeof response.error == 'undefined')
-						{
-							// Удаляем все файлы, если поле не multiple
-							if (!self.params['multiple'])
-							{
-								self.settedValue = [];
-							}
-							
-							// Запоминаем, что поле готово к отправке формы
-							self.uploadInProcess = false;
-							
-							// Запоминаем имя файла
-							wdpro.each(response['files'], function (file) {
-								self.addFile('ZIP: ' + file);
-							});
-							//self.setValue('ZIP: ' + response['fileName']);
+						// Ответ сервера
+						success: function (json) {
 
-							self.submitOnUpload && self.submitOnUpload();
-							self.submitOnUpload = null;
-							
-							self.updateFieldValue();
-							self.showCurrentFiles();
-						}
-						
-						// Ошибка
-						else
-						{
+							var response = wdpro.parseJSON(json);
 							self.field.loadingStop();
-							self.fileBlockContainer.append('<p>При загрузке файла произошла ошибка: ' + response.error+'</p>');
+
+							// Все верно
+							if (typeof response.error == 'undefined')
+							{
+								// Удаляем все файлы, если поле не multiple
+								if (!self.params['multiple'])
+								{
+									self.settedValue = [];
+								}
+
+								// Запоминаем, что поле готово к отправке формы
+								self.uploadInProcess = false;
+
+								// Запоминаем имя файла
+								wdpro.each(response['files'], function (file) {
+									self.addFile('ZIP: ' + file);
+								});
+								//self.setValue('ZIP: ' + response['fileName']);
+
+								self.submitOnUpload && self.submitOnUpload();
+								self.submitOnUpload = null;
+
+								self.updateFieldValue();
+								self.showCurrentFiles();
+							}
+
+							// Ошибка
+							else
+							{
+								self.field.loadingStop();
+								self.fileBlockContainer.append('<p>При загрузке файла произошла ошибка: ' + response.error+'</p>');
+							}
+						},
+
+						error: function (jqXHR, testStatus, errorThrow) {
+							self.field.loadingStop();
+							console.error('При загрузке файла произошла ошибка', jqXHR.getAllResponseHeaders());
 						}
-					},
-					
-					error: function (jqXHR, testStatus, errorThrow) {
-						self.field.loadingStop();
-						console.log('При загрузке файла произошла ошибка', testStatus);
-					}
+					};
+					console.log('ajax', ajax);
+					$.ajax(ajax);
 				});
+
+
 			});
 		},
 
