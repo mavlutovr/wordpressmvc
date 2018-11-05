@@ -900,6 +900,10 @@ abstract class BaseEntity
 	* Возвращает true, когда это новая сущность и ее нет в базе
 	*/
 	public function isNew() {
+
+		return !isset($this->data['_from_db']) || !$this->data['_from_db'];
+
+
 		return $this->id();
 	}
 
