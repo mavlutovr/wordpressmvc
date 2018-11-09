@@ -22,14 +22,16 @@ class Modules
 	 */
 	public static function add($pathToModuleDir)
 	{
+		$pathToModuleDir = wdpro_fix_directory_separator($pathToModuleDir);
 		if (!isset(static::$addedModules[$pathToModuleDir])) {
 			static::$addedModules[$pathToModuleDir] = true;
 			
 			$controllerClassFileName = $pathToModuleDir.'/Controller.php';
+			$controllerClassFileName = wdpro_fix_directory_separator($controllerClassFileName);
+
 			if (is_file($controllerClassFileName))
 			{
 				$moduleNamespace = require($controllerClassFileName);
-				
 				if (!$moduleNamespace || $moduleNamespace === 1)
 				{
 					throw new Exception('Файл '.$controllerClassFileName
@@ -48,6 +50,10 @@ class Modules
 				$controller::initStart();
 			}
 
+			else {
+				echo 'Нет файла: '.$controllerClassFileName.PHP_EOL.PHP_EOL;
+			}
+
 			// Секции (все, только сайт, только админка)
 			$sections = array('all', 'site', 'console');
 
@@ -61,15 +67,21 @@ class Modules
 					$dir = $pathToModuleDir;
 				}
 				else {
-					$dir = realpath(
+					$dir = wdpro_realpath(
 						__DIR__ . '/../modules/'
 						. $moduleName . '/' . $moduleName . '.' . $ext
 					);
 				}
 
+				$fullName = $dir . '/' . $moduleName . '.' . $ext;
+
+				$fullName = wdpro_fix_directory_separator($fullName);
+
+
 				$fullName = realpath(
-					$dir . '/' . $moduleName . '.' . $ext
+					$fullName
 				);
+
 
 				if (is_file( $fullName )) {
 					return $fullName;
@@ -79,6 +91,7 @@ class Modules
 			
 			// Шаблоны по-умолчанию
 			$templatesDir = $pathToModuleDir.'/default/templates/';
+			$templatesDir = wdpro_fix_directory_separator($templatesDir);
 			if (is_dir($templatesDir)) {
 				$templatesFiles = scandir($templatesDir);
 				foreach($templatesFiles as $templateFile) {
