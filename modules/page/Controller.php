@@ -284,8 +284,11 @@ class Controller extends \Wdpro\BaseController {
 		});
 
 		// ХЗ
-		add_filter ( 'user_can_richedit' , create_function ( '$a' , 'return false;' ) , 50 );
-		
+		//add_filter ( 'user_can_richedit' , create_function ( '$a' , 'return false;' ) , 50 );
+		add_filter ( 'user_can_richedit' , function () {
+			return false;
+		} , 50 );
+
 		
 		// Удаление сущностей при удалении постов
 		add_action('admin_init', function () {

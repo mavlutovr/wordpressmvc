@@ -235,6 +235,7 @@ class Roll extends BaseRoll
 			$entity = static::getEntity(
 				isset($_GET['id']) ? $_GET['id'] : true
 			);
+
 			$form = $entity->getConsoleForm();
 			if (!$form)
 				throw new Exception('Нету класса '.$entity::getNamespace()

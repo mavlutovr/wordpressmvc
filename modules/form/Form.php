@@ -17,7 +17,7 @@ class Form
 	protected $groups = [];
 	protected $saveErrorsToOptions = false;
 	protected static $defaultMethod = 'POST';
-	
+
 	const CKEDITOR = 'ckeditor';
 	const CKEDITOR_SMALL = 'ckeditorSmall';
 	const CHECK = 'check';
@@ -818,6 +818,16 @@ class Form
 	 */
 	public function setMethod($method) {
 		$this->params['method'] = $method;
+	}
+
+
+	/**
+	 * Возвращает элемент (сущность), который редактируется данной формой
+	 *
+	 * @return \Wdpro\BaseEntity
+	 */
+	public function getEntity() {
+		return $this->params['entity'];
 	}
 }
 
