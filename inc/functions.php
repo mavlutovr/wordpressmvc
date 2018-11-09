@@ -1309,7 +1309,13 @@ function wdpro_realpath($path) {
 			$absolutes[] = $part;
 		}
 	}
-	return implode(DIRECTORY_SEPARATOR, $absolutes);
+	$path = implode(DIRECTORY_SEPARATOR, $absolutes);
+
+	if (DIRECTORY_SEPARATOR === '/') {
+		$path = '/'.$path;
+	}
+
+	return $path;
 
 }
 
