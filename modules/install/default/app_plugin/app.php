@@ -21,6 +21,8 @@ add_action('wdpro-ready', function ()
 	Wdpro\Modules::addWdpro('contacts');
 	// Модуль разработчика
 	Wdpro\Modules::addWdpro('dev');
+	// Иконки Awesome
+	Wdpro\Modules::addWdpro('extra/fontAwesome5');
 });
 
 

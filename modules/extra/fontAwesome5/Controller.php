@@ -22,7 +22,7 @@ class Controller extends \Wdpro\BaseController {
 	public static function initConsole()
 	{
 		// Подключение шрифта к админке
-		if (wdpro_get_option('wdpro_font_awesome_5_console')) {
+		if (wdpro_get_option('wdpro_font_awesome_5_console', 1)) {
 			wdpro_add_css_to_console(__DIR__.'/css/all.min.css');
 		}
 

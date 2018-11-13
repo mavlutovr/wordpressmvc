@@ -198,9 +198,8 @@ class Controller extends \Wdpro\BaseController {
 		wdpro_on_page_init(function ($page) {
 			/** @var $page \App\BasePage */
 
-			if (method_exists($page, 'initCard')) {
-				$page->initCard();
-			}
+			if (method_exists($page, 'initCard'))
+			$page->initCard();
 		});
 		
 		

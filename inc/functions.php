@@ -76,7 +76,32 @@ function wdpro_path_remove_wp_content($path)
  */
 function wdpro_path_remove_root($path)
 {
-	return str_replace(wdpro_realpath(__DIR__.'/../../../../'), '', wdpro_realpath($path));
+	$path =  str_replace(wdpro_realpath(__DIR__.'/../../../../'), '', wdpro_realpath($path));
+
+	$path = wdpro_fix_directory_separator($path);
+
+	return $path;
+}
+
+
+/**
+ * Исправляет слеши на соответствующие текущей ОС
+ *
+ * Чтобы в виндовс нормально работали пути
+ *
+ * @param string $path Путь
+ * @return string
+ */
+function wdpro_fix_directory_separator($path) {
+	if (DIRECTORY_SEPARATOR == '\\') {
+		$path = str_replace(
+			'/',
+			DIRECTORY_SEPARATOR,
+			$path
+		);
+	}
+
+	return $path;
 }
 
 
@@ -106,9 +131,22 @@ function wdpro_add_script_to_console($absolutePath, $handle=null)
 	add_action( 'admin_enqueue_scripts', function () use ($absolutePath, $handle)
 	{
 		$file = wdpro_path_remove_root($absolutePath);
+		$file = wdpro_fix_directory_separator_in_url($file);
 		if (!$handle) $handle = $file;
 		wp_enqueue_script( $handle, $file );
 	});
+}
+
+
+
+/**
+ * Исправляет слеши в url адресах
+ *
+ * @param string $url
+ * @return string
+ */
+function wdpro_fix_directory_separator_in_url($url) {
+	return str_replace('\\', '/', $url);
 }
 
 
@@ -143,6 +181,7 @@ function wdpro_add_script_to_site($absolutePath, $handle=null)
 		if (is_file($absolutePath))
 		{
 			$file = wdpro_path_remove_root($absolutePath);
+			$file = wdpro_fix_directory_separator_in_url($file);
 			if (!$handle) $handle = $file;
 			wp_enqueue_script( $handle, $file );
 		}
@@ -188,6 +227,7 @@ function wdpro_add_css_to_console($absolutePath)
 	add_action('admin_enqueue_scripts', function () use ($absolutePath)
 	{
 		$file = wdpro_path_remove_root($absolutePath);
+		$file = wdpro_fix_directory_separator_in_url($file);
 		wp_enqueue_style( $file, $file );
 	});
 }
@@ -217,6 +257,7 @@ function wdpro_add_css_to_site($absolutePath)
 	add_action('wp_enqueue_scripts', function () use ($absolutePath)
 	{
 		$file = wdpro_path_remove_root($absolutePath);
+		$file = wdpro_fix_directory_separator_in_url($file);
 		wp_enqueue_style( $file, $file );
 	});
 }
@@ -1255,28 +1296,27 @@ function wdpro_image_resize_crop($originalImageFile, $newImageFile, $crop_w, $cr
  */
 function wdpro_realpath($path) {
 
-	// check if path begins with "/" ie. is absolute
-	// if it isnt concat with script path
-	if (strpos($path,"/") !== 0) {
-		$base=dirname($_SERVER['SCRIPT_FILENAME']);
-		$path=$base."/".$path;
-	}
+	$path = wdpro_fix_directory_separator($path);
 
-	// canonicalize
-	$path=explode('/', $path);
-	$newpath=array();
-	for ($i=0; $i<sizeof($path); $i++) {
-		if ($path[$i]==='' || $path[$i]==='.') continue;
-		if ($path[$i]==='..') {
-			array_pop($newpath);
-			continue;
+	$path = str_replace(array('/', '\\'), DIRECTORY_SEPARATOR, $path);
+	$parts = array_filter(explode(DIRECTORY_SEPARATOR, $path), 'strlen');
+	$absolutes = array();
+	foreach ($parts as $part) {
+		if ('.' == $part) continue;
+		if ('..' == $part) {
+			array_pop($absolutes);
+		} else {
+			$absolutes[] = $part;
 		}
-		array_push($newpath, $path[$i]);
 	}
-	$finalpath="/".implode('/', $newpath);
+	$path = implode(DIRECTORY_SEPARATOR, $absolutes);
 
-	// check then return valid path or filename
-	return ($finalpath);
+	if (DIRECTORY_SEPARATOR === '/') {
+		$path = '/'.$path;
+	}
+
+	return $path;
+
 }
 
 
