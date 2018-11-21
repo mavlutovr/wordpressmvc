@@ -144,7 +144,7 @@ function breadcrumbs() {
 
 
 // Хлебные крошки
-add_action('wdpro_breadcrumbs_init', 'wdpro_breadcrumbs_init');
+add_action('wdpro_breadcrumbs_init', '_wdpro_breadcrumbs_init');
 
 /**
  * Дополнительная иницциализация хлебных крошек, которую если что можно отключить
@@ -154,7 +154,7 @@ add_action('wdpro_breadcrumbs_init', 'wdpro_breadcrumbs_init');
  *
  * @param \Wdpro\Breadcrumbs\Breadcrumbs $breadcrumbs Объект хлебных крошек
  */
-function wdpro_breadcrumbs_init($breadcrumbs) {
+function _wdpro_breadcrumbs_init($breadcrumbs) {
 
 	if (!is_front_page()) {
 		$breadcrumbs->prependFrontPage();
@@ -180,6 +180,17 @@ wdpro_get_post(function ($post) {
 		$post->initSite();
 	}
 });
+
+
+/**
+ * Дополнительная обработка хлебных крошек
+ *
+ * @param callback $callback Каллбэк, в который отправляется объект хлебных крошек
+ */
+function wdpro_breadcrumbs_init($callback) {
+	add_action('wdpro_breadcrumbs_init', $callback);
+}
+
 
 /**
  * Возвращает объект хлебных крошек
