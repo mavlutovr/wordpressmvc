@@ -3105,3 +3105,18 @@ function wdpro_link_text($text, $blank=false)
 function wdpro_redirect($link) {
 	return WDPRO_URL.'redirect.php?http='.urlencode($link);
 }
+
+
+$wdproJsData = [];
+
+/**
+ * Добавление данных в объект js: wdpro
+ *
+ * @param string $key Ключ
+ * @param mixed $value Значение
+ */
+function wdpro_js_data ($key, $value) {
+	global $wdproJsData;
+
+	$wdproJsData[$key] = $value;
+}

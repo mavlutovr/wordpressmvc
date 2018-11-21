@@ -230,20 +230,7 @@ class Controller extends \Wdpro\BaseController {
 			remove_filter( 'the_content', 'wpautop' );
 		}
 
-
-		/**
-		 * Скрипты
-		 */
-		add_action('wp_footer', function () {
-			echo '<script>
-			if (window.wdpro) {
-				wdpro.postId = '.(int)get_the_ID().';
-				wdpro.WDPRO_TEMPLATE_URL = "'.WDPRO_TEMPLATE_URL.'";
-				wdpro.WDPRO_UPLOAD_IMAGES_URL = "'.WDPRO_UPLOAD_IMAGES_URL.'";
-				wdpro.WDPRO_HOME_URL = "'.home_url().'/";
-			}
-			</script>';
-		});
+		wdpro_js_data('postId', (int)get_the_ID());
 
 		
 		//remove_filter('template_redirect', 'redirect_canonical');

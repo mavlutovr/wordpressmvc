@@ -2346,12 +2346,45 @@ if (typeof Array.isArray === 'undefined') {
 
 
 	/**
+	 *
+	 * @param newQueryData
+	 */
+	wdpro.updateQueryString = function (newQueryData) {
+		var queryStringData = wdpro.getQueryStringObject();
+
+		wdpro.each(newQueryData, function (value, key) {
+			if (value === null) {
+				delete queryStringData[key];
+			}
+			else {
+				queryStringData[key] = value;
+			}
+		});
+
+		console.log('window.location.pathname', window.location.pathname);
+
+		var queryString = $.param(queryStringData);
+		var url = window.location.protocol
+			+ '//' + window.location.host
+			+ window.location.pathname;
+
+		if (queryString) {
+			url += '?'+queryString;
+		}
+
+		wdpro.changeUrlWithoutReloadPage(url);
+	};
+
+
+	/**
 	 * Преобразует url в массив данных
 	 *
 	 * @param url {string} Url
 	 * @returns {HTMLAnchorElement}
 	 */
 	wdpro.parseUrl = function (url) {
+		if (!url) url = window.location;
+
 		var l = document.createElement("a");
 		l.href = url;
 		return l;
