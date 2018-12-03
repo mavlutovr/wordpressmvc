@@ -43,7 +43,7 @@ class ConsoleRoll extends \Wdpro\Console\Roll {
 				'add_new'=>'Добавить справку',
 			],
 
-			'icon'=>'far fa-question-circle',
+			'icon'=>'far fa-question',
 
 			'where'=>'ORDER BY sorting',
 		];
