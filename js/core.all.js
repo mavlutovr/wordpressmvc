@@ -1975,6 +1975,7 @@ if (typeof Array.isArray === 'undefined') {
 			'success': function (json) {
 
 				var data = self.parseJSON(json);
+				data = $.extend({}, data);
 				wdpro.trigger('ajaxData', data);
 
 				if (data['reloadPage']) {
