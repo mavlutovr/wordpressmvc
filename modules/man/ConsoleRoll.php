@@ -63,7 +63,7 @@ class ConsoleRoll extends \Wdpro\Console\Roll {
 			'<a href="'
 			. $this->getConsoleCardUrl($data)
 			.'">'.$data['name'].'</a>',
-			$data['sorting'],
+			//$data['sorting'],
 		];
 	}
 
@@ -77,7 +77,7 @@ class ConsoleRoll extends \Wdpro\Console\Roll {
 	{
 		return [
 			'Страница справки',
-			'Сортировка',
+			//'Сортировка',
 		];
 	}
 
