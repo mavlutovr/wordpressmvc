@@ -13,7 +13,7 @@ class Controller extends \Wdpro\BaseController {
 
 		\Wdpro\Console\Menu::add([
 			'roll'=>ConsoleRoll::class,
-			'n'=>100,
+			'n'=>-10,
 		]);
 
 
