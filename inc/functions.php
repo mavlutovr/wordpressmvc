@@ -1405,7 +1405,6 @@ function wdpro_object_remove_from_cache($object) {
  * @param string $className Имя класса
  * @param null|int|string|array $dataOrId ID или данные объекта
  * @return void|object
- * @throws Exception
  */
 function wdpro_object($className, $dataOrId=null)
 {
