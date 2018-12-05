@@ -11,7 +11,7 @@ class SqlTable extends \Wdpro\BaseSqlTable {
 	 *
 	 * @var string
 	 */
-	protected static $name = 'menu_top';
+	protected static $name = 'app_menu_top';
 
 	/**
 	 * Структура таблицы
@@ -32,12 +32,18 @@ class SqlTable extends \Wdpro\BaseSqlTable {
 		return [
 			static::COLLS => [
 				'id',
+				'in_menu'=>'tinyint', // Отображается в меню
 				'post_parent'=>'int', // Это и для страниц и для простых элементов
 				'menu_order'=>'int',
 				'post_status',
 				'post_title',
 				'post_name',
+				'post_content'=>'longtext',
+			],
 
+			static::INDEX => [
+				'in_menu',
+				'post_parent',
 			],
 
 			static::ENGINE => static::INNODB,

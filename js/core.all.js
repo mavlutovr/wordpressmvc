@@ -4,11 +4,17 @@ var wdproData = typeof wdproData !== 'undefined' ? wdproData : null;
 var wdpro = {
 	templates: {},
 	data: wdproData,
+	speed: 200, // Скорость эффектов (там, там, где используется)
 	
 	// Константы
 	WDPRO_TEMPLATE_URL: '',
 	WDPRO_UPLOAD_IMAGES_URL: '',
-	WDPRO_HOME_URL: ''
+	WDPRO_HOME_URL: '',
+
+	// base64_decode
+	base64_decode: function (str) {
+		return decodeURIComponent(escape(window.atob( str )));
+	}
 };
 
 
@@ -47,15 +53,55 @@ if (typeof Array.isArray === 'undefined') {
 };
 
 (function ($) {
-	
-	// Аналог $(document).ready()
-	wdpro.ready = function (callback) {
-		
-		$(document).ready(function () {
-			
-			callback($);
-		});
+
+	var readyFns = [];
+	var readyInited = false;
+
+	/**
+	 * Запускает каллбэк при готовности страницы к выколнению скриптов
+	 *
+	 * Аналог $(document).ready()
+	 *
+	 * @param [n] {number} Порядковый номер выполнения. Актуален до первого срабатывания каллбков.
+	 * Дальше будет срабатывать сразу
+	 * @param callback {function} Каллбэк, которые запускается
+	 */
+	wdpro.ready = function (n, callback) {
+
+		var args = wdpro.argumentsSortByTypes(arguments);
+
+		if (readyInited) {
+			args['function']($);
+		}
+
+		else {
+			// Номер
+			if (!args['number']) {
+				args['number'] = 10;
+			}
+
+			readyFns.push(args);
+		}
+
 	};
+
+	$(document).ready(function () {
+		readyInited = true;
+
+		readyFns.sort(function (a, b) {
+			if (a['number'] > b['number']) {
+				return 1;
+			}
+			if (a['number'] < b['number']) {
+				return -1;
+			}
+			return 0;
+		});
+
+		$.each(readyFns, function (i, object) {
+			object['function']($);
+		});
+	});
 
 
 
@@ -1048,66 +1094,57 @@ if (typeof Array.isArray === 'undefined') {
 		 * @param actionName {string} Имя события с пространством имен в формате name.namespace
 		 * @returns {Event}
 		 */
-		off: function(actionName)
-		     {
-			     var self = this;
+		off: function (actionName) {
+			var self = this;
 
-			     // Парсим имя события
-			     var action = this.eventParseName(actionName);
+			// Парсим имя события
+			var action = this.eventParseName(actionName);
 
-			     // Удаление по пространству имен
-			     if (action.namespace)
-			     {
-				     // Если есть каллбэки для данного пространства имен
-				     if (this.removeByNamespace && this.removeByNamespace.isset(actionName))
-				     {
-					     // Получаем список номеров каллбэков пространства имен
-					     var ns = this.removeByNamespace.unset(actionName);
+			// Удаление по пространству имен
+			if (action.namespace) {
+				// Если есть каллбэки для данного пространства имен
+				if (this.removeByNamespace && this.removeByNamespace.isset(actionName)) {
+					// Получаем список номеров каллбэков пространства имен
+					var ns = this.removeByNamespace.unset(actionName);
 
-					     // Получаем список вызываемых каллбэков
-					     var callbacks = self.callbacks.get(action.name);
+					// Получаем список вызываемых каллбэков
+					var callbacks = self.callbacks.get(action.name);
 
-					     // Если есть список вызываемых каллбэков
-					     if (callbacks)
-					     {
-						     // Перебираем номера каллбэков
-						     ns.each(function(n)
-						     {
-							     // Удаляем этот каллбэк по номеру
-							     callbacks.unset(n);
-						     });
-					     }
-				     }
-			     }
+					// Если есть список вызываемых каллбэков
+					if (callbacks) {
+						// Перебираем номера каллбэков
+						ns.each(function (n) {
+							// Удаляем этот каллбэк по номеру
+							callbacks.unset(n);
+						});
+					}
+				}
+			}
 
 
-			     // Удаление без пространства имен
-			     else
-			     {
-				     // Удаляем все каллбэки из списка каллбэков по имени события
-				     if (this.callbacks)
-				     {
-					     this.callbacks.unset(action.name);
-				     }
+			// Удаление без пространства имен
+			else {
+				// Удаляем все каллбэки из списка каллбэков по имени события
+				if (this.callbacks) {
+					this.callbacks.unset(action.name);
+				}
 
-				     // Удаляем инфу о каллбэках по пространствам имен
-				     this.removeByNamespace && this.removeByNamespace.each(function (ns, actionName)
-				     {
-					     // Парсим имя события
-					     var action = self.eventParseName(actionName);
+				// Удаляем инфу о каллбэках по пространствам имен
+				this.removeByNamespace && this.removeByNamespace.each(function (ns, actionName) {
+					// Парсим имя события
+					var action = self.eventParseName(actionName);
 
-					     // Если имя совпадает с удаляемым
-					     if (action.name == actionName)
-					     {
-						     // Удаляем номера этого каллбэка из списка номеров для удаления по пространству имен
-						     self.removeByNamespace.unset(actionName);
-					     }
-				     });
-			     }
+					// Если имя совпадает с удаляемым
+					if (action.name == actionName) {
+						// Удаляем номера этого каллбэка из списка номеров для удаления по пространству имен
+						self.removeByNamespace.unset(actionName);
+					}
+				});
+			}
 
 
-			     return this;
-		     },
+			return this;
+		},
 
 
 		/**
@@ -1117,45 +1154,39 @@ if (typeof Array.isArray === 'undefined') {
 		 * @param [data] {{}} Данные, отправляемые в прослушки события
 		 * @returns {number} Количество запущенных прослушек в данный момент
 		 */
-		trigger: function (actionName, data)
-		         {
-			         // Количество запущенных каллбэков
-			         var ret = 0;
+		trigger: function (actionName, data) {
+			// Количество запущенных каллбэков
+			var ret = 0;
 
-			         // Если есть список прослушек
-			         if (this.callbacks)
-			         {
-				         // Получаем список прослушек для этого события
-				         var callbacks = this.callbacks.get(actionName);
+			// Если есть список прослушек
+			if (this.callbacks) {
+				// Получаем список прослушек для этого события
+				var callbacks = this.callbacks.get(actionName);
 
-				         // Если есть прослушки на данное событие
-				         if (callbacks)
-				         {
-					         // Перебираем прослушки
-					         callbacks.each(function(callback)
-					         {
-						         if (typeof callback.fn == 'function')
-						         {
-							         // Запускаем прослушку
-							         callback.fn(data);
+				// Если есть прослушки на данное событие
+				if (callbacks) {
+					// Перебираем прослушки
+					callbacks.each(function (callback) {
+						if (typeof callback.fn == 'function') {
+							// Запускаем прослушку
+							callback.fn(data);
 
-							         // Увеличиваем счетчик запущенных каллбэков
-							         ret ++;
-						         }
-					         });
-				         }
-			         }
+							// Увеличиваем счетчик запущенных каллбэков
+							ret++;
+						}
+					});
+				}
+			}
 
-			         // Запоминаем данное событие для прослушек, которые будут установлены после,
-			         // но которые по параметрам будут требовать данное событие
-			         if (!this.prevEvents)
-			         {
-				         this.prevEvents = new List();
-			         }
-			         this.prevEvents.set(actionName, data);
+			// Запоминаем данное событие для прослушек, которые будут установлены после,
+			// но которые по параметрам будут требовать данное событие
+			if (!this.prevEvents) {
+				this.prevEvents = new List();
+			}
+			this.prevEvents.set(actionName, data);
 
-			         return ret;
-		         },
+			return ret;
+		},
 
 
 		/**
@@ -1164,30 +1195,25 @@ if (typeof Array.isArray === 'undefined') {
 		 * @param [list] {{}} Объект, содержащий прослушки
 		 * @param [keyInList] {*} Ключ списка прослушек в этом объекте (когда объект не список прослушек, а список всяких штук, одной из штук которого является список прослушек)
 		 */
-		onList: function(list, keyInList)
-		        {
-			        var self = this;
+		onList: function (list, keyInList) {
+			var self = this;
 
-			        if (typeof list == 'object')
-			        {
-				        // Список каллбэков в ключе
-				        if (keyInList)
-				        {
-					        list = list[keyInList];
-				        }
+			if (typeof list == 'object') {
+				// Список каллбэков в ключе
+				if (keyInList) {
+					list = list[keyInList];
+				}
 
-				        // Если есть такой список калббэков
-				        if (list && typeof list == 'object')
-				        {
-					        // Перебираем прослушки
-					        each(list, function (eventCallback, eventName)
-					        {
-						        // Добавляем прослушку события
-						        self.on(eventName, eventCallback);
-					        });
-				        }
-			        }
-		        },
+				// Если есть такой список калббэков
+				if (list && typeof list == 'object') {
+					// Перебираем прослушки
+					each(list, function (eventCallback, eventName) {
+						// Добавляем прослушку события
+						self.on(eventName, eventCallback);
+					});
+				}
+			}
+		},
 
 
 		/**
@@ -1196,15 +1222,14 @@ if (typeof Array.isArray === 'undefined') {
 		 * @param name {string}
 		 * @returns {{name: string, namespace: string}}
 		 */
-		eventParseName: function(name)
-		                {
-			                var pieces = name.split('.');
+		eventParseName: function (name) {
+			var pieces = name.split('.');
 
-			                return {
-				                name: pieces[0],
-				                namespace: pieces[1]
-			                };
-		                }
+			return {
+				name: pieces[0],
+				namespace: pieces[1]
+			};
+		}
 	});
 
 
@@ -1868,6 +1893,35 @@ if (typeof Array.isArray === 'undefined') {
 
 
 	/**
+	* Обновляет страницу
+	*/
+	wdpro.reloadPage = function () {
+		window.location = window.location;
+		console.log('window.location', window.location);
+	};
+
+
+	/**
+	 * Возвращает адрес для ajax запроса
+	 * 
+	 * @param  {{}} params Данные запроса
+	 * 
+	 * @return {string}
+	 */
+	wdpro.ajaxUrl = function (params) {
+
+		var query = wdpro.extend(params, {
+				'action': 'wdpro',
+				'wdproAction': params['action'],
+				'lang': wdpro.data.lang
+			});
+
+			return this.data['ajaxUrl']+'?'+ $.param(query);
+	};
+
+
+
+	/**
 	 * Выполняет ajax запрос
 	 * 
 	 * @param $_GET_OR_ACTION {{}|string} Имя события, по которой модуль поймает этот запрос
@@ -1878,42 +1932,63 @@ if (typeof Array.isArray === 'undefined') {
 	wdpro.ajax = function ($_GET_OR_ACTION, $_POST, callback) {
 		
 		var self = this;
+		var url;
 
-		if (typeof $_GET_OR_ACTION === 'string')
-		{
-			$_GET_OR_ACTION = {
-				'action': $_GET_OR_ACTION
-			};
+		// Когда указан конкретный адрес
+		if (typeof $_GET_OR_ACTION === 'string'
+			&& ($_GET_OR_ACTION.match(/^\/\//)
+				|| $_GET_OR_ACTION.match(/^http:\/\//)
+				|| $_GET_OR_ACTION.match(/^https:\/\//))
+			) {
+			url = $_GET_OR_ACTION;
 		}
 
-		var $_GET2 = wdpro.extend($_GET_OR_ACTION, {
-			'action': 'wdpro',
-			'wdproAction': $_GET_OR_ACTION['action'],
-			'lang': wdpro.data.lang
-		});
-		
+		// Когда указаны действия или еще чего
+		else {
+			if (typeof $_GET_OR_ACTION === 'string')
+			{
+				$_GET_OR_ACTION = {
+					'action': $_GET_OR_ACTION
+				};
+			}
+
+			var $_GET2 = wdpro.extend($_GET_OR_ACTION, {
+				'action': 'wdpro',
+				'wdproAction': $_GET_OR_ACTION['action'],
+				'lang': wdpro.data.lang
+			});
+
+			url = this.data['ajaxUrl']+'?'+ $.param($_GET2);
+		}
+			
 		if (typeof $_POST === 'function')
 		{
 			callback = $_POST;
 			$_POST = null;
 		}
 		
+
 		var params = {
-			'url': this.data['ajaxUrl']+'?'+ $.param($_GET2),
+			'url': url,
 			'type': 'POST',
 			'data': $_POST,
 			'success': function (json) {
 
 				var data = self.parseJSON(json);
+				data = $.extend({}, data);
 				wdpro.trigger('ajaxData', data);
-				
+
+				if (data['reloadPage']) {
+					wdpro.reloadPage();
+				}
+			
 				if (callback)
 				{
 					callback(data);
 				}
 			}
 		};
-		
+
 		$.ajax(params);
 	};
 	
@@ -2097,6 +2172,312 @@ if (typeof Array.isArray === 'undefined') {
 		string = string.replace(/&amp;/g, '&')
 		return string
 	};
+
+
+	/**
+	 * Преобразует текстовый ключ в объект, чтобы его было проще дальше использовать
+	 * 
+	 * @param key {string|{}} Ключ
+	 * @returns {{key: string, object: {}}}
+	 */
+	wdpro.keyParse = function (key) {
+
+		// Когда ключ массив
+		if (typeof key === 'object') {
+			if (key['allReady']) {
+				return key;
+			}
+
+			var infoArr = key;
+			var infoString = '';
+
+			$.each(key, function (i, value) {
+				if (infoString != '')
+				{
+					infoString += ',';
+				}
+				infoString += i + ':' + value;
+			});
+
+
+		}
+
+
+		// Ключь в виде строки
+		else if (typeof key === 'string') {
+			// Создаем строку ключа
+			var infoString = key;
+
+			var infoArr = {};
+
+			var elements = infoString.split(',');
+
+			wdpro.each(elements, function (element) {
+				var elementParts = element.split(':');
+				infoArr[elementParts[0]] = elementParts[1];
+			});
+		}
+
+		if (infoString) {
+			return {
+				'key': infoString,
+				'object': infoArr,
+				'allReady': true
+			};
+		}
+	};
+
+
+	/**
+	 * Добавляет в ключ объекта данные
+	 *
+	 * @param originalKey {string|{}}Оригинальный ключ
+	 * @param newData {{}} Новые данные
+	 * @returns {{key: string, object: {}}}
+	 */
+	wdpro.keyUpdate = function (originalKey, newData) {
+		var key = wdpro.keyParse(originalKey);
+
+		$.each(newData, function (newKey, newValue) {
+			key['object'][newKey] = newValue;
+		});
+
+		return wdpro.keyParse(key['object']);
+	};
+
+
+	/**
+	 * Обновляет search (query string) троку
+	 *
+	 * @param search {string} Строка
+	 * @param values {{}} Новые данные query string
+	 */
+	wdpro.queryStringUpdate = function (search, values) {
+
+		var search = $.parseParams(search);
+
+		$.each(values, function (key, value) {
+			console.log('search', key, value);
+
+			search[key] = value;
+		});
+
+		return $.param(search);
+	};
+
+
+	/**
+	 * Возвращает данные query string в виде объекта
+	 *
+	 * @returns {{}}
+	 */
+	wdpro.getQueryStringObject = function (queryString) {
+		if (!queryString) {
+			queryString = window.location.search;
+		}
+		return wdpro.parseParams(queryString);
+	};
+
+
+	/**
+	 * Заменяет в адресе search строку на новую
+	 *
+	 * @param url {string} Url
+	 * @param search {string|{}} Query String
+	 */
+	wdpro.replaceQueryStringInUrl = function (url, search) {
+		var urlData = wdpro.parseUrl(url);
+
+		if (typeof search === 'object') {
+			search = $.param(search);
+		}
+
+		var url = urlData.protocol + '//' +
+			urlData.hostname +
+			urlData.pathname +
+			'?' + search;
+
+		return url;
+	};
+
+
+	/**
+	 * Обновляет Search строку в адресе
+	 *
+	 * @param url {string} Адрес
+	 * @param newSearchData {{}} Новые дынне в search строке
+	 * @returns {string}
+	 */
+	wdpro.updateQueryStringInUrl = function (url, newSearchData) {
+		var urlData = wdpro.parseUrl(url);
+		var search = wdpro.queryStringUpdate(urlData.search, newSearchData);
+
+		var returnUrl = urlData.protocol + '//' +
+			urlData.hostname +
+			urlData.pathname +
+			'?' + search;
+
+		return returnUrl;
+	};
+
+
+	/**
+	 * Возвращает данные QueryString из адреса в виде объекта
+	 *
+	 * @param url {string} Url адрес
+	 * @returns {{}}
+	 */
+	wdpro.getQueryStringDataFromUrl = function (url) {
+		var urlData = wdpro.parseUrl(url);
+
+		return $.parseParams(urlData.search);
+	};
+
+
+	/**
+	 * Меняет адрес в браузере без перезагрузки страницы
+	 *
+	 * @param url {string} Url
+	 */
+	wdpro.changeUrlWithoutReloadPage = function (url) {
+		if (window.history.replaceState) {
+			window.history.replaceState(null, null, url);
+		}
+	};
+
+
+	/**
+	 *
+	 * @param newQueryData
+	 */
+	wdpro.updateQueryString = function (newQueryData) {
+		var queryStringData = wdpro.getQueryStringObject();
+
+		wdpro.each(newQueryData, function (value, key) {
+			if (value === null) {
+				delete queryStringData[key];
+			}
+			else {
+				queryStringData[key] = value;
+			}
+		});
+
+		console.log('window.location.pathname', window.location.pathname);
+
+		var queryString = $.param(queryStringData);
+		var url = window.location.protocol
+			+ '//' + window.location.host
+			+ window.location.pathname;
+
+		if (queryString) {
+			url += '?'+queryString;
+		}
+
+		wdpro.changeUrlWithoutReloadPage(url);
+	};
+
+
+	/**
+	 * Преобразует url в массив данных
+	 *
+	 * @param url {string} Url
+	 * @returns {HTMLAnchorElement}
+	 */
+	wdpro.parseUrl = function (url) {
+		if (!url) url = window.location;
+
+		var l = document.createElement("a");
+		l.href = url;
+		return l;
+	};
+
+
+
+	// Add an URL parser to JQuery that returns an object
+	// This function is meant to be used with an URL like the window.location
+	// Use: $.parseParams('http://mysite.com/?var=string') or $.parseParams() to parse the window.location
+	// Simple variable:  ?var=abc                        returns {var: "abc"}
+	// Simple object:    ?var.length=2&var.scope=123     returns {var: {length: "2", scope: "123"}}
+	// Simple array:     ?var[]=0&var[]=9                returns {var: ["0", "9"]}
+	// Array with index: ?var[0]=0&var[1]=9              returns {var: ["0", "9"]}
+	// Nested objects:   ?my.var.is.here=5               returns {my: {var: {is: {here: "5"}}}}
+	// All together:     ?var=a&my.var[]=b&my.cookie=no  returns {var: "a", my: {var: ["b"], cookie: "no"}}
+	// You just cant have an object in an array, ?var[1].test=abc DOES NOT WORK
+	(function ($) {
+		var re = /([^&=]+)=?([^&]*)/g;
+		var decode = function (str) {
+			return decodeURIComponent(str.replace(/\+/g, ' '));
+		};
+		$.parseParams = wdpro.parseParams = function (query) {
+			// recursive function to construct the result object
+			function createElement(params, key, value) {
+				key = key + '';
+				// if the key is a property
+				if (key.indexOf('.') !== -1) {
+					// extract the first part with the name of the object
+					var list = key.split('.');
+					// the rest of the key
+					var new_key = key.split(/\.(.+)?/)[1];
+					// create the object if it doesnt exist
+					if (!params[list[0]]) params[list[0]] = {};
+					// if the key is not empty, create it in the object
+					if (new_key !== '') {
+						createElement(params[list[0]], new_key, value);
+					} else console.warn('parseParams :: empty property in key "' + key + '"');
+				} else
+				// if the key is an array
+				if (key.indexOf('[') !== -1) {
+					// extract the array name
+					var list = key.split('[');
+					key = list[0];
+					// extract the index of the array
+					var list = list[1].split(']');
+					var index = list[0]
+					// if index is empty, just push the value at the end of the array
+					if (index == '') {
+						if (!params) params = {};
+						if (!params[key] || !$.isArray(params[key])) params[key] = [];
+						params[key].push(value);
+					} else
+					// add the value at the index (must be an integer)
+					{
+						if (!params) params = {};
+						if (!params[key] || !$.isArray(params[key])) params[key] = [];
+						params[key][parseInt(index)] = value;
+					}
+				} else
+				// just normal key
+				{
+					if (!params) params = {};
+					params[key] = value;
+				}
+			}
+			// be sure the query is a string
+			query = query + '';
+			if (query === '') query = window.location + '';
+			var params = {}, e;
+			if (query) {
+				// remove # from end of query
+				if (query.indexOf('#') !== -1) {
+					query = query.substr(0, query.indexOf('#'));
+				}
+
+				// remove ? at the begining of the query
+				if (query.indexOf('?') !== -1) {
+					query = query.substr(query.indexOf('?') + 1, query.length);
+				} else return {};
+				// empty parameters
+				if (query == '') return {};
+				// execute a createElement on every key and value
+				while (e = re.exec(query)) {
+					var key = decode(e[1]);
+					var value = decode(e[2]);
+					createElement(params, key, value);
+				}
+			}
+			return params;
+		};
+	})(jQuery);
 
 })(jQuery);
 

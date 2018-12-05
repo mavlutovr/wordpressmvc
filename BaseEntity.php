@@ -86,13 +86,18 @@ abstract class BaseEntity
 	/**
 	 * Загрузка данных из базы
 	 * 
-	 * @param int $id ID сущности
+	 * @param int|null $id ID сущности
 	 * @return bool true, если данные загрузились
 	 * @throws EntityException
 	 */
-	public function loadData($id)
+	public function loadData($id=null)
 	{
-		$this->_id = $id;
+		if ($id) {
+			$this->_id = $id;
+		}
+		else {
+			$id = $this->id();
+		}
 
 		if ($data = static::sqlTable()->getRow(
 			array('WHERE id=%d', $id)
@@ -161,11 +166,29 @@ abstract class BaseEntity
 		}
 		else
 		{
-			if (strstr($key, '[lang]')) {
+			$keys = func_get_args();
+			$value = $this->data;
+
+			foreach ($keys as $key) {
+				if (strstr($key, '[lang]')) {
+					$key = \Wdpro\Lang\Data::replaceLangShortcode($key);
+				}
+
+				if (isset($value[$key])) {
+					$value = $value[$key];
+				}
+				else {
+					return null;
+				}
+			}
+
+			return $value;
+
+			/*if (strstr($key, '[lang]')) {
 				$key = \Wdpro\Lang\Data::replaceLangShortcode($key);
 			}
 
-			if (isset($this->data[$key])) return $this->data[$key];
+			if (isset($this->data[$key])) return $this->data[$key];*/
 		}
 	}
 
@@ -243,6 +266,15 @@ abstract class BaseEntity
 			// Данные не были загружены из таблицы
 			else
 			{
+				// Если это новая сущность, удаляем ее из списка объектов, как новую сущность
+				// Чтобы потом при обращении к пустой сущности не загружалась эта не пустая сущность
+				$new = false;
+				// А создавалась новая пустая сущность
+				if (true || !$this->id()) {
+					$new = true;
+					wdpro_object_remove_from_cache($this);
+				}
+
 				if (!isset($data[static::idField()]) && $this->id())
 				{
 					$data[static::idField()] =  $this->id();
@@ -250,6 +282,11 @@ abstract class BaseEntity
 				
 				$this->_id = static::sqlTable()->insert($data);
 				$this->data[static::idField()] = $this->_id;
+
+				// Если это новая сущность, добавляе ее в кэш
+				if ($new) {
+					wdpro_object_add_to_cache($this);
+				}
 			}
 			
 			$this->onChange();
@@ -352,7 +389,7 @@ abstract class BaseEntity
 	/**
 	 * Берет следующий порядковый номер и добавляет его в данные
 	 *
-	 * @param string $where WHERE запрос, по которомустроиться список этих сущностей, в 
+	 * @param string $where WHERE запрос, по которому строиться список этих сущностей, в
 	 * котором идет сортировка
 	 * @return $this
 	 * @throws EntityException
@@ -380,42 +417,6 @@ abstract class BaseEntity
 		
 		return $this;
 	}
-
-
-	/**
-	 * Возвращает объект таблицы сущности
-	 * 
-	 * @return \Wdpro\BaseSqlTable
-	 * @throws EntityException
-	 */
-	public static function sqlTable()
-	{
-		if ($tableClass = static::getSqlTableClass())
-		{
-			//return $tableClass;
-			return wdpro_object($tableClass);
-		}
-		
-		else
-		{
-			throw new EntityException(
-				'У сущности '.get_called_class().' не указано класс таблицы в методе 
-				getSqlTableClass()'
-			);
-		}
-	}
-
-	
-	/**
-	 * Дополнительная таблица
-	 *
-	 * @return \Wdpro\BaseSqlTable
-	 */
-	public static function getSqlTableClass()
-	{
-		return static::getNamespace().'\\SqlTable';
-	}
-
 
 	/**
 	 * Аналог $this->sqlTable();
@@ -588,15 +589,28 @@ abstract class BaseEntity
 				if (!isset($childParams['icon'])) {
 					$childParams['icon'] = $rollParams['icon'];
 				}
+
 				if (isset($childParams['icon']) && $childParams['icon'])
 				{
-					if (strstr($childParams['icon'], 'fa-')) {
+					// Awesome 5
+					if (strstr($childParams['icon'], 'fas')
+					|| strstr($childParams['icon'], 'far')
+					|| strstr($childParams['icon'], 'fal')
+					|| strstr($childParams['icon'], 'fab')) {
+						
+						$iconClasses = 'fa5 '.$childParams['icon'];
+					}
+
+					// Awesome 4
+					else if (strstr($childParams['icon'], 'fa-')) {
 						$iconClasses = 'fa '.$childParams['icon'];
 					}
+
 					else {
 						$iconClasses = 'dashicons '.$childParams['icon'];
 					}
 				}
+
 				$icon = '<i class="'.$iconClasses.'"></i> ';
 
 				// Текст кнопкии
@@ -803,12 +817,33 @@ abstract class BaseEntity
 
 	/**
 	 * Удаление сущности
+	 *
+	 * @throws \Exception
 	 */
 	public function remove()
 	{
 		if ($id = $this->id())
 		{
-			static::getSqlTable()->delete(array(static::idField()=>$id), array('%d'));
+			$table = static::getSqlTable();
+			
+			// Удаление дочерних элементов
+			if ($table::isColl('post_parent')) {
+				if ($selChilds = $table::select([
+					'WHERE post_parent=%d',
+					[$id]
+				])) {
+					foreach ($selChilds as $childRow) {
+						$child = wdpro_object(get_class($this), $childRow);
+						/** @var \Wdpro\BaseEntity $child */
+						$child->remove();
+					}
+				}
+			}
+
+
+			$table->delete(array(static::idField()=>$id), array('%d'));
+
+			wdpro_object_remove_from_cache($this);
 			
 			$this->_removed = true;
 			
@@ -818,6 +853,17 @@ abstract class BaseEntity
 			$this->onRemove();
 			$this->trigger('remove', $this->id());
 		}
+	}
+
+
+	public function addToObjectsCache() {
+		global $_wdproObjects;
+
+	}
+
+
+	public function removeFromObjectsCache() {
+
 	}
 
 
@@ -847,6 +893,18 @@ abstract class BaseEntity
 		foreach ($table::getLangsFields() as $coll) {
 			$this->data[$coll] = $this->data[$coll.\Wdpro\Lang\Data::getCurrentSuffix()];
 		}
+	}
+
+
+	/**
+	* Возвращает true, когда это новая сущность и ее нет в базе
+	*/
+	public function isNew() {
+
+		return !isset($this->data['_from_db']) || !$this->data['_from_db'];
+
+
+		return $this->id();
 	}
 
 }

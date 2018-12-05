@@ -26,7 +26,7 @@ class Controller extends \Wdpro\BaseController {
 			
 			/*$fp =  fopen(__DIR__.'/log', 'a+');
 			fwrite($fp,
-				wdpro_current_url()."\n\n".print_r($data, 1)
+				wdpro_current_uri()."\n\n".print_r($data, 1)
 				."\n\n--------------------------------\n\n"
 			);
 			fclose($fp);*/

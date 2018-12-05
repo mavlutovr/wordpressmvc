@@ -7,6 +7,34 @@
 	wdpro.forms = {};
 
 
+	/**
+	* Вревращалка слоя с данными формы в саму форму
+	*/
+	$.fn.wdproForm = function () {
+
+		$(this).each(function ()
+		{
+			var container = $(this);
+
+			// Получаем параметры формы
+			var jsonDiv = container.find('.js-params');
+			var json = jsonDiv.text();
+			var data = wdpro.parseJSON(json);
+
+			// Создаем форму
+			var form = new wdpro.forms.Form(data);
+
+			form.getHtml(function (html) {
+				container.append(html);
+			});
+			
+			
+		});
+
+		return this;
+	};
+
+
 	$(document).on('DOMNodeInserted', function (e)
 	{
 		for(var i in e.target.classList)
@@ -138,6 +166,20 @@
 
 
 	/**
+	 * Возвращает объект формы по ее html коду (jquery)
+	 *
+	 * @param html {jQuery} Html блок формы
+	 * @returns {wdpro.forms.Form}
+	 */
+	wdpro.forms.getFormObjectByHtml = function (html) {
+		var id = Number(html.attr('data-id'));
+		if (forms[id]) {
+			return forms[id];
+		}
+	};
+
+
+	/**
 	 * Выравнивает все формы
 	 */
 	wdpro.forms.align = function () {
@@ -229,6 +271,27 @@
 			}
 
 			wdpro.trigger('form', this);
+
+			this.on('addedToPage', function () {
+				self.updateDialogPos();
+			});
+
+
+			// Ajax
+			if (this.params['ajax']) {
+				this.ajax(function (data) {
+					self.loading();
+
+					wdpro.ajax(self.params['action'], data, function (response) {
+
+						if (response['dialogClose']) {
+							self.closeDialog();
+						}
+
+						self.loadingStop();
+					});
+				});
+			}
 		},
 
 
@@ -480,6 +543,9 @@
 					// Получаем шаблон формы
 					self.html = $(self.templates.form(templateData));
 
+					// Устанавливааем номер формы
+					self.html.attr('data-form-n', self.id);
+
 					// Расставляем по всем меткам соответствующие элементы
 					wdpro.jQueryToHtmlRun(self.html, 'form');
 
@@ -491,6 +557,7 @@
 					self.align();
 					
 					// Через секунду
+					setTimeout(function () { self.align(); }, 10);
 					setTimeout(function () { self.align(); }, 1000);
 
 					// Инициализируем созданную форму
@@ -532,7 +599,7 @@
 			this.eachElements(function (element) {
 				element.trigger('prepareToGetData');
 			});
-			
+
 			return this.jForm.serializeObject();
 		},
 
@@ -846,6 +913,9 @@
 		align: function () {
 
 			var self = this;
+
+			// Обновляем позицию Dialog, когда форма в окошке
+			self.updateDialogPos();
 			
 			if (this.params['align'])
 			{
@@ -1341,6 +1411,9 @@
 						// Запускаем выравнивание заново
 						alignAllColls();
 					}
+					else {
+						self.updateDialogPos();
+					}
 				};
 
 
@@ -1358,6 +1431,23 @@
 					}
 				});
 			}
+		},
+
+
+		/**
+		* Обновляет позицию диалогового окна, в котором находится форма
+		*/
+		updateDialogPos: function () {
+			// Обновляем позицию Dialog, когда форма в окошке
+			this.html.closest('.js-dialog').trigger('updatePos');
+		},
+
+
+		/**
+		 * Закрывает диалоговое окно, в котором находится
+		 */
+		closeDialog: function () {
+			this.html.closest('.js-dialog').trigger('close');
 		},
 
 
@@ -2744,10 +2834,15 @@
 			{
 				this.config = CKEDITOR.wdproConfigs[this.params['config']];
 			}
+			if (this.params['width']) {
+				this.config.width = this.params['width'];
+			}
 			if (this.params['configParams'])
 			{
 				this.config = wdpro.extend(this.config, this.params['configParams']);
 			}
+
+			console.log('this.config', this.config);
 			
 			this.on('addedToPage', function () {
 				
@@ -3147,73 +3242,117 @@
 			
 			
 			// Change
-			this.field.on('change', function ()
+			this.field.on('change', function (e)
 			{
 				self.field.loading();
 				self.uploadInProcess = true;
 
 				// Данные для отправки
-				var files = this.files;
-				var data = new FormData();
-				$.each( files, function( key, value ){
-					data.append( key, value );
+				var files = e.target.files;
+				console.log('files', files);
+
+				var data = {
+					'action': 'form_file_upload',
+					'files': {}
+				};
+				var formData = new FormData();
+				var waiter = new wdpro.Waiter();
+
+				// Добавление файлов
+				$.each( files, function( key, file ){
+					waiter.wait(function (complete) {
+						formData.append('file_' + key, file, file.name);
+						complete();
+					});
+
+					/*waiter.wait(function (complete) {
+						var fr = new FileReader;
+						fr.onloadend = function (str) {
+
+							data['files'][key] = {
+								'image': fr.result,
+								'fileName': file.name
+							};
+							complete();
+						};
+						fr.readAsDataURL(file);
+					});
+
+					waiter.wait(function (complete) {
+						var fr = new FileReader;
+						fr.onloadend = function (binary) {
+
+							//formData.append('file_'+key, file, file.name);
+							complete();
+						};
+						fr.readAsBinaryString(file);
+					});*/
 				});
-				data.append('action', 'form_file_upload');
 
-				
-				// Отправляем данные на сервер
-				$.ajax({
-					url: 'admin-ajax.php',
-					type: 'POST',
-					data: data,
-					cache: false,
-					//dataType: 'json',
-					processData: false,
-					contentType: false,
-					
-					// Ответ сервера
-					success: function (json) {
+				// При завершении добавления в данные всех файлов
+				waiter.run(function () {
 
-						var response = wdpro.parseJSON(json);
-						self.field.loadingStop();
+					// Отправляем данные на сервер
+					var ajax = {
+						url: wdpro.ajaxUrl({
+							'action': 'form_file_upload',
+						}),
+						type: 'POST',
+						data: formData,
+						cache: false,
+						processData: false,
+						contentType: false,
+						//contentType: 'multipart/form-data',
 
-						// Все верно
-						if (typeof response.error == 'undefined')
-						{
-							// Удаляем все файлы, если поле не multiple
-							if (!self.params['multiple'])
+						// Ответ сервера
+						success: function (json) {
+
+							var response = wdpro.parseJSON(json);
+							self.field.loadingStop();
+
+							// Все верно
+							if (typeof response.error == 'undefined')
 							{
-								self.settedValue = [];
-							}
-							
-							// Запоминаем, что поле готово к отправке формы
-							self.uploadInProcess = false;
-							
-							// Запоминаем имя файла
-							wdpro.each(response['files'], function (file) {
-								self.addFile('ZIP: ' + file);
-							});
-							//self.setValue('ZIP: ' + response['fileName']);
+								// Удаляем все файлы, если поле не multiple
+								if (!self.params['multiple'])
+								{
+									self.settedValue = [];
+								}
 
-							self.submitOnUpload && self.submitOnUpload();
-							self.submitOnUpload = null;
-							
-							self.updateFieldValue();
-							self.showCurrentFiles();
+								// Запоминаем, что поле готово к отправке формы
+								self.uploadInProcess = false;
+
+								// Запоминаем имя файла
+								wdpro.each(response['files'], function (file) {
+									self.addFile('ZIP: ' + file);
+								});
+								//self.setValue('ZIP: ' + response['fileName']);
+
+								self.submitOnUpload && self.submitOnUpload();
+								self.submitOnUpload = null;
+
+								self.updateFieldValue();
+								self.showCurrentFiles();
+							}
+
+							// Ошибка
+							else
+							{
+								self.field.loadingStop();
+								self.fileBlockContainer.append('<p>При загрузке файла произошла ошибка: ' + response.error+'</p>');
+							}
+						},
+
+						error: function (jqXHR, testStatus, errorThrow) {
+							self.field.loadingStop();
+							console.error('При загрузке файла произошла ошибка', jqXHR.getAllResponseHeaders());
 						}
-						
-						// Ошибка
-						else
-						{
-							console.error('При загрузке файла произошла ошибка', response.error);
-						}
-					},
-					
-					error: function (jqXHR, testStatus, errorThrow) {
-						self.field.loadingStop();
-						console.log('При загрузке файла произошла ошибка', testStatus);
-					}
+					};
+					console.log('ajax', ajax);
+					$.ajax(ajax);
 				});
+
+
 			});
 		},
 
@@ -3502,6 +3641,136 @@
 
 
 	/**
+	 * Checks
+	 *
+	 * Это примерно то же самое, что и select multyple, только несколько элементов можно выделять
+	 * чекбоксами
+	 */
+	wdpro.forms.ChecksElement = wdpro.forms.BaseElement.extend({
+
+		init: function (data) {
+			var self = this;
+
+			if (!data['disabled']) {
+				data['disabled'] = [];
+			}
+			if (data['disabled']) {
+				var disabled = {};
+				wdpro.each(data['disabled'], function (id) {
+					disabled[id] = true;
+				});
+				data['disabled'] = disabled;
+			}
+
+			this._super(data);
+
+			if (data['value']) {
+				this.setValue(data['value']);
+			}
+
+			this.on('prepareToGetData', function () {
+				self.updateHiddenValue();
+			});
+		},
+
+
+
+		createField: function (callback) {
+
+			console.log({
+				data:  this.getParams(),
+				attrs: this.getAttrs()
+			});
+
+			callback(this.templates.checksField({
+				data:  this.getParams(),
+				attrs: this.getAttrs()
+			}));
+		},
+
+
+		/**
+		 * Обработка уже jquery полей
+		 *
+		 * @param field
+		 */
+		onField: function (field) {
+			var self = this;
+
+			this.checks = field.find('.js-checks-check').on('change', function () {
+				self.updateHiddenValue();
+			});
+
+			this.hiddens = field.find('.js-checks-hiddens');
+
+			this.updateHiddenValue();
+
+			if (this.savedValues) {
+				this.setValue(this.savedValues);
+				this.savedValues = null;
+			}
+		},
+
+
+		/**
+		 * Установка значения
+		 *
+		 * @param values {array} Значения
+		 */
+		setValue: function (values) {
+			var self = this;
+
+			if (this.checks) {
+				this.checks.prop('checked', false);
+
+				wdpro.each(values, function (value) {
+					self.checks.filter('[data-value="'+value+'"]').prop('checked', true);
+				});
+
+				this.updateHiddenValue();
+			}
+
+			else {
+				this.savedValues = values;
+			}
+
+		},
+
+
+		/**
+		 * Обновление отправляемых данных исходя их отмеченных чекбоксов
+		 */
+		updateHiddenValue: function () {
+			var self = this;
+
+			this.hiddens.empty();
+			var i = 0;
+
+			this.checks.each(function () {
+				var check = $(this);
+
+				if (check.is(':checked')) {
+					var hidden = $('<input name="'+self.getName()+'['+i+']" type="hidden" />');
+					self.hiddens.append(hidden);
+					hidden.attr('value', check.attr('data-value'));
+					i ++;
+				}
+			});
+
+
+			// Ничего не выбрано
+			if (!i) {
+				var hidden = $('<input name="'+self.getName()+'" type="hidden" value="null" />');
+				self.hiddens.append(hidden);
+			}
+
+		}
+
+	});
+
+
+
+	/**
 	 * Просто html блок в форме
 	 */
 	wdpro.forms.HtmlElement = wdpro.forms.BaseElement.extend({
@@ -3577,6 +3846,7 @@
 		'Submit': SubmitElement,
 		'SubmitSave': wdpro.forms.SubmitSaveElement,
 		'Check':  CheckElement,
+		'Checks':  wdpro.forms.ChecksElement,
 		'File':   wdpro.forms.FileElement,
 		'Image':  wdpro.forms.ImageElement,
 		'Ckeditor': wdpro.forms.CkeditorElement,

@@ -86,6 +86,42 @@ trait Tools
 
 
 	/**
+	 * Возвращает объект таблицы сущности
+	 * 
+	 * @return \Wdpro\BaseSqlTable
+	 * @throws EntityException
+	 */
+	public static function sqlTable()
+	{
+		if ($tableClass = static::getSqlTableClass())
+		{
+			//return $tableClass;
+			return wdpro_object($tableClass);
+		}
+		
+		else
+		{
+			throw new EntityException(
+				'У сущности '.get_called_class().' не указано класс таблицы в методе 
+				getSqlTableClass()'
+			);
+		}
+	}
+
+	
+	/**
+	 * Дополнительная таблица
+	 *
+	 * @return \Wdpro\BaseSqlTable
+	 */
+	public static function getSqlTableClass()
+	{
+		return static::getNamespace().'\\SqlTable';
+	}
+
+
+
+	/**
 	 * Возвращает имя класса контроллера
 	 * 
 	 * @return \Wdpro\BaseController
@@ -104,7 +140,18 @@ trait Tools
 	 * @return string
 	 */
 	public function getKey() {
-		return 'name:' . get_class($this).',id:' . $this->id();
+
+		return 'name:' . wdpro_get_class($this).',id:' . $this->id();
+	}
+
+
+	/**
+	 * Возвращает ключ в виде массива
+	 *
+	 * @return array
+	 */
+	public function getKeyArray() {
+		return wdpro_key_parse($this->_key);
 	}
 
 
@@ -113,8 +160,7 @@ trait Tools
 	 *
 	 * Не надо удалять, т.к. сюда отправляются данные из функции keyObj()
 	 *
-	 * @param string $key
-	 *            Ключ
+	 * @param string|array $key Ключ
 	 */
 	public function setKey($key) {
 
@@ -123,6 +169,32 @@ trait Tools
 
 		// Запоминаем ключ
 		$this->_key = $key;
+	}
+
+
+	/**
+	 * Возвращает значение ключа или задает, если указано значение
+	 *
+	 * @param string $key ключ ключа
+	 * @param string $value Значение
+	 * @return mixed
+	 */
+	public function keyValue($key, $value='---noValue---') {
+
+		// Возвращает значение ключа
+		if ($value === '---noValue---') {
+			if (isset($this->_key['object'][$key]) && $this->_key['object'][$key])
+				return wdpro_key_unescape($this->_key['object'][$key]);
+		}
+
+		// Устанавливает значение внутри ключа
+		else {
+			$this->setKey(
+				wdpro_key_add_values($this->getKey(), [
+					$key=>$value,
+				])
+			);
+		}
 	}
 
 

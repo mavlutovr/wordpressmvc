@@ -205,7 +205,7 @@ class Controller extends \Wdpro\BaseController {
 					// Description
 					// <meta name="description" content="Сеобит - продвижение сайтов в Санкт-Петербурге, Москве и других городах."/>
 					$html = preg_replace_callback(
-						'~<meta[\s\S]+?name=["\']description["\'][\s\S]*?/>~i',
+						'~<meta[\s]+?name=["\']description["\'][\s\S]*?/>~i',
 						function ($arr) use (&$first) {
 
 							$first[] = $arr[0];
@@ -215,10 +215,9 @@ class Controller extends \Wdpro\BaseController {
 						$html
 					);
 
-					// Description
-					// <meta name="description" content="Сеобит - продвижение сайтов в Санкт-Петербурге, Москве и других городах."/>
+					// Keywords
 					$html = preg_replace_callback(
-						'~<meta[\s\S]*?name=["\']keywords["\'][\s\S]*?/>~i',
+						'~<meta[\s]*?name=["\']keywords["\'][\s\S]*?/>~i',
 						function ($arr) use (&$first) {
 
 							$first[] = $arr[0];
@@ -227,10 +226,12 @@ class Controller extends \Wdpro\BaseController {
 						},
 						$html
 					);
+
+					//print_r($html); exit();
 
 					$html = str_replace(
 						'<head>',
-						'<head>'.implode('', $first),
+						'<head>'.PHP_EOL.implode(PHP_EOL, $first),
 						$html);
 
 					return $html;
@@ -241,7 +242,7 @@ class Controller extends \Wdpro\BaseController {
 			return $html;
 		};
 
-		// Css, Javascript
+		// Css, Javascript, mail
 		add_filter('wdpro_html', function ($html)
 		use (&$cssToFooter, &$titleToTop, &$scriptsToNoindex) {
 
@@ -251,6 +252,55 @@ class Controller extends \Wdpro\BaseController {
 				$html = $scriptsToNoindex($html);
 			}
 
+			// Интиспам ящиков
+			if (wdpro_get_option('wdpro_mail_antispam')) {
+
+				$isMail = false;
+
+				$html = preg_replace_callback(
+
+					'~<a[^<]+?'
+
+					.'([\.\-a-zа-я0-9]+@[a-zа-я0-9\-]+\.[a-zа-я]+)'
+
+					.'[\s\S]+?</a>~ui',
+
+					function ($arr) use (&$isMail) {
+
+						$isMail = true;
+						$html = $arr[0];
+
+						$html = base64_encode($html);
+
+						return '<span class="js-mail-antispam-protect" style="display: none;">'
+						       .$html
+						       .'</span>';
+					},
+					$html
+				);
+
+				$html = preg_replace_callback(
+					'~'
+					//	.'>[^[<>"]]*?'
+					.'([\.\-a-zа-я0-9]+@[a-zа-я0-9\-]+\.[a-zа-я]+)'
+					//.'^[<>"]*?<'
+					.'~ui',
+					function ($arr) use (&$isMail) {
+
+						$isMail = true;
+						$html = $arr[0];
+						$html = base64_encode($html);
+						return '<span class="js-mail-antispam-protect" style="display: none;">'
+						       .$html
+						       .'</span>';
+					},
+					$html
+				);
+
+				if ($isMail) {
+					$html .= '<script>window.wdpro_mail_antispam = true;</script>';
+				}
+			}
 
 			return $html;
 		});

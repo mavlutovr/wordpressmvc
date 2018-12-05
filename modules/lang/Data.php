@@ -13,9 +13,10 @@ namespace Wdpro\Lang;
 class Data {
 
 	protected static $jsonFileName = 'langs.json';
+	protected static $jsonFileNameProd = 'langs.prod.json';
 	protected static $data = [];
 	protected static $inited = false;
-	protected static $rootLangUri;
+	protected static $rootLangUri = 'ru';
 
 
 	/**
@@ -29,8 +30,10 @@ class Data {
 		}
 		static::$inited = true;
 
-		if ( is_file(__DIR__ . '/' . static::$jsonFileName) ) {
-			$json         = file_get_contents(__DIR__ . '/' . static::$jsonFileName);
+		$jsonFile = static::getJsonFileName();
+
+		if ( is_file(__DIR__ . '/' . $jsonFile) ) {
+			$json         = file_get_contents(__DIR__ . '/' . $jsonFile);
 			static::$data = json_decode($json, 1);
 
 			// У первого языка делаем адреса без /ru/
@@ -71,6 +74,11 @@ class Data {
 	}
 
 
+	protected static function getJsonFileName() {
+		return wdpro_local() ? static::$jsonFileName : static::$jsonFileNameProd;
+	}
+
+
 	/**
 	 * Сохранение данных о языках
 	 *
@@ -106,7 +114,8 @@ class Data {
 		];
 
 		$json = json_encode(static::$data, JSON_PRETTY_PRINT);
-		file_put_contents(__DIR__ . '/' . static::$jsonFileName, $json);
+		$path = __DIR__ . '/' . static::getJsonFileName();
+		file_put_contents($path, $json);
 	}
 
 
@@ -244,41 +253,52 @@ class Data {
 
 		$page = wdpro_current_page();
 
-		foreach ( $data as $i => $datum ) {
+		$return = [];
 
-			// Активный язык
-			$data[ $i ]['active'] = false;
-			if ( Controller::getCurrentLangUri() == $datum['uri'] ) {
-				$data[ $i ]['active'] = true;
+		foreach ( $data as $datum ) {
+
+			// Если язык включен
+			if ($datum['visible'] == 1) {
+				// Активный язык
+				$datum['active'] = false;
+				if ( Controller::getCurrentLangUri() == $datum['uri'] ) {
+					$datum['active'] = true;
+				}
+
+				// Определяем, есть ли перевод страницы на этот язык
+				$datum['isLang'] = $page->isLang($datum['uri']);
+
+				// Главная
+				$isHome = $page->isHome();
+
+				// Адрес
+				// Главной на текущем языке
+				$homeUrl = home_url() . '/';
+				if ( $datum['uri'] ) {
+					$homeUrl .= $datum['uri'] . '/';
+				}
+
+				$datum['homeUrl'] = $homeUrl;
+
+				// Адрес текущей страницы на этом языке
+				$datum['pageUrl'] = $homeUrl;
+				if ( ! $isHome ) {
+					$datum['pageUrl'] .= $page->getUri() . '/';
+				}
+
+				// Адрес для кнопки языка в зависимости от того, есть ли перевод или нет
+				$datum['url'] = $datum['isLang'] && ! $isHome ?
+					$datum['pageUrl'] : $homeUrl;
+
+				$return[] = $datum;
 			}
-
-			// Определяем, есть ли перевод страницы на этот язык
-			$data[ $i ]['isLang'] = $page->isLang($datum['uri']);
-
-			// Главная
-			$isHome = $page->isHome();
-
-			// Адрес
-			// Главной на текущем языке
-			$homeUrl = home_url() . '/';
-			if ( $datum['uri'] ) {
-				$homeUrl .= $datum['uri'] . '/';
-			}
-
-			$data[ $i ]['homeUrl'] = $homeUrl;
-
-			// Адрес текущей страницы на этом языке
-			$data[ $i ]['pageUrl'] = $homeUrl;
-			if ( ! $isHome ) {
-				$data[ $i ]['pageUrl'] .= $page->getUri() . '/';
-			}
-
-			// Адрес для кнопки языка в зависимости от того, есть ли перевод или нет
-			$data[ $i ]['url'] = $data[ $i ]['isLang'] && ! $isHome ?
-				$data[ $i ]['pageUrl'] : $homeUrl;
 		}
 
-		return $data;
+		if (count($return) > 1) {
+			return $return;
+		}
+
+		return [];
 	}
 
 
@@ -337,5 +357,21 @@ class Data {
 	 */
 	public static function getRootLangUri () {
 		return static::$rootLangUri;
+	}
+
+
+	/**
+	 * Возвращает адрес языка даже если он основной
+	 *
+	 * Так как адрес основного языка пустой. То есть не /en/, /de/, а /
+	 * То этот метод вместо пустоты возвращает ru
+	 *
+	 * @return string
+	 */
+	public static function getCurrentLangUriNotEmpty() {
+		$uri = static::getCurrentLangUri();
+		if (!$uri) $uri = static::getRootLangUri();
+
+		return $uri;
 	}
 }

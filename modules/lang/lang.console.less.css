@@ -1,0 +1,25 @@
+.lang-element:not(.lang-visible) {
+  display: none;
+}
+body #wpadminbarul .lang-selected,
+#wpadminbar:not(.mobile) .ab-top-menu > li.lang-selected:hover > .ab-item,
+#wpadminbar:not(.mobile) .ab-top-menu > li.lang-selected > .ab-item {
+  background: rgba(255, 255, 255, 0.3);
+}
+body #wpadminbarul .lang-selected:focus,
+#wpadminbar:not(.mobile) .ab-top-menu > li.lang-selected:hover > .ab-item:focus,
+#wpadminbar:not(.mobile) .ab-top-menu > li.lang-selected > .ab-item:focus,
+body #wpadminbarul .lang-selected:hover,
+#wpadminbar:not(.mobile) .ab-top-menu > li.lang-selected:hover > .ab-item:hover,
+#wpadminbar:not(.mobile) .ab-top-menu > li.lang-selected > .ab-item:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+body #wpadminbar ul .wdpro-lang-menu {
+  padding: 3px;
+  box-sizing: border-box;
+}
+body #wpadminbar ul .wdpro-lang-menu a {
+  height: auto;
+  padding: 4px 7px;
+  line-height: normal;
+}

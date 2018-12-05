@@ -1,0 +1,8 @@
+.blog-tags-active {
+  color: black;
+  border-bottom: none;
+  cursor: default;
+}
+.blog-tags-active:hover {
+  color: black;
+}

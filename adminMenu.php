@@ -9,6 +9,59 @@ add_action(
 
 			function () {
 
+				add_options_page(
+					'Head',
+					'Head',
+					'administrator',
+					'wdproHead',
+					function () {
+						echo('<h1>Head, seo</h1>');
+
+						wdproOptionsForm(array(
+							'title'=>'Настройки',
+							'name'=>'options',
+							'elements' => array(
+
+								array(
+									'type'=>'text',
+									'top'=>'Дополнительные мета-теги в head',
+									'name'=>'wdpro_head_additional',
+									'width'=>600,
+								),
+
+								array(
+									'type' => 'submit',
+									'text' => 'Сохранить',
+									'class'=>WDPRO_BUTTON_CSS_CLASS,
+								),
+
+								array(
+									'type'=>'html',
+									'html'=>'<h2>Seo</h2>',
+								),
+
+								array(
+									'name'=>'wdpro_title_template[lang]',
+									'top'=>'Шаблон title',
+									'right'=>'[h1]',
+								),
+
+								array(
+									'name'=>'wdpro_description_template[lang]',
+									'top'=>'Шаблон description',
+									'right'=>'[h1]',
+								),
+
+								array(
+									'name'=>'wdpro_keywords_template[lang]',
+									'top'=>'Шаблон keywords',
+									'right'=>'[h1]',
+								),
+							),
+						));
+					}
+				);
+
 				// Options
 				add_options_page(
 					'Настройки Wordpress MVC',
@@ -35,7 +88,7 @@ href="'.WDPRO_CONSOLE_URL.'plugins.php">Активировать плагин</a
 ');
 							}
 							else {
-								echo('<p><a href="'.wdpro_current_url(['create_theme_app', 'create_plugin_app'])
+								echo('<p><a href="'.wdpro_current_uri(['create_theme_app', 'create_plugin_app'])
 								     .'&create_plugin_app=1">Создать загатовку плагина-приложения App</a></p>');
 							}
 						}
@@ -49,7 +102,7 @@ href="'.WDPRO_CONSOLE_URL.'themes.php">Активировать тему</a>
 </p>');
 							}
 							else {
-								echo( '<p><a href="' . wdpro_current_url(['create_theme_app', 'create_plugin_app'])
+								echo( '<p><a href="' . wdpro_current_uri(['create_theme_app', 'create_plugin_app'])
 								      . '&create_theme_app=1">Создать загатовку темы</a></p>' );
 							}
 						}
@@ -75,6 +128,18 @@ href="'.WDPRO_CONSOLE_URL.'themes.php">Активировать тему</a>
 							'title'=>'Настройки',
 							'name'=>'options',
 							'elements' => array(
+
+								array(
+									'type'=>'html',
+									'htm'=>'<h2>Head</h2>',
+								),
+
+								array(
+									'type'=>'text',
+									'top'=>'Дополнительные мета-теги в head',
+									'name'=>'wdpro_head_additional',
+								),
+
 								array(
 									'type'=>'html',
 									'html'=>'<h2>Компиляция (имеет смысл только на локальной машине)</h2>',
@@ -170,6 +235,13 @@ href="'.WDPRO_CONSOLE_URL.'themes.php">Активировать тему</a>
 									'name'=>'wdpro_dev_mode',
 									'right'=>'Включить модуль разработчика',
 									'type'=>'checkbox',
+								),
+
+								array(
+									'name'=>'wdpro_mail_antispam',
+									'type'=>'checkbox',
+									'right'=>'Включить защиту ящиков, размещенных на сайте от спама',
+									'bottom'=>'Это имеет смысл, когда на сайте есть ящики, размещенные как ссылки. Например, <a href="mailto:info@'.str_replace('www.', '', $_SERVER['HTTP_HOST']).'">info@'.str_replace('www.', '', $_SERVER['HTTP_HOST']).'</a>. Чтобы потом спам боты не слали на эти ящики спам.',
 								),
 
 								array(

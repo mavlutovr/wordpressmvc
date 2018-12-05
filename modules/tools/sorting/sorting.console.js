@@ -60,7 +60,6 @@
 					// В зависимости от направления сортировки указываем разные prev и next
 					var up = rowReplaced.prev().find('.js-wdpro-sorting-number').attr('data-id');
 					var down = rowReplaced.next().find('.js-wdpro-sorting-number').attr('data-id');
-					console.log('number', rowReplaced.prev().find('.js-wdpro-sorting-number'));
 
 					var post = {
 						'change': {

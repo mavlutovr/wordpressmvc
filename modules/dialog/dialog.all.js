@@ -100,7 +100,7 @@
 				// Добавляем обработчик закрытия
 				if (typeof this.params.close == 'function')
 				{
-					self.on('close', this.params.close);
+					self.on('closed', this.params.close);
 				}
 
 
@@ -166,13 +166,75 @@
 					this.params.positioning(this.html);
 				}
 
+
+				// Url
+				if (this.params.url) {
+					this.load(this.params.url);
+				}
+
+
 				this.show();
 
 				this.processingContent();
 
 				$(window).on('resize', function () {
 					self.updatePos();
-				})
+				});
+
+				this.html.on('updatePos', function () {
+					self.updatePos();
+				});
+
+				this.html.draggable({
+					'cancel': '.JS_input_container'
+				});
+
+				this.html.on('close', function () {
+					self.close();
+				});
+			},
+
+
+			/**
+			* Загружает адрес
+			*/
+			load: function (url) {
+				var self = this;
+
+				this.loadingStart();
+
+				wdpro.ajax(url, function (data) {
+
+					if (typeof data === 'string') {
+						data = {
+							'html': data
+						};
+					}
+
+					self.loadingStop();
+
+					self.setContent(data['html']);
+
+					/*if (data['reloadPage']) {
+						wdpro.reloadPage();
+					}*/
+				});
+			},
+
+
+			/**
+			* Показывает Loading...
+			*/
+			loadingStart: function () {
+				this.setContent('Загрузка...');
+			},
+
+
+			/**
+			* Убирает Loading...
+			*/
+			loadingStop: function() {
+				this.setContent('');
 			},
 
 
@@ -187,6 +249,9 @@
 
 					self.close();
 				});
+
+				// Отправляем событие, чтобы можно было обрабатывать контент другим скриптам через wdpro.on('content', function...);
+				wdpro.trigger('content', this.html);
 			},
 
 
@@ -200,7 +265,7 @@
 				if (typeof this.params.close == 'function')
 				{
 					// запускаем каллбэки закрытия
-					this.trigger('close', this);
+					this.trigger('closed', this);
 				}
 
 

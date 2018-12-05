@@ -131,11 +131,11 @@ class Dictionary {
 			throw new Exception('В переводах класса \Wdpro\Lang\Dictionary нету значения с именем '.$name);
 		}
 
-		$lang = Data::getCurrentLangUri();
-		// Тут нужно сделать, чтобы главный язык был пустым
-		// Что когда приходит пустой язык, то это первый язык в списке
-		if (!$lang) $lang = Data::getRootLangUri();
+		$lang = Data::getCurrentLangUriNotEmpty();
 
+		if (!isset(static::$dictionary[$name][$lang])) {
+			throw new \Exception('Не задан перевод: '.$name.' для языка "'.$lang.'"');
+		}
 
 		return static::$dictionary[$name][$lang];
 	}

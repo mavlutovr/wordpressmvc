@@ -127,3 +127,29 @@ if (defined('DOING_CRON') && DOING_CRON) {
 
 
 
+/**
+ * Скрипты
+ */
+add_action('wp_footer', function () {
+
+	global $wdproJsData;
+
+	$data = '';
+
+	foreach ($wdproJsData as $key => $value) {
+		if ($value === '') {
+			$value = 'null';
+		}
+		$data .= PHP_EOL
+			. 'wdpro.'.$key.' = '.$value.';';
+	}
+
+	echo '<script>
+			if (window.wdpro) {
+				wdpro.WDPRO_TEMPLATE_URL = "'.WDPRO_TEMPLATE_URL.'";
+				wdpro.WDPRO_UPLOAD_IMAGES_URL = "'.WDPRO_UPLOAD_IMAGES_URL.'";
+				wdpro.WDPRO_HOME_URL = "'.home_url().'/";
+				'.$data.'
+			}
+			</script>';
+});

@@ -26,10 +26,11 @@ wdpro_less_compile_try(__DIR__.'/css/console.less', __DIR__.'/css/console.less.c
 wdpro_add_css_to_console(__DIR__.'/css/console.less.css');
 
 // Font Avesome
-// https://fontawesome.com/v4.7.0/
-wdpro_add_css_to_console(__DIR__.'/css/font-awesome.min.css');
+// 4
+if (!wdpro_get_option('wdpro_font_awesome_5_console'))
+	wdpro_add_css_to_console(__DIR__ . '/css/font-awesome.min.css');
 // 5
-//wdpro_add_css_to_console(__DIR__.'/fonts/awesome5/css/fontawesome-all.min.css');
+// modules/extra/fontAwesome5/Controller.php
 
 $appConsoleCssFile = APP_PATH.'console.less';
 if (is_file($appConsoleCssFile)) {
@@ -37,6 +38,15 @@ if (is_file($appConsoleCssFile)) {
 	wdpro_add_css_to_console($appConsoleCssFile.'.css');
 }
 
+/**
+ * Дополнительная обработка хлебных крошек
+ *
+ * @param callback $callback Каллбэк, в который отправляется объект хлебных крошек
+ */
+function wdpro_breadcrumbs_init($callback) {
+	// Это просто заглушка, это нужно на сайте, но не в админке
+	// Но админка заходит в functions.php в теме и там может запускаться эта функция
+}
 
 do_action('wdpro-ready');
 Wdpro\Modules::run('initConsoleStart');

@@ -11,7 +11,7 @@ function wdproOptionsForm($formParams)
 {
 	// Создание формы
 	$form = new Wdpro\Form\Form($formParams);
-	$form->setAction(wdpro_current_url());
+	$form->setAction(wdpro_current_uri());
 
 	// Сохранение
 	$form->onSubmit(function ($data) {
@@ -38,22 +38,22 @@ function wdproOptionsForm($formParams)
 
 
 // Ajax загрузка файла
-add_action('wp_ajax_form_file_upload', function () {
-	
+wdpro_ajax('form_file_upload', function () {
+
+	//print_r($_REQUEST);
+	//print_r($_FILES);
+
+	ini_set('display_errors', 'on');
+	error_reporting(7);
+	ini_set('memory_limit', '512M');
+
+
 	$retFiles = array(
 		'files'=>array(),
 	);
 	
 	foreach($_FILES as $fileData)
 	{
-		/*print_r($_REQUEST);*/
-		//print_r($_FILES);
-		
-		ini_set('display_errors', 'on');
-		error_reporting(7);
-		ini_set('memory_limit', '512M');
-		
-
 		// Копируем файл во временную папку и архивируем его для безопасности
 		$tmpDir = wdpro_upload_dir('temp');
 		$fileName = wdpro_text_to_file_name(
@@ -67,10 +67,20 @@ add_action('wp_ajax_form_file_upload', function () {
 			$zipFileName = $fileName.'_'.$n.'.gz';
 		}
 
-		// Создаем архив с файлом
-		wdpro_gz_encode($fileData['tmp_name'], $tmpDir.$zipFileName);
+		// Есть загруженный файл
+		if ($fileData['tmp_name']) {
+			// Создаем архив с файлом
+			wdpro_gz_encode($fileData['tmp_name'], $tmpDir.$zipFileName);
 
-		$retFiles['files'][] = $zipFileName;
+			$retFiles['files'][] = $zipFileName;
+		}
+		
+		// Нет загруженного файла
+		else {
+			// Вовзращаем ошибку
+			$upload_max_size = ini_get('upload_max_filesize');
+			$retFiles['error'] = 'Не удалось загрузить файл. Возможно, нужно увеличить upload_max_filesize в php.ini. Сейчас максимальный размер загружаемых файлов равен '.$upload_max_size;
+		}
 	}
 	
 

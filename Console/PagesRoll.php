@@ -181,7 +181,7 @@ class PagesRoll extends Roll
 
 					$admin_bar->add_menu( array(
 						'id'    => 'lang-all',
-						'title' => '<i class="fa fa-globe" aria-hidden="true"></i>',
+						'title' => '<i class="fa5 fas fa-globe"></i>',
 						'href'  => '#all',
 						'meta'  => array(
 							'class'=>'wdpro-lang-menu js-wdpro-lang-menu',
@@ -309,9 +309,17 @@ class PagesRoll extends Roll
 										$actions['view']
 									);
 								}*/
-								$actions['view'] = '<a href="' . home_url($post->post_name) . '"
+
+								// Удаляе параметры, которые редактируются без открытия страницы редактироваания
+								// Это чтобы адрес менялся только из формы редактирования
+								// И он нормально обрабатывался, сохраняясь везде где нужно
+								unset($actions['inline hide-if-no-js']);
+
+								// Адрес страницы
+								$actions['view'] = '<div class="g-inline-block" title="Адрес страницы">
+<a href="' . home_url($post->post_name) . '"
  class="dashicons dashicons-external js-post-link_"
- target="_blank"></a>';
+ target="_blank"></a> ' . $post->post_name . '</div>';
 
 								// Редактировать
 								$actions['edit'] = preg_replace(
@@ -488,10 +496,9 @@ class PagesRoll extends Roll
 							
 							// В меню
 							if ($column == 'wdpro_in_menu') {
-								if (wdpro_get_post_by_id($postId)->getData('in_menu')) {
-									echo '<i class="fa fa-check" aria-hidden="true" title="Эта страница отображается в меню"></i>';
-								}
-								//echo(get_post_meta($postId, 'in_menu', true));
+								echo wdpro_check_html(
+									wdpro_get_post_by_id($postId)->getData('in_menu'),
+									'Эта страница отображается в меню');
 							}
 						}
 					};

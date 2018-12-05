@@ -133,8 +133,8 @@ class Autoload
 			//array_pop($namespaceArr);
 			//print_r($namespaceArr);
 			$dirNamespace = null;
-			
-			
+
+
 			// Находим самый подходящий зарегистрированный путь
 			$searchProcess = true;
 			for($n = count($namespacesList) - 1; $n >= 0 && $searchProcess; $n --)

@@ -131,6 +131,7 @@ th#wdpro_in_menu
 
 .row-actions {
 	padding-left: 20px;
+	color: #777;
 }
 
 .wdpro-info {
@@ -149,7 +150,8 @@ th#wdpro_in_menu
 	}
 }
 
-.row-title .fa {
+.row-title .fa,
+.row-title .fa5{
 	margin-right: 10px;
 }
 
@@ -163,7 +165,7 @@ th#wdpro_in_menu
 }
 
 #adminmenu {
-	.fa {
+	.fa, .fa5 {
 		position: absolute;
 		margin-left: -36px;
 		margin-top: 1px;
@@ -174,26 +176,26 @@ th#wdpro_in_menu
 	}
 
 	a:focus {
-		.fa{
+		.fa, .fa5{
 			color: #00b9eb;
 		}
 	}
 
 	a:hover, a:active {
-		.fa{
+		.fa, .fa5{
 			color: #00a0d2;
 		}
 	}
 	
 	li.current {
-		.fa {
+		.fa, .fa5 {
 			color: white;
 		}
 	}
 }
 
 .folded #adminmenu {
-	.fa {
+	.fa, .fa5 {
 		margin-left: 999px;
 	}
 }
@@ -220,7 +222,7 @@ th#wdpro_in_menu
 		//background: none;
 		//margin-bottom: 4px;
 	}
-	.fa {
+	.fa, .fa5 {
 		vertical-align: middle;
 	}
 }
@@ -245,65 +247,93 @@ a:hover {
 
 
 .admin-color-light {
-	#adminmenu .fa {
+	#adminmenu .fa, #adminmenu .fa5 {
 		color: #999;
 	}
-	#adminmenu a:hover .fa, #adminmenu a:active .fa {
+	#adminmenu a:hover .fa,
+	#adminmenu a:active .fa,
+	#adminmenu a:hover .fa5,
+	#adminmenu a:active .fa5{
 		color: #ccc;
 	}
 }
 .admin-color-blue {
-	#adminmenu .fa {
+	#adminmenu .fa,
+	#adminmenu .fa5 {
 		color: #e5f8ff;
 	}
-	#adminmenu a:hover .fa, #adminmenu a:active .fa {
+	#adminmenu a:hover .fa,
+	#adminmenu a:active .fa,
+	#adminmenu a:hover .fa5,
+	#adminmenu a:active .fa5{
 		color: #f1f1f1;
 	}
 }
 .admin-color-coffee {
-	#adminmenu .fa {
+	#adminmenu .fa,
+	#adminmenu .fa5 {
 		color: #f3f2f1;
 	}
-	#adminmenu a:hover .fa, #adminmenu a:active .fa {
+	#adminmenu a:hover .fa,
+	#adminmenu a:active .fa,
+	#adminmenu a:hover .fa5,
+	#adminmenu a:active .fa5 {
 		color: #fff;
 	}
 }
 .admin-color-ectoplasm {
-	#adminmenu .fa {
+	#adminmenu .fa,
+	#adminmenu .fa5 {
 		color: #ece6f6;
 	}
-	#adminmenu a:hover .fa, #adminmenu a:active .fa {
+	#adminmenu a:hover .fa,
+	#adminmenu a:active .fa,
+	#adminmenu a:hover .fa5,
+	#adminmenu a:active .fa5 {
 		color: #fff;
 	}
 }
 
 .admin-color-midnight {
-	#adminmenu .fa {
+	#adminmenu .fa,
+	#adminmenu .fa5 {
 		color: #f1f2f3;
 	}
-	#adminmenu a:hover .fa, #adminmenu a:active .fa {
+	#adminmenu a:hover .fa,
+	#adminmenu a:active .fa,
+	#adminmenu a:hover .fa5,
+	#adminmenu a:active .fa5 {
 		color: #fff;
 	}
 }
 .admin-color-ocean {
-	#adminmenu .fa {
+	#adminmenu .fa,
+	#adminmenu .fa5 {
 		color: #f2fcff;
 	}
-	#adminmenu a:hover .fa, #adminmenu a:active .fa {
+	#adminmenu a:hover .fa,
+	#adminmenu a:active .fa,
+	#adminmenu a:hover .fa5,
+	#adminmenu a:active .fa5 {
 		color: #fff;
 	}
 }
 .admin-color-sunrise {
-	#adminmenu .fa {
+	#adminmenu .fa,
+	#adminmenu .fa5 {
 		color: #f3f1f1;
 	}
-	#adminmenu a:hover .fa, #adminmenu a:active .fa {
+	#adminmenu a:hover .fa,
+	#adminmenu a:active .fa,
+	#adminmenu a:hover .fa5,
+	#adminmenu a:active .fa5{
 		color: #fff;
 	}
 }
 
 .wp-submenu {
-	i.fa {
+	i.fa,
+	i.fa5 {
 		display: none;
 	}
 }
@@ -371,6 +401,14 @@ a:hover {
 	font: normal normal normal 18px/1 FontAwesome;
 }
 
+#wpadminbar .fa5 {
+
+	font-family: "Font Awesome 5 Free";
+	font-weight: 900;
+	line-height: 20px;
+	font-size: 20px;
+}
+
 
 .wdpro-lang-menu {
 	img {
@@ -378,4 +416,10 @@ a:hover {
 		border-radius: 5px;
 		border: 1px solid red;
 	}
+}
+
+#wpcontent ul {
+	list-style: disc;
+	padding-left: 20px;
+	padding-top: 3px;
 }

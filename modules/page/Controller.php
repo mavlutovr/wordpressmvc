@@ -8,6 +8,7 @@ use Wdpro\Templates;
 
 class Controller extends \Wdpro\BaseController {
 
+
 	/**
 	 * Инициализация модуля
 	 */
@@ -164,7 +165,7 @@ class Controller extends \Wdpro\BaseController {
 	public static function initSite() {
 		
 		// Подменю по-умолчанию
-		wdpro_default_file(__DIR__ . '/default/submenu_standart.php', 
+		wdpro_default_file(__DIR__.'/../install/default/app_theme/submenu_standart.php',
 			WDPRO_TEMPLATE_PATH.'submenu_standart.php');
 
 		// Подменю
@@ -191,6 +192,15 @@ class Controller extends \Wdpro\BaseController {
 				
 				return do_shortcode($post->post_content);
 			}
+		});
+
+
+		// Инициализация страницы до отправки html кода в браузер
+		wdpro_on_page_init(function ($page) {
+			/** @var $page \App\BasePage */
+
+			if (method_exists($page, 'initCard'))
+			$page->initCard();
 		});
 		
 		
@@ -221,20 +231,7 @@ class Controller extends \Wdpro\BaseController {
 			remove_filter( 'the_content', 'wpautop' );
 		}
 
-
-		/**
-		 * Скрипты
-		 */
-		add_action('wp_footer', function () {
-			echo '<script>
-			if (window.wdpro) {
-				wdpro.postId = '.(int)get_the_ID().';
-				wdpro.WDPRO_TEMPLATE_URL = "'.WDPRO_TEMPLATE_URL.'";
-				wdpro.WDPRO_UPLOAD_IMAGES_URL = "'.WDPRO_UPLOAD_IMAGES_URL.'";
-				wdpro.WDPRO_HOME_URL = "'.home_url().'/";
-			}
-			</script>';
-		});
+		wdpro_js_data('postId', (int)get_the_ID());
 
 		
 		//remove_filter('template_redirect', 'redirect_canonical');
@@ -275,8 +272,11 @@ class Controller extends \Wdpro\BaseController {
 		});
 
 		// ХЗ
-		add_filter ( 'user_can_richedit' , create_function ( '$a' , 'return false;' ) , 50 );
-		
+		//add_filter ( 'user_can_richedit' , create_function ( '$a' , 'return false;' ) , 50 );
+		add_filter ( 'user_can_richedit' , function () {
+			return false;
+		} , 50 );
+
 		
 		// Удаление сущностей при удалении постов
 		add_action('admin_init', function () {
@@ -747,6 +747,8 @@ class Controller extends \Wdpro\BaseController {
 				);
 			}
 		});
+
+
 	}
 
 
@@ -780,7 +782,7 @@ class Controller extends \Wdpro\BaseController {
 						wdpro_create_post($data);
 
 						// Редирект
-						wdpro_location(wdpro_current_url(['postAdded'=>1]));
+						wdpro_location(wdpro_current_uri(['postAdded'=>1]));
 					}
 				}
 				

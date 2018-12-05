@@ -144,7 +144,7 @@ function breadcrumbs() {
 
 
 // Хлебные крошки
-add_action('wdpro_breadcrumbs_init', 'wdpro_breadcrumbs_init');
+add_action('wdpro_breadcrumbs_init', '_wdpro_breadcrumbs_init');
 
 /**
  * Дополнительная иницциализация хлебных крошек, которую если что можно отключить
@@ -154,13 +154,10 @@ add_action('wdpro_breadcrumbs_init', 'wdpro_breadcrumbs_init');
  *
  * @param \Wdpro\Breadcrumbs\Breadcrumbs $breadcrumbs Объект хлебных крошек
  */
-function wdpro_breadcrumbs_init($breadcrumbs) {
+function _wdpro_breadcrumbs_init($breadcrumbs) {
 
 	if (!is_front_page()) {
-		$breadcrumbs->prepend(array(
-			'text'=>wdpro_get_option('wdpro_breadcrumbs_home[lang]', 'Главная'),
-			'uri'=>wdpro_home_url_with_lang(),
-		));
+		$breadcrumbs->prependFrontPage();
 	}
 
 	$breadcrumbs->removeLast(true);
@@ -173,12 +170,27 @@ wdpro_get_post(function ($post) {
 	if ($post) {
 		global $breadcrumbs;
 		$breadcrumbs = new \Wdpro\Breadcrumbs\Breadcrumbs();
-		$breadcrumbs->makeFrom(wdpro_object_by_post_id($post->ID));
+		$post = wdpro_object_by_post_id($post->ID);
+		$breadcrumbs->makeFrom($post);
 
 		// Дополнительная обработка хлебных крошек
 		do_action('wdpro_breadcrumbs_init', $breadcrumbs);
+
+		if (method_exists($post, 'initSite'))
+		$post->initSite();
 	}
 });
+
+
+/**
+ * Дополнительная обработка хлебных крошек
+ *
+ * @param callback $callback Каллбэк, в который отправляется объект хлебных крошек
+ */
+function wdpro_breadcrumbs_init($callback) {
+	add_action('wdpro_breadcrumbs_init', $callback);
+}
+
 
 /**
  * Возвращает объект хлебных крошек
@@ -192,6 +204,16 @@ function wdpro_breadcrumbs()
 		$breadcrumbs = new \Wdpro\Breadcrumbs\Breadcrumbs();
 	}
 	return $breadcrumbs;
+}
+
+
+/**
+ * Отображает хлебные крошки
+ *
+ * @return string
+ */
+function wdpro_the_breadcrumbs() {
+	return wdpro_breadcrumbs()->getHtml();
 }
 
 

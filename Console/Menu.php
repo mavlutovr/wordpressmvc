@@ -36,7 +36,7 @@ class Menu
 			'menu_title' => isset($buttonParams['label']) ? $buttonParams['label'] : '',
 			'icon'       => WDPRO_ICONS_PAGES,
 			'open'       => '',
-			'n'=>static::$buttonCount,
+			//'n'=>static::$buttonCount,
 			'showNew'=>false,
 			'count'=>0,
 		), $buttonParams);
@@ -59,6 +59,15 @@ class Menu
 				
 				if (!$buttonParams['menu_title'])
 					$buttonParams['menu_title'] = $rollParams['labels']['menu_name'];
+
+				if (!isset($buttonParams['n']) || $buttonParams['n'] === null) {
+					if (isset($rollParams['n'])) {
+						$buttonParams['n'] = $rollParams['n'];
+					}
+					else {
+						$buttonParams['n'] = static::$buttonCount;
+					}
+				}
 			}
 			
 			
@@ -96,11 +105,26 @@ class Menu
 					// Иконки
 					$icon = '';
 					if (isset($buttonParams['icon']) && $buttonParams['icon']) {
-						if (strstr($buttonParams['icon'], 'fa-')) {
+
+						// Awesome 5
+						if (strstr($buttonParams['icon'], 'fas')
+						|| strstr($buttonParams['icon'], 'far')
+						|| strstr($buttonParams['icon'], 'fal')
+						|| strstr($buttonParams['icon'], 'fab')
+						) {
+							$buttonTitle = '<i class="fa5 '.$buttonParams['icon']
+								.'" aria-hidden="true"></i>'.$buttonTitle;
+							$icon = 'none';
+						}
+
+						// Awedome 4
+						else if (strstr($buttonParams['icon'], 'fa-')) {
 							$buttonTitle = '<i class="fa '.$buttonParams['icon']
 								.'" aria-hidden="true"></i>'.$buttonTitle;
 							$icon = 'none';
 						}
+
+						// Standard
 						else {
 							$icon = $buttonParams['icon'];
 						}

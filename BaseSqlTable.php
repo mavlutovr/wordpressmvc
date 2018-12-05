@@ -734,6 +734,8 @@ abstract class BaseSqlTable
 	/**
 	 * Проверяет наличие колонки
 	 * 
+	 * Аналог isColl
+	 * 
 	 * @param string $fieldName Название колонки
 	 * @return bool
 	 */
@@ -743,6 +745,19 @@ abstract class BaseSqlTable
 		
 		global $sqlFieldsFormat;
 		return isset($sqlFieldsFormat[static::getName()][$fieldName]);
+	}
+
+
+	/**
+	 * Проверяет наличие колонки
+	 * 
+	 * Аналог isField
+	 * 
+	 * @param string $fieldName Название колонки
+	 * @return bool
+	 */
+	public static function isColl($collName) {
+		return static::isField($collName);
 	}
 
 
@@ -920,8 +935,7 @@ abstract class BaseSqlTable
 	 * 
 	 * @return array array('sql'=>'CREATE TABLE ...', 'format'=>array('field_name'=>'%d')
 	 */
-	protected static function structure()
-	{
+	protected static function structure() {
 		
 	}
 
@@ -1203,7 +1217,9 @@ abstract class BaseSqlTable
 	 * @return array
 	 */
 	public static function getLangsFields() {
-		return static::getStatic('fieldsLang');
+		$langFields = static::getStatic('fieldsLang');
+		if (!$langFields) $langFields = [];
+		return $langFields;
 //		return static::$fieldsLang;
 	}
 	

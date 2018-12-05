@@ -76,7 +76,32 @@ function wdpro_path_remove_wp_content($path)
  */
 function wdpro_path_remove_root($path)
 {
-	return str_replace(wdpro_realpath(__DIR__.'/../../../../'), '', wdpro_realpath($path));
+	$path =  str_replace(wdpro_realpath(__DIR__.'/../../../../'), '', wdpro_realpath($path));
+
+	$path = wdpro_fix_directory_separator($path);
+
+	return $path;
+}
+
+
+/**
+ * Исправляет слеши на соответствующие текущей ОС
+ *
+ * Чтобы в виндовс нормально работали пути
+ *
+ * @param string $path Путь
+ * @return string
+ */
+function wdpro_fix_directory_separator($path) {
+	if (DIRECTORY_SEPARATOR == '\\') {
+		$path = str_replace(
+			'/',
+			DIRECTORY_SEPARATOR,
+			$path
+		);
+	}
+
+	return $path;
 }
 
 
@@ -106,9 +131,22 @@ function wdpro_add_script_to_console($absolutePath, $handle=null)
 	add_action( 'admin_enqueue_scripts', function () use ($absolutePath, $handle)
 	{
 		$file = wdpro_path_remove_root($absolutePath);
+		$file = wdpro_fix_directory_separator_in_url($file);
 		if (!$handle) $handle = $file;
 		wp_enqueue_script( $handle, $file );
 	});
+}
+
+
+
+/**
+ * Исправляет слеши в url адресах
+ *
+ * @param string $url
+ * @return string
+ */
+function wdpro_fix_directory_separator_in_url($url) {
+	return str_replace('\\', '/', $url);
 }
 
 
@@ -143,6 +181,7 @@ function wdpro_add_script_to_site($absolutePath, $handle=null)
 		if (is_file($absolutePath))
 		{
 			$file = wdpro_path_remove_root($absolutePath);
+			$file = wdpro_fix_directory_separator_in_url($file);
 			if (!$handle) $handle = $file;
 			wp_enqueue_script( $handle, $file );
 		}
@@ -188,6 +227,7 @@ function wdpro_add_css_to_console($absolutePath)
 	add_action('admin_enqueue_scripts', function () use ($absolutePath)
 	{
 		$file = wdpro_path_remove_root($absolutePath);
+		$file = wdpro_fix_directory_separator_in_url($file);
 		wp_enqueue_style( $file, $file );
 	});
 }
@@ -217,6 +257,7 @@ function wdpro_add_css_to_site($absolutePath)
 	add_action('wp_enqueue_scripts', function () use ($absolutePath)
 	{
 		$file = wdpro_path_remove_root($absolutePath);
+		$file = wdpro_fix_directory_separator_in_url($file);
 		wp_enqueue_style( $file, $file );
 	});
 }
@@ -333,59 +374,86 @@ function wdpro_array_remove_by_value(&$array, $value) {
 
 
 /**
- * Возвращает адрес текущей страницы
+ * Заменяет в адресе query данные или добавляет их
+ *
+ * @param string $url URL
+ * @param array $queryParams Параметры
+ * @return string
+ */
+function wdpro_replace_query_params_in_url($url, $queryParams) {
+	$arr = parse_url($url);
+
+	$new = array();
+
+	$get = [];
+	parse_str($arr['query'], $get);
+
+
+	if (is_array($get)) {
+		foreach($get as $key=>$value)
+		{
+			if (array_key_exists($key, $queryParams))
+			{
+				if ($queryParams[$key])
+				{
+					$new[$key] = $queryParams[$key];
+				}
+			}
+
+			else
+			{
+				$new[$key] = $get[$key];
+			}
+
+			unset($queryParams[$key]);
+		}
+	}
+
+	if (is_array($queryParams)) {
+		foreach($queryParams as $key=>$value)
+		{
+			$new[$key] = $value;
+		}
+	}
+
+	$queryString = http_build_query($new);
+	if ($queryString) $queryString = '?'.$queryString;
+
+	return $arr['path'].$queryString;
+}
+
+
+/**
+ * Возвращает относительный адрес текущей страницы
  *
  * @param null|array $queryChanges Изменить параметры QUERY_STRING согласно этому массиву
  * @return string
  */
-function wdpro_current_url($queryChanges=null)
+function wdpro_current_uri($queryChanges=null)
 {
+	$uri = '';
+	if (isset($_SERVER['REQUEST_URI_ORIGINAL'])) $uri = $_SERVER['REQUEST_URI_ORIGINAL'];
+	if (!$uri) $uri = $_SERVER['REQUEST_URI'];
+
 	if ($queryChanges)
 	{
-		$uri = '';
-		if (isset($_SERVER['REQUEST_URI_ORIGINAL'])) $uri = $_SERVER['REQUEST_URI_ORIGINAL'];
-		if (!$uri) $uri = $_SERVER['REQUEST_URI'];
-
-		$arr = parse_url($uri);
-
-		$new = array();
-		if (is_array($_GET)) {
-			foreach($_GET as $key=>$value)
-			{
-				if (array_key_exists($key, $queryChanges))
-				{
-					if ($queryChanges[$key])
-					{
-						$new[$key] = $queryChanges[$key];
-					}
-				}
-
-				else
-				{
-					$new[$key] = $_GET[$key];
-				}
-
-				unset($queryChanges[$key]);
-			}
-		}
-
-		if (is_array($queryChanges)) {
-			foreach($queryChanges as $key=>$value)
-			{
-				$new[$key] = $value;
-			}
-		}
-
-		$queryString = http_build_query($new);
-		if ($queryString) $queryString = '?'.$queryString;
-
-		return $arr['path'].$queryString;
+		$uri = wdpro_replace_query_params_in_url($uri, $queryChanges);
 	}
 
-	else
-	{
-		return $_SERVER['REQUEST_URI'];
-	}
+	return $uri;
+}
+
+
+/**
+ * Возвращает абсолютный адрес текущей страницы
+ *
+ * @param null|array $queryChanges Изменить параметры QUERY_STRING согласно этому массиву
+ * @return string
+ */
+function wdpro_current_url($queryChanges=null) {
+	$uri = wdpro_current_uri($queryChanges);
+
+	return home_url().$uri;
 }
 
 
@@ -419,6 +487,23 @@ function wdpro_is_current_post_type($postType) {
 	}
 
 	return false;
+}
+
+
+/**
+ * True, если это локальная машина
+ *
+ * Это нужно для тог, чтобы например, для модуля переключателя языков.
+ * Этот модуль использует для хранения информации файл. Так надо :)
+ * И чтобы при копировании всех файлов на боевой сервер файл на сервере не затирался локальными
+ * данными, на боевом сервере используется другой файл. И теперь можно хоть сколько копировать
+ * файлы на сервер, данные на сервере не затрутся локальными.
+ *
+ * @return bool
+ */
+function wdpro_local() {
+	return $_SERVER['HTTP_HOST'] == 'localhost'
+			|| (defined('WDPRO_LOCALHOST') && WDPRO_LOCALHOST);
 }
 
 
@@ -617,7 +702,7 @@ function wdpro_gz_decode($zipFile, $targetFile)
  */
 function wdpro_json_encode($data)
 {
-	return json_encode($data, JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE);
+	return json_encode($data, JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
 }
 
 
@@ -1211,28 +1296,27 @@ function wdpro_image_resize_crop($originalImageFile, $newImageFile, $crop_w, $cr
  */
 function wdpro_realpath($path) {
 
-	// check if path begins with "/" ie. is absolute
-	// if it isnt concat with script path
-	if (strpos($path,"/") !== 0) {
-		$base=dirname($_SERVER['SCRIPT_FILENAME']);
-		$path=$base."/".$path;
-	}
+	$path = wdpro_fix_directory_separator($path);
 
-	// canonicalize
-	$path=explode('/', $path);
-	$newpath=array();
-	for ($i=0; $i<sizeof($path); $i++) {
-		if ($path[$i]==='' || $path[$i]==='.') continue;
-		if ($path[$i]==='..') {
-			array_pop($newpath);
-			continue;
+	$path = str_replace(array('/', '\\'), DIRECTORY_SEPARATOR, $path);
+	$parts = array_filter(explode(DIRECTORY_SEPARATOR, $path), 'strlen');
+	$absolutes = array();
+	foreach ($parts as $part) {
+		if ('.' == $part) continue;
+		if ('..' == $part) {
+			array_pop($absolutes);
+		} else {
+			$absolutes[] = $part;
 		}
-		array_push($newpath, $path[$i]);
 	}
-	$finalpath="/".implode('/', $newpath);
+	$path = implode(DIRECTORY_SEPARATOR, $absolutes);
 
-	// check then return valid path or filename
-	return ($finalpath);
+	if (DIRECTORY_SEPARATOR === '/') {
+		$path = '/'.$path;
+	}
+
+	return $path;
+
 }
 
 
@@ -1263,12 +1347,64 @@ function wdproObjectsTrace() {
 
 
 /**
+ * Добавляет объект в список объектов
+ *
+ * Для быстрого доступа к нему через wdpro_object(...)
+ *
+ * @param $object \Wdpro\BaseEntity
+ * @param int $key
+ */
+function wdpro_object_add_to_cache($object, $key=-1) {
+	global $_wdproObjects;
+
+	$className = '\\' . get_class($object);
+
+	if ($key === -1)
+	$key = $object->id();
+
+	if (!$key) {
+		$key = 0;
+	}
+
+
+	if (!isset($_wdproObjects[$className]))
+	{
+		$_wdproObjects[$className] = array();
+	}
+
+	if (!isset($_wdproObjects[$className][$key]))
+	{
+		$_wdproObjects[$className][$key] = $object;
+	}
+}
+
+
+/**
+ * Удаляет объект из списка объектов для быстрого доступа
+ *
+ * @param $object \Wdpro\BaseEntity
+ */
+function wdpro_object_remove_from_cache($object) {
+	global $_wdproObjects;
+	$className = '\\' . get_class($object);
+
+	$key = $object->id();
+
+	if (!$key) {
+		$key = 0;
+	}
+
+	unset($_wdproObjects[$className][$key]);
+
+}
+
+
+/**
  * Возвращает объект, создавая его, если он еще не был создан
  *
  * @param string $className Имя класса
  * @param null|int|string|array $dataOrId ID или данные объекта
  * @return void|object
- * @throws Exception
  */
 function wdpro_object($className, $dataOrId=null)
 {
@@ -1290,12 +1426,16 @@ function wdpro_object($className, $dataOrId=null)
 		$key = $dataOrId;
 	}
 
+	if (!$key) {
+		$key = 0;
+	}
+
 	if (substr($className, 0, 1) != '\\')
 		$className = '\\'.$className;
 
 	if (is_string($className))
 	{
-		if (!isset($_wdproObjects[$className]))
+		/*if (!isset($_wdproObjects[$className]))
 		{
 			$_wdproObjects[$className] = array();
 		}
@@ -1303,7 +1443,9 @@ function wdpro_object($className, $dataOrId=null)
 		if (!isset($_wdproObjects[$className][$key]))
 		{
 			$_wdproObjects[$className][$key] = new $className($dataOrId);
-		}
+		}*/
+
+		wdpro_object_add_to_cache(new $className($dataOrId), $key);
 
 		return $_wdproObjects[$className][$key];
 	}
@@ -1390,7 +1532,7 @@ function wdpro_object_by_key($objectKey) {
 
 	$key = wdpro_key_parse($objectKey);
 
-	$obj = wdpro_object($key['object']['name'], $key['object']['id']);
+	$obj = wdpro_object($key['object']['name'], isset($key['object']['id']) ? $key['object']['id'] : null);
 
 	if (is_object($obj))
 	{
@@ -1437,7 +1579,7 @@ function wdpro_key_parse($key=null)
 			{
 				$infoString .= ',';
 			}
-			$infoString .= $i . ':' . $value;
+			$infoString .= $i . ':' . wdpro_key_escape($value);
 		}
 	}
 
@@ -1446,7 +1588,9 @@ function wdpro_key_parse($key=null)
 	else {
 		if (is_string($key))
 		{
-			// Создаем строку ключа
+			$key = str_replace('\\\\', '\\', $key);
+
+		// Создаем строку ключа
 			$infoString = $key;
 
 			// Создаем массив ключа
@@ -1462,16 +1606,70 @@ function wdpro_key_parse($key=null)
 				$elementParts = explode(':', $element);
 
 				// Добавляем часть в массив
-				$infoArr[$elementParts[0]] = $elementParts[1];
+				$infoArr[$elementParts[0]] = wdpro_key_unescape($elementParts[1]);
 			}
 		}
 	}
+
+	//$infoArr['name'] = str_replace('\\\\', '\\', $infoArr['name']);
+	//$infoString = str_replace('\\\\', '\\', $infoString);
 
 	return array(
 		'key'    => $infoString,
 		'object' => $infoArr,
 		'allReady'=>true,
 	);
+}
+
+
+/**
+ * Добавляет значение в ключ
+ *
+ * @param string|array $key Ключь
+ * @param array $values
+ * @return array
+ */
+function wdpro_key_add_values($key, $values) {
+	$key = wdpro_key_parse($key);
+
+	if (is_array($values)) {
+		foreach ($values as $newKey => $newValue) {
+			//$key['key'] .= ','.$newKey.':'.$newValue;
+			$key['object'][$newKey] = wdpro_key_escape($newValue);
+		}
+	}
+
+	$key = wdpro_key_parse($key['object']);
+
+	return $key;
+}
+
+
+/**
+ * Экранирование значения ключа
+ *
+ * Чтобы один ключ можно было вставлять в другой
+ *
+ * @param string $value Значение ключа в виде строки
+ * @return string
+ */
+function wdpro_key_escape($value) {
+	$value = str_replace(',', '&', $value);
+	$value = str_replace(':', '=', $value);
+	return $value;
+}
+
+
+/**
+ * Разэкронирование значение ключа
+ *
+ * @param string $value Значение ключа в виде строки
+ * @return string
+ */
+function wdpro_key_unescape($value) {
+	$value = str_replace('&', ',', $value);
+	$value = str_replace('=', ':', $value);
+	return $value;
 }
 
 
@@ -2695,4 +2893,229 @@ function wdpro_is_admin() {
  */
 function wdpro_add_slash_to_end(&$str) {
 	$str = rtrim($str, '/') . '/';
+}
+
+
+$wdproData = [];
+
+/**
+ * Запоминает или возвращает что-нибудь
+ *
+ * Например, сначала можно что-то запомнить
+ * А потом вывести в шаблоне страницы
+ *
+ * @param string $name Имя данных
+ * @param string|mixed $value Значение
+ *
+ * @return string|mixed
+ */
+function wdpro_data($name, $value='WDPRO_NOT_SETTED_SO_RETURN_VALUE') {
+	global $wdproData;
+	if ($value === 'WDPRO_NOT_SETTED_SO_RETURN_VALUE') {
+		if (isset($wdproData[$name])) {
+			return $wdproData[$name];
+		}
+	}
+
+	else {
+		$wdproData[$name] = $value;
+	}
+}
+
+
+/**
+ * Возвращает html код калочки
+ *
+ * @param string $visible true, 1 - Отображать галочку
+ * @param string $title   Текст всплаывающей подсказки
+ *
+ * @return string
+ */
+function wdpro_check_html($visible, $title='') {
+	if ($visible) {
+		return '<i class="fa fa-check" aria-hidden="true" title="'.$title.'"></i>';
+	}
+}
+
+
+/**
+ * Срабатывает после инициализации страницы
+ *
+ * Когда уже известно, что за страница открыта, что в хлебных крошках...
+ *
+ * @param callable $callback Каллбэк, в который отправляется объект страницы
+ */
+function wdpro_on_page_init($callback) {
+	add_action('wdpro_breadcrumbs_init', function ($breadcrumbs) use (&$callback) {
+		/** @var $breadcrumbs \Wdpro\Breadcrumbs\Breadcrumbs */
+
+		$callback($breadcrumbs->getFirstEntity());
+	});
+}
+
+
+/**
+ * Возвращает домен без www из адреса.
+ *
+ * Или если это просто строка, а не адрес. То возвращает ее без изменений.
+ *
+ * @param string $url Url
+ * @return string
+ */
+function wdpro_get_domain_from_url($url) {
+	$parsed = parse_url($url);
+	if (isset($parsed['host'])) {
+		return str_replace('www.', '', $parsed['host']);
+	}
+
+	return $url;
+}
+
+
+/**
+ * Возвращает класс объекта, чтобы в начале всегда был символ \
+ *
+ * @param object $object Объект
+ * @return string
+ */
+function wdpro_get_class($object) {
+	$class = get_class($object);
+
+	$class = wdpro_root_namespace($class);
+
+	return $class;
+}
+
+
+/**
+ * Возвращает путь от самого начала (ставит в начале \, если его нету)
+ *
+ * @param string $path путь до класса
+ * @return string
+ */
+function wdpro_root_namespace($path) {
+
+	if (strpos($path, '\\') !== 0) {
+		$path = '\\'.$path;
+	}
+
+	return $path;
+}
+
+
+/**
+ * Обновление текста из редактора
+ *
+ * @param string $text Текст
+ * @return string
+ */
+function wdpro_text_from_editor_normalize($text)
+{
+	// Закомментировал это чтобы текст не ломался, не превращался в полностью
+	// htmlspecialchars, когда я вставляю в него html код, отображаемый как html код,
+	// например с подсветкой
+	/*if (strstr($text, '&lt;p'))
+	{
+		$text = htmlspecialchars_decode($text);
+		$htmlspecialchars = true;
+	}*/
+	// Неактивные ссылки в активные
+	$text = wdpro_link_text($text);
+
+	// Убираем фигню из ссылок
+	$text = preg_replace('/<a _src="([^"]+)"/', '<a', $text);
+
+	// Активные ссылки в новом окне
+	$text = preg_replace_callback('/<a href="([^"]+)">/', function ($arr)
+	{
+		$link = $arr[1];
+		$parsed = parse_url($link);
+
+		// Если это внешняя ссылка
+		if (isset($parsed['host'])) {
+			$host = str_replace('www.', '', $parsed['host']);
+			if ($host != str_replace('www.', '', $_SERVER['HTTP_HOST'])) {
+				$link = wdpro_redirect($link);
+
+				return '<a href="'.$link.'" target="_blank">';
+			}
+		}
+
+		// Внутренняя ссылка
+		return $arr[0];
+
+	}, $text);
+
+	return $text;
+}
+
+
+/**
+ * Делает в тексте ссылки активными
+ *
+ * @param string $text Текст
+ * @param bool $blank Открывать в новом окне
+ * @return string
+ */
+function wdpro_link_text($text, $blank=false)
+{
+	$blankTag = '';
+	if ($blank)
+	{
+		$blankTag = ' target="_blank"';
+	}
+
+	$text = str_replace('&nbsp;', ' [&nbsp;] ', $text);
+
+	$replace = function ($arr) use (&$blankTag) {
+		$link = $arr[3];
+		$text = $link;
+		if (strlen($text) > 50) {
+			$text = substr($text, 0, 40).'...';
+		}
+
+		return $arr[1].$arr[2].'<a href="'
+			.$link
+			.'"'.$blankTag.'>'.$text.'</a>';
+	};
+
+	$text= preg_replace_callback(
+		"/(^|[\n ]|<p>)([\w]*?)((ht|f)tp(s)?:\/\/[\w]+[^ \,\"\n\r\t<]*)/is",
+		$replace,
+		$text);
+
+	$text= preg_replace_callback(
+		"/(^|[\n ])([\w]*?)((www|ftp)\.[^ \,\"\t\n\r<]*)/is",
+		$replace,
+		$text);
+
+	$text = str_replace(' [&nbsp;] ', '&nbsp;', $text);
+
+	return $text;
+}
+
+
+/**
+ * Возвращает ссылку через редирект
+ *
+ * @param string $link Ссылка
+ * @return string
+ */
+function wdpro_redirect($link) {
+	return WDPRO_URL.'redirect.php?http='.urlencode($link);
+}
+
+
+$wdproJsData = [];
+
+/**
+ * Добавление данных в объект js: wdpro
+ *
+ * @param string $key Ключ
+ * @param mixed $value Значение
+ */
+function wdpro_js_data ($key, $value) {
+	global $wdproJsData;
+
+	$wdproJsData[$key] = $value;
 }

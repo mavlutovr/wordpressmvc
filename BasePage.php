@@ -2,7 +2,7 @@
 namespace Wdpro;
 
 
-class BasePage extends BaseEntity
+abstract class BasePage extends BaseEntity
 {
 
 	/**
@@ -24,16 +24,18 @@ class BasePage extends BaseEntity
 			) );
 		});
 
-		$type = static::getType();
-
 		// Это чтобы главная загружалась
 		add_action('pre_get_posts', function ($query) use (&$type) {
+
 			if(
 				(!isset($query->query_vars['post_type'])
 					||'' == $query->query_vars['post_type'])
 				&& isset($query->query_vars['page_id'])
-				&& 0 != $query->query_vars['page_id'])
-				$query->query_vars['post_type'] = array( 'page', $type);
+				&& 0 != $query->query_vars['page_id']) {
+
+				$post = wdpro_get_post_by_id($query->query_vars['page_id']);
+				$query->query_vars['post_type'] = array( 'page', $post->getType());
+			}
 
 			return $query;
 		});
@@ -46,6 +48,27 @@ class BasePage extends BaseEntity
 	 * @param string $content Текущий текст страницы
 	 */
 	public function getCard(&$content) {
+
+	}
+
+
+	/**
+	 * Инициализация страницы до отправки html кода в браузер
+	 */
+	public function initCard() {
+
+		if (isset($this->data['image']) && $this->data['image']) {
+			wdpro_data('ogImage', WDPRO_UPLOAD_IMAGES_URL.$this->data['image']);
+		}
+	}
+
+
+	/**
+	 * Инициализация текущей страницы, когда она открывается
+	 *
+	 * Этот метод срабатывает еще до getCard
+	 */
+	public function initSite() {
 
 	}
 

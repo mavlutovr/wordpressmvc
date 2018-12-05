@@ -14,7 +14,7 @@ function wdproShowMetaForm($post)
 	$form = new \Wdpro\Form\Form('wdpro');
 
 	$form->add([
-		'name'=>'alternative_url',
+		'name'=>'alternative_url[lang]',
 		'top'=>'Ссылка на другую страницу или другой сайт',
 	]);
 
@@ -112,12 +112,49 @@ function wdpro_the_header()
 {
 	remove_action( 'wp_head', '_wp_render_title_tag', 1 );
 
+	$title = wdpro_data('title');
+
+	if (!$title)
 	$title = wdpro_get_post_meta('title');
+	$description = wdpro_get_post_meta('description');
+	$keywords = wdpro_get_post_meta('keywords');
+
+
+	$h1 = wdpro_the_h1(true);
+	$template = function ($string, $key) use (&$h1) {
+		if (!$string) {
+			$string = wdpro_get_option($key.'[lang]');
+			$string = str_replace('[h1]', $h1, $string);
+		}
+
+		return $string;
+	};
+
+	$title = $template($title, 'wdpro_title_template');
+	$description = $template($description, 'wdpro_description_template');
+	$keywords = $template($keywords, 'wdpro_keywords_template');
 	if (!$title) {
 		$title = wdpro_the_title_standart();
 	}
-	$description = wdpro_get_post_meta('description');
-	$keywords = wdpro_get_post_meta('keywords');
+
+
+	// Картинка для Поделиться
+	// Из Wdpro
+	$ogImage = wdpro_data('ogImage');
+	if (!$ogImage) {
+		$page = wdpro_current_page();
+		if (isset($page->data['image'])) {
+			$ogImage = WDPRO_UPLOAD_IMAGES_URL.$page->data['image'];
+		}
+	}
+	// Стандартная
+	if (!$ogImage) {
+		$post = get_post();
+		if ($post) {
+			$image = wp_get_attachment_image_src(get_post_thumbnail_id($post->ID), 'single-post-thumbnail');
+			$ogImage = $image[0];
+		}
+	}
 	
 ?><title><?php echo($title); ?></title>
 	<meta name="description" content="<?php echo( htmlspecialchars($description) );
@@ -125,9 +162,14 @@ function wdpro_the_header()
 	<meta name="keywords" content="<?php echo( htmlspecialchars($keywords) ); ?>" />
 
 	<meta charset="<?php bloginfo( 'charset' ); ?>" />
+	<meta property="og:title" content="<?=$title?>">
+	<meta property="og:description" content="<?=htmlspecialchars($description)?>">
+	<meta property="og:image" content="<?=$ogImage?>">
+	<meta property="og:url" content="<?=wdpro_current_url()?>">
 <?php
 
 
+	echo wdpro_get_option('wdpro_head_additional');
 
 	//wdpro_css_header();
 	//wdpro_scripts_header();
@@ -206,18 +248,22 @@ function wdpro_css_footer() {
 		wdpro_css();
 	}
 }
-	
+
 
 /**
  * Возвращает заголовок страницы
- * 
+ *
+ * @param bool $force Возвратить заголовок, даже когда он выключен через "-"
  * @return bool|null|string
  */
-function wdpro_the_h1()
+function wdpro_the_h1($force=false)
 {
+	$h1 = wdpro_data('h1');
+
+	if (!$h1)
 	$h1 = wdpro_get_post_meta('h1');
 	
-	if ($h1 != '-' && $h1 != '—')
+	if ($h1 != '-' && $h1 != '—' || $force)
 	{
 		if (!$h1)
 		{

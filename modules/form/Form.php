@@ -16,10 +16,12 @@ class Form
 	protected $elementI = 0;
 	protected $groups = [];
 	protected $saveErrorsToOptions = false;
-	
+	protected static $defaultMethod = 'POST';
+
 	const CKEDITOR = 'ckeditor';
 	const CKEDITOR_SMALL = 'ckeditorSmall';
 	const CHECK = 'check';
+	const CHECKS = 'checks';
 	const SORTING = 'sorting';
 	const SORTING_TOP = 'sortingTop';
 	const TEXT = 'text';
@@ -48,7 +50,9 @@ class Form
 		'sortingTop'=>'\Wdpro\Form\Elements\SortingTop',
 		'text'=>'\Wdpro\Form\Elements\Text',
 		'check'=>'\Wdpro\Form\Elements\Check',
+		'checks'=>'\Wdpro\Form\Elements\Checks',
 		'checkbox'=>'\Wdpro\Form\Elements\Check',
+		'checkboxes'=>'\Wdpro\Form\Elements\Checks',
 		'pass'=>'\Wdpro\Form\Elements\Pass',
 		'hidden'=>'\Wdpro\Form\Elements\Hidden',
 		'file'=>'\Wdpro\Form\Elements\File',
@@ -80,8 +84,9 @@ class Form
 		
 		$this->params = wdpro_extend(array(
 			'action'=>'',
-			'method'=>'POST',
-			'elements'=>array(),
+			'method'=>static::$defaultMethod,
+			'elements'=>[],
+			'attributes'=>[],
 		), $params);
 		
 		foreach($this->params['elements'] as $elementParams)
@@ -171,7 +176,7 @@ class Form
 	/**
 	 * Добавляет поле в форму
 	 *
-	 * @param array $params Параметры
+	 * @param array|string $params Параметры
 	 */
 	public function add($params)
 	{
@@ -235,7 +240,15 @@ class Form
 	}
 
 
-
+	/**
+	 * Добавление аттрибута в форму
+	 *
+	 * @param string $name Имя атррибута
+	 * @param string|number|mixed $value Значение
+	 */
+	public function addAttribute($name, $value) {
+		$this->params['attributes'][$name] = $value;
+	}
 
 
 	/**
@@ -312,11 +325,21 @@ class Form
 			class="js-wdpro-form"><div class="js-params g-hid" 
 			style="display: none">
 '
-		.htmlspecialchars(json_encode(
+		.htmlspecialchars($this->getJson())
+		.'</div></div>';
+	}
+
+
+	/**
+	* Возвращает Json строку с данными формы
+	* 
+	* Чтобы потом на странице с помощью js превратить данные в саму форму
+	*/
+	public function getJson() {
+		return json_encode(
 			$this->getParams(), 
 			JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE|JSON_HEX_QUOT
-		))
-		.'</div></div>';
+		);
 	}
 
 
@@ -395,6 +418,16 @@ class Form
 
 
 	/**
+	* Переключает в режим ajax
+	* 
+	* @param boolean $ajax
+	*/
+	public function setAjax($ajax=true) {
+		$this->params['ajax'] = $ajax;
+	}
+
+
+	/**
 	 * Перебор параметров элеменов
 	 *
 	 * @param callback $callback Каллбэк, принимающий параметры каждого элемента
@@ -457,8 +490,9 @@ class Form
 	 * Запускает каллбэк при получении данных из формы
 	 *
 	 * @param callback $validCallback каллбэк, получающий данные, которые были запущены формой
+	 * @param callback|null $noSubmitCallback каллбэк, который срабатывает, если форма не была отправлена
 	 */
-	public function onSubmit($validCallback)
+	public function onSubmit($validCallback, $noSubmitCallback=null)
 	{
 		$data = $this->getData();
 
@@ -467,6 +501,11 @@ class Form
 			if ($this->valid())
 			{
 				$validCallback($data);
+			}
+		}
+		else {
+			if ($noSubmitCallback) {
+				$noSubmitCallback();
 			}
 		}
 	}
@@ -631,7 +670,10 @@ class Form
 
 					if (isset($data[$rootName]) || $value) {
 
-						if (is_array($value) && is_array($fixedData[$rootName])) {
+						if (is_array($value)
+							&& isset($fixedData[$rootName])
+							&& is_array($fixedData[$rootName])) {
+
 							$fixedData[$rootName] = array_merge_recursive($fixedData[$rootName],
 								$value);
 						}
@@ -766,6 +808,26 @@ class Form
 		if (count($elements)) {
 			return $elements;
 		}
+	}
+
+
+	/**
+	 * Устанавливаем метод отправки
+	 *
+	 * @param string $method Метод (POST, GET)
+	 */
+	public function setMethod($method) {
+		$this->params['method'] = $method;
+	}
+
+
+	/**
+	 * Возвращает элемент (сущность), который редактируется данной формой
+	 *
+	 * @return \Wdpro\BaseEntity
+	 */
+	public function getEntity() {
+		return $this->params['entity'];
 	}
 }
 

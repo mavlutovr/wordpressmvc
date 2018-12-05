@@ -2,7 +2,7 @@
 namespace Wdpro;
 
 
-class BaseController {
+abstract class BaseController {
 
 	use Tools;
 
@@ -70,6 +70,19 @@ class BaseController {
 	public static function sqlTable() {
 
 		return static::getModuleClass('SqlTable');
+	}
+
+
+	/**
+	 * Возвращает сущность по данным или id
+	 *
+	 * @param null|int|string|array $dataOrId ID или данные объекта
+	 *
+	 * @return \Wdpro\BaseEntity
+	 * @throws \Exception
+	 */
+	public static function entity($dataOrId) {
+		return wdpro_object(static::getModuleClass('Entity'), $dataOrId);
 	}
 
 
@@ -211,27 +224,123 @@ class BaseController {
 	 */
 	public static function getOptions($paramsOrWhere=null) {
 
-		if (is_string($paramsOrWhere)) {
-			$paramsOrWhere = [
-				'where'=>'ORDER BY menu_order DESC',
+		$params = $paramsOrWhere;
+
+		if (is_string($params)) {
+			$params = [
+				'where'=>$params,
 			];
 		}
 
-		$paramsOrWhere = wdpro_extend([
-			'where'=>'ORDER BY menu_order DESC',
-		], $paramsOrWhere);
-
-		if (!isset($paramsOrWhere['options'])) {
-			$paramsOrWhere['options'] = [ '' =>''];
-		}
-
 		$sqlTable = static::sqlTable();
-		if ($sel = $sqlTable::select($paramsOrWhere['where'], 'id, post_title')) {
-			foreach($sel as $row) {
-				$paramsOrWhere['options'][] = [$row['id'], $row['post_title']];
+		$tree = $sqlTable::isColl('parent_id');
+
+		if ($tree) {
+
+			// Начиная с одного родительского элемента
+			if (isset($params['from_id']) && $params['from_id']) {
+				$params = wdpro_extend([
+					'where'=>[
+						'WHERE id=%d',
+						[
+							$params['from_id']
+						]
+					],
+				], $params);
 			}
 
-			return $paramsOrWhere['options'];
+			// Начиная со списка
+			else {
+				$params = wdpro_extend([
+					'where'=>[
+						'WHERE parent_id=%d ORDER BY menu_order',
+						[
+							isset($params['parent_id']) ? $params['parent_id'] : 0,
+						]
+					],
+				], $params);
+			}
+		}
+
+		else {
+			$params = wdpro_extend([
+				'where'=>'ORDER BY menu_order',
+			], $params);
+		}
+
+
+		if (!isset($params['checks'])) {
+			$params['checks'] = false;
+		}
+
+		if (!isset($params['options'])) {
+			$params['options'] = [];
+			if (!$params['checks']) {
+				$params['options'][''] = '';
+			}
+		}
+
+		if (isset($params['field']) && $params['field']) {
+			$nameField = $params['field'];
+		}
+
+		else {
+			$nameField = $sqlTable::isColl('post_title') ? 'post_title' : 'name';
+		}
+
+		if ($sel = $sqlTable::select($params['where'], 'id, '.$nameField)) {
+
+			$prefix = isset($params['prefix']) ? $params['prefix'] : '';
+
+			foreach($sel as $row) {
+
+				$name = $row[$nameField];
+
+
+				// Для Checks
+				if ($params['checks']) {
+					$option = [
+						'value'=>$row['id'],
+						'text'=>$name,
+					];
+				}
+
+				// Для Select
+				else {
+					$name = $prefix . $name;
+					$params['options'][] = [ $row['id'], $name ];
+				}
+
+				if ($tree) {
+
+					if ($subOptions = static::getOptions([
+						'options'=>[],
+						'checks'=>$params['checks'],
+						'parent_id'=>$row['id'],
+						'prefix'=>'- '.$prefix,
+					])) {
+
+						// Checks
+						if ($params['checks']) {
+							$option['options'] = $subOptions;
+						}
+
+						// Select
+						else {
+							foreach ($subOptions as $subOption) {
+								$params['options'][] = $subOption;
+							}
+						}
+					}
+				}
+
+				// Checks
+				if ($params['checks']) {
+					$params['options'][] = $option;
+				}
+			}
+
+			return $params['options'];
 		}
 	}
 

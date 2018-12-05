@@ -53,16 +53,30 @@ class Breadcrumbs
 	}
 
 
+	public function removeAll() {
+		$this->firstEntity = null;
+		$this->root = [];
+		$this->prepended = [];
+		$this->appended = [];
+		$this->lastAddedEntity = null;
+		$this->lastElementsWithoutLinks = 1;
+		$this->parentByType = [];
+	}
+
+
 	/**
 	 * Создание структуры пути хлебных крошек
-	 * 
+	 *
 	 * @param \Wdpro\BasePage $entity Конечная (текущая) страница
+	 * @throws \Exception
 	 */
 	public function makeFrom($entity)
 	{
 		if ($entity)
 		{
+			if (!isset($this->firstEntity))
 			$this->firstEntity = $entity;
+
 			$element = new EntityElement($entity);
 			$this->prepend($element);
 			
@@ -113,6 +127,17 @@ class Breadcrumbs
 	public function prepend($element)
 	{
 		$this->prepended[] = $this->getElement($element);
+	}
+
+
+	/**
+	 * Добавляет главную страницу
+	 */
+	public function prependFrontPage() {
+		$this->prepend(array(
+			'text'=>wdpro_get_option('wdpro_breadcrumbs_home[lang]', 'Главная'),
+			'uri'=>wdpro_home_url_with_lang(),
+		));
 	}
 
 
@@ -182,12 +207,23 @@ class Breadcrumbs
 
 	/**
 	 * Возвращает объект самой первой страницы в пути страниц
-	 * 
+	 *
 	 * @return \Wdpro\BaseEntity
 	 */
 	public function getFirstEntity()
 	{
 		return $this->firstEntity;
+	}
+
+
+	/**
+	 * Возвращает объект текущей страницы
+	 *
+	 * @return \Wdpro\BaseEntity
+	 */
+	public function getCurrentPage()
+	{
+		return $this->getFirstEntity();
 	}
 
 
@@ -434,5 +470,15 @@ class Breadcrumbs
 	 */
 	public function removeLast($remove=true) {
 		static::$removeLast = $remove;
+	}
+
+
+	/**
+	 * Установка минимального количества элементов в хлебных крошках, когда хлебные крошки отображаются
+	 *
+	 * @param $min
+	 */
+	public function setMin($min) {
+		static::$min = $min;
 	}
 }
