@@ -11,7 +11,7 @@ class SqlTable extends \Wdpro\BaseSqlTable {
 	 *
 	 * @var string
 	 */
-	protected static $name = 'menu_top';
+	protected static $name = 'app_menu_top';
 
 	/**
 	 * Структура таблицы
