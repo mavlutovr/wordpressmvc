@@ -208,6 +208,16 @@ function wdpro_breadcrumbs()
 
 
 /**
+ * Отображает хлебные крошки
+ *
+ * @return string
+ */
+function wdpro_the_breadcrumbs() {
+	return wdpro_breadcrumbs()->getHtml();
+}
+
+
+/**
  * Выводит настройку в браузер
  *
  * @param string $optionName Имя настройки
