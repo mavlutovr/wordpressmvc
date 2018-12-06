@@ -36,7 +36,7 @@ class Menu
 			'menu_title' => isset($buttonParams['label']) ? $buttonParams['label'] : '',
 			'icon'       => WDPRO_ICONS_PAGES,
 			'open'       => '',
-			'n'=>static::$buttonCount,
+			//'n'=>static::$buttonCount,
 			'showNew'=>false,
 			'count'=>0,
 		), $buttonParams);
@@ -59,6 +59,15 @@ class Menu
 				
 				if (!$buttonParams['menu_title'])
 					$buttonParams['menu_title'] = $rollParams['labels']['menu_name'];
+
+				if (!isset($buttonParams['n']) || $buttonParams['n'] === null) {
+					if (isset($rollParams['n'])) {
+						$buttonParams['n'] = $rollParams['n'];
+					}
+					else {
+						$buttonParams['n'] = static::$buttonCount;
+					}
+				}
 			}
 			
 			

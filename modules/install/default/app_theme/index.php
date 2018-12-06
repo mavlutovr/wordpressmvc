@@ -2,15 +2,24 @@
 
 	<div class="wrapper">
 
-		<?php echo( wdpro_breadcrumbs()->getHtml() ); ?>
+		<!-- Хлебные крошки -->
+		<?= wdpro_the_breadcrumbs() ?>
 
 		<div class="page-middle">
+
+			<!-- Блок сбоку страницы -->
 			<?php get_sidebar(); ?>
+
 			<article class="page-content">
+
+				<!-- Заголовок H1 -->
 				<?php if ( $h1 = wdpro_the_h1() ): ?>
-					<h1><?php echo( $h1 ); ?></h1>
+					<h1><?= $h1 ?></h1>
 				<?php endif; ?>
-				<?php wdpro_the_content(); ?>
+
+				<!-- Текст (содержимое) страницы -->
+				<?= wdpro_the_content(); ?>
+
 			</article>
 		</div>
 

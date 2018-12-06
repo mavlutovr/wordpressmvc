@@ -1405,7 +1405,6 @@ function wdpro_object_remove_from_cache($object) {
  * @param string $className Имя класса
  * @param null|int|string|array $dataOrId ID или данные объекта
  * @return void|object
- * @throws Exception
  */
 function wdpro_object($className, $dataOrId=null)
 {
@@ -1975,7 +1974,7 @@ function wdpro_on_content($callback, $priority=10) {
 
 
 /**
- * Запускает каллбэк при появлении контента и отправляем в каллбэк обхект страницы
+ * Запускает каллбэк при появлении контента и отправляет в каллбэк объект страницы
  * \Wdpro\BasePage
  *
  * @param string   $pageType Тип страницы \Wdpro\BasePage::getType()
@@ -2362,6 +2361,37 @@ function wdpro_on_uri_content($uri, $callback) {
 					if (($uriOne == $post->post_name)
 					|| ($uriOne === '' && $post->ID == get_option('page_on_front'))) {
 						wdpro_content($callback);
+						break;
+					}
+				}
+			}
+		}
+	);
+}
+
+
+/**
+ * Запускает каллбэк при открытии страницы по заданному адресу, и добавляет в текст то,
+ * что возвратил каллбэк
+ *
+ * @param string|array $uri Адрес страницы или массив адресов
+ * @param callback $callback Каллбэк, получающий объект поста при открытии страницы
+ * @param int $priority Приоритет
+ */
+function wdpro_on_content_uri($uri, $callback, $priority=10) {
+	add_action(
+		'wp',
+		function () use (&$uri, &$callback, &$priority) {
+
+			$post = get_post();
+
+			if (!is_array($uri)) $uri = [$uri];
+
+			if ($post) {
+				foreach($uri as $uriOne) {
+					if (($uriOne == $post->post_name)
+						|| ($uriOne === '' && $post->ID == get_option('page_on_front'))) {
+						wdpro_on_content($callback, $priority);
 						break;
 					}
 				}
