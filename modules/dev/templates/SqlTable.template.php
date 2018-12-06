@@ -34,6 +34,7 @@ class SqlTable extends \<?=$data['parent_namespace']?>\BaseSqlTable {
 				'id',
 				'post_parent'=>'int', // Это и для страниц и для простых элементов
 <?php if ($type == 'page'): ?>
+				'in_menu'=>'tinyint',
 				'menu_order'=>'int',
 				'post_status',
 				'post_title',

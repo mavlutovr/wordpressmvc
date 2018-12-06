@@ -291,13 +291,15 @@ function wdpro_on_page_type($type, $callback) {
 
 
 /**
- * Обработка текста страницы, когда открыта страница определенного типа
+ * Запускает каллбэк при появлении контента и отправляет в каллбэк объект страницы
+ * \Wdpro\BasePage
  *
- * @param string $type Тип страницы
- * @param callback $callback Каллбек
+ * @param string   $pageType Тип страницы \Wdpro\BasePage::getType()
+ * @param callback $callback Каллбэк
+ * @param int      $priority Приоритет
  */
-function wdpro_on_content_type($type, $callback) {
-
+function wdpro_on_content_type($pageType, $callback, $priority=10) {
+	wdpro_on_content_of_page_type($pageType, $callback, $priority);
 }
 
 
