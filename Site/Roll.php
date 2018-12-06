@@ -36,11 +36,16 @@ class Roll extends \Wdpro\BaseRoll {
 
 	/**
 	 * Возвращает объект постраничности для использования в списке
+	 *
+	 * return [
+	 *  'n'=>10,
+	 *  'key'=>'videoPage',
+	 * ]
 	 * 
 	 * @return void|\Wdpro\Tools\Pagination
 	 */
 	public static function pagination() {
-		
+
 	}
 
 
@@ -77,7 +82,14 @@ class Roll extends \Wdpro\BaseRoll {
 		$table = static::sqlTable();
 		
 		if (!strstr($where[0], 'LIMIT ') && $pagination = static::pagination()) {
-			
+
+			if ($pagination === true || $pagination === 1) {
+				$pagination = new \Wdpro\Tools\Pagination();
+			}
+			else if (is_array($pagination)) {
+				$pagination = new \Wdpro\Tools\Pagination($pagination);
+			}
+
 			$pagination->initByWhere($where, $table);
 			$where[0] .= $pagination->getLimit();
 		}
