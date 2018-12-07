@@ -37,6 +37,8 @@ class Form
 	const SPINNER = 'spinner';
 	const EMAIL = 'email';
 	const DATE = 'date';
+	const MENU_ORDER = 'menuOrder';
+	const MENU_ORDER_TOP = 'menuOrderTop';
 
 
 	/**
@@ -67,6 +69,8 @@ class Form
 		'spinner'=>'\Wdpro\Form\Elements\Spinner',
 		'email'=>'\Wdpro\Form\Elements\Email',
 		'date'=>'\Wdpro\Form\Elements\Date',
+		'menuOrder'=>'\Wdpro\Form\Elements\MenuOrder',
+		'menuOrderTop'=>'\Wdpro\Form\Elements\MenuOrderTop',
 	);
 
 
