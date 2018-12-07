@@ -2764,6 +2764,20 @@
 
 
 	/**
+	 * Сортировка по полю menu_order
+	 */
+	wdpro.forms.MenuOrderElement = wdpro.forms.SortingElement.extend({
+		init: function (params) {
+			params = wdpro.extend({
+				'name': 'menu_order'
+			}, params);
+
+			this._super(params);
+		}
+	});
+
+
+	/**
 	 * Пароль
 	 */
 	// export class StringElement extends BaseElement
@@ -3839,6 +3853,8 @@
 		'String': StringElement,
 		'Sorting': wdpro.forms.SortingElement,
 		'SortingTop': wdpro.forms.SortingElement,
+		'MenuOrder': wdpro.forms.MenuOrderElement,
+		'MenuOrderTop': wdpro.forms.MenuOrderElement,
 		'Pass':   PassElement,
 		'Text':   TextElement,
 		'Hidden': HiddenElement,
