@@ -163,11 +163,11 @@ class Menu extends Roll
 
 			$params = wdpro_extend(array(
 				'where'=>'WHERE post_type=%s
-					AND post_parent=%d
-					AND post_status="publish"
-					AND post_title[lang]!=""
-					'.$inMenuSql.'
-					ORDER BY menu_order',
+									AND post_parent=%d
+									AND post_status="publish"
+									AND post_title[lang]!=""
+									'.$inMenuSql.'
+									ORDER BY menu_order',
 			), $params);
 
 			$where = array(
@@ -180,11 +180,11 @@ class Menu extends Roll
 		else {
 
 			$params = wdpro_extend(array(
-				'WHERE post_parent=%d
-					AND post_status="publish"
-					AND post_title[lang]!=""
-					'.$inMenuSql.'
-					ORDER BY menu_order',
+				'where'=>'WHERE post_parent=%d
+									AND post_status="publish"
+									AND post_title[lang]!=""
+									'.$inMenuSql.'
+									ORDER BY menu_order',
 			), $params);
 
 
