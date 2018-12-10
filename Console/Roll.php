@@ -214,7 +214,7 @@ class Roll extends BaseRoll
 			// Когда это карточка элемента
 			if (isset($_GET['action']) && $_GET['action'] === 'card') {
 				$breadcrumbs->setMin(0);
-				$breadcrumbs->unremoveLink();
+				$breadcrumbs->unremoveLastLink();
 			}
 
 		}
