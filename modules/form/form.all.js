@@ -288,6 +288,14 @@
 							self.closeDialog();
 						}
 
+						var dialog = self.dialog();
+						if (dialog) {
+							response['content']
+							&& dialog.setContent(response['content']);
+							response['html']
+							&& dialog.setContent(response['html']);
+						}
+
 						self.loadingStop();
 					});
 				});
@@ -1458,6 +1466,17 @@
 			this.html.closest('.js-dialog').trigger('close');
 		},
 
+
+		/**
+		 * Возвращает объект окна, в котором находится форма
+		 *
+		 * Если она в окне
+		 *
+		 * @return {*|wdpro.dialogs.Dialog}
+		 */
+		dialog: function () {
+			return wdpro.dialogs.getObjectByJquery(this.html.closest('.js-dialog'));
+		},
 
 		/**
 		 * Приостанавливает обычную отправку и отправляет в callback данные формы
