@@ -6,13 +6,7 @@
 
 По-сути вы получаете фреймворк внутри Wordpress.
 
-## Как работать сплагином?
-
-:book: Смотрите в папке [/Wiki/](https://github.com/mavlutovr/wordpressmvc/tree/master/Wiki).
-
-## Миниобзор WordpressMVC
-
-<https://youtu.be/7lLF9aMhrWA>
+[![](http://img.youtube.com/vi/7lLF9aMhrWA/0.jpg)](http://www.youtube.com/watch?v=7lLF9aMhrWA "")
 
 ## Что плагин вам дает?
 
