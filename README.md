@@ -1,4 +1,4 @@
-# ![WordpressMVC Wordpress MVC](images/logo.png)
+# ![WordpressMVC Wordpress MVC](images/128.png) Wordpress MVC
 
 [Домашняя страница плагина](https://github.com/mavlutovr/wordpressmvc)
 
