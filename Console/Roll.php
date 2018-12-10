@@ -214,7 +214,7 @@ class Roll extends BaseRoll
 			// Когда это карточка элемента
 			if (isset($_GET['action']) && $_GET['action'] === 'card') {
 				$breadcrumbs->setMin(0);
-				$breadcrumbs->unremoveLink();
+				$breadcrumbs->unremoveLastLink();
 			}
 
 		}
@@ -510,7 +510,7 @@ title="Удалить"></a>
 	 *  'orderby'=>'menu_order',
 	 *  'icon'=>WDPRO_ICONS_PRODUCTS,
 	 *      // https://developer.wordpress.org/resource/dashicons/#lock
-	 * 		// https://fontawesome.com/v4.7.0/icons/
+	 * // https://fontawesome.com/
 	 * 
 	 *  'subsections'=>false,
 	 *  'where'=>["WHERE ... %d, %d", [1, 2]],

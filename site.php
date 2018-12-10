@@ -144,7 +144,7 @@ function breadcrumbs() {
 
 
 // Хлебные крошки
-add_action('wdpro_breadcrumbs_init', '_wdpro_breadcrumbs_init');
+add_action('wdpro_breadcrumbs_init', '_wdpro_breadcrumbs_init', 10);
 
 /**
  * Дополнительная иницциализация хлебных крошек, которую если что можно отключить
@@ -161,7 +161,7 @@ function _wdpro_breadcrumbs_init($breadcrumbs) {
 	}
 
 	$breadcrumbs->removeLast(true);
-	$breadcrumbs->unremoveLink();
+	$breadcrumbs->unremoveLastLink();
 }
 
 // Получаем пост и инициализируем хлебные крошки
@@ -188,7 +188,7 @@ wdpro_get_post(function ($post) {
  * @param callback $callback Каллбэк, в который отправляется объект хлебных крошек
  */
 function wdpro_breadcrumbs_init($callback) {
-	add_action('wdpro_breadcrumbs_init', $callback);
+	add_action('wdpro_breadcrumbs_init', $callback, 20);
 }
 
 

@@ -313,31 +313,6 @@ class Breadcrumbs
 				$this->templateFilName,
 				$template
 			);
-			
-			// Создаем html код
-			$html = '';
-			foreach($template['elements'] as $n=>$element)
-			{
-				if ($html) { $html .= ' <span class="breadcrumbs-separator">/</span> '; }
-
-				$text = $element['text'];
-
-				if (isset($element['uri']) && $element['uri'])
-				{
-					$url = $element['uri'];
-					if (!wdpro_is_absolute_url($url)) {
-						$url = home_url($url);
-					}
-					
-					$text = '<a href="'.$url.'">'
-						.$element['text']
-						.'</a>';
-				}
-
-				$html .= $text;
-			}
-
-			return '<div class="breadcrumbs">'.$html.'</div>';
 		}
 	}
 
@@ -345,17 +320,37 @@ class Breadcrumbs
 	/**
 	 * Удалить ссылку с последнего элемента у которого есть ссылка
 	 */
-	public function removeLink()
+	public function removeLastLink()
 	{
 		$this->lastElementsWithoutLinks ++;
 	}
 
 
 	/**
+	 * Уладяет ссылку с последнего элемента
+	 *
+	 * @deprecated
+	 */
+	public function removeLink() {
+		$this->removeLastLink();
+	}
+
+
+	/**
 	 * Вернуть ссылку к последнему элементу, у которого есть ссылка
 	 */
-	public function unremoveLink() {
+	public function unremoveLastLink() {
 		$this->lastElementsWithoutLinks --;
+	}
+
+
+	/**
+	 * Возвращает ссылку у последнего элемента
+	 *
+	 * @deprecated
+	 */
+	public function unremoveLink() {
+		$this->unremoveLastLink();
 	}
 
 
@@ -469,7 +464,18 @@ class Breadcrumbs
 	 * @param bool $remove true - убрать, false - вернуть
 	 */
 	public function removeLast($remove=true) {
+		//echo 'removeLast';
 		static::$removeLast = $remove;
+	}
+
+
+	/**
+	 * Возвращает удаленную последнюю ссылку
+	 */
+	public function unremoveLast() {
+		//echo 'unremoveLast';
+		//throw new \Exception('test');
+		static::$removeLast = false;
 	}
 
 

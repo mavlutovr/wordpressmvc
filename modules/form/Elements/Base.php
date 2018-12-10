@@ -132,7 +132,8 @@ class Base
 	 */
 	public function valid($formData)
 	{
-		if (isset($this->params['required']) && $this->params['required'])
+		if (isset($this->params['required']) && $this->params['required']
+		|| isset($this->params['*']) && $this->params['*'])
 		{
 			if (!$this->getDataFromSubmit($formData))
 			{

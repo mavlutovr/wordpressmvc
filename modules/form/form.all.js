@@ -288,6 +288,14 @@
 							self.closeDialog();
 						}
 
+						var dialog = self.dialog();
+						if (dialog) {
+							response['content']
+							&& dialog.setContent(response['content']);
+							response['html']
+							&& dialog.setContent(response['html']);
+						}
+
 						self.loadingStop();
 					});
 				});
@@ -432,6 +440,14 @@
 				// Добавляем группу в форму
 				groupAdd(group);
 			}
+		},
+
+
+		/**
+		 * Убирает элементы формы
+		 */
+		removeElements: function () {
+			this.jForm.hide().trigger('hide');
 		},
 
 
@@ -796,7 +812,7 @@
 				params && params.err && this.messagesContainer.addClass('_error_message');
 
 				// Убираем саму форму
-				params && params.hideForm && this.jForm.hide().trigger('hide');
+				params && params.hideForm && this.removeElements();
 
 				// Закрываем окно
 				params && params.close && (function () {
@@ -1450,6 +1466,17 @@
 			this.html.closest('.js-dialog').trigger('close');
 		},
 
+
+		/**
+		 * Возвращает объект окна, в котором находится форма
+		 *
+		 * Если она в окне
+		 *
+		 * @return {*|wdpro.dialogs.Dialog}
+		 */
+		dialog: function () {
+			return wdpro.dialogs.getObjectByJquery(this.html.closest('.js-dialog'));
+		},
 
 		/**
 		 * Приостанавливает обычную отправку и отправляет в callback данные формы
