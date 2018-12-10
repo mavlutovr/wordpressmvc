@@ -17,6 +17,24 @@
 
 	wdpro.dialogs = {
 
+
+		/**
+		 * Возвращает объект окна по его html блоку
+		 *
+		 * @param html {jQuery} Html блок окна
+		 * @return {wdpro.dialogs.Dialog}
+		 */
+		getObjectByJquery: function (html) {
+			if (html.length) {
+				var N = html.attr('data-n');
+				if (N) {
+					N = Number(N);
+					return dialogsList[N];
+				}
+			}
+		},
+
+
 		/**
 		 * Класс окна
 		 *
@@ -94,6 +112,7 @@
 				// Добавляем окно в массив окон и запоминаем индекс окна
 				this.N = currentDialogI;
 				dialogsList[this.N] = this;
+				this.html.attr('data-n', this.N);
 				currentDialogI ++;
 
 
@@ -213,7 +232,13 @@
 
 					self.loadingStop();
 
-					self.setContent(data['html']);
+					if (data['html']) {
+						self.setContent(data['html']);
+					}
+
+					if (data['content']) {
+						self.setContent(data['content']);
+					}
 
 					/*if (data['reloadPage']) {
 						wdpro.reloadPage();
