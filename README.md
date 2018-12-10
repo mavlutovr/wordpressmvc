@@ -1,4 +1,4 @@
-![WordpressMVC Wordpress MVC](images/256.png)
+![WordpressMVC Wordpress MVC](images/h1.png)
 
 # Wordpress MVC
 
