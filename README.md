@@ -1,6 +1,6 @@
-[Домашняя страница плагина](https://github.com/mavlutovr/wordpressmvc)
+# ![WordpressMVC](images/logo.png)
 
-# WordpressMVC
+[Домашняя страница плагина](https://github.com/mavlutovr/wordpressmvc)
 
 Плагин для wordpress, который позволяет вам разрабатывать не стандартный функционал на Wordpress с помощью MVC-подхода.
 
