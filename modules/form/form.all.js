@@ -436,6 +436,14 @@
 
 
 		/**
+		 * Убирает элементы формы
+		 */
+		removeElements: function () {
+			this.jForm.hide().trigger('hide');
+		},
+
+
+		/**
 		 * Установка формы в контейнер
 		 *
 		 * @param formContainer Контейнер, куда вставить форму
@@ -796,7 +804,7 @@
 				params && params.err && this.messagesContainer.addClass('_error_message');
 
 				// Убираем саму форму
-				params && params.hideForm && this.jForm.hide().trigger('hide');
+				params && params.hideForm && this.removeElements();
 
 				// Закрываем окно
 				params && params.close && (function () {
