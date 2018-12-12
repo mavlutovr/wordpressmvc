@@ -806,7 +806,15 @@ title="Удалить"></a>
 	 * @return string
 	 */
 	public function getSortingWhere($get) {
-		return $this->getWhere();
+		$where = $this->getWhere();
+
+		$where = preg_replace(
+			'~( DESC\s*)$~',
+			'',
+			$where
+		);
+
+		return $where;
 	}
 
 
@@ -819,7 +827,9 @@ title="Удалить"></a>
 	 */
 	public function getSortingField($elementData) {
 		$this->_is_sorting = true;
-		return \Wdpro\Tools\Controller::getOrderColumnRowElement($elementData);
+		$controller = static::getController();
+		return $controller::getOrderColumnRowElement($elementData);
+		//return \Wdpro\Tools\Controller::getOrderColumnRowElement($elementData);
 	}
 
 
@@ -843,7 +853,8 @@ title="Удалить"></a>
 
 		$currentRow = null;
 
-		$sortingField = $table::isField('sorting') ? 'sorting' : 'menu_order';
+		$controller = static::getController();
+		$sortingField = $controller::getSortingSqlField();
 
 		if ($sel = $table::select($where, 'id, '.$sortingField)) {
 
