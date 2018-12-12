@@ -3662,6 +3662,21 @@
 				data['disabled'] = disabled;
 			}
 
+			// Преобразование options в формат value => text
+			var options = [];
+			wdpro.each(data['options'], function (option) {
+				if (option[0] !==undefined && option[1] !== undefined) {
+					option = {
+						'value': option[0],
+						'text': option[1]
+					};
+				}
+
+				options.push(option);
+			});
+			data['options'] = options;
+
+
 			this._super(data);
 
 			if (data['value']) {
