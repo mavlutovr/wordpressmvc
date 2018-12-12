@@ -344,4 +344,42 @@ abstract class BaseController {
 		}
 	}
 
+
+	/**
+	 * Возвращает данные для колонки сортировки (Простые элементы)
+	 *
+	 * @param array $data Данные
+	 *
+	 * @return string
+	 */
+	public static function getOrderColumnRowElement ($data) {
+
+		$sortingField = static::getSortingSqlField();
+
+		return '<div class="js-wdpro-sorting-number wdpro-sorting-number"
+data-id="' . $data['id'] . '">'
+			. $data[$sortingField] . '</div>';
+	}
+
+
+	/**
+	 * Возвращает sql поле сортировки
+	 *
+	 * @return string
+	 * @throws \Exception
+	 */
+	public static function getSortingSqlField() {
+		$table = static::getSqlTableClass();
+
+		if ($table::isField('menu_order')) {
+			return 'menu_order';
+		}
+
+		if ($table::isField('sorting')) {
+			return 'sorting';
+		}
+
+		throw new \Exception('В таблице '.$table::getName().' нет поля `menu_order`, которое необходимо для сортировки.');
+	}
+
 }

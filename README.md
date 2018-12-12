@@ -1,16 +1,18 @@
-# ![WordpressMVC](images/logo.png)
+![WordpressMVC Wordpress MVC](images/h1.png)
+
+# Wordpress MVC
 
 [Домашняя страница плагина](https://github.com/mavlutovr/wordpressmvc)
 
 Плагин для wordpress, который позволяет вам разрабатывать не стандартный функционал на Wordpress с помощью MVC-подхода.
 
-По-сути вы получаете фреймворк внутри Wordpress.
+По-сути вы получаете MVC-фреймворк внутри Wordpress.
 
 [![](http://img.youtube.com/vi/7lLF9aMhrWA/0.jpg)](http://www.youtube.com/watch?v=7lLF9aMhrWA "")
 
 ## Что плагин вам дает?
 
-:eagle: Высокая скорость и простота разработки.
+:eagle: Высокая скорость и простота разработки. Например:
 * Чтобы создать форму, просто используйте класс формы. И в Php, и в Js.
 * Чтобы создать SQL таблицу, просто опишите ее поля, индексы в классе. И она создастся автоматом. Что-то поменяли в массиве - поменялось в SQL-таблице.
 * Ускорение и упрощение за счет MVC-подхода.
@@ -93,11 +95,11 @@
   * [Пространства имен](https://habr.com/post/132736/)
   * Классы, объекты
     * В том числе статические методы
-* Wordpress (хотя бы на базовом уровне)
+* Wordpress (хотя бы на самом базовом уровне)
 
 ## Как начать создавать сайты на WordpressMVC?
 
-Смотрите в разделе [Wiki](https://github.com/mavlutovr/wordpressmvc/tree/master/Wiki).
+Смотрите инструкции с видеопримерами в разделе [Wiki](https://github.com/mavlutovr/wordpressmvc/tree/master/Wiki).
 
 ## Как быстро и просто решить вопрос с плагином?
 

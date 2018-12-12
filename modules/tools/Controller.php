@@ -19,8 +19,9 @@ class Controller extends \Wdpro\BaseController {
 
 			$get = $_POST['get'];
 
-			// Страницы
 			if (isset($_POST['change']['row'])) {
+
+				// Страницы
 				if ( isset($get['post_type']) ) {
 					$entity = wdpro_get_entity_class_by_post_type($get['post_type']);
 					/** @var $entity \App\BasePage */
@@ -65,20 +66,6 @@ class Controller extends \Wdpro\BaseController {
 		echo '<div class="js-wdpro-sorting-number wdpro-sorting-number"
 data-id="' . $postId . '">'
 		     . get_post_field('menu_order', $postId) . '</div>';
-	}
-
-
-	/**
-	 * Возвращает данные для колонки сортировки (Простые элементы)
-	 *
-	 * @param array $data Данные
-	 *
-	 * @return string
-	 */
-	public static function getOrderColumnRowElement ($data) {
-		return '<div class="js-wdpro-sorting-number wdpro-sorting-number"
-data-id="' . $data['id'] . '">'
-		       . $data['sorting'] . '</div>';
 	}
 
 
