@@ -698,6 +698,7 @@ abstract class BaseEntity
 	 *      'label'=>'Товары',
 	 *
 	 *      // https://developer.wordpress.org/resource/dashicons/#products
+	 *      // https://fontawesome.com/icons
 	 *      'icon'=>'dashicons-products',
 	 *  )
 	 * );
