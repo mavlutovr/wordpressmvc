@@ -386,7 +386,9 @@ function wdpro_replace_query_params_in_url($url, $queryParams) {
 	$new = array();
 
 	$get = [];
-	parse_str($arr['query'], $get);
+	if (isset($arr['query'])) {
+		parse_str($arr['query'], $get);
+	}
 
 
 	if (is_array($get)) {
