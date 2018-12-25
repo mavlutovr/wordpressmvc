@@ -10,16 +10,37 @@ class Controller extends \Wdpro\BaseController {
 	 * @param string $messageInHtmlFormat Текст сообщения в формате html
 	 */
 	public static function sendMessageHtml($subject, $messageInHtmlFormat) {
-		
-		if ($sel = SqlTable::select('ORDER BY sorting'))
-		{
-			foreach($sel as $row)
-			{
+
+		if ($emails = static::getAdminEmails()) {
+			foreach ($emails as $email) {
 				\Wdpro\Sender\Controller::sendEmail(
-					$row['email'],
+					$email,
 					$_SERVER['HTTP_HOST'].' - '.$subject,
 					$messageInHtmlFormat);
 			}
+		}
+	}
+
+
+	/**
+	 * Возвращает массив ящиков для уведомлений
+	 *
+	 * Например для того, чтобы потом отправить на них письмо
+	 *
+	 * @return array
+	 */
+	public static function getAdminEmails() {
+
+		if ($sel = SqlTable::select('ORDER BY sorting'))
+		{
+			$emails = [];
+
+			foreach($sel as $row)
+			{
+				$emails[] = $row['email'];
+			}
+
+			return $emails;
 		}
 	}
 	
