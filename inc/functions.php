@@ -2239,7 +2239,7 @@ function wdpro_render_text($text, $data=null) {
 	if (is_array($data)) {
 		foreach($data as $key=>$value) {
 
-			$text = str_replace('{'.$key.'}', $value, $text);
+			$text = str_replace('['.$key.']', $value, $text);
 		}
 	}
 

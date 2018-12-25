@@ -17,7 +17,7 @@ class Controller extends \Wdpro\BaseController {
 
 		// Список шаблонов
 		\Wdpro\Console\Menu::add(array(
-			'n'=>100,
+			'position'=>'settings',
 			'roll'=>ConsoleRoll::class,
 		));
 	}
@@ -79,7 +79,8 @@ class Controller extends \Wdpro\BaseController {
 			$emails = explode(',', $emails);
 		}
 		
-		if ($template = static::getTemplate($name, $params)) {
+		if (is_array($emails)
+			&& $template = static::getTemplate($name, $params)) {
 			
 			foreach($emails as $email) {
 				
