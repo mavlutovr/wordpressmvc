@@ -826,7 +826,7 @@ abstract class BaseSqlTable
 
 
 			// Индекс существует
-			if (is_array($current_index_arr[$index_name]))
+			if (isset($current_index_arr[$index_name]) && is_array($current_index_arr[$index_name]))
 			{
 				// Получаем строки полей для сравнения
 				// Текущий индекс
