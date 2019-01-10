@@ -57,6 +57,8 @@ if (typeof Array.isArray === 'undefined') {
 	var readyFns = [];
 	var readyInited = false;
 
+
+
 	/**
 	 * Запускает каллбэк при готовности страницы к выколнению скриптов
 	 *
@@ -579,101 +581,101 @@ if (typeof Array.isArray === 'undefined') {
 		 * @param completeCallback {function} Каллбэк, срабатывающий при завершении всех функций
 		 */
 		onCompletion: function(completeCallback)
+    {
+      var self = this;
+
+      if (completeCallback)
+      {
+        this.completeCallback = completeCallback;
+      }
+
+      // Если есть функции, которые надо выполнить
+      if (this.functions.count() > 0)
+      {
+        // Остановить процесс
+        var stop = false;
+
+        /**
+         * Список ожидающих функций
+         */
+        var runArr = new List();
+
+        // Перечисляем функции
+        this.functions.each(function (fnOb, n)
+        {
+          if (!stop)
+          {
+            // Надо ли ожидать выполнение предыдущей функции
+            var wait = fnOb.wait;
+
+            // Надо ждать и это не первая функция
+            if (wait && n != 0)
+            {
+              stop = true;
+
+              // Убираем из функции метку о том, что надо ждать выполнение предыдущей функции
+              fnOb.wait = false;
+            }
+
+            // Не надо ждать выполнение предыдущей функции, запускаем эту
+            else if (!fnOb.runned)
+            {
+              (function ()
+              {
+	              // Получаем функцию
+	              var fn = fnOb.fn;
+
+	              // Запоминаем, что функция запущена
+	              fnOb.runned = true;
+
+	              // Каллбэк, который вызывается по завершении работы функции
+	              var complete = (function (data)
+	              {
+		              if (data && (
+				              data.className
+				              || data.prototype && data.prototype.className
+				              || data['__proto__'] && ['__proto__'].className
+			              ))
 		              {
-			              var self = this;
+			              // Ошибка, когда в результат отправляется объект класса
+			              // Так нельзя делать, потому что этот результат сливается с другими результатами
+			              // И у объектов ломаются свойства
+			              throw new Error('Waiter.wait() получил результат в виде объекта на основе класса ');
+		              }
 
-			              if (completeCallback)
-			              {
-				              this.completeCallback = completeCallback;
-			              }
+		              if (typeof data == 'object')
+		              {
+			              self.data = extend(data, self.data);
+		              }
 
-			              // Если есть функции, которые надо выполнить
-			              if (this.functions.count() > 0)
-			              {
-				              // Остановить процесс
-				              var stop = false;
+		              self.functionComplete(n);
+	              });
 
-				              /**
-				               * Список ожидающих функций
-				               */
-				              var runArr = new List();
+	              // Запоминаем функцию на запуск, который произойдет после перебора всех функций
+	              runArr.push({
+		              fn: fn,
+		              complete: complete
+	              });
+              })();
+            }
+          }
+        });
 
-				              // Перечисляем функции
-				              this.functions.each(function (fnOb, n)
-				              {
-					              if (!stop)
-					              {
-						              // Надо ли ожидать выполнение предыдущей функции
-						              var wait = fnOb.wait;
-
-						              // Надо ждать и это не первая функция
-						              if (wait && n != 0)
-						              {
-							              stop = true;
-
-							              // Убираем из функции метку о том, что надо ждать выполнение предыдущей функции
-							              fnOb.wait = false;
-						              }
-
-						              // Не надо ждать выполнение предыдущей функции, запускаем эту
-						              else if (!fnOb.runned)
-						              {
-							              (function ()
-							              {
-								              // Получаем функцию
-								              var fn = fnOb.fn;
-
-								              // Запоминаем, что функция запущена
-								              fnOb.runned = true;
-
-								              // Каллбэк, который вызывается по завершении работы функции
-								              var complete = (function (data)
-								              {
-									              if (data && (
-											              data.className
-											              || data.prototype && data.prototype.className
-											              || data['__proto__'] && ['__proto__'].className
-										              ))
-									              {
-										              // Ошибка, когда в результат отправляется объект класса
-										              // Так нельзя делать, потому что этот результат сливается с другими результатами
-										              // И у объектов ломаются свойства
-										              throw new Error('Waiter.wait() получил результат в виде объекта на основе класса ');
-									              }
-
-									              if (typeof data == 'object')
-									              {
-										              self.data = extend(data, self.data);
-									              }
-
-									              self.functionComplete(n);
-								              });
-
-								              // Запоминаем функцию на запуск, который произойдет после перебора всех функций
-								              runArr.push({
-									              fn: fn,
-									              complete: complete
-								              });
-							              })();
-						              }
-					              }
-				              });
-
-				              // Запуск функций после перебора
-				              runArr.each(function(element)
-				              {
-					              element.fn(element.complete);
-				              });
-			              }
+        // Запуск функций после перебора
+        runArr.each(function(element)
+        {
+          element.fn(element.complete, self.data);
+        });
+      }
 
 
-			              // Функций больше нет
-			              else
-			              {
-				              // Запускаем каллбэк, который ожидал их выполнение
-				              this.completeCallback && this.completeCallback(this.data);
-			              }
-		              },
+      // Функций больше нет
+      else
+      {
+        // Запускаем каллбэк, который ожидал их выполнение
+        this.completeCallback && this.completeCallback(this.data);
+      }
+    },
 
 
 		/**
@@ -1975,6 +1977,7 @@ if (typeof Array.isArray === 'undefined') {
 			'success': function (json) {
 
 				var data = self.parseJSON(json);
+				data = $.extend({}, data);
 				wdpro.trigger('ajaxData', data);
 
 				if (data['reloadPage']) {

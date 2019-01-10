@@ -13,6 +13,15 @@ class ConsoleForm extends \<?=(
 	 */
 	protected function initFields() {
 
+<?php if ($type == 'page'): ?>
+		// Текст страницы
+		$this->add([
+		'name' => 'post_content[lang]',
+		'top' => 'Текст страницы',
+		'type' => static::CKEDITOR,
+		]);
+<?php endif; ?>
+
 	}
 
 

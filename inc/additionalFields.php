@@ -282,8 +282,13 @@ function wdpro_the_h1($force=false)
  */
 function wdpro_the_title_standart()
 {
-	return wdpro_current_page()->getTitle();
-	//return get_the_title();
+	$wdproTitle = wdpro_current_page()->getTitle();
+
+	if ($wdproTitle) {
+		return $wdproTitle;
+	}
+
+	return get_the_title();
 }
 	
 

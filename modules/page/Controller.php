@@ -8,6 +8,7 @@ use Wdpro\Templates;
 
 class Controller extends \Wdpro\BaseController {
 
+
 	/**
 	 * Инициализация модуля
 	 */
@@ -164,7 +165,7 @@ class Controller extends \Wdpro\BaseController {
 	public static function initSite() {
 		
 		// Подменю по-умолчанию
-		wdpro_default_file(__DIR__ . '/default/submenu_standart.php', 
+		wdpro_default_file(__DIR__.'/../install/default/app_theme/submenu_standart.php',
 			WDPRO_TEMPLATE_PATH.'submenu_standart.php');
 
 		// Подменю

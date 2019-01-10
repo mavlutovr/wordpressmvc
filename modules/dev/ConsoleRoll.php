@@ -135,13 +135,14 @@ class ConsoleRoll extends \Wdpro\Console\Roll {
 			'name'=>'ConsoleRoll_icon',
 			'left'=>'<a href="https://developer.wordpress.org/resource/dashicons/"
 			            target="_blank">Иконка wordpress</a>,
-			            <a href="https://fontawesome.com/v4.7.0/icons/" target="_blank">Awesome</a>',
+			            <a href="https://fontawesome.com/v4.7.0/icons/" target="_blank">Awesome 4</a>,
+			            <a href="https://fontawesome.com/" target="_blank">Awesome 5</a>',
 		]);
 		$form->add([
 			'name'=>'ConsoleRoll_add_new',
 			'left'=>'Добавить ...',
 		]);
-		$form->add([
+		/*$form->add([
 			'name'=>'ConsoleRoll_sorting_field',
 			'left'=>'Поле сортировки',
 			'type'=>$form::SELECT,
@@ -150,7 +151,7 @@ class ConsoleRoll extends \Wdpro\Console\Roll {
 				'sorting'=>'sorting',
 				'menu_order'=>'menu_order',
 			],
-		]);
+		]);*/
 		$form->add([
 			'type'=>$form::HTML,
 			'html'=>'<hr>',
@@ -172,6 +173,19 @@ class ConsoleRoll extends \Wdpro\Console\Roll {
 		$form->onSubmit(function ($data) use (&$form, &$formHtml) {
 
 			if (!$data['plugin']) { $form->showErrorMessage('Ошибка'); return false; }
+
+
+			// Оставляем в иконке только css классы
+			$data['ConsoleRoll_icon'] = preg_replace_callback(
+				'~(<i class="(.+)"></i>)~',
+
+				function ($arr) { return $arr[2]; },
+
+				$data['ConsoleRoll_icon']
+			);
+
+			// Поле сортировки теперь всегда 'menu_order'
+			$data['ConsoleRoll_sorting_field'] = 'menu_order';
 
 
 			// Создаем папку модуля

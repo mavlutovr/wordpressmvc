@@ -38,6 +38,15 @@ if (is_file($appConsoleCssFile)) {
 	wdpro_add_css_to_console($appConsoleCssFile.'.css');
 }
 
+/**
+ * Дополнительная обработка хлебных крошек
+ *
+ * @param callback $callback Каллбэк, в который отправляется объект хлебных крошек
+ */
+function wdpro_breadcrumbs_init($callback) {
+	// Это просто заглушка, это нужно на сайте, но не в админке
+	// Но админка заходит в functions.php в теме и там может запускаться эта функция
+}
 
 do_action('wdpro-ready');
 Wdpro\Modules::run('initConsoleStart');

@@ -11,7 +11,7 @@ define('WDPRO_CONSOLE_URL', admin_url());
 define('WDPRO_BUTTON_CSS_CLASS', 'button button-primary button-large');
 
 // Иконки
-define('WDPRO_ICONS_PAGES', 'fa-file-o far fa-file');
+define('WDPRO_ICONS_PAGES', 'fa-file-o fas fa-file');
 define('WDPRO_ICONS_PRODUCTS', 'dashicons-products');
 define('WDPRO_ICONS_CART', 'dashicons-cart');
 

@@ -288,6 +288,14 @@
 							self.closeDialog();
 						}
 
+						var dialog = self.dialog();
+						if (dialog) {
+							response['content']
+							&& dialog.setContent(response['content']);
+							response['html']
+							&& dialog.setContent(response['html']);
+						}
+
 						self.loadingStop();
 					});
 				});
@@ -432,6 +440,14 @@
 				// Добавляем группу в форму
 				groupAdd(group);
 			}
+		},
+
+
+		/**
+		 * Убирает элементы формы
+		 */
+		removeElements: function () {
+			this.jForm.hide().trigger('hide');
 		},
 
 
@@ -796,7 +812,7 @@
 				params && params.err && this.messagesContainer.addClass('_error_message');
 
 				// Убираем саму форму
-				params && params.hideForm && this.jForm.hide().trigger('hide');
+				params && params.hideForm && this.removeElements();
 
 				// Закрываем окно
 				params && params.close && (function () {
@@ -1450,6 +1466,17 @@
 			this.html.closest('.js-dialog').trigger('close');
 		},
 
+
+		/**
+		 * Возвращает объект окна, в котором находится форма
+		 *
+		 * Если она в окне
+		 *
+		 * @return {*|wdpro.dialogs.Dialog}
+		 */
+		dialog: function () {
+			return wdpro.dialogs.getObjectByJquery(this.html.closest('.js-dialog'));
+		},
 
 		/**
 		 * Приостанавливает обычную отправку и отправляет в callback данные формы
@@ -2764,6 +2791,20 @@
 
 
 	/**
+	 * Сортировка по полю menu_order
+	 */
+	wdpro.forms.MenuOrderElement = wdpro.forms.SortingElement.extend({
+		init: function (params) {
+			params = wdpro.extend({
+				'name': 'menu_order'
+			}, params);
+
+			this._super(params);
+		}
+	});
+
+
+	/**
 	 * Пароль
 	 */
 	// export class StringElement extends BaseElement
@@ -3662,6 +3703,21 @@
 				data['disabled'] = disabled;
 			}
 
+			// Преобразование options в формат value => text
+			var options = [];
+			wdpro.each(data['options'], function (option) {
+				if (option[0] !==undefined && option[1] !== undefined) {
+					option = {
+						'value': option[0],
+						'text': option[1]
+					};
+				}
+
+				options.push(option);
+			});
+			data['options'] = options;
+
+
 			this._super(data);
 
 			if (data['value']) {
@@ -3839,6 +3895,8 @@
 		'String': StringElement,
 		'Sorting': wdpro.forms.SortingElement,
 		'SortingTop': wdpro.forms.SortingElement,
+		'MenuOrder': wdpro.forms.MenuOrderElement,
+		'MenuOrderTop': wdpro.forms.MenuOrderElement,
 		'Pass':   PassElement,
 		'Text':   TextElement,
 		'Hidden': HiddenElement,

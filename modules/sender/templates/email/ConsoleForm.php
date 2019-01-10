@@ -13,7 +13,8 @@ class ConsoleForm extends \Wdpro\Form\Form {
 
 		$this->add(array(
 			'name'=>'name',
-			'left'=>'Название шаблона',
+			'left'=>'Имя шаблона',
+			'bottom'=>'Имя, по которому к шаблону обращаться в скриптах (английские буквы)',
 			'*'=>true,
 		));
 		$this->add(array(
@@ -35,6 +36,7 @@ class ConsoleForm extends \Wdpro\Form\Form {
 			'type'=>'text',
 			'autoWidth'=>false,
 			'style'=>'width: 600px; height: 100px',
+			'bottom'=>'Сюда можно добавить описания шорткодов',
 		));
 	}
 

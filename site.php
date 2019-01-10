@@ -144,7 +144,7 @@ function breadcrumbs() {
 
 
 // Хлебные крошки
-add_action('wdpro_breadcrumbs_init', 'wdpro_breadcrumbs_init');
+add_action('wdpro_breadcrumbs_init', '_wdpro_breadcrumbs_init', 10);
 
 /**
  * Дополнительная иницциализация хлебных крошек, которую если что можно отключить
@@ -154,14 +154,14 @@ add_action('wdpro_breadcrumbs_init', 'wdpro_breadcrumbs_init');
  *
  * @param \Wdpro\Breadcrumbs\Breadcrumbs $breadcrumbs Объект хлебных крошек
  */
-function wdpro_breadcrumbs_init($breadcrumbs) {
+function _wdpro_breadcrumbs_init($breadcrumbs) {
 
 	if (!is_front_page()) {
 		$breadcrumbs->prependFrontPage();
 	}
 
 	$breadcrumbs->removeLast(true);
-	$breadcrumbs->unremoveLink();
+	$breadcrumbs->unremoveLastLink();
 }
 
 // Получаем пост и инициализируем хлебные крошки
@@ -181,6 +181,17 @@ wdpro_get_post(function ($post) {
 	}
 });
 
+
+/**
+ * Дополнительная обработка хлебных крошек
+ *
+ * @param callback $callback Каллбэк, в который отправляется объект хлебных крошек
+ */
+function wdpro_breadcrumbs_init($callback) {
+	add_action('wdpro_breadcrumbs_init', $callback, 20);
+}
+
+
 /**
  * Возвращает объект хлебных крошек
  *
@@ -193,6 +204,16 @@ function wdpro_breadcrumbs()
 		$breadcrumbs = new \Wdpro\Breadcrumbs\Breadcrumbs();
 	}
 	return $breadcrumbs;
+}
+
+
+/**
+ * Отображает хлебные крошки
+ *
+ * @return string
+ */
+function wdpro_the_breadcrumbs() {
+	return wdpro_breadcrumbs()->getHtml();
 }
 
 
@@ -270,13 +291,15 @@ function wdpro_on_page_type($type, $callback) {
 
 
 /**
- * Обработка текста страницы, когда открыта страница определенного типа
+ * Запускает каллбэк при появлении контента и отправляет в каллбэк объект страницы
+ * \Wdpro\BasePage
  *
- * @param string $type Тип страницы
- * @param callback $callback Каллбек
+ * @param string   $pageType Тип страницы \Wdpro\BasePage::getType()
+ * @param callback $callback Каллбэк
+ * @param int      $priority Приоритет
  */
-function wdpro_on_content_type($type, $callback) {
-
+function wdpro_on_content_type($pageType, $callback, $priority=10) {
+	wdpro_on_content_of_page_type($pageType, $callback, $priority);
 }
 
 
