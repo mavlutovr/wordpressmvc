@@ -188,10 +188,15 @@ class Menu extends Roll
 			), $params);
 
 
-			$where = array(
-				$params['where'],
-				$params['post_parent'],
-			);
+			if (is_array($params['where'])) {
+				$where = $params['where'];
+			}
+			else {
+				$where = array(
+					$params['where'],
+					$params['post_parent'],
+				);
+			}
 		}
 
 		$params = static::params($params);
