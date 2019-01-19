@@ -22,7 +22,7 @@ class Templates
 	 * Инициализация шаблонов
 	 */
 	public static function init() {
-		
+
 		$templatesAddToWordpress = function ($atts)
 		{
 			//print_r($atts);
@@ -163,11 +163,21 @@ class Templates
 				}
 
 				// Когда шаблон указан в параметрах страницы
+				$page_template = $post->page_template;
 				if (isset(static::$templatesByFiles[$post->page_template]['file']))
 				{
 					return static::$templatesByFiles[$post->page_template]['file'];
 				}
 
+
+				// Из параметров 2
+				$page_template = get_post_meta($post->ID, 'page_template');
+				if (is_array($page_template)) {
+					$page_template = $page_template[0];
+				}
+				if ($page_template && $page_template!='default') {
+					return WDPRO_TEMPLATE_PATH.$page_template;
+				}
 			}
 			
 			return $template;

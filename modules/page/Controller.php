@@ -386,8 +386,7 @@ class Controller extends \Wdpro\BaseController {
 									$dropdown_args = apply_filters( 'page_attributes_dropdown_pages_args', $dropdown_args, $post );
 									$pages = wp_dropdown_pages( $dropdown_args );
 
-									//print_r($dropdown_args);
-									//exit();
+									//print_r($dropdown_args); exit();
 
 									if ( ! empty($pages) )
 									{
@@ -399,11 +398,17 @@ class Controller extends \Wdpro\BaseController {
 										echo $pages;
 									} // end empty pages check
 
-									if ( 'page' == $post->post_type && 0 != count( get_page_templates( $post ) ) && get_option( 'page_for_posts' ) != $post->ID ) {
-										$template = !empty($post->page_template) ? $post->page_template : false;
+									// Шаблон
+									// Сделал, чтобы отображался во всех типах страниц
+									if ( /*'page' == $post->post_type && */0 != count( get_page_templates( ) ) && get_option( 'page_for_posts' ) != $post->ID ) {
+										$metaPageTemplate = get_post_meta($post->ID, 'page_template');
+										if (is_array($metaPageTemplate)) {
+											$metaPageTemplate = $metaPageTemplate[0];
+										}
+										$template = $metaPageTemplate;
 										?>
 										<p><strong><?php _e('Template') ?></strong></p>
-										<label class="screen-reader-text" for="page_template"><?php _e('Page Template') ?></label><select name="page_template" id="page_template">
+										<label class="screen-reader-text" for="page_template"><?php _e('Page Template') ?></label><select name="page_template_wdpro" id="page_template">
 											<?php
 											/**
 											 * Filter the title of the default page template displayed in the drop-down.
@@ -656,13 +661,19 @@ class Controller extends \Wdpro\BaseController {
 								$post->guid = home_url($en);
 							}
 
-							// № п.п., Видимость в меню
+							// Обработка данных из боковой формы
 							if ($entity = wdpro_object_by_post_id( $postId )) {
 
 								// № п.п.
 								if (isset($_POST['wdpro_menu_order'])) {
 									$post->menu_order = $entity->getMenuOrder( $_POST['wdpro_menu_order'] );
 									$data['menu_order'] = $post->menu_order;
+								}
+
+								if (isset($_POST['page_template_wdpro'])) {
+									$data['page_template'] = $_POST['page_template_wdpro'];
+									update_post_meta($postId, 'page_template', $data['page_template']);
+									$post->page_template = $data['page_template'];
 								}
 
 								// Видимость в меню
