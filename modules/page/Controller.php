@@ -408,7 +408,7 @@ class Controller extends \Wdpro\BaseController {
 										$template = $metaPageTemplate;
 										?>
 										<p><strong><?php _e('Template') ?></strong></p>
-										<label class="screen-reader-text" for="page_template"><?php _e('Page Template') ?></label><select name="page_template_wdpro" id="page_template">
+										<label class="screen-reader-text" for="page_template"><?php _e('Page Template') ?></label><select name="page_template" id="page_template">
 											<?php
 											/**
 											 * Filter the title of the default page template displayed in the drop-down.
@@ -620,6 +620,20 @@ class Controller extends \Wdpro\BaseController {
 						}
 
 
+						$updatePost = function () use (&$savePost, &$post) {
+							remove_action('save_post', $savePost);
+
+							wp_update_post($post);
+
+							// Обновление Guid
+							\Wdpro\Page\SqlTable::update(['guid'=>$post->guid], [
+								'ID'=>$post->ID,
+							]);
+
+							add_action('save_post', $savePost);
+						};
+
+
 						// Если это не черновик
 						if (get_post_field('post_status', $postId) != 'auto-draft'
 							&& get_post_type($postId) == $entity->getType()
@@ -670,9 +684,12 @@ class Controller extends \Wdpro\BaseController {
 									$data['menu_order'] = $post->menu_order;
 								}
 
-								if (isset($_POST['page_template_wdpro'])) {
-									$data['page_template'] = $_POST['page_template_wdpro'];
+								if (isset($_POST['page_template'])) {
+									$data['page_template'] = $_POST['page_template'];
+									$data['_wp_page_template'] = $_POST['page_template'];
 									update_post_meta($postId, 'page_template', $data['page_template']);
+									//print_r($data);
+									//update_post_meta($postId, '_wp_page_template', $data['page_template']);
 									$post->page_template = $data['page_template'];
 								}
 
@@ -698,6 +715,8 @@ class Controller extends \Wdpro\BaseController {
 								$data['menu_order'] = $_POST['wdpro_menu_order'];
 							}*/
 
+							$updatePost();
+
 							if ($data)
 							{
 
@@ -714,15 +733,10 @@ class Controller extends \Wdpro\BaseController {
 							}
 						}
 
-						remove_action('save_post', $savePost);
-						wp_update_post($post);
-
-						// Обновление Guid
-						\Wdpro\Page\SqlTable::update(['guid'=>$post->guid], [
-							'ID'=>$post->ID,
-						]);
-
-						add_action('save_post', $savePost);
+						// Черновик
+						else {
+							$updatePost();
+						}
 					};
 
 					// Сохранение
