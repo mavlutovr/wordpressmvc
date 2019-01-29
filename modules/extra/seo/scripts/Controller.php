@@ -30,8 +30,6 @@ class Controller extends \Wdpro\BaseController {
 
 		// Css to footer
 		$cssToFooter = function ($html) {
-			// Css To Footer
-			if (wdpro_get_option('wdpro_css_to_footer') == 1) {
 
 				// <link rel="stylesheet" type="text/css" href="..." media="all" />
 				// <link rel='stylesheet' id='bfa-font-awesome-css'  href='...' type='text/css'
@@ -40,7 +38,7 @@ class Controller extends \Wdpro\BaseController {
 				$html = preg_replace_callback(
 					'~(<link.*?rel=["\']stylesheet["\'].*?>)~i',
 					function ($arr) {
-						static::$cssFileHtmls .= $arr[1];
+						static::$cssFileHtmls .= $arr[1].PHP_EOL;
 						return '';
 					},
 					$html
@@ -64,9 +62,42 @@ class Controller extends \Wdpro\BaseController {
 					);
 				}
 
+			return $html;
+		};
+
+		// Css to header
+		$cssToHeader = function ($html) {
+
+				// <link rel="stylesheet" type="text/css" href="..." media="all" />
+				// <link rel='stylesheet' id='bfa-font-awesome-css'  href='...' type='text/css'
+				// media='all' />
+
+				$html = preg_replace_callback(
+					'~(<link.*?rel=["\']stylesheet["\'].*?>)~i',
+					function ($arr) {
+						static::$cssFileHtmls .= $arr[1].PHP_EOL;
+						return '';
+					},
+					$html
+				);
 
 
-			}
+
+				if (strstr($html, '<!-- cssPlace -->')) {
+					$html = str_replace(
+						'<!-- cssPlace -->',
+						static::$cssFileHtmls.PHP_EOL,
+						$html
+					);
+				}
+
+				else {
+					$html = str_replace(
+						'</head>',
+						static::$cssFileHtmls.PHP_EOL.'</head>',
+						$html
+					);
+				}
 
 			return $html;
 		};
@@ -120,7 +151,7 @@ class Controller extends \Wdpro\BaseController {
 
 					$html = str_replace(
 						'<head>',
-						'<head>'.PHP_EOL.implode(PHP_EOL, $first),
+						'<head>'.implode('', $first),
 						$html);
 
 					return $html;
@@ -133,6 +164,7 @@ class Controller extends \Wdpro\BaseController {
 
 		// Scripts To Noindex
 		$scriptsToNoindex = function ($html) {
+
 			// Скрипты в noindex
 			if (wdpro_get_option('wdpro_scripts_to_noindex') == 1) {
 
@@ -181,6 +213,7 @@ class Controller extends \Wdpro\BaseController {
 
 
 			}
+
 
 			// Убиаем noscript из head
 			$html = preg_replace_callback(
@@ -244,15 +277,16 @@ class Controller extends \Wdpro\BaseController {
 
 		// Css, Javascript, mail
 		add_filter('wdpro_html', function ($html)
-		use (&$cssToFooter, &$titleToTop, &$scriptsToNoindex) {
+		use (&$cssToFooter, &$cssToHeader, &$titleToTop, &$scriptsToNoindex) {
 
 			if (!static::$w3css) {
-				$html = $cssToFooter($html);
+				//$html = $cssToFooter($html);
+				$html = wdpro_get_option('wdpro_css_to_footer') ? $cssToFooter($html) : $cssToHeader($html);
 				$html = $titleToTop($html);
 				$html = $scriptsToNoindex($html);
 			}
 
-			// Интиспам ящиков
+			// Антиспам ящиков
 			if (wdpro_get_option('wdpro_mail_antispam')) {
 
 				$isMail = false;
@@ -307,11 +341,12 @@ class Controller extends \Wdpro\BaseController {
 
 		// Css WC3
 		add_filter('w3tc_minify_processed', function ($html)
-		use (&$cssToFooter, &$titleToTop, &$scriptsToNoindex) {
+		use (&$cssToFooter, &$cssToHeader, &$titleToTop, &$scriptsToNoindex) {
 
 			// Css
 			if (static::$w3css) {
-				$html = $cssToFooter($html);
+				//$html = $cssToFooter($html);
+				$html = wdpro_get_option('wdpro_css_to_footer') ? $cssToFooter($html) : $cssToHeader($html);
 				$html = $titleToTop($html);
 				$html = $scriptsToNoindex($html);
 			}
