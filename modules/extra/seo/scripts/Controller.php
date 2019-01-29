@@ -45,8 +45,7 @@ class Controller extends \Wdpro\BaseController {
 				);
 
 
-
-				if (strstr($html, '<!-- cssPlace -->')) {
+			if (strstr($html, '<!-- cssPlace -->')) {
 					$html = str_replace(
 						'<!-- cssPlace -->',
 						static::$cssFileHtmls.PHP_EOL,
@@ -55,11 +54,17 @@ class Controller extends \Wdpro\BaseController {
 				}
 
 				else {
-					$html = str_replace(
-						'</body>',
-						static::$cssFileHtmls.PHP_EOL.'</body>',
-						$html
-					);
+					if (strstr($html, '</body>')) {
+						$html = str_replace(
+							'</body>',
+							static::$cssFileHtmls.PHP_EOL.'</body>',
+							$html
+						);
+					}
+
+					else {
+						$html .= static::$cssFileHtmls;
+					}
 				}
 
 			return $html;
