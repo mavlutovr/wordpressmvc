@@ -80,7 +80,7 @@ class Controller extends \Wdpro\BaseController {
 				$html = preg_replace_callback(
 					'~(<link.*?rel=["\']stylesheet["\'].*?>)~i',
 					function ($arr) {
-						static::$cssFileHtmls .= $arr[1].PHP_EOL;
+						static::$cssFileHtmls .= '    '.$arr[1].PHP_EOL;
 						return '';
 					},
 					$html
@@ -97,9 +97,15 @@ class Controller extends \Wdpro\BaseController {
 				}
 
 				else {
-					$html = str_replace(
-						'</head>',
-						static::$cssFileHtmls.PHP_EOL.'</head>',
+					/*$html = str_replace(
+						'<meta charset',
+						static::$cssFileHtmls.PHP_EOL.'<meta charset',
+						$html
+					);*/
+
+					$html = preg_replace(
+						'~(<meta charset=[./ \S]*?>)~i',
+						'$1'.PHP_EOL.PHP_EOL.static::$cssFileHtmls.PHP_EOL,
 						$html
 					);
 				}
@@ -285,7 +291,6 @@ class Controller extends \Wdpro\BaseController {
 		use (&$cssToFooter, &$cssToHeader, &$titleToTop, &$scriptsToNoindex) {
 
 			if (!static::$w3css) {
-				//$html = $cssToFooter($html);
 				$html = wdpro_get_option('wdpro_css_to_footer') ? $cssToFooter($html) : $cssToHeader($html);
 				$html = $titleToTop($html);
 				$html = $scriptsToNoindex($html);
@@ -399,6 +404,12 @@ class Controller extends \Wdpro\BaseController {
 		remove_action( 'wp_head', 'wp_enqueue_scripts', 1 );
 		remove_action( 'wp_head', 'wp_print_head_scripts', 9 );
 		remove_action( 'wp_head', 'wp_print_scripts' );
+
+		if ($to === 'footer') {
+			add_action('wp_head', function () {
+				static::printHead();
+			});
+		}
 
 		add_action('wp_'.$to, function () {
 		//	wp_print_styles();
