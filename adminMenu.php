@@ -216,7 +216,7 @@ href="'.WDPRO_CONSOLE_URL.'themes.php">Активировать тему</a>
 
 								array(
 									'name'=>'wdpro_css_to_footer',
-									'right'=>'Переместить Css в футер',
+									'right'=>'Переместить Css в футер (чтобы поставить css в свое место, укажите в коде &lt;!-- cssPlace --&gt;)',
 									'type'=>'checkbox',
 								),
 
