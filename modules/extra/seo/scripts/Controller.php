@@ -1,4 +1,7 @@
 <?php
+
+// todo <head> вообще можно сделать через шаблон, чтобы можно было менять, как вздумается
+
 namespace Wdpro\Extra\Seo\Scripts;
 
 class Controller extends \Wdpro\BaseController {
