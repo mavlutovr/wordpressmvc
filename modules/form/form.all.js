@@ -296,7 +296,19 @@
 							&& dialog.setContent(response['html']);
 						}
 
-						self.loadingStop();
+
+						if (response['error']) {
+							self.showErrorMessage(response['error']);
+						}
+
+
+						if (response['location']) {
+							window.location = response['location'];
+						}
+
+						else {
+							self.loadingStop();
+						}
 					});
 				});
 			}
@@ -1475,6 +1487,7 @@
 		 * @return {*|wdpro.dialogs.Dialog}
 		 */
 		dialog: function () {
+			if (wdpro.dialogs)
 			return wdpro.dialogs.getObjectByJquery(this.html.closest('.js-dialog'));
 		},
 
