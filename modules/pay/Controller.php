@@ -379,7 +379,7 @@ class Controller extends \Wdpro\BaseController {
 	{
 		$params['target'] = urlencode($params['target']);
 
-		return 'pay?'.wdpro_urlencode_array(array(
+		return home_url().'/pay?'.wdpro_urlencode_array(array(
 			'pay'=>$params
 		));
 	}
