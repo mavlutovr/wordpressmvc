@@ -3187,3 +3187,22 @@ function wdpro_js_data ($key, $value) {
 
 	$wdproJsData[$key] = $value;
 }
+
+
+/**
+ * Возвращает ID текущего пользователя
+ *
+ * @return int
+ */
+function wdpro_person_auth_id() {
+
+	$personId = get_current_user_id();
+
+	// Чтобы можно было заменить ID пользователя на какой-нибудь свой
+	$personId = apply_filters(
+		'wdpro_person_auth_id',
+		$personId
+	);
+
+	return $personId;
+}

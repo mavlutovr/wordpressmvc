@@ -74,40 +74,6 @@ class Controller extends \Wdpro\BaseController {
 
 
 	/**
-	 * Возвращает объект платежки по $_GET данным
-	 * 
-	 * @return Entity
-	 * @throws \Exception
-	 */
-	public static function getPayByGet() {
-		
-		if (isset($_GET['in']) && isset($_GET['sw'])) {
-
-			/** @var Entity $pay */
-			$pay = wdpro_object( Entity::class, $_GET['in'] );
-
-			if ($pay->secretIsCorrect( $_GET['sw'] )) {
-
-				return $pay;
-			}
-		}
-	}
-
-
-	/**
-	 * Выполнение скриптов после инициализаций всех модулей (в админке)
-	 */
-	public static function runConsole() {
-
-		static::eachMethods(function ($method) {
-			
-			/** @var MethodInterface $method */
-			$method::runConsole();
-		});
-	}
-
-
-	/**
 	 * Выполнение скриптов после инициализаций всех модулей (на сайте)
 	 */
 	public static function runSite() {
@@ -150,6 +116,40 @@ class Controller extends \Wdpro\BaseController {
 
 			/** @var MethodInterface $method */
 			$method::runSite();
+		});
+	}
+
+
+	/**
+	 * Возвращает объект платежки по $_GET данным
+	 * 
+	 * @return Entity
+	 * @throws \Exception
+	 */
+	public static function getPayByGet() {
+		
+		if (isset($_GET['in']) && isset($_GET['sw'])) {
+
+			/** @var Entity $pay */
+			$pay = wdpro_object( Entity::class, $_GET['in'] );
+
+			if ($pay->secretIsCorrect( $_GET['sw'] )) {
+
+				return $pay;
+			}
+		}
+	}
+
+
+	/**
+	 * Выполнение скриптов после инициализаций всех модулей (в админке)
+	 */
+	public static function runConsole() {
+
+		static::eachMethods(function ($method) {
+			
+			/** @var MethodInterface $method */
+			$method::runConsole();
 		});
 	}
 

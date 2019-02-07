@@ -22,7 +22,9 @@ interface TargetInterface
 	 * return array(
 	 *
 	 *      'params'=>array(
-	 *          'referer'=>home_url().'/aftersale',
+	 *          'target'=>$this->getData(),
+	 *          'aftersale'=>home_url().'/aftersale',
+	 *          'pay-error'=>home_url().'/pay-error',
 	 *      ),
 	 *
 	 *      'cost'=>$this->data['cost'],
