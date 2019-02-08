@@ -72,11 +72,12 @@ Wdpro\Autoload::add('Wdpro\Lang', __DIR__.'/modules/lang');
 require(__DIR__ . '/Modules.php');
 
 // Add modules
+Wdpro\Modules::addWdpro('adminNotice');
+Wdpro\Modules::addWdpro('secure');
 Wdpro\Modules::addWdpro('form');
 Wdpro\Modules::addWdpro('tools');
 Wdpro\Modules::addWdpro('page');
 Wdpro\Modules::addWdpro('breadcrumbs');
-Wdpro\Modules::addWdpro('adminNotice');
 Wdpro\Modules::addWdpro('sender');
 Wdpro\Modules::addWdpro('counters');
 Wdpro\Modules::addWdpro('extra/downloadFile');
