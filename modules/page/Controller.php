@@ -729,7 +729,7 @@ class Controller extends \Wdpro\BaseController {
 								}
 
 								// Сохранение в основной базе сущности
-								$entity->mergeData($data)->save();
+								$entity->consoleMergeDataFromForm($data)->save();
 							}
 						}
 

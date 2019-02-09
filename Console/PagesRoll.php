@@ -393,7 +393,7 @@ class PagesRoll extends Roll
 
 								if ($postWdpro = wdpro_get_post_by_id($_GET['post'])) {
 									$formData = array_merge(
-										$postWdpro->getData(),
+										$postWdpro->consoleGetDataForForm(),
 										$formData
 									);
 								}
@@ -446,8 +446,7 @@ class PagesRoll extends Roll
 
 
 				// Колонкии
-				if (isset($_GET['post_type']) && $_GET['post_type'] == 
-					$postType) {
+				if (isset($_GET['post_type']) && $_GET['post_type'] == $postType) {
 					
 					// Заголовки
 					$manage_posts_columns = function ( $columns) use (&$params, &$entityClass)

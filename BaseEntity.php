@@ -152,6 +152,61 @@ abstract class BaseEntity
 
 
 	/**
+	 * Установка данных формы из админки
+	 *
+	 * Для того, чтобы поменять эти данные, переопределите метод prepareDataFromConsoleForm
+	 *
+	 * @param array $data Данные формы
+	 * @return $this
+	 */
+	public function consoleMergeDataFromForm($data) {
+		$data = $this->prepareDataFromConsoleForm($data);
+		$this->mergeData($data);
+		return $this;
+	}
+
+
+	/**
+	 * Обработка данных, которые пришли из формы админки
+	 *
+	 * @param array $data Данные из формы админки
+	 * @return array
+	 */
+	public function prepareDataFromConsoleForm($data) {
+
+		return $data;
+	}
+
+
+	/**
+	 * Возвращает данные для формы админки
+	 *
+	 * Для изменения этих данных переопределите метод prepareDataForConsoleForm
+	 *
+	 * @return array
+	 */
+	public function consoleGetDataForForm() {
+
+		$data = $this->getData();
+		$data = $this->prepareDataForConsoleForm($data);
+
+		return $data;
+	}
+
+
+	/**
+	 * Обработка данных перед отправкой их в форму админки
+	 *
+	 * @param array $data Данные
+	 * @return array
+	 */
+	public function prepareDataForConsoleForm($data) {
+
+		return $data;
+	}
+
+
+	/**
 	 * Возвращает данные сущности
 	 *
 	 * @param null|string $key Ключ данных, которые необходимо получить.
@@ -471,7 +526,7 @@ abstract class BaseEntity
 				
 				if ($this->loaded())
 				{
-					$this->_consoleForm->setData($this->getData());
+					$this->_consoleForm->setData($this->consoleGetDataForForm());
 				}
 			}
 			else
