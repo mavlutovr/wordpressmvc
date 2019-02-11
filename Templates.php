@@ -172,7 +172,7 @@ class Templates
 
 				// Из параметров 2
 				$page_template = get_post_meta($post->ID, 'page_template');
-				if (is_array($page_template)) {
+				if (is_array($page_template) && isset($page_template[0])) {
 					$page_template = $page_template[0];
 				}
 				if ($page_template && $page_template!='default') {
