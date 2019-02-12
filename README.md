@@ -24,41 +24,40 @@ namespace App\Gallery;
 
 class ConsoleForm extends \App\BaseForm {
 
-	// Инициализация полей
-	protected function initFields()
-	{
-		// Поле загрузки картинки
-		$this->add([
-			'name' => 'image',
-			'left' => 'Картинка',
-			'type' => static::IMAGE,
+    // Инициализация полей
+    protected function initFields()
+    {
+        // Поле загрузки картинки
+        $this->add([
+            'name' => 'image',
+            'left' => 'Картинка',
+            'type' => static::IMAGE,
 
-			// Изменение размеров картинки
-			'resize' => [
+            // Изменение размеров картинки
+            'resize' => [
 
-				// Большая
-				[ 'width' => 1000 ],
+                // Большая
+                [ 'width' => 1000 ],
 
-				// Поменьше
-				[
-					'width' => 250,
-					'height' => 200,
-					'type' => 'crop',
-					'dir' => 'small'
-				],
+                // Поменьше
+                [
+                    'width' => 250,
+                    'height' => 200,
+                    'type' => 'crop',
+                    'dir' => 'small'
+                ],
+            ],
+        ]);
 
-			],
-		]);
+        // Текстовое поле
+        $this->add([
+            'name'=>'text',
+            'left'=>'Описание картинки',
+        ]);
 
-		// Текстовое поле
-		$this->add([
-			'name'=>'text',
-			'left'=>'Описание картинки',
-		]);
-
-		// Кнопка "Сохранить"
-		$this->add(static::SUBMIT_SAVE);
-	}
+        // Кнопка "Сохранить"
+        $this->add(static::SUBMIT_SAVE);
+    }
 }
 ```
 
