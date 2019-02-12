@@ -128,8 +128,8 @@ class ConsoleRoll extends \Wdpro\Console\Roll {
     // Заголовки списка
     public function templateHeaders() {
         return [
-            'Фотография',
-            'Подпись',
+            'Картинка',
+            'Подпись к картинке',
             '№ п.п.',
         ];
     }
@@ -139,13 +139,13 @@ class ConsoleRoll extends \Wdpro\Console\Roll {
     {
         return [
             
-            // Фотография
+            // Картинка
             '<img src="'
                 . WDPRO_UPLOAD_IMAGES_URL
                 . 'small/' . $data['image']
                 . '">',
 
-            // Подпись к фото
+            // Подпись к картинке
             $data['text'],
 
             // № п.п.
