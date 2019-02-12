@@ -70,32 +70,32 @@ namespace App\Gallery;
 class SqlTable extends \App\BaseSqlTable {
 	
     // Имя таблицы
-	protected static $name = 'app_gallery';
+    protected static $name = 'app_gallery';
 
-	// Структура таблицы
+    // Структура таблицы
     // (Таблица в базе меняется автоматически)
-	protected static function structure()
-	{
-		return [
+    protected static function structure()
+    {
+        return [
 
-			// Поля таблицы
-			static::COLLS => [
-				'id',
-				'menu_order'=>'int',
-				'post_parent'=>'int',
-				'image', // (varchar 255)
-				'text'=>'text',
-			],
+            // Поля таблицы
+            static::COLLS => [
+                'id',
+                'menu_order'=>'int',
+                'post_parent'=>'int',
+                'image', // (varchar 255)
+                'text'=>'text',
+            ],
 
-			// Индексы
-			static::INDEX => [
-				'post_parent',
-			],
+            // Индексы
+            static::INDEX => [
+                'post_parent',
+            ],
 
-			// Тип таблицы
-			static::ENGINE => static::INNODB,
-		];
-	}
+            // Тип таблицы
+            static::ENGINE => static::INNODB,
+        ];
+    }
 }
 ```
 
@@ -108,51 +108,50 @@ namespace App\Gallery;
 class ConsoleRoll extends \Wdpro\Console\Roll {
 	
     // Параметры списка
-	public static function params() {
-		return [
+    public static function params() {
+        return [
             
-			'labels' => [
-				'label' => 'Фотогалерея',
-				'add_new' => 'Добавить фото',
-			],
+            'labels' => [
+                'label' => 'Фотогалерея',
+                'add_new' => 'Добавить фото',
+            ],
 
-			'where' => [
-				'WHERE `post_parent`=%d
-				ORDER BY `menu_order`',
-				[ $_GET['sectionId'] ]
-			],
+            'where' => [
+                'WHERE `post_parent`=%d ORDER BY `menu_order`',
+                [ $_GET['sectionId'] ]
+            ],
 
-			'icon' => 'dashicons-format-gallery',
-		];
-	}
+            'icon' => 'dashicons-format-gallery',
+        ];
+    }
 
-	// Заголовки списка
-	public function templateHeaders() {
-		return [
-			'Фотография',
-			'Подпись',
-			'№ п.п.',
-		];
-	}
+    // Заголовки списка
+    public function templateHeaders() {
+        return [
+            'Фотография',
+            'Подпись',
+            '№ п.п.',
+        ];
+    }
 
-	// Строка списка
-	public function template($data, $entity)
-	{
-		return [
+    // Строка списка
+    public function template($data, $entity)
+    {
+        return [
             
             // Фотография
-			'<img src="'
-				.WDPRO_UPLOAD_IMAGES_URL
-            	. 'small/' . $data['image']
-				. '">',
+            '<img src="'
+                . WDPRO_UPLOAD_IMAGES_URL
+                . 'small/' . $data['image']
+                . '">',
 
-            // Подпись
-			$data['text'],
+            // Подпись к фото
+            $data['text'],
 
             // № п.п.
-			$this->getSortingField($data),
-		];
-	}
+            $this->getSortingField($data),
+        ];
+    }
 }
 ```
 
