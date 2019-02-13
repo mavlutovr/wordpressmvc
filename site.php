@@ -306,9 +306,14 @@ function wdpro_on_content_type($pageType, $callback, $priority=10) {
 /**
  * Возвращает текст старницы
  *
+ * @param bool $echo Сразу отправить в браузер
  * @return string
  */
-function wdpro_the_content() {
+function wdpro_the_content($echo=true) {
+
+	if (!$echo) {
+		ob_start();
+	}
 
 	if (have_posts())
 	{
@@ -320,6 +325,13 @@ function wdpro_the_content() {
 
 	else if ($GLOBALS['post']) {
 		echo $GLOBALS['post']->post_content;
+	}
+
+	if (!$echo) {
+		$content = ob_get_contents();
+		ob_clean();
+		ob_end_flush();
+		return $content;
 	}
 }
 

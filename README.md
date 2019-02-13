@@ -1,14 +1,170 @@
 ![WordpressMVC Wordpress MVC](images/h1.png)
 
-# Wordpress MVC
+# [Wordpress MVC](https://github.com/mavlutovr/wordpressmvc)
 
-[Домашняя страница плагина](https://github.com/mavlutovr/wordpressmvc)
-
-Плагин для wordpress, который позволяет вам разрабатывать не стандартный функционал на Wordpress с помощью MVC-подхода.
+Плагин для wordpress, который позволяет вам разрабатывать не стандартный функционал на Wordpress с помощью MVC.
 
 По-сути вы получаете MVC-фреймворк внутри Wordpress.
 
+
+
+## Видеообзор за 8 минут
+
 [![](http://img.youtube.com/vi/7lLF9aMhrWA/0.jpg)](http://www.youtube.com/watch?v=7lLF9aMhrWA "")
+
+
+
+## Несколько примеров
+
+### Форма в админке
+
+```php
+<?php
+namespace App\Gallery;
+
+class ConsoleForm extends \App\BaseForm {
+
+    // Инициализация полей
+    protected function initFields()
+    {
+        // Поле загрузки картинки
+        $this->add([
+            'name' => 'image',
+            'left' => 'Картинка',
+            'type' => static::IMAGE,
+
+            // Изменение размеров картинки
+            'resize' => [
+
+                // Большая
+                [ 'width' => 1000 ],
+
+                // Поменьше
+                [
+                    'width' => 250,
+                    'height' => 200,
+                    'type' => 'crop',
+                    'dir' => 'small'
+                ],
+            ],
+        ]);
+
+        // Текстовое поле
+        $this->add([
+            'name'=>'text',
+            'left'=>'Описание картинки',
+        ]);
+
+        // Кнопка "Сохранить"
+        $this->add(static::SUBMIT_SAVE);
+    }
+}
+```
+
+### Mysql таблица
+
+```php
+<?php
+namespace App\Gallery;
+
+class SqlTable extends \App\BaseSqlTable {
+	
+    // Имя таблицы
+    protected static $name = 'app_gallery';
+
+    // Структура таблицы
+    // (Таблица в базе меняется автоматически)
+    protected static function structure()
+    {
+        return [
+
+            // Поля таблицы
+            static::COLLS => [
+                'id',
+                'menu_order'=>'int',
+                'post_parent'=>'int',
+                'image', // (varchar 255)
+                'text'=>'text',
+            ],
+
+            // Индексы
+            static::INDEX => [
+                'post_parent',
+            ],
+
+            // Тип таблицы
+            static::ENGINE => static::INNODB,
+        ];
+    }
+}
+```
+
+### Список в админке
+
+```php
+<?php
+namespace App\Gallery;
+
+class ConsoleRoll extends \Wdpro\Console\Roll {
+	
+    // Параметры списка
+    public static function params() {
+        return [
+            
+            'labels' => [
+                'label' => 'Фотогалерея',
+                'add_new' => 'Добавить фото',
+            ],
+
+            'where' => [
+                'WHERE `post_parent`=%d ORDER BY `menu_order`',
+                [ $_GET['sectionId'] ]
+            ],
+
+            'icon' => 'dashicons-format-gallery',
+        ];
+    }
+
+    // Заголовки списка
+    public function templateHeaders() {
+        return [
+            'Картинка',
+            'Подпись к картинке',
+            '№ п.п.',
+        ];
+    }
+
+    // Строка списка
+    public function template($data, $entity)
+    {
+        return [
+            
+            // Картинка
+            '<img src="'
+                . WDPRO_UPLOAD_IMAGES_URL
+                . 'small/' . $data['image']
+                . '">',
+
+            // Подпись к картинке
+            $data['text'],
+
+            // № п.п.
+            $this->getSortingField($data),
+        ];
+    }
+}
+```
+
+
+
+## Пошаговые инструкции
+
+- На русском
+- Вместе с видео-примерами
+
+Смотрите в разделе [Wiki](https://github.com/mavlutovr/wordpressmvc/tree/master/Wiki).
+
+
 
 ## Что плагин вам дает?
 
@@ -37,6 +193,8 @@
 * От чего вы сэкономите свое время на объяснениях. А ваш заказчик будет еще больше доволен сотрудничеством с вами.
 
 :package: При этом всем - возможность использовать Wordpress. А значит, огромное количество готовых решений. Которые помогут сэкономить вам время.
+
+
 
 ## Для каких сайтов подходит плагин Wordpress MVC?
 
@@ -68,38 +226,22 @@
      	
      - Будет выводить информацию, которая соответствует текущему языку
 
-:thinking: **Для интернет-магазинов**
-
-Для магазинов подходит меньше. Пока.
-
-Скажем так. Если есть возможность использовать WooCommerce. То лучше использовать WooCommerce.
-
-- Есть
-  - Подключение к системам оплаты:
-    - Робокасса
-    - Яндекс.Касса
-    - PayPal
-- Нету (надо будет разрабатывать самим):
-  - Корзина
-  - Заказы
-  - Доставка
-
 :ok_hand: **Для лендингов**
 
 Тоже хорошо подходит. Особенно, когда на лендинге вам надо сделать списоки блоков, которые редактируются из админки.
+
+
 
 ## Чем нужно владеть, чтобы пользоваться плагином?
 
 * MVC-подходом
 * PHP
-  * [Пространства имен](https://habr.com/post/132736/)
+  * Пространства имен
   * Классы, объекты
     * В том числе статические методы
-* Wordpress (желательно, но не обязательно)
+* Wordpress (не обязательно)
 
-## Как начать создавать сайты на WordpressMVC?
 
-Смотрите инструкции с видеопримерами в разделе [Wiki](https://github.com/mavlutovr/wordpressmvc/tree/master/Wiki).
 
 ## Как быстро и просто решить вопрос с плагином?
 
