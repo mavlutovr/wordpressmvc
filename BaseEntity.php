@@ -37,7 +37,19 @@ abstract class BaseEntity
 	 *
 	 * @param int|string|array $dataOrId ID или данные объекта
 	 *
-	 * @return self
+	 * @return $this
+	 */
+	public static function instance($dataOrId) {
+		return static::getEntity($dataOrId);
+	}
+
+
+	/**
+	 * Возвращает экземпляр объекта
+	 *
+	 * @param int|string|array $dataOrId ID или данные объекта
+	 *
+	 * @return $this
 	 */
 	public static function getEntity($dataOrId) {
 		return wdpro_object(get_called_class(), $dataOrId);
