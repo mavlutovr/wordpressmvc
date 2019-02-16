@@ -725,11 +725,32 @@ if (typeof Array.isArray === 'undefined') {
 		var waiter = new wdpro.Waiter();
 
 		// Добавляем функции кроме последней
-		wdpro.each(args, function (arg, i) {
-			if (i < args.length-1) {
-				waiter.add(arg, true);
-			}
-		});
+		for (var i=0; i < args.length - 1; i ++) {
+			waiter.wait(args[i], true);
+		}
+
+		// Добавляем последнюю функцию
+		waiter.run(args[args.length-1]);
+	};
+
+
+	/**
+	 * Дожидается выполнения всех функций и после этого запускает последнюю
+	 *
+	 * @param fn1 {function} Функция 1
+	 * @param fn2 {function} Функция 2
+	 * @param fnN {function} Функция N
+	 */
+	wdpro.wait = function (fn1, fn2, fnN) {
+
+		var args = wdpro.args(arguments);
+
+		var waiter = new wdpro.Waiter();
+
+		// Добавляем функции кроме последней
+		for (var i=0; i < args.length - 1; i ++) {
+			waiter.wait(args[i]);
+		}
 
 		// Добавляем последнюю функцию
 		waiter.run(args[args.length-1]);
