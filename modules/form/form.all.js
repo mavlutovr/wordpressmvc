@@ -297,17 +297,19 @@
 						}
 
 
+						// Loading Stop
+						if (!response['location']) {
+							self.loadingStop();
+						}
+
+						// Ошибка
 						if (response['error']) {
 							self.showErrorMessage(response['error']);
 						}
 
-
+						// Редирект
 						if (response['location']) {
 							window.location = response['location'];
-						}
-
-						else {
-							self.loadingStop();
 						}
 					});
 				});
@@ -1527,7 +1529,10 @@
 		 * Показать на форме состояние загрузки
 		 */
 		loading: function () {
+			console.log('loading');
 			//this.jForm && this.jForm.find('.JS_submit').addClass('loading');
+			if (this._loadingProcess) return false;
+			this._loadingProcess = true;
 			this.jForm && this.jForm.find('.JS_submit').loading();
 		},
 
@@ -1537,6 +1542,8 @@
 		 */
 		loadingStop: function () {
 			this.jForm && this.jForm.find('.JS_submit').loadingStop();
+			this._loadingProcess = false;
+			console.log('loadingStop');
 		}
 	});
 
