@@ -284,6 +284,10 @@ class Controller extends \Wdpro\BaseController {
 				// Параметры
 				$targetPayParams = $target->payGetParams();
 
+				if (isset($targetPayParams['person_id']) && $targetPayParams['person_id']) {
+					$transaction['person_id'] = $targetPayParams['person_id'];
+				}
+
 				if (!isset($targetPayParams['params']['referer']))
 				{
 					if (isset($params['referer']))

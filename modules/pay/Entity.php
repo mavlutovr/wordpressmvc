@@ -13,7 +13,11 @@ class Entity extends \Wdpro\BaseEntity {
 
 		$data['secret'] = md5(rand(1000000, 10000000));
 		$data['created'] = time();
-		$data['visitor_id'] = wdpro_visitor_session_id();
+
+		if (!isset($data['visitor_id']))
+			$data['visitor_id'] = wdpro_visitor_session_id();
+
+		if (!isset($data['person_id']))
 		$data['person_id'] = wdpro_person_auth_id();
 		
 		return $data;
