@@ -76,8 +76,8 @@ abstract class BaseSqlTable
 	 *
 	 * @param string|array $where Параметры запроса или сам запрос
 	 * 'WHERE a="A"'
-	 * array('WHERE a=%s', 'A')
-	 * array('a'=>'A')
+	 * array('WHERE field=%s', 'value')
+	 * array('field'=>'value')
 	 * @param string $fields Поля, которые выбрать из таблицы
 	 * @param null|array $insertIfNotExistsThisData Данные по-умолчанию
 	 * Они добавяться в таблицу, если строка будет не найдена

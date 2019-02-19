@@ -447,6 +447,34 @@ function wdpro_current_uri($queryChanges=null)
 
 
 /**
+ * Возвращает текущий путь страницы от домена до query_string
+ *
+ * @return string
+ */
+function wdpro_current_path() {
+	$uri = '';
+	if (isset($_SERVER['REQUEST_URI_ORIGINAL'])) $uri = $_SERVER['REQUEST_URI_ORIGINAL'];
+	if (!$uri) $uri = $_SERVER['REQUEST_URI'];
+
+	$parsedUri = parse_url($uri);
+	return $parsedUri['path'];
+}
+
+
+/**
+ * Возвращает имя поста (определяет по адресу, а не по get_post())
+ *
+ * @return string
+ */
+function wdpro_current_post_name() {
+	$path = wdpro_current_path();
+	$path = preg_replace('~^/(.*)$~', '$1', $path);
+
+	return $path;
+}
+
+
+/**
  * Возвращает абсолютный адрес текущей страницы
  *
  * @param null|array $queryChanges Изменить параметры QUERY_STRING согласно этому массиву
@@ -2360,10 +2388,10 @@ function wdpro_on_uri_content($uri, $callback) {
 		'wp',
 		function () use (&$uri, &$callback) {
 
-			$post = get_post();
-
 			if (!is_array($uri)) $uri = [$uri];
 
+			// Определяем по посту
+			$post = get_post();
 			if ($post) {
 				foreach($uri as $uriOne) {
 					if (($uriOne == $post->post_name)
@@ -2372,6 +2400,13 @@ function wdpro_on_uri_content($uri, $callback) {
 						break;
 					}
 				}
+			}
+
+			// Определяем по адресу
+			else {
+				$currentPostName = wdpro_current_post_name();
+
+				return $currentPostName === $uri;
 			}
 		}
 	);
@@ -3157,4 +3192,40 @@ function wdpro_js_data ($key, $value) {
 	global $wdproJsData;
 
 	$wdproJsData[$key] = $value;
+}
+
+
+/**
+ * Возвращает ID текущего пользователя
+ *
+ * @return int
+ */
+function wdpro_person_auth_id() {
+
+	$personId = get_current_user_id();
+
+	// Чтобы можно было заменить ID пользователя на какой-нибудь свой
+	$personId = apply_filters(
+		'wdpro_person_auth_id',
+		$personId
+	);
+
+	return $personId;
+}
+
+
+/**
+ * Возвращает ip посетителя
+ *
+ * @return string
+ */
+function wdpro_get_visitor_ip(){
+	if(!empty($_SERVER['HTTP_CLIENT_IP'])){
+		$ip = $_SERVER['HTTP_CLIENT_IP'];
+	}elseif(!empty($_SERVER['HTTP_X_FORWARDED_FOR'])){
+		$ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+	}else{
+		$ip = $_SERVER['REMOTE_ADDR'];
+	}
+	return $ip;
 }

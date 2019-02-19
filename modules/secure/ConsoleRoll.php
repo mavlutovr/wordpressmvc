@@ -1,5 +1,5 @@
-<?php echo '<?php'.PHP_EOL; ?>
-namespace <?php echo $namespace; ?>;
+<?php
+namespace Wdpro\Secure;
 
 class ConsoleRoll extends \Wdpro\Console\Roll {
 
@@ -32,15 +32,13 @@ class ConsoleRoll extends \Wdpro\Console\Roll {
 
 		return [
 			'labels' => [
-				'label'   => '<?php echo $ConsoleRoll_label; ?>',
-				<?php if ($ConsoleRoll_add_new): ?>'add_new' => 'Добавить <?php echo $ConsoleRoll_add_new; ?>',<?php endif;?>
+				'label'   => 'Безопасность',
 			],
 			// Когда это дочерний элемент
-			// 'where'  => ['WHERE `post_parent`=%d ORDER BY `<?php echo $ConsoleRoll_sorting_field; ?>`', [$_GET['sectionId']]],
-			'where'  => 'ORDER BY `<?php echo $ConsoleRoll_sorting_field; ?>`',
-<?php if ($ConsoleRoll_icon): ?>
-			'icon' => '<?php echo $ConsoleRoll_icon; ?>',
-<?php endif; ?>
+			// 'where'  => ['WHERE `post_parent`=%d ORDER BY `menu_order`', [$_GET['sectionId']]],
+			'where'  => 'ORDER BY id DESC',
+			'icon'=>'fas fa-shield-alt',
+			'pagination'=>20,
 		];
 	}
 
@@ -55,7 +53,9 @@ class ConsoleRoll extends \Wdpro\Console\Roll {
 	public function template($data, $entity) {
 
 		return [
-			$this->getSortingField($data)
+			wdpro_date($data['time']),
+			$data['ip'],
+			$data['message'] . ($data['text'] ? '<BR><i>'.$data['text'].'</i>' : ''),
 		];
 	}
 
@@ -68,7 +68,9 @@ class ConsoleRoll extends \Wdpro\Console\Roll {
 	public function templateHeaders() {
 
 		return [
-			'№ п.п.',
+			'Дата',
+			'IP',
+			'Ошибка',
 		];
 	}
 

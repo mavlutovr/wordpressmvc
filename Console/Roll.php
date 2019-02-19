@@ -292,10 +292,10 @@ class Roll extends BaseRoll
 							$data['section_type'] = $_GET['sectionType'];
 					}
 
-					// Установка даты
+					// Установка данных
 					// Следующий порядковый номер
 					// Сохранение
-					$entity->mergeData($data)
+					$entity->consoleMergeDataFromForm($data)
 						->nextSortingToData($this->getWhere())
 						->save();
 

@@ -2,6 +2,6 @@
 
 // Страница оплаты по-умолчанию
 return [
-	'post_title'=>'Оплата',
-	'post_content'=>'<p>Выберите способ оплаты</p><div>[pay_start_form]</div>',
+	'post_title'=>'Выберите способ оплаты',
+	'post_content'=>'<div>[pay_start_form]</div><p>&nbsp;</p>',
 ];

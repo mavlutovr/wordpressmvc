@@ -401,9 +401,8 @@ class Controller extends \Wdpro\BaseController
 			));
 			$form->add(array(
 				'name'=>'wdpro_smtp_email',
-				'left'=>'E-mail',
+				'left'=>'E-mail *',
 				'center'=>'Например, your.name@yandex.ru',
-				'*'=>1,
 			));
 			$form->add(array(
 				'name'=>'wdpro_smtp_from_name',
@@ -412,21 +411,18 @@ class Controller extends \Wdpro\BaseController
 			));
 			$form->add(array(
 				'name'=>'wdpro_smtp_server',
-				'left'=>array('text'=>'Адрес сервера', 'nowrap'=>true),
+				'left'=>array('text'=>'Адрес сервера *', 'nowrap'=>true),
 				'center'=>'Например, smtp.yandex.ru',
-				'*'=>true,
 			));
 			$form->add(array(
 				'name'=>'wdpro_smtp_port',
-				'left'=>'Порт',
+				'left'=>'Порт *',
 				'center'=>'Например, 465',
-				'*'=>true,
 			));
 			$form->add(array(
 				'name'=>'wdpro_smtp_login',
-				'left'=>'Логин',
+				'left'=>'Логин *',
 				'center'=>'Обычно то, что написано до знака @',
-				'*'=>true,
 			));
 			$form->add(array(
 				'name'=>'wdpro_smtp_pass',

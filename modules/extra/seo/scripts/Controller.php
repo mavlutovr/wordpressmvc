@@ -1,4 +1,7 @@
 <?php
+
+// todo <head> вообще можно сделать через шаблон, чтобы можно было менять, как вздумается
+
 namespace Wdpro\Extra\Seo\Scripts;
 
 class Controller extends \Wdpro\BaseController {
@@ -30,8 +33,6 @@ class Controller extends \Wdpro\BaseController {
 
 		// Css to footer
 		$cssToFooter = function ($html) {
-			// Css To Footer
-			if (wdpro_get_option('wdpro_css_to_footer') == 1) {
 
 				// <link rel="stylesheet" type="text/css" href="..." media="all" />
 				// <link rel='stylesheet' id='bfa-font-awesome-css'  href='...' type='text/css'
@@ -40,7 +41,49 @@ class Controller extends \Wdpro\BaseController {
 				$html = preg_replace_callback(
 					'~(<link.*?rel=["\']stylesheet["\'].*?>)~i',
 					function ($arr) {
-						static::$cssFileHtmls .= $arr[1];
+						static::$cssFileHtmls .= $arr[1].PHP_EOL;
+						return '';
+					},
+					$html
+				);
+
+
+			if (strstr($html, '<!-- cssPlace -->')) {
+					$html = str_replace(
+						'<!-- cssPlace -->',
+						static::$cssFileHtmls.PHP_EOL,
+						$html
+					);
+				}
+
+				else {
+					if (strstr($html, '</body>')) {
+						$html = str_replace(
+							'</body>',
+							static::$cssFileHtmls.PHP_EOL.'</body>',
+							$html
+						);
+					}
+
+					else {
+						$html .= static::$cssFileHtmls;
+					}
+				}
+
+			return $html;
+		};
+
+		// Css to header
+		$cssToHeader = function ($html) {
+
+				// <link rel="stylesheet" type="text/css" href="..." media="all" />
+				// <link rel='stylesheet' id='bfa-font-awesome-css'  href='...' type='text/css'
+				// media='all' />
+
+				$html = preg_replace_callback(
+					'~(<link.*?rel=["\']stylesheet["\'].*?>)~i',
+					function ($arr) {
+						static::$cssFileHtmls .= '    '.$arr[1].PHP_EOL;
 						return '';
 					},
 					$html
@@ -57,16 +100,18 @@ class Controller extends \Wdpro\BaseController {
 				}
 
 				else {
-					$html = str_replace(
-						'</body>',
-						static::$cssFileHtmls.PHP_EOL.'</body>',
+					/*$html = str_replace(
+						'<meta charset',
+						static::$cssFileHtmls.PHP_EOL.'<meta charset',
+						$html
+					);*/
+
+					$html = preg_replace(
+						'~(<meta charset=[./ \S]*?>)~i',
+						'$1'.PHP_EOL.PHP_EOL.static::$cssFileHtmls.PHP_EOL,
 						$html
 					);
 				}
-
-
-
-			}
 
 			return $html;
 		};
@@ -120,7 +165,7 @@ class Controller extends \Wdpro\BaseController {
 
 					$html = str_replace(
 						'<head>',
-						'<head>'.PHP_EOL.implode(PHP_EOL, $first),
+						'<head>'.implode('', $first),
 						$html);
 
 					return $html;
@@ -133,6 +178,7 @@ class Controller extends \Wdpro\BaseController {
 
 		// Scripts To Noindex
 		$scriptsToNoindex = function ($html) {
+
 			// Скрипты в noindex
 			if (wdpro_get_option('wdpro_scripts_to_noindex') == 1) {
 
@@ -181,6 +227,7 @@ class Controller extends \Wdpro\BaseController {
 
 
 			}
+
 
 			// Убиаем noscript из head
 			$html = preg_replace_callback(
@@ -244,15 +291,15 @@ class Controller extends \Wdpro\BaseController {
 
 		// Css, Javascript, mail
 		add_filter('wdpro_html', function ($html)
-		use (&$cssToFooter, &$titleToTop, &$scriptsToNoindex) {
+		use (&$cssToFooter, &$cssToHeader, &$titleToTop, &$scriptsToNoindex) {
 
 			if (!static::$w3css) {
-				$html = $cssToFooter($html);
+				$html = wdpro_get_option('wdpro_css_to_footer') ? $cssToFooter($html) : $cssToHeader($html);
 				$html = $titleToTop($html);
 				$html = $scriptsToNoindex($html);
 			}
 
-			// Интиспам ящиков
+			// Антиспам ящиков
 			if (wdpro_get_option('wdpro_mail_antispam')) {
 
 				$isMail = false;
@@ -307,11 +354,12 @@ class Controller extends \Wdpro\BaseController {
 
 		// Css WC3
 		add_filter('w3tc_minify_processed', function ($html)
-		use (&$cssToFooter, &$titleToTop, &$scriptsToNoindex) {
+		use (&$cssToFooter, &$cssToHeader, &$titleToTop, &$scriptsToNoindex) {
 
 			// Css
 			if (static::$w3css) {
-				$html = $cssToFooter($html);
+				//$html = $cssToFooter($html);
+				$html = wdpro_get_option('wdpro_css_to_footer') ? $cssToFooter($html) : $cssToHeader($html);
 				$html = $titleToTop($html);
 				$html = $scriptsToNoindex($html);
 			}
@@ -359,6 +407,12 @@ class Controller extends \Wdpro\BaseController {
 		remove_action( 'wp_head', 'wp_enqueue_scripts', 1 );
 		remove_action( 'wp_head', 'wp_print_head_scripts', 9 );
 		remove_action( 'wp_head', 'wp_print_scripts' );
+
+		if ($to === 'footer') {
+			add_action('wp_head', function () {
+				static::printHead();
+			});
+		}
 
 		add_action('wp_'.$to, function () {
 		//	wp_print_styles();

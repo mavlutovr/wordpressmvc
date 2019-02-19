@@ -296,7 +296,21 @@
 							&& dialog.setContent(response['html']);
 						}
 
-						self.loadingStop();
+
+						// Loading Stop
+						if (!response['location']) {
+							self.loadingStop();
+						}
+
+						// Ошибка
+						if (response['error']) {
+							self.showErrorMessage(response['error']);
+						}
+
+						// Редирект
+						if (response['location']) {
+							window.location = response['location'];
+						}
 					});
 				});
 			}
@@ -447,7 +461,24 @@
 		 * Убирает элементы формы
 		 */
 		removeElements: function () {
+
 			this.jForm.hide().trigger('hide');
+		},
+
+
+		/**
+		 * Удаляет элемент по имени
+		 *
+		 * @param name {string}
+		 */
+		removeElement: function (name) {
+
+			var element = this.elements[name];
+
+			if (element) {
+				element.remove();
+				delete this.elements[name];
+			}
 		},
 
 
@@ -696,7 +727,7 @@
 			var self = this;
 
 			this.loading();
-			
+
 			this.valid(function (valid)
 			{
 				if (valid)
@@ -1475,6 +1506,7 @@
 		 * @return {*|wdpro.dialogs.Dialog}
 		 */
 		dialog: function () {
+			if (wdpro.dialogs)
 			return wdpro.dialogs.getObjectByJquery(this.html.closest('.js-dialog'));
 		},
 
@@ -1497,7 +1529,10 @@
 		 * Показать на форме состояние загрузки
 		 */
 		loading: function () {
+			console.log('loading');
 			//this.jForm && this.jForm.find('.JS_submit').addClass('loading');
+			if (this._loadingProcess) return false;
+			this._loadingProcess = true;
 			this.jForm && this.jForm.find('.JS_submit').loading();
 		},
 
@@ -1507,6 +1542,8 @@
 		 */
 		loadingStop: function () {
 			this.jForm && this.jForm.find('.JS_submit').loadingStop();
+			this._loadingProcess = false;
+			console.log('loadingStop');
 		}
 	});
 
@@ -1734,6 +1771,7 @@
 	 */
 	// export class BaseElement
 	var BaseElement = wdpro.forms.BaseElement = wdpro.Event.extend({
+
 
 		/**
 		 * Конструктор
@@ -2127,6 +2165,14 @@
 
 
 		/**
+		 * Удаляет элемент
+		 */
+		remove: function () {
+			this.html && this.html.remove && this.html.remove();
+		},
+
+
+		/**
 		 * Инифиирование описания поля в самом поле 
 		 * 
 		 * (которое исчезает, когда вводиться текст)
@@ -2255,7 +2301,7 @@
 				if (this.params['name'])
 				{
 					// Имя в виде массива
-					if (typeof this.params['name'] == 'object')
+					if (typeof this.params['name'] === 'object')
 					{
 						this.params['key'] = this.params['name'].join('_');
 					}
@@ -2288,7 +2334,7 @@
 			}
 
 			// Имя в виде массива
-			if (typeof this.params['name'] == 'object')
+			if (typeof this.params['name'] === 'object')
 			{
 				var elementData = formData;
 
@@ -2626,7 +2672,6 @@
 		}
 	});
 
-	
 
 	/**
 	 * Дата
@@ -3011,6 +3056,7 @@
 		}
 
 	});
+
 
 	/**
 	 * @type {CheckElement}
@@ -3825,15 +3871,49 @@
 	});
 
 
-
 	/**
 	 * Просто html блок в форме
 	 */
 	wdpro.forms.HtmlElement = wdpro.forms.BaseElement.extend({
 
 		getHtml: function (callback) {
-			
-			callback(this.params['html']);
+
+			if (this.hasLbel()) {
+				this._super(callback);
+			}
+			else {
+				callback(this.getHtmlValue());
+			}
+		},
+
+
+		/**
+		 * Создает html код самого поля
+		 *
+		 * @param callback {function} Каллбэк, получающий поле
+		 */
+		createField: function (callback) {
+
+			if (this.hasLbel()) {
+				callback(this.getHtmlValue());
+			}
+		},
+
+
+		hasLbel: function () {
+			return this.params['left']
+			|| this.params['top']
+			|| this.params['right']
+			|| this.params['bottom'];
+		},
+
+
+		getHtmlValue: function () {
+			var html = this.params['html'];
+			if (html.indexOf('<') === -1) {
+				html = '<div>'+html+'</div>';
+			}
+			return html;
 		}
 	});
 

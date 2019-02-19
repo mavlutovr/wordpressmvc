@@ -386,8 +386,7 @@ class Controller extends \Wdpro\BaseController {
 									$dropdown_args = apply_filters( 'page_attributes_dropdown_pages_args', $dropdown_args, $post );
 									$pages = wp_dropdown_pages( $dropdown_args );
 
-									//print_r($dropdown_args);
-									//exit();
+									//print_r($dropdown_args); exit();
 
 									if ( ! empty($pages) )
 									{
@@ -399,8 +398,14 @@ class Controller extends \Wdpro\BaseController {
 										echo $pages;
 									} // end empty pages check
 
-									if ( 'page' == $post->post_type && 0 != count( get_page_templates( $post ) ) && get_option( 'page_for_posts' ) != $post->ID ) {
-										$template = !empty($post->page_template) ? $post->page_template : false;
+									// Шаблон
+									// Сделал, чтобы отображался во всех типах страниц
+									if ( /*'page' == $post->post_type && */0 != count( get_page_templates( ) ) && get_option( 'page_for_posts' ) != $post->ID ) {
+										$metaPageTemplate = get_post_meta($post->ID, 'page_template');
+										if (is_array($metaPageTemplate)) {
+											$metaPageTemplate = $metaPageTemplate[0];
+										}
+										$template = $metaPageTemplate;
 										?>
 										<p><strong><?php _e('Template') ?></strong></p>
 										<label class="screen-reader-text" for="page_template"><?php _e('Page Template') ?></label><select name="page_template" id="page_template">
@@ -615,6 +620,20 @@ class Controller extends \Wdpro\BaseController {
 						}
 
 
+						$updatePost = function () use (&$savePost, &$post) {
+							remove_action('save_post', $savePost);
+
+							wp_update_post($post);
+
+							// Обновление Guid
+							\Wdpro\Page\SqlTable::update(['guid'=>$post->guid], [
+								'ID'=>$post->ID,
+							]);
+
+							add_action('save_post', $savePost);
+						};
+
+
 						// Если это не черновик
 						if (get_post_field('post_status', $postId) != 'auto-draft'
 							&& get_post_type($postId) == $entity->getType()
@@ -656,13 +675,22 @@ class Controller extends \Wdpro\BaseController {
 								$post->guid = home_url($en);
 							}
 
-							// № п.п., Видимость в меню
+							// Обработка данных из боковой формы
 							if ($entity = wdpro_object_by_post_id( $postId )) {
 
 								// № п.п.
 								if (isset($_POST['wdpro_menu_order'])) {
 									$post->menu_order = $entity->getMenuOrder( $_POST['wdpro_menu_order'] );
 									$data['menu_order'] = $post->menu_order;
+								}
+
+								if (isset($_POST['page_template'])) {
+									$data['page_template'] = $_POST['page_template'];
+									$data['_wp_page_template'] = $_POST['page_template'];
+									update_post_meta($postId, 'page_template', $data['page_template']);
+									//print_r($data);
+									//update_post_meta($postId, '_wp_page_template', $data['page_template']);
+									$post->page_template = $data['page_template'];
 								}
 
 								// Видимость в меню
@@ -687,6 +715,8 @@ class Controller extends \Wdpro\BaseController {
 								$data['menu_order'] = $_POST['wdpro_menu_order'];
 							}*/
 
+							$updatePost();
+
 							if ($data)
 							{
 
@@ -699,19 +729,14 @@ class Controller extends \Wdpro\BaseController {
 								}
 
 								// Сохранение в основной базе сущности
-								$entity->mergeData($data)->save();
+								$entity->consoleMergeDataFromForm($data)->save();
 							}
 						}
 
-						remove_action('save_post', $savePost);
-						wp_update_post($post);
-
-						// Обновление Guid
-						\Wdpro\Page\SqlTable::update(['guid'=>$post->guid], [
-							'ID'=>$post->ID,
-						]);
-
-						add_action('save_post', $savePost);
+						// Черновик
+						else {
+							$updatePost();
+						}
 					};
 
 					// Сохранение

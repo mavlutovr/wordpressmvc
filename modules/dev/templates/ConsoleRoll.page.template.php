@@ -33,7 +33,7 @@ class ConsoleRoll extends \Wdpro\Console\PagesRoll {
 		return [
 			'labels'=>[
 				'label'=>'<?php echo $ConsoleRoll_label; ?>',
-				'add_new'=>'Добавить <?php echo $ConsoleRoll_add_new; ?>',
+<?php if ($ConsoleRoll_add_new): ?>'add_new' => 'Добавить <?php echo $ConsoleRoll_add_new; ?>',<?php endif;?>
 			],
 <?php if ($ConsoleRoll_icon): ?>
 			'icon' => '<?php echo $ConsoleRoll_icon; ?>',

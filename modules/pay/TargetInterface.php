@@ -22,7 +22,9 @@ interface TargetInterface
 	 * return array(
 	 *
 	 *      'params'=>array(
-	 *          'referer'=>home_url().'/aftersale',
+	 *          'target'=>$this->getData(),
+	 *          'aftersale'=>home_url().'/aftersale',
+	 *          'pay-error'=>home_url().'/pay-error',
 	 *      ),
 	 *
 	 *      'cost'=>$this->data['cost'],
@@ -41,6 +43,16 @@ interface TargetInterface
 	 * @return bool
 	 */
 	public function payGetStatus();
+
+
+	/**
+	 * Возвращает информацию для подтверждения оплаты
+	 *
+	 * Чтобы человек после того, как заполнил форму, и прямо перед нажатием на кнопку Оплатить, чтобы он увидел всю информацию, которую добавлял. И чтобы еще раз мог проверить, все ли правильно.
+	 *
+	 * @return string
+	 */
+	public function payGetConfirmInfoHtml();
 
 
 	/**

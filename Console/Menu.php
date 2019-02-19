@@ -162,6 +162,20 @@ class Menu
 
 
 	/**
+	 * Добавляет кнопку в блок настроек
+	 *
+	 * @param array|string $buttonParams
+	 */
+	public static function addToSettings($buttonParams) {
+		if (is_string($buttonParams))
+			$buttonParams = [ 'roll'=>$buttonParams ];
+
+		$buttonParams['position'] = 'settings';
+		static::add($buttonParams);
+	}
+
+
+	/**
 	 * Добавление настроек
 	 *
 	 * @param array|string $buttonParams Параметры кнопки
