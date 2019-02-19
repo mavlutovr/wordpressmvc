@@ -1419,9 +1419,12 @@ function wdpro_object($className, $dataOrId=null)
 
 	if (is_array($dataOrId))
 	{
-		if (isset($dataOrId['ID'])) $key = $dataOrId['ID'];
-		else if (isset($dataOrId['id'])) $key = $dataOrId['id'];
-		else $key = null;
+		if (isset($dataOrId['ID']))
+			$key = $dataOrId['ID'];
+		else if (isset($dataOrId['id']))
+			$key = $dataOrId['id'];
+		else
+			$key = null;
 	}
 	else
 	{
@@ -1447,7 +1450,10 @@ function wdpro_object($className, $dataOrId=null)
 			$_wdproObjects[$className][$key] = new $className($dataOrId);
 		}*/
 
-		wdpro_object_add_to_cache(new $className($dataOrId), $key);
+		if (!isset($_wdproObjects[$className][$key]))
+		{
+			wdpro_object_add_to_cache(new $className($dataOrId), $key);
+		}
 
 		return $_wdproObjects[$className][$key];
 	}
@@ -1490,7 +1496,7 @@ function wdpro_object_by_post_id($postId)
 {
 	$postType = get_post_field('post_type', $postId);
 
-	if ($class = wdpro_get_class_by_post_type($postType))
+	if ($class = wdpro_get_entity_class_by_post_type($postType))
 	{
 		return wdpro_object($class, $postId);
 	}
