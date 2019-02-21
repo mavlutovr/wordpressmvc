@@ -82,7 +82,6 @@ abstract class BaseSqlTable
 	 * @param null|array $insertIfNotExistsThisData Данные по-умолчанию
 	 * Они добавяться в таблицу, если строка будет не найдена
 	 * @return array
-	 * @throws TableException
 	 */
 	public static function getRow($where, $fields='*', $insertIfNotExistsThisData=null)
 	{

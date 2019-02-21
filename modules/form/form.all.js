@@ -1529,7 +1529,6 @@
 		 * Показать на форме состояние загрузки
 		 */
 		loading: function () {
-			console.log('loading');
 			//this.jForm && this.jForm.find('.JS_submit').addClass('loading');
 			if (this._loadingProcess) return false;
 			this._loadingProcess = true;
@@ -1543,7 +1542,6 @@
 		loadingStop: function () {
 			this.jForm && this.jForm.find('.JS_submit').loadingStop();
 			this._loadingProcess = false;
-			console.log('loadingStop');
 		}
 	});
 
@@ -3086,7 +3084,7 @@
 		 * Возвращает CSS классы
 		 */
 		getClass: function () {
-
+			return this.params['class'] || '';
 		}
 	});
 
