@@ -249,6 +249,14 @@ if (goog.DEBUG) {
 }
 
 
+wdpro.templates.forms.htmlContent = function(opt_data, opt_ignored) {
+  return ((opt_data.attrs['nothing']) ? '' : '') + '<div ' + wdpro.templates.forms.attrs(opt_data) + '>' + soy.$$escapeHtml(opt_data.html) + '</div>';
+};
+if (goog.DEBUG) {
+  wdpro.templates.forms.htmlContent.soyTemplateName = 'wdpro.templates.forms.htmlContent';
+}
+
+
 wdpro.templates.forms.requiredStar = function(opt_data, opt_ignored) {
   return '<span class="required_star" title="\u041F\u043E\u043B\u0435 \u043E\u0431\u044F\u0437\u0430\u0442\u0435\u043B\u044C\u043D\u043E \u0434\u043B\u044F \u0437\u0430\u043F\u043E\u043B\u043D\u0435\u043D\u0438\u044F">*</span>';
 };

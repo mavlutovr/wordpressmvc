@@ -524,6 +524,7 @@
 	</div>
 {/template}
 
+
 /**
  * Checks Level
  * @param data Данные
@@ -603,6 +604,20 @@
 	</div>
 </div>
 {/template}
+
+
+
+/**
+* Содержимое html поля
+* @param attrs Аттрибуты
+* @param html Html код
+*/
+{template .htmlContent}
+    {if ($attrs['nothing'])}{/if}
+
+		<div {call .attrs data="all" /}>{$html}</div>
+{/template}
+
 
 
 

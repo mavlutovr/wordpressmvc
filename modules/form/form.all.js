@@ -3909,9 +3909,18 @@
 		getHtmlValue: function () {
 			var html = this.params['html'];
 			if (html.indexOf('<') === -1) {
-				html = '<div>'+html+'</div>';
+				html = wdpro.templates.forms.htmlContent({
+					data:  this.getParams(),
+					attrs: this.getAttrs(),
+					html: html
+				});
 			}
 			return html;
+		},
+
+
+		getClass: function () {
+			return this.params['class'];
 		}
 	});
 
