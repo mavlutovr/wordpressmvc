@@ -32,7 +32,7 @@ class ConsoleRoll extends \Wdpro\Console\Roll {
 
 		return [
 			'labels' => [
-				'label'   => 'Волшебная палка',
+				'label'   => 'Палка',
 				'add_new' => 'Добавить модуль',
 			],
 			'icon'   => 'fas fa-magic',
