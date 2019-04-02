@@ -51,7 +51,9 @@ class Modules
 			}
 
 			else {
-				echo 'Нет файла: '.$controllerClassFileName.PHP_EOL.PHP_EOL;
+				if (defined('WP_DEBUG') && WP_DEBUG) {
+					echo 'Нет файла: '.$controllerClassFileName.PHP_EOL.PHP_EOL;
+				}
 			}
 
 			// Секции (все, только сайт, только админка)
