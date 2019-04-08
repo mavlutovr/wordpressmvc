@@ -167,12 +167,16 @@ class Form
 	/**
 	 * Добавляет заголовок (Актуально для админки, на сайте лучше не добавлять)
 	 *
-	 * @param $headerText
+	 * @param string $headerText Текст заголовка
+	 * @param bool $marginLeft Сделать отступ слева
+	 * @throws Exception
 	 */
-	public function addHeader($headerText) {
+	public function addHeader($headerText, $marginLeft = false) {
 		$this->add([
 			'type'=>static::HTML,
 			'html'=>'<h2>'.$headerText.'</h2>',
+			'left'=>$marginLeft,
+			'autoWidth'=>false,
 		]);
 	}
 
