@@ -15,10 +15,12 @@ class Controller extends \Wdpro\BaseController {
 
 			$maxErrors = wdpro_get_option('wdpro_secure_errors_n', 3);
 
-			if (SqlTable::count([
+			$currentErrors = SqlTable::count([
 				'WHERE time>%d AND ip=%s',
 				[$minSeconds, wdpro_get_visitor_ip()]
-			]) >= $maxErrors) {
+			]);
+
+			if ($currentErrors >= $maxErrors) {
 
 				header('HTTP/1.0 403 Forbidden');
 				echo '<h1>Ошибка безопасности</h1>

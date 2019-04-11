@@ -3214,7 +3214,11 @@ function wdpro_person_auth_id() {
  * @return string
  */
 function wdpro_get_visitor_ip(){
-	if(!empty($_SERVER['HTTP_CLIENT_IP'])){
+
+	if (!empty($_SERVER['HTTP_REMOTE_ADDR'])) {
+		$ip = $_SERVER['HTTP_REMOTE_ADDR'];
+	}
+	else if(!empty($_SERVER['HTTP_CLIENT_IP'])){
 		$ip = $_SERVER['HTTP_CLIENT_IP'];
 	}elseif(!empty($_SERVER['HTTP_X_FORWARDED_FOR'])){
 		$ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
