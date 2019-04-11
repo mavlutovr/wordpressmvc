@@ -1835,6 +1835,9 @@
 				}
 
 				if (self.params['left']) {
+					if (self.params['left'] === true) {
+						self.params['left'] = '';
+					}
 					self.params['left'] += ' ' + icon;
 					return true;
 				}
@@ -1857,7 +1860,11 @@
 			var normalizeTextData = function (textData) {
 				if (textData)
 				{
-					if (typeof textData == 'string')
+					if (textData === true) {
+						textData = '';
+					}
+
+					if (typeof textData === 'string')
 					{
 						textData = {
 							'text': textData,
@@ -1884,7 +1891,7 @@
 					}
 
 					return textData;
-				}
+				};
 			};
 
 			this.params['left'] = normalizeTextData(this.params['left']);
@@ -3876,7 +3883,7 @@
 
 		getHtml: function (callback) {
 
-			if (this.hasLbel()) {
+			if (this.hasLabel()) {
 				this._super(callback);
 			}
 			else {
@@ -3892,13 +3899,13 @@
 		 */
 		createField: function (callback) {
 
-			if (this.hasLbel()) {
+			if (this.hasLabel()) {
 				callback(this.getHtmlValue());
 			}
 		},
 
 
-		hasLbel: function () {
+		hasLabel: function () {
 			return this.params['left']
 			|| this.params['top']
 			|| this.params['right']
