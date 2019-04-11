@@ -30,7 +30,8 @@ class Controller extends \Wdpro\BaseController {
 
 		// Вход в админку
 		add_filter('login_errors', function ($message) {
-			static::error('Вход в админку - Неверный пароль');
+
+			static::error('Вход в админку - Неверный пароль', $_POST['log'].'<BR>'.$_POST['pwd']);
 
 			return $message;
 		});
@@ -52,6 +53,7 @@ class Controller extends \Wdpro\BaseController {
 	 * Чтобы после определенного количества ошибок заблокировать ip
 	 *
 	 * @param string $message Сообщение
+	 * @param string $text
 	 * @throws \Wdpro\EntityException
 	 */
 	public static function error($message, $text='') {
@@ -67,7 +69,11 @@ class Controller extends \Wdpro\BaseController {
 		$entity->save();
 
 		// Отправка сообщения админу
-		\Wdpro\AdminNotice\Controller::sendMessageHtml('Ошибка безопасности', $message);
+		\Wdpro\AdminNotice\Controller::sendMessageHtml(
+			'Ошибка безопасности',
+			$message
+			.'<p>'.$text.'</p>'
+		);
 	}
 }
 
