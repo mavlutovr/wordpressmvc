@@ -72,7 +72,6 @@ class Controller extends \Wdpro\BaseController {
 		\Wdpro\AdminNotice\Controller::sendMessageHtml(
 			'Ошибка безопасности',
 			$message
-			.'<p>'.$text.'</p>'
 		);
 	}
 }
