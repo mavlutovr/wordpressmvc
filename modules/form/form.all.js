@@ -274,7 +274,7 @@
 
 			this.on('addedToPage', function () {
 				self.updateDialogPos();
-			});
+			}, true);
 
 
 			// Ajax
