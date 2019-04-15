@@ -81,7 +81,7 @@ add_action(
 									});
 
 
-								echo('<p>Загатовка плагина-приложения создана. <a 
+								echo('<p>Заготовка плагина-приложения создана. <a 
 class="button-primary"
 href="'.WDPRO_CONSOLE_URL.'plugins.php">Активировать плагин</a>
 </p>
@@ -96,7 +96,7 @@ href="'.WDPRO_CONSOLE_URL.'plugins.php">Активировать плагин</a
 							if ($_GET['create_theme_app']) {
 								wdpro_copy(__DIR__.'/modules/install/default/app_theme',
 									__DIR__.'/../../themes/app');
-								echo('<p>Загатовка темы создана. <a 
+								echo('<p>Заготовка темы создана. <a 
 class="button-primary"
 href="'.WDPRO_CONSOLE_URL.'themes.php">Активировать тему</a>
 </p>');
