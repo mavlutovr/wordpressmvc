@@ -473,7 +473,7 @@
 
 	<input
 		type="submit"
-		value="{$data['value'] ? $data['value'] : '' }"
+		value="{if $data['value']}{$data['value']}{/if}"
 		{call .attrs data="all" /}
 	/>
 
