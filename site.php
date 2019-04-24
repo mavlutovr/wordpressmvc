@@ -338,11 +338,15 @@ function wdpro_the_content($echo=true) {
 
 // Ajax
 add_action('wp_enqueue_scripts', function () {
+
+	$post = get_post();
+
 	wp_localize_script('wdpro', 'wdproData', array(
 		'ajaxUrl'=>wdpro_ajax_url(),
 		'homeUrl'=>home_url().'/',
 		'imagesUrl'=>WDPRO_UPLOAD_IMAGES_URL,
 		'lang'=>\Wdpro\Lang\Data::getCurrentLangUri(),
+		'currentPostId'=>$post->ID,
 	));
 });
 

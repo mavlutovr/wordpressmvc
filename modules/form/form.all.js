@@ -282,7 +282,14 @@
 				this.ajax(function (data) {
 					self.loading();
 
-					wdpro.ajax(self.params['action'], data, function (response) {
+					var action = wdpro.updateQueryStringInUrl(
+						self.params['action'],
+						{
+							fromPostId: wdpro.data['currentPostId']
+						}
+					);
+
+					wdpro.ajax(action, data, function (response) {
 
 						if (response['dialogClose']) {
 							self.closeDialog();
@@ -296,6 +303,14 @@
 							&& dialog.setContent(response['html']);
 						}
 
+						else {
+							if (response['html']) {
+								self.html.empty();
+								self.html.append(response['html']);
+								wdpro.contentProcess(self.html);
+							}
+						}
+
 
 						// Loading Stop
 						if (!response['location']) {
@@ -305,6 +320,11 @@
 						// Ошибка
 						if (response['error']) {
 							self.showErrorMessage(response['error']);
+						}
+
+						// Просто сообщение
+						if (response['message']) {
+							self.showMessage(response['message']);
 						}
 
 						// Редирект
@@ -1509,6 +1529,7 @@
 			if (wdpro.dialogs)
 			return wdpro.dialogs.getObjectByJquery(this.html.closest('.js-dialog'));
 		},
+
 
 		/**
 		 * Приостанавливает обычную отправку и отправляет в callback данные формы
@@ -3440,7 +3461,6 @@
 							console.error('При загрузке файла произошла ошибка', jqXHR.getAllResponseHeaders());
 						}
 					};
-					console.log('ajax', ajax);
 					$.ajax(ajax);
 				});
 

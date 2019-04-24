@@ -438,10 +438,24 @@ class Form
 	/**
 	* Переключает в режим ajax
 	* 
-	* @param boolean $ajax
+	* @param boolean|string|array $ajaxEnableOrAjaxUrl
 	*/
-	public function setAjax($ajax=true) {
-		$this->params['ajax'] = $ajax;
+	public function setAjax($ajaxEnableOrAjaxUrl=true) {
+
+		if (is_array($ajaxEnableOrAjaxUrl)) {
+			$ajaxEnableOrAjaxUrl = wdpro_ajax_url($ajaxEnableOrAjaxUrl);
+		}
+
+		// Url
+		if (is_string($ajaxEnableOrAjaxUrl)) {
+			$this->params['ajax'] = true;
+			$this->setAction($ajaxEnableOrAjaxUrl);
+		}
+
+		// Просто включение
+		else {
+			$this->params['ajax'] = $ajaxEnableOrAjaxUrl;
+		}
 	}
 
 
