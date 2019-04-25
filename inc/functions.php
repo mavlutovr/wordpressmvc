@@ -2827,6 +2827,7 @@ function noindex_end() {
  *
  * @param \Wdpro\BasePage $post Страница, на которую добавлять шорткод
  * @param string $shortcode Сам шорткод
+ * @throws \Wdpro\EntityException
  */
 function wdpro_add_shortcode_to_post($post, $shortcode) {
 	if ($post && $langs = \Wdpro\Lang\Data::getSuffixes()) {
