@@ -874,7 +874,7 @@ abstract class BaseSqlTable
 				if (!($wpdb->query($create_index_query)))
 				{
 					// Выводим ошибку
-					throw new Exception($create_index_query.mysql_error());
+					throw new Exception($create_index_query . $wpdb->print_error());
 				}
 			}
 
