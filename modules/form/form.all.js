@@ -18,6 +18,7 @@
 
 			// Получаем параметры формы
 			var jsonDiv = container.find('.js-params');
+			console.log('jsonDiv', jsonDiv);
 			var json = jsonDiv.text();
 			var data = wdpro.parseJSON(json);
 
