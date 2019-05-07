@@ -7,6 +7,10 @@
  * Author URI: https://github.com/mavlutovr/wordpressmvc
  */
 
+// Фикс для хостинга sweb.ru
+if ($_SERVER['HTTP_HTTPS'] === 'on')
+	$_SERVER['HTTPS'] = 'on';
+
 // Standart Functions
 require(__DIR__ . '/inc/functions.php');
 

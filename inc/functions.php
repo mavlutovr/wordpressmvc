@@ -2353,8 +2353,14 @@ function wdpro_on_url($url, $callback) {
 				$scheme = $_SERVER['REQUEST_SCHEME'];
 			}
 			else {
-				$scheme = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] ?
-					'https' : 'http';
+				if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']
+					|| isset($_SERVER['HTTP_HTTPS']) && $_SERVER['HTTP_HTTPS']) {
+
+					$scheme = 'https';
+				}
+				else {
+					$scheme = 'http';
+				}
 			}
 
 			$absurl = $scheme.'://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
