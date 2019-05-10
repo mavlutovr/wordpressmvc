@@ -293,12 +293,17 @@ abstract class BaseEntity
 		if (is_array($data))
 		{
 			$created = false;
-			$data = $this->prepareDataForSave($data);
+
+			// Сначала Запускаем обработку данных перед созданием
 			if (!$this->existsInDb())
 			{
 				$data = $this->_prepareData($data);
 				$created = true;
 			}
+
+			// А потом делаем обработку данных при сохранении
+			// Чтобы во время этой обработки уже были известны результаты обработки перед созданием
+			$data = $this->prepareDataForSave($data);
 			$this->_created = $created;
 			
 			// Если данные это true или false, значит сохранение было прервано

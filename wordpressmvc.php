@@ -8,7 +8,7 @@
  */
 
 // Фикс для хостинга sweb.ru
-if ($_SERVER['HTTP_HTTPS'] === 'on')
+if (isset($_SERVER['HTTP_HTTPS']) && $_SERVER['HTTP_HTTPS'] === 'on')
 	$_SERVER['HTTPS'] = 'on';
 
 // Standart Functions

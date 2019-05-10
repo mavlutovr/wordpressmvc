@@ -153,8 +153,19 @@ abstract class BaseSqlTable
 		echo "format: "; print_r($format);
 		echo "data: "; print_r($data);*/
 	    $wpdb->insert(static::getNameWithPrefix(), $data, $format);
-	    
-	    return $wpdb->insert_id;
+
+	  /*  global $wpdb;
+		echo '$wpdb->insert_id: '.($wpdb->dbh->error).PHP_EOL; exit();*/
+
+		if (!$wpdb->insert_id) {
+			if (defined('WP_DEBUG') && WP_DEBUG) {
+				echo $wpdb->dbh->error.PHP_EOL;
+				exit();
+			}
+			throw new \Exception($wpdb->dbh->error);
+		}
+
+		return $wpdb->insert_id;
 	}
 
 	
