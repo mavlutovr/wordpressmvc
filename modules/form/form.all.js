@@ -3086,6 +3086,30 @@
 
 
 	/**
+	 * Политика
+	 */
+	var Privacy = CheckElement.extend({
+
+		/**
+		 * Инициализация параметров
+		 *
+		 * @param params
+		 */
+		initParams: function (params) {
+			params = wdpro.extend({
+				'right': "Я даю свое согласие на обработку персональных данных и соглашаюсь с условиями и <a href='/privacy/' target='_blank'>политикой конфиденциальности</a>",
+
+				'containerClass': 'privacy-check',
+				'checked': true,
+				'required': true
+			}, params);
+
+			this._super(params);
+		}
+	});
+
+
+	/**
 	 * @type {CheckElement}
 	 */
 	wdpro.forms.CheckElement = CheckElement;
@@ -4028,6 +4052,7 @@
 		'Html': wdpro.forms.HtmlElement,
 		'Spinner': wdpro.forms.SpinnerElement,
 		'Email': wdpro.forms.EmailElement,
+		'Privacy': Privacy,
 		'Date': wdpro.forms.DateElement
 	};
 
