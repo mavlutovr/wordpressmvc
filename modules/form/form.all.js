@@ -753,14 +753,15 @@
 			{
 				if (valid)
 				{
+					// Получаем данные
+					var data = self.getData();
+
+					// Отправляем данные в каллбэк
+					self.trigger('submit', data);
+
 					// Ajax
 					if (self._ajax)
 					{
-						// Получаем данные
-						var data = self.getData();
-
-						// Отправляем данные в каллбэк
-						self.trigger('submit', data);
 					}
 
 					else 
@@ -3016,7 +3017,7 @@
 		 */
 		initParams: function (params) {
 			params = wdpro.extend({
-				'value':                  1,
+				'value': 1,
 				'JS_class_for_container': 'checkbox_container',
 				'autoWidth': false
 			}, params);
