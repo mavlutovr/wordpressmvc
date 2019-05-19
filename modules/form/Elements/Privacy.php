@@ -10,7 +10,7 @@ class Privacy extends Check
 
 		$params = wdpro_extend(array(
 			'name' => 'privacy',
-			'required' => true
+			'required' => true,
 		), $params);
 
 		parent::__construct($params);
@@ -18,26 +18,14 @@ class Privacy extends Check
 
 
 	/**
-	 * Возвращает данные для сохранения в базе
+	 * Возвращает значение поля для отправки
 	 *
-	 * @return mixed
+	 * @return string
 	 */
-	public function getSaveValue()
+	public function getSendValue()
 	{
-
 
 	}
 
 
-	/**
-	 * Дополнительная обработка данных запущенной формы этим полем
-	 *
-	 * @param array $formData Данные запущенной формы
-	 * @returns mixed
-	 */
-	public function getDataFromSubmit($formData)
-	{
-
-
-	}
 }
