@@ -11,6 +11,11 @@
 if (isset($_SERVER['HTTP_HTTPS']) && $_SERVER['HTTP_HTTPS'] === 'on')
 	$_SERVER['HTTPS'] = 'on';
 
+
+// Дата
+date_default_timezone_set(ini_get('date.timezone'));
+
+
 // Standart Functions
 require(__DIR__ . '/inc/functions.php');
 
