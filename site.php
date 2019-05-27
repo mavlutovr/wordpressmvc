@@ -6,7 +6,7 @@ require __DIR__.'/inc/shortcodes.php';
 do_action('wdpro-ready');
 Wdpro\Modules::run('initSiteStart');
 Wdpro\Modules::run('run');
-Wdpro\Modules::run('runSite');
+Wdpro\Modules::run('runSiteStart');
 do_action('app-ready');
 
 /**
