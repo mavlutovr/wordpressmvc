@@ -2359,8 +2359,14 @@ function wdpro_on_url($url, $callback) {
 				$scheme = $_SERVER['REQUEST_SCHEME'];
 			}
 			else {
-				$scheme = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] ?
-					'https' : 'http';
+				if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']
+					|| isset($_SERVER['HTTP_HTTPS']) && $_SERVER['HTTP_HTTPS']) {
+
+					$scheme = 'https';
+				}
+				else {
+					$scheme = 'http';
+				}
 			}
 
 			$absurl = $scheme.'://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
@@ -2833,6 +2839,7 @@ function noindex_end() {
  *
  * @param \Wdpro\BasePage $post Страница, на которую добавлять шорткод
  * @param string $shortcode Сам шорткод
+ * @throws \Wdpro\EntityException
  */
 function wdpro_add_shortcode_to_post($post, $shortcode) {
 	if ($post && $langs = \Wdpro\Lang\Data::getSuffixes()) {
@@ -3220,7 +3227,11 @@ function wdpro_person_auth_id() {
  * @return string
  */
 function wdpro_get_visitor_ip(){
-	if(!empty($_SERVER['HTTP_CLIENT_IP'])){
+
+	if (!empty($_SERVER['HTTP_REMOTE_ADDR'])) {
+		$ip = $_SERVER['HTTP_REMOTE_ADDR'];
+	}
+	else if(!empty($_SERVER['HTTP_CLIENT_IP'])){
 		$ip = $_SERVER['HTTP_CLIENT_IP'];
 	}elseif(!empty($_SERVER['HTTP_X_FORWARDED_FOR'])){
 		$ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
@@ -3228,4 +3239,16 @@ function wdpro_get_visitor_ip(){
 		$ip = $_SERVER['REMOTE_ADDR'];
 	}
 	return $ip;
+}
+
+
+// Отключение смайликов
+function wdpro_disable_emojis() {
+	remove_action( "wp_head", "print_emoji_detection_script", 7 );
+	remove_action( "admin_print_scripts", "print_emoji_detection_script" );
+	remove_action( "wp_print_styles", "print_emoji_styles" );
+	remove_action( "admin_print_styles", "print_emoji_styles" );
+	remove_filter( "the_content_feed", "wp_staticize_emoji" );
+	remove_filter( "comment_text_rss", "wp_staticize_emoji" );
+	remove_filter( "wp_mail", "wp_staticize_emoji_for_email" );
 }

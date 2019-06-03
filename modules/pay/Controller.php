@@ -83,8 +83,10 @@ class Controller extends \Wdpro\BaseController {
 
 			$getForm = function () {
 
+				// Если есть id и secret
 				if (isset($_GET['in']) && isset($_GET['sw'])) {
 
+					// Находим транзакцию по ним
 					if ($pay = static::getPayByGet()) {
 
 						return static::getStartBlock(array(
@@ -97,7 +99,7 @@ class Controller extends \Wdpro\BaseController {
 
 				return static::getStartBlock(array(
 					'target_key'=>urldecode($_GET['pay']['target']),
-					'id'=>$_GET['in'],
+					'id'=>isset($_GET['in']) ? $_GET['in'] : '',
 				));
 			};
 
@@ -171,7 +173,7 @@ class Controller extends \Wdpro\BaseController {
 		}
 		
 		// Загрузка существующей транзакции
-		else if (isset($params['id']))
+		else if (isset($params['id']) && $params['id'])
 		{
 			/** @var Entity $pay */
 			$pay = wdpro_object(Entity::class, $params['id']);
@@ -185,7 +187,7 @@ class Controller extends \Wdpro\BaseController {
 			$available = true;
 		}
 
-		// Создаем новую транзакацию
+		// Если такая транзакция есть
 		if ($available)
 		{
 			// Получаем данные

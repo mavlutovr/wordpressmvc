@@ -473,7 +473,7 @@
 
 	<input
 		type="submit"
-		value="{$data['value'] ? $data['value'] : '' }"
+		value="{if $data['value']}{$data['value']}{/if}"
 		{call .attrs data="all" /}
 	/>
 
@@ -523,6 +523,7 @@
 		{/if}
 	</div>
 {/template}
+
 
 /**
  * Checks Level
@@ -603,6 +604,20 @@
 	</div>
 </div>
 {/template}
+
+
+
+/**
+* Содержимое html поля
+* @param attrs Аттрибуты
+* @param html Html код
+*/
+{template .htmlContent}
+    {if ($attrs['nothing'])}{/if}
+
+		<div {call .attrs data="all" /}>{$html}</div>
+{/template}
+
 
 
 

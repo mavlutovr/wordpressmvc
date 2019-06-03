@@ -32,10 +32,10 @@ class ConsoleRoll extends \Wdpro\Console\Roll {
 
 		return [
 			'labels' => [
-				'label'   => 'Разработка',
+				'label'   => 'Палка',
 				'add_new' => 'Добавить модуль',
 			],
-			'icon'   => 'dashicons-admin-tools',
+			'icon'   => 'fas fa-magic',
 		];
 	}
 

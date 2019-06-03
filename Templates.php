@@ -343,7 +343,10 @@ class Templates
 			return $templateFile;
 		});
 	}
+
+
 }
+
 
 add_action('plugins_loaded', function () {
 	Templates::init();

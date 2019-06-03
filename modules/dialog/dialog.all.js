@@ -286,8 +286,7 @@
 					self.close();
 				});
 
-				// Отправляем событие, чтобы можно было обрабатывать контент другим скриптам через wdpro.on('content', function...);
-				wdpro.trigger('content', this.html);
+				wdpro.contentProcess(this.html);
 			},
 
 

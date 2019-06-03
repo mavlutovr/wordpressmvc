@@ -186,7 +186,7 @@ if (goog.DEBUG) {
 
 
 wdpro.templates.forms.submitField = function(opt_data, opt_ignored) {
-  return ((opt_data.data['nothing']) ? '' : '') + '<input type="submit" value="' + soy.$$escapeHtml(opt_data.data['value'] ? opt_data.data['value'] : '') + '"' + wdpro.templates.forms.attrs(opt_data) + '/>';
+  return ((opt_data.data['nothing']) ? '' : '') + '<input type="submit" value="' + ((opt_data.data['value']) ? soy.$$escapeHtml(opt_data.data['value']) : '') + '"' + wdpro.templates.forms.attrs(opt_data) + '/>';
 };
 if (goog.DEBUG) {
   wdpro.templates.forms.submitField.soyTemplateName = 'wdpro.templates.forms.submitField';
@@ -195,11 +195,11 @@ if (goog.DEBUG) {
 
 wdpro.templates.forms.selectField = function(opt_data, opt_ignored) {
   var output = ((opt_data.attrs['nothing']) ? '' : '') + '<div><select ' + wdpro.templates.forms.attrs(opt_data) + '>';
-  var nList323 = soy.$$getMapKeys(opt_data.data['options']);
-  var nListLen323 = nList323.length;
-  for (var nIndex323 = 0; nIndex323 < nListLen323; nIndex323++) {
-    var nData323 = nList323[nIndex323];
-    output += '<option value="' + soy.$$escapeHtml(opt_data.data['options'][nData323][0]) + '"' + ((opt_data.data['value'] == opt_data.data['options'][nData323][0]) ? ' selected="selected"' : '') + '>' + soy.$$escapeHtml(opt_data.data['options'][nData323][1]) + '</option>';
+  var nList325 = soy.$$getMapKeys(opt_data.data['options']);
+  var nListLen325 = nList325.length;
+  for (var nIndex325 = 0; nIndex325 < nListLen325; nIndex325++) {
+    var nData325 = nList325[nIndex325];
+    output += '<option value="' + soy.$$escapeHtml(opt_data.data['options'][nData325][0]) + '"' + ((opt_data.data['value'] == opt_data.data['options'][nData325][0]) ? ' selected="selected"' : '') + '>' + soy.$$escapeHtml(opt_data.data['options'][nData325][1]) + '</option>';
   }
   output += '</select>' + ((opt_data.data['multiple']) ? '<div class="wdpro-form-select-multiple-info">\u0423\u0434\u0435\u0440\u0436\u0438\u0432\u0430\u0439\u0442\u0435 CTRL, \u0447\u0442\u043E\u0431\u044B \u0432\u044B\u0431\u0440\u0430\u0442\u044C \u043D\u0435\u0441\u043A\u043E\u043B\u044C\u043A\u043E</div>' : '') + '</div>';
   return output;
@@ -219,11 +219,11 @@ if (goog.DEBUG) {
 
 wdpro.templates.forms.checksLevel = function(opt_data, opt_ignored) {
   var output = '<div class="wdpro-form-checks-level">';
-  var optionList351 = opt_data.options;
-  var optionListLen351 = optionList351.length;
-  for (var optionIndex351 = 0; optionIndex351 < optionListLen351; optionIndex351++) {
-    var optionData351 = optionList351[optionIndex351];
-    output += '<div class=""><label>' + ((optionData351['value'] && ! opt_data.data['disabled'][optionData351['value']]) ? '<input type="checkbox" data-value="' + soy.$$escapeHtml(optionData351['value']) + '" class="js-checks-check" /> ' : '') + soy.$$escapeHtml(optionData351['text']) + '</label></div>' + ((optionData351['options']) ? wdpro.templates.forms.checksLevel({options: optionData351['options'], data: opt_data.data}) : '');
+  var optionList353 = opt_data.options;
+  var optionListLen353 = optionList353.length;
+  for (var optionIndex353 = 0; optionIndex353 < optionListLen353; optionIndex353++) {
+    var optionData353 = optionList353[optionIndex353];
+    output += '<div class=""><label>' + ((optionData353['value'] && ! opt_data.data['disabled'][optionData353['value']]) ? '<input type="checkbox" data-value="' + soy.$$escapeHtml(optionData353['value']) + '" class="js-checks-check" /> ' : '') + soy.$$escapeHtml(optionData353['text']) + '</label></div>' + ((optionData353['options']) ? wdpro.templates.forms.checksLevel({options: optionData353['options'], data: opt_data.data}) : '');
   }
   output += '</div>';
   return output;
@@ -246,6 +246,14 @@ wdpro.templates.forms.fileField = function(opt_data, opt_ignored) {
 };
 if (goog.DEBUG) {
   wdpro.templates.forms.fileField.soyTemplateName = 'wdpro.templates.forms.fileField';
+}
+
+
+wdpro.templates.forms.htmlContent = function(opt_data, opt_ignored) {
+  return ((opt_data.attrs['nothing']) ? '' : '') + '<div ' + wdpro.templates.forms.attrs(opt_data) + '>' + soy.$$escapeHtml(opt_data.html) + '</div>';
+};
+if (goog.DEBUG) {
+  wdpro.templates.forms.htmlContent.soyTemplateName = 'wdpro.templates.forms.htmlContent';
 }
 
 

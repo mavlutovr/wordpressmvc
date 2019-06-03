@@ -39,6 +39,7 @@ class Form
 	const DATE = 'date';
 	const MENU_ORDER = 'menuOrder';
 	const MENU_ORDER_TOP = 'menuOrderTop';
+	const PRIVACY = 'privacy';
 
 
 	/**
@@ -71,6 +72,7 @@ class Form
 		'date'=>'\Wdpro\Form\Elements\Date',
 		'menuOrder'=>'\Wdpro\Form\Elements\MenuOrder',
 		'menuOrderTop'=>'\Wdpro\Form\Elements\MenuOrderTop',
+		'privacy'=>'\Wdpro\Form\Elements\Privacy',
 	);
 
 
@@ -167,12 +169,16 @@ class Form
 	/**
 	 * Добавляет заголовок (Актуально для админки, на сайте лучше не добавлять)
 	 *
-	 * @param $headerText
+	 * @param string $headerText Текст заголовка
+	 * @param bool $marginLeft Сделать отступ слева
+	 * @throws Exception
 	 */
-	public function addHeader($headerText) {
+	public function addHeader($headerText, $marginLeft = false) {
 		$this->add([
 			'type'=>static::HTML,
 			'html'=>'<h2>'.$headerText.'</h2>',
+			'left'=>$marginLeft,
+			'autoWidth'=>false,
 		]);
 	}
 
@@ -434,10 +440,24 @@ class Form
 	/**
 	* Переключает в режим ajax
 	* 
-	* @param boolean $ajax
+	* @param boolean|string|array $ajaxEnableOrAjaxUrl
 	*/
-	public function setAjax($ajax=true) {
-		$this->params['ajax'] = $ajax;
+	public function setAjax($ajaxEnableOrAjaxUrl=true) {
+
+		if (is_array($ajaxEnableOrAjaxUrl)) {
+			$ajaxEnableOrAjaxUrl = wdpro_ajax_url($ajaxEnableOrAjaxUrl);
+		}
+
+		// Url
+		if (is_string($ajaxEnableOrAjaxUrl)) {
+			$this->params['ajax'] = true;
+			$this->setAction($ajaxEnableOrAjaxUrl);
+		}
+
+		// Просто включение
+		else {
+			$this->params['ajax'] = $ajaxEnableOrAjaxUrl;
+		}
 	}
 
 

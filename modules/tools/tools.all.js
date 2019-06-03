@@ -65,8 +65,8 @@
 			self.css('opacity', 0);
 
 			bg
-				.width(self.outerWidth() - 2)
-				.height(self.outerHeight() - 2)
+				.width(self.outerWidth())
+				.height(self.outerHeight())
 			;
 
 

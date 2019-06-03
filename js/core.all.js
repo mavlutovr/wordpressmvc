@@ -303,6 +303,26 @@ if (typeof Array.isArray === 'undefined') {
 
 
 	/**
+	 * Обработка контента
+	 *
+	 * @param content {jQuery}
+	 */
+	wdpro.contentProcess = function (content) {
+		wdpro.trigger('content', content);
+	};
+
+
+	/**
+	 * Установка обработчиков контента
+	 *
+	 * @param callback {function} Каллбэк, в который отправляется контент для обработки
+	 */
+	wdpro.onContent = function (callback) {
+		wdpro.on('content', callback);
+	};
+
+
+	/**
 	 * Возвращает простой объект без всяких строгих типов
 	 *
 	 * @param object

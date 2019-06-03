@@ -15,25 +15,25 @@ class BackForm extends \Wdpro\Form\Form {
 		$this->setClass('wdpro-contacts-form');
 		$this->add(array(
 			'name'=>'name',
-			'top'=>'Ваше Имя',
-			'*',
+			'center'=>'Ваше Имя',
+			'*'=>true,
 		));
 		$this->add(array(
 			'name'=>'contact',
-			'top'=>'E-mail или телефон',
-			'*',
+			'center'=>'E-mail или телефон',
+			'*'=>true,
 		));
 		$this->add(array(
 			'name'=>'text',
-			'top'=>'Сообщение',
+			'center'=>'Сообщение',
 			'type'=>'text',
-			'*',
+			'*'=>true,
 		));
 		$this->add(array(
 			'type'=>'submit',
 			'text'=>'Отправить',
 		));
-		$this->add(array(
+		/*$this->add(array(
 			'type'=>static::CHECK,
 			'right'=>'Я даю свое согласие на обработку персональных данных и соглашаюсь с условиями и 
 <a href=\'/privacy/\' target=\'_blank\'>политикой конфиденциальности</a>',
@@ -41,7 +41,9 @@ class BackForm extends \Wdpro\Form\Form {
 			'checked'=>true,
 			'name'=>'privacy',
 			'*'=>true,
-		));
+		));*/
+
+		$this->add(static::PRIVACY);
 	}
 
 
