@@ -141,6 +141,45 @@ if (typeof Array.isArray === 'undefined') {
 	};
 
 
+	wdpro.localStorage = {
+
+
+		/**
+		 * Сохраняет данные в localStorage
+		 * @param name {strong} Имя данных
+		 * @param data {*} Данные
+		 */
+		set: function (name, data) {
+
+			if (data === null) {
+				localStorage.removeItem(name);
+			}
+
+			else {
+				localStorage.setItem(name, JSON.stringify(data));
+			}
+		},
+
+
+		/**
+		 * Загружает данные по имени
+		 *
+		 * @param name {strong} Имя данных
+		 * @return {*}
+		 */
+		get: function (name) {
+			var json = localStorage.getItem(name);
+
+			if (json) {
+				var data = wdpro.parseJSON(json);
+				return data;
+			}
+		}
+	};
+
+
+
+
 	(function(){
 		var initializing = false, fnTest = /xyz/.test(function(){xyz;}) ? /\b_super\b/ : /.*/;
 
