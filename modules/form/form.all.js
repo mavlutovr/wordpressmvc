@@ -2956,13 +2956,28 @@
 				this.config = wdpro.extend(this.config, this.params['configParams']);
 			}
 
-			console.log('this.config', this.config);
-			
+
+			var heightKey = 'ckeditor-height:'+self.getName();
+			if (!this.config['height']) {
+				(function () {
+					var height = wdpro.localStorage.get(heightKey);
+					if (height) {
+						self.config['height'] = Number(height);
+					}
+				})();
+
+			}
+
 			this.on('addedToPage', function () {
 				
 				self.html.addClass('wdpro-form-element-ckeditor');
 				if (!CKEDITOR.instances[self.htmlId]) {
 					var editor = CKEDITOR.replace(self.htmlId, self.config);
+
+					editor.on('resize', function (e) {
+
+						wdpro.localStorage.set(heightKey, e['data']['contentsHeight']);
+					});
 
 					self.on('prepareToGetData', function () {
 						self.field.val(editor.getData());
