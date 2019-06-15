@@ -401,7 +401,7 @@ abstract class BaseSqlTable
 	/**
 	 * Проверяет, изменился ли файл таблицы с прошлого раза
 	 * 
-	 * @return bool
+	 * @return int
 	 */
 	protected static function isStructureFileUpdated() {
 
@@ -418,7 +418,7 @@ abstract class BaseSqlTable
 				static::setStatic('isStructureFileUpdated', $currentFileTime);
 			}
 		}
-		
+
 		return static::getStatic('isStructureFileUpdated');
 	}
 
@@ -583,9 +583,13 @@ abstract class BaseSqlTable
 
 				// Если файл таблицы поменялся, обновляем ее структуру
 				if (static::structureUpdateEnable()
-				    && ($currentFileTime = static::isStructureFileUpdated()
-				    || $currentLangTime = static::isLangStructureUpdated()))
+				    && (static::isStructureFileUpdated()
+				    || static::isLangStructureUpdated()))
 				{
+					$currentFileTime = static::isStructureFileUpdated();
+					$currentLangTime = static::isLangStructureUpdated();
+
+
 					// Wordpress (стандартный метод)
 					if (isset($structure[static::SQL]) && $structure[static::SQL])
 					{
@@ -724,12 +728,16 @@ abstract class BaseSqlTable
 					}
 
 
-					update_option( 'sqlTableVersion:' . static::$name,
+					isset($currentFileTime)
+					&& $currentFileTime
+					&& update_option(
+						'sqlTableVersion:' . static::$name,
 						$currentFileTime );
 
 					isset($currentLangTime)
 					&& $currentLangTime
-					&& update_option('sqlTableLangVersion:'.static::$name,
+					&& update_option(
+						'sqlTableLangVersion:'.static::$name,
 						$currentLangTime);
 				}
 

@@ -1995,7 +1995,8 @@ if (typeof Array.isArray === 'undefined') {
 		var query = wdpro.extend(params, {
 				'action': 'wdpro',
 				'wdproAction': params['action'],
-				'lang': wdpro.data.lang
+				'lang': wdpro.data.lang,
+				'get': wdpro.data.get
 			});
 
 			return this.data['ajaxUrl']+'?'+ $.param(query);
@@ -2520,18 +2521,11 @@ if (typeof Array.isArray === 'undefined') {
 					// extract the index of the array
 					var list = list[1].split(']');
 					var index = list[0]
-					// if index is empty, just push the value at the end of the array
-					if (index == '') {
-						if (!params) params = {};
-						if (!params[key] || !$.isArray(params[key])) params[key] = [];
-						params[key].push(value);
-					} else
-					// add the value at the index (must be an integer)
-					{
-						if (!params) params = {};
-						if (!params[key] || !$.isArray(params[key])) params[key] = [];
-						params[key][parseInt(index)] = value;
-					}
+
+
+					if (!params) params = {};
+					if (!params[key]) params[key] = {};
+					params[key][index] = value;
 				} else
 				// just normal key
 				{
