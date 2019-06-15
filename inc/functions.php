@@ -437,6 +437,23 @@ function wdpro_current_uri($queryChanges=null)
 	if (isset($_SERVER['REQUEST_URI_ORIGINAL'])) $uri = $_SERVER['REQUEST_URI_ORIGINAL'];
 	if (!$uri) $uri = $_SERVER['REQUEST_URI'];
 
+	// Преобразуем адрес сайта так, чтобы он начинался от нормального корня сайта
+	// Берем адрес сайта
+	$siteUrl = get_option('siteurl');
+	$urlArr = parse_url($siteUrl);
+
+	$homeUrl = $urlArr['scheme'].'://'.$urlArr['host'].$uri;
+	$uri = str_replace(home_url(), '', $homeUrl);
+
+
+	// Чтобы адрес начинася с главной папки, когда главная папка находится не в корне домена, а в другой папке
+	/*$arr = explode('/', $uri);
+	$count = count($arr);
+	$uri = '/'.$arr[$count-2].'/';
+	if ($arr[$count-1]) {
+		$uri.=$arr[$count-1];
+	}*/
+
 	if ($queryChanges)
 	{
 		$uri = wdpro_replace_query_params_in_url($uri, $queryChanges);
