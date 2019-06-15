@@ -199,7 +199,7 @@ class Controller extends \Wdpro\BaseController {
 		wdpro_on_page_init(function ($page) {
 			/** @var $page \App\BasePage */
 
-			if ($page->isHome() && wdpro_current_url() !== wdpro_home_url_with_lang()) {
+			if ($page->isHome() && wdpro_current_post_name() !== '/') {
 				wdpro_location(wdpro_home_url_with_lang());
 			}
 

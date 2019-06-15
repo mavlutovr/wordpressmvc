@@ -426,6 +426,25 @@ function wdpro_replace_query_params_in_url($url, $queryParams) {
 
 
 /**
+ *
+ *
+ * @param null $queryChanges
+ * @return mixed|string
+ */
+function wdpro_current_post_name($queryChanges=null) {
+	$uri = wdpro_current_uri($queryChanges);
+
+	$siteUrl = get_option('siteurl');
+	$urlArr = parse_url($siteUrl);
+
+	$homeUrl = $urlArr['scheme'].'://'.$urlArr['host'].$uri;
+	$uri = str_replace(home_url(), '', $homeUrl);
+
+	return $uri;
+}
+
+
+/**
  * Возвращает относительный адрес текущей страницы
  *
  * @param null|array $queryChanges Изменить параметры QUERY_STRING согласно этому массиву
@@ -439,11 +458,11 @@ function wdpro_current_uri($queryChanges=null)
 
 	// Преобразуем адрес сайта так, чтобы он начинался от нормального корня сайта
 	// Берем адрес сайта
-	$siteUrl = get_option('siteurl');
+	/*$siteUrl = get_option('siteurl');
 	$urlArr = parse_url($siteUrl);
 
 	$homeUrl = $urlArr['scheme'].'://'.$urlArr['host'].$uri;
-	$uri = str_replace(home_url(), '', $homeUrl);
+	$uri = str_replace(home_url(), '', $homeUrl);*/
 
 
 	// Чтобы адрес начинася с главной папки, когда главная папка находится не в корне домена, а в другой папке
@@ -460,6 +479,21 @@ function wdpro_current_uri($queryChanges=null)
 	}
 
 	return $uri;
+}
+
+
+/**
+ * Возвращает абсолютный адрес текущей страницы
+ *
+ * @param null|array $queryChanges Изменить параметры QUERY_STRING согласно этому массиву
+ * @return string
+ */
+function wdpro_current_url($queryChanges=null) {
+	$uri = wdpro_current_uri($queryChanges);
+
+	echo PHP_EOL.'$uri: '.$uri.PHP_EOL;
+
+	return home_url().$uri;
 }
 
 
@@ -483,24 +517,11 @@ function wdpro_current_path() {
  *
  * @return string
  */
-function wdpro_current_post_name() {
+function wdpro_current_post_name_DELETE() {
 	$path = wdpro_current_path();
 	$path = preg_replace('~^/(.*)$~', '$1', $path);
 
 	return $path;
-}
-
-
-/**
- * Возвращает абсолютный адрес текущей страницы
- *
- * @param null|array $queryChanges Изменить параметры QUERY_STRING согласно этому массиву
- * @return string
- */
-function wdpro_current_url($queryChanges=null) {
-	$uri = wdpro_current_uri($queryChanges);
-
-	return home_url().$uri;
 }
 
 
