@@ -22,6 +22,10 @@ class YandexMoney extends Base implements MethodInterface {
 		// Проверка оплаты
 		wdpro_ajax('yandexMoneyHttpCheck', function () {
 
+			if (!isset($_POST['test_repeat'])) {
+				update_option('yandexMoneyHttpCheckPost', wdpro_json_encode($_POST));
+			}
+
 			// Секретное слово
 			$secret = get_option('yandex.money.secret');
 
@@ -62,9 +66,17 @@ class YandexMoney extends Base implements MethodInterface {
 			];
 
 
+			// Платеж не выполнен
+			if ($_POST['unaccepted'] !== 'false') {
+				exit();
+			}
+
 			// Объект платежа
 			$pay = \Wdpro\Pay\Controller::getById($info['label']);
-			if ($pay->loaded()) {
+
+			print_r($pay->data);
+
+			if ($pay->loaded() && $pay->process()) {
 
 				// Осуществляем проверку
 				// Все ОК
@@ -95,6 +107,10 @@ class YandexMoney extends Base implements MethodInterface {
 					}
 					$pay->mergeInfo($info)->setSignature($info['sha1_hash']);
 					$pay->confirm(static::getName());
+					print_r($pay->data);
+
+					echo 'OK';
+					exit();
 				}
 
 				// Ошибка
@@ -157,6 +173,27 @@ class YandexMoney extends Base implements MethodInterface {
 				'name'=>'yandex.money.secret',
 				'top'=>'Секрет | <a href="https://money.yandex.ru/myservices/online.xml" target="_blank">получить секрет</a>',
 			));
+
+
+
+			// Данные последнего уведомления
+			$form->addHeader('Данные последнего уведомления');
+
+			$yandexMoneyHttpCheckPostJson = get_option('yandexMoneyHttpCheckPost');
+			$yandexMoneyHttpCheckPost = wdpro_json_decode($yandexMoneyHttpCheckPostJson);
+			$inputs = '';
+			foreach ($yandexMoneyHttpCheckPost as $key => $value) {
+				$inputs .= '<input type="hidden" name="'.$key.'" value="'.$value.'">';
+			}
+			$form->add([
+				'type'=>'html',
+				'html'=>'<pre>'.$yandexMoneyHttpCheckPostJson.'</pre>
+					<form action="'.$httpCheckUrl.'" target="_blank" method="POST">
+						'.$inputs.'
+						<input type="hidden" name="test_repeat" value="1">
+						<input type="submit" value="Повторить в новом окне">	
+					</form>',
+			]);
 
 			$form->add($form::SUBMIT_SAVE);
 
