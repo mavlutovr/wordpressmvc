@@ -296,7 +296,7 @@ class Controller extends \Wdpro\BaseController {
 					{
 						$targetPayParams['params']['referer'] = urlencode($params['referer']);
 					}
-					else
+					else if (isset($_SERVER['HTTP_REFERER']))
 					{
 						$targetPayParams['params']['referer'] = urlencode($_SERVER['HTTP_REFERER']);
 					}

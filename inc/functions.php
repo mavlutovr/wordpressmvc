@@ -3236,6 +3236,10 @@ $wdproJsData = [];
 function wdpro_js_data ($key, $value) {
 	global $wdproJsData;
 
+	if (is_array($value)) {
+		$value = wdpro_json_encode($value);
+	}
+
 	$wdproJsData[$key] = $value;
 }
 
