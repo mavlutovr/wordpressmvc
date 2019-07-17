@@ -293,6 +293,8 @@
 
 					wdpro.ajax(action, data, function (response) {
 
+						console.log('response', response);
+
 						if (response['dialogClose']) {
 							self.closeDialog();
 						}
@@ -1821,7 +1823,7 @@
 		 */
 		initParams: function (params) {
 			var self = this;
-			
+
 			if (params['*']) params['required'] = true;
 			
 			if (params['width']) {
