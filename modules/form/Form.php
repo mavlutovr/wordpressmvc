@@ -39,6 +39,7 @@ class Form
 	const DATE = 'date';
 	const MENU_ORDER = 'menuOrder';
 	const MENU_ORDER_TOP = 'menuOrderTop';
+	const RECAPTCHA3 = 'recaptcha3';
 
 
 	/**
@@ -71,6 +72,7 @@ class Form
 		'date'=>'\Wdpro\Form\Elements\Date',
 		'menuOrder'=>'\Wdpro\Form\Elements\MenuOrder',
 		'menuOrderTop'=>'\Wdpro\Form\Elements\MenuOrderTop',
+		'recaptcha3'=>'\Wdpro\Form\Elements\Recaptcha3',
 	);
 
 

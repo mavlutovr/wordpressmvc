@@ -13,6 +13,9 @@ class BackForm extends \Wdpro\Form\Form {
 
 		$this->setJsName('contactsBack');
 		$this->setClass('wdpro-contacts-form');
+
+		$this->add(static::RECAPTCHA3);
+
 		$this->add(array(
 			'name'=>'name',
 			'top'=>'Ваше Имя',
