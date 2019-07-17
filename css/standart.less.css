@@ -70,6 +70,9 @@ body {
 .g-italic {
   font-style: italic;
 }
+.g-flex {
+  display: flex;
+}
 td {
   margin: 0;
   padding: 0;

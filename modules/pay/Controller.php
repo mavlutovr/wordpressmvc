@@ -8,7 +8,7 @@ define('WDPRO_PAY', true);
 class Controller extends \Wdpro\BaseController {
 
 	protected static $methods = array();
-	protected static $templateStart, $autoTemplateStart;
+	protected static $templateListMethods, $templateSingleMethod;
 
 
 	/**
@@ -16,11 +16,18 @@ class Controller extends \Wdpro\BaseController {
 	 */
 	public static function init() {
 
-		// Шаблон стартового блока по-умолчанию
-		static::$templateStart = __DIR__.'/templates/payStart.php';
-		static::$autoTemplateStart = __DIR__.'/templates/payAutoStart.php';
-		// Подключаем подмодуль стандартных заказов
-		//\Wdpro\Modules::addWdpro('pay/order');
+		wdpro_default_file(
+			__DIR__.'/templates/pay_start_list_methods.php',
+			WDPRO_TEMPLATE_PATH.'/pay_start_list_methods.php'
+		);
+
+		wdpro_default_file(
+			__DIR__.'/templates/pay_start_single_method.php',
+			WDPRO_TEMPLATE_PATH.'/pay_start_single_method.php'
+		);
+
+		static::$templateListMethods = WDPRO_TEMPLATE_PATH.'/pay_start_list_methods.php';
+		static::$templateSingleMethod = WDPRO_TEMPLATE_PATH.'/pay_start_single_method.php';
 	}
 
 
@@ -50,40 +57,6 @@ class Controller extends \Wdpro\BaseController {
 	 */
 	public static function initSite() {
 		
-		// Страница оплаты
-		wdpro_on_uri_content('pay', function ($content) {
-
-			$getForm = function () {
-
-				if (isset($_GET['in']) && isset($_GET['sw'])) {
-					
-					if ($pay = static::getPayByGet()) {
-
-						return static::getStartBlock(array(
-							'pay'=>$pay,
-						));
-					}
-
-					return 'Ошибка';
-				}
-
-				return static::getStartBlock(array(
-					'target_key'=>urldecode($_GET['pay']['target']),
-					'id'=>$_GET['in'],
-				));
-			};
-
-			wdpro_replace_or_append(
-				$content,
-				'[pay_start_form]',
-				$getForm()
-			);
-
-			return $content;
-
-		});
-		
-		
 		// Страницы по-умолчанию
 		// Страница оплаты
 		\Wdpro\Page\Controller::defaultPage('pay', function () {
@@ -96,6 +69,62 @@ class Controller extends \Wdpro\BaseController {
 		// Ошибка оплаты
 		\Wdpro\Page\Controller::defaultPage('pay-error', function () {
 			return require __DIR__.'/default/pay-error.page.php';
+		});
+	}
+
+
+	/**
+	 * Выполнение скриптов после инициализаций всех модулей (на сайте)
+	 */
+	public static function runSite() {
+
+		// Страница оплаты
+		wdpro_on_uri_content('pay', function ($content) {
+
+			$getForm = function () {
+
+				// Если есть id и secret
+				// https://проказник.рф/pay/?pay%5Btarget%5D=name%253A%255CApp%255COrder%255CEntity%252Cid%253A10
+				if (isset($_GET['in']) && isset($_GET['sw'])) {
+
+					// Находим транзакцию по ним
+					if ($pay = static::getPayByGet()) {
+
+						// Когда транзакция подтверждена
+						if (!$pay->process()) {
+							// Переходим на страницу "Спасибо за оплату"
+							wdpro_location($pay->getAftersaleUrl());
+						}
+
+						return static::getStartBlock(array(
+							'pay'=>$pay,
+						));
+					}
+
+					return 'Ошибка';
+				}
+
+				return static::getStartBlock(array(
+					'target_key'=>urldecode($_GET['pay']['target']),
+					'id'=>isset($_GET['in']) ? $_GET['in'] : '',
+				));
+			};
+
+			wdpro_replace_or_append(
+				$content,
+				'[pay_start_form]',
+				$getForm()
+			);
+
+			return $content;
+
+		});
+
+
+		static::eachMethods(function ($method) {
+
+			/** @var MethodInterface $method */
+			$method::runSite();
 		});
 	}
 
@@ -135,19 +164,6 @@ class Controller extends \Wdpro\BaseController {
 
 
 	/**
-	 * Выполнение скриптов после инициализаций всех модулей (на сайте)
-	 */
-	public static function runSite() {
-
-		static::eachMethods(function ($method) {
-
-			/** @var MethodInterface $method */
-			$method::runSite();
-		});
-	}
-
-
-	/**
 	 * Возвращает блок стартовой страницы
 	 *
 	 * @param array $params Параметры
@@ -164,7 +180,7 @@ class Controller extends \Wdpro\BaseController {
 		}
 		
 		// Загрузка существующей транзакции
-		else if (isset($params['id']))
+		else if (isset($params['id']) && $params['id'])
 		{
 			/** @var Entity $pay */
 			$pay = wdpro_object(Entity::class, $params['id']);
@@ -176,13 +192,34 @@ class Controller extends \Wdpro\BaseController {
 		{
 			$pay = static::createTransaction($params);
 			$available = true;
+
+			if (!isset($_GET['in'])) {
+				wdpro_location($pay->getUrl());
+			}
 		}
 
-		// Создаем новую транзакацию
+		// Если такая транзакция есть
 		if ($available)
 		{
 			// Получаем данные
 			$transaction = $pay->getData();
+
+			// Оплачиваемый объект
+			/** @var \Wdpro\BaseEntity|\Wdpro\Pay\TargetInterface $target */
+			$target = wdpro_object_by_key($transaction['target_key']);
+
+			// Добавляем данные оплачиваемого объекта в шаблон
+			$transaction['target'] = $target->getData();
+
+			// Добавляем текст о подтверждении оплаты в шаблон
+			$transaction['target_confirm_info'] = $target->payGetConfirmInfoHtml();
+
+
+			/*if (!is_array($transaction['methods'])) {
+				echo '<p>Добавьте хотябы один метод оплаты:</p>
+							<code>\Wdpro\Pay\Controller::addMethod(\Wdpro\Pay\Methods\Robokassa::class);</code><BR><BR>';
+				throw new \Exception('Нет способа оплаты');
+			}*/
 
 			// Перебираем подключенные методы
 			static::eachMethods(function ($method) use (&$transaction, &$pay)
@@ -193,9 +230,15 @@ class Controller extends \Wdpro\BaseController {
 					$transaction['methods'][] = $method::getBlock($pay);
 				}
 			});
-			if(!isset($transaction['methods']) || !count($transaction['methods'])) {
+			if(!isset($transaction['methods'])
+				|| !is_array($transaction['methods'])
+				|| !count($transaction['methods'])) {
 				$transaction['methods_error'] = 'Не подключен ни один метод оплаты. Их 
 				нужно подключить в скриптах и потом включить в админке.';
+				echo '<p>Добавьте хотябы один метод оплаты:</p>
+							<code>\Wdpro\Pay\Controller::addMethod(\Wdpro\Pay\Methods\Robokassa::class);</code>
+							<p>А затем включите его в админке.</p><BR><BR>';
+				throw new \Exception('Нет способа оплаты');
 			}
 
 			if (isset($transaction)) {
@@ -203,7 +246,7 @@ class Controller extends \Wdpro\BaseController {
 				if (count($transaction['methods']) == 1) {
 					// Биндим шаблон и возвращаем результат
 					return wdpro_render_php(
-						static::$autoTemplateStart,
+						static::$templateSingleMethod,
 
 						$transaction,
 						array(
@@ -216,7 +259,7 @@ class Controller extends \Wdpro\BaseController {
 				else {
 					// Биндим шаблон и возвращаем результат
 					return wdpro_render_php(
-						static::$templateStart,
+						static::$templateListMethods,
 
 						$transaction,
 						array(
@@ -254,13 +297,17 @@ class Controller extends \Wdpro\BaseController {
 				// Параметры
 				$targetPayParams = $target->payGetParams();
 
+				if (isset($targetPayParams['person_id']) && $targetPayParams['person_id']) {
+					$transaction['person_id'] = $targetPayParams['person_id'];
+				}
+
 				if (!isset($targetPayParams['params']['referer']))
 				{
 					if (isset($params['referer']))
 					{
 						$targetPayParams['params']['referer'] = urlencode($params['referer']);
 					}
-					else
+					else if (isset($_SERVER['HTTP_REFERER']))
 					{
 						$targetPayParams['params']['referer'] = urlencode($_SERVER['HTTP_REFERER']);
 					}
@@ -379,7 +426,7 @@ class Controller extends \Wdpro\BaseController {
 	{
 		$params['target'] = urlencode($params['target']);
 
-		return 'pay?'.wdpro_urlencode_array(array(
+		return home_url().'/pay?'.wdpro_urlencode_array(array(
 			'pay'=>$params
 		));
 	}
@@ -402,10 +449,10 @@ class Controller extends \Wdpro\BaseController {
 	/**
 	 * Добавление метода оплаты
 	 * 
-	 * @param \Wdpro\Pay\Methods\MethodInterface $methodClassname Имя класса метода
+	 * @param \Wdpro\Pay\Methods\MethodInterface|string $methodClassname Имя класса метода
 	 */
 	public static function addMethod($methodClassname) {
-		
+
 		static::$methods[$methodClassname::getName()] = $methodClassname;
 
 		$methodClassname::init();
@@ -428,9 +475,9 @@ class Controller extends \Wdpro\BaseController {
 	 *
 	 * @param string $pathToTemplateFile Путь к файлу шаблона
 	 */
-	public static function setTemplateStart($pathToTemplateFile) {
+	public static function setTemplateListMethods($pathToTemplateFile) {
 
-		static::$templateStart = $pathToTemplateFile;
+		static::$templateListMethods = $pathToTemplateFile;
 	}
 
 

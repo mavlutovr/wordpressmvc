@@ -292,10 +292,10 @@ class Roll extends BaseRoll
 							$data['section_type'] = $_GET['sectionType'];
 					}
 
-					// Установка даты
+					// Установка данных
 					// Следующий порядковый номер
 					// Сохранение
-					$entity->mergeData($data)
+					$entity->consoleMergeDataFromForm($data)
 						->nextSortingToData($this->getWhere())
 						->save();
 
@@ -513,7 +513,14 @@ title="Удалить"></a>
 	 * // https://fontawesome.com/
 	 * 
 	 *  'subsections'=>false,
-	 *  'where'=>["WHERE ... %d, %d", [1, 2]],
+	 *  'where'=>[
+	 *   'WHERE `post_parent`=%d
+	 *    ORDER BY `menu_order`',
+	 *   [ $_GET['sectionId'] ]
+	 *  ],
+	 *
+	 *
+	 *
 	 *  'pagination'=>10, //  Количество элементов на странице
 	 *  'info'=>'<p>Всякая информация над списком элементов</p>'
 	 *

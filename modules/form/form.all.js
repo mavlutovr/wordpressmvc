@@ -276,7 +276,7 @@
 
 			this.on('addedToPage', function () {
 				self.updateDialogPos();
-			});
+			}, true);
 
 
 			// Ajax
@@ -284,7 +284,14 @@
 				this.ajax(function (data) {
 					self.loading();
 
-					wdpro.ajax(self.params['action'], data, function (response) {
+					var action = wdpro.updateQueryStringInUrl(
+						self.params['action'],
+						{
+							fromPostId: wdpro.data['currentPostId']
+						}
+					);
+
+					wdpro.ajax(action, data, function (response) {
 
 						if (response['dialogClose']) {
 							self.closeDialog();
@@ -298,7 +305,34 @@
 							&& dialog.setContent(response['html']);
 						}
 
-						self.loadingStop();
+						else {
+							if (response['html']) {
+								self.html.empty();
+								self.html.append(response['html']);
+								wdpro.contentProcess(self.html);
+							}
+						}
+
+
+						// Loading Stop
+						if (!response['location']) {
+							self.loadingStop();
+						}
+
+						// Ошибка
+						if (response['error']) {
+							self.showErrorMessage(response['error']);
+						}
+
+						// Просто сообщение
+						if (response['message']) {
+							self.showMessage(response['message']);
+						}
+
+						// Редирект
+						if (response['location']) {
+							window.location = response['location'];
+						}
 					});
 				});
 			}
@@ -449,7 +483,24 @@
 		 * Убирает элементы формы
 		 */
 		removeElements: function () {
+
 			this.jForm.hide().trigger('hide');
+		},
+
+
+		/**
+		 * Удаляет элемент по имени
+		 *
+		 * @param name {string}
+		 */
+		removeElement: function (name) {
+
+			var element = this.elements[name];
+
+			if (element) {
+				element.remove();
+				delete this.elements[name];
+			}
 		},
 
 
@@ -698,19 +749,20 @@
 			var self = this;
 
 			this.loading();
-			
+
 			this.valid(function (valid)
 			{
 				if (valid)
 				{
+					// Получаем данные
+					var data = self.getData();
+
+					// Отправляем данные в каллбэк
+					self.trigger('submit', data);
+
 					// Ajax
 					if (self._ajax)
 					{
-						// Получаем данные
-						var data = self.getData();
-
-						// Отправляем данные в каллбэк
-						self.trigger('submit', data);
 					}
 
 					else 
@@ -1477,8 +1529,10 @@
 		 * @return {*|wdpro.dialogs.Dialog}
 		 */
 		dialog: function () {
+			if (wdpro.dialogs)
 			return wdpro.dialogs.getObjectByJquery(this.html.closest('.js-dialog'));
 		},
+
 
 		/**
 		 * Приостанавливает обычную отправку и отправляет в callback данные формы
@@ -1500,6 +1554,8 @@
 		 */
 		loading: function () {
 			//this.jForm && this.jForm.find('.JS_submit').addClass('loading');
+			if (this._loadingProcess) return false;
+			this._loadingProcess = true;
 			this.jForm && this.jForm.find('.JS_submit').loading();
 		},
 
@@ -1509,6 +1565,7 @@
 		 */
 		loadingStop: function () {
 			this.jForm && this.jForm.find('.JS_submit').loadingStop();
+			this._loadingProcess = false;
 		}
 	});
 
@@ -1737,6 +1794,7 @@
 	// export class BaseElement
 	var BaseElement = wdpro.forms.BaseElement = wdpro.Event.extend({
 
+
 		/**
 		 * Конструктор
 		 *
@@ -1801,6 +1859,9 @@
 				}
 
 				if (self.params['left']) {
+					if (self.params['left'] === true) {
+						self.params['left'] = '';
+					}
 					self.params['left'] += ' ' + icon;
 					return true;
 				}
@@ -1823,7 +1884,11 @@
 			var normalizeTextData = function (textData) {
 				if (textData)
 				{
-					if (typeof textData == 'string')
+					if (textData === true) {
+						textData = '';
+					}
+
+					if (typeof textData === 'string')
 					{
 						textData = {
 							'text': textData,
@@ -1850,7 +1915,7 @@
 					}
 
 					return textData;
-				}
+				};
 			};
 
 			this.params['left'] = normalizeTextData(this.params['left']);
@@ -2129,6 +2194,14 @@
 
 
 		/**
+		 * Удаляет элемент
+		 */
+		remove: function () {
+			this.html && this.html.remove && this.html.remove();
+		},
+
+
+		/**
 		 * Инифиирование описания поля в самом поле 
 		 * 
 		 * (которое исчезает, когда вводиться текст)
@@ -2257,7 +2330,7 @@
 				if (this.params['name'])
 				{
 					// Имя в виде массива
-					if (typeof this.params['name'] == 'object')
+					if (typeof this.params['name'] === 'object')
 					{
 						this.params['key'] = this.params['name'].join('_');
 					}
@@ -2290,7 +2363,7 @@
 			}
 
 			// Имя в виде массива
-			if (typeof this.params['name'] == 'object')
+			if (typeof this.params['name'] === 'object')
 			{
 				var elementData = formData;
 
@@ -2628,7 +2701,6 @@
 		}
 	});
 
-	
 
 	/**
 	 * Дата
@@ -2885,13 +2957,28 @@
 				this.config = wdpro.extend(this.config, this.params['configParams']);
 			}
 
-			console.log('this.config', this.config);
-			
+
+			var heightKey = 'ckeditor-height:'+self.getName();
+			if (!this.config['height']) {
+				(function () {
+					var height = wdpro.localStorage.get(heightKey);
+					if (height) {
+						self.config['height'] = Number(height);
+					}
+				})();
+
+			}
+
 			this.on('addedToPage', function () {
 				
 				self.html.addClass('wdpro-form-element-ckeditor');
 				if (!CKEDITOR.instances[self.htmlId]) {
 					var editor = CKEDITOR.replace(self.htmlId, self.config);
+
+					editor.on('resize', function (e) {
+
+						wdpro.localStorage.set(heightKey, e['data']['contentsHeight']);
+					});
 
 					self.on('prepareToGetData', function () {
 						self.field.val(editor.getData());
@@ -2946,7 +3033,7 @@
 		 */
 		initParams: function (params) {
 			params = wdpro.extend({
-				'value':                  1,
+				'value': 1,
 				'JS_class_for_container': 'checkbox_container',
 				'autoWidth': false
 			}, params);
@@ -3014,6 +3101,31 @@
 
 	});
 
+
+	/**
+	 * Политика
+	 */
+	var Privacy = CheckElement.extend({
+
+		/**
+		 * Инициализация параметров
+		 *
+		 * @param params
+		 */
+		initParams: function (params) {
+			params = wdpro.extend({
+				'right': "Я даю свое согласие на обработку персональных данных и соглашаюсь с условиями и <a href='/privacy/' target='_blank'>политикой конфиденциальности</a>",
+
+				'containerClass': 'privacy-check',
+				'checked': true,
+				'required': true
+			}, params);
+
+			this._super(params);
+		}
+	});
+
+
 	/**
 	 * @type {CheckElement}
 	 */
@@ -3042,7 +3154,7 @@
 		 * Возвращает CSS классы
 		 */
 		getClass: function () {
-
+			return this.params['class'] || '';
 		}
 	});
 
@@ -3063,7 +3175,7 @@
 
 
 		getClass: function () {
-			return 'js-recaptcha3-input';
+			return this._super() + ' js-recaptcha3-input';
 		}
 
 	});
@@ -3413,7 +3525,6 @@
 							console.error('При загрузке файла произошла ошибка', jqXHR.getAllResponseHeaders());
 						}
 					};
-					console.log('ajax', ajax);
 					$.ajax(ajax);
 				});
 
@@ -3855,8 +3966,52 @@
 	wdpro.forms.HtmlElement = wdpro.forms.BaseElement.extend({
 
 		getHtml: function (callback) {
-			
-			callback(this.params['html']);
+
+			if (this.hasLabel()) {
+				this._super(callback);
+			}
+			else {
+				callback(this.getHtmlValue());
+			}
+		},
+
+
+		/**
+		 * Создает html код самого поля
+		 *
+		 * @param callback {function} Каллбэк, получающий поле
+		 */
+		createField: function (callback) {
+
+			if (this.hasLabel()) {
+				callback(this.getHtmlValue());
+			}
+		},
+
+
+		hasLabel: function () {
+			return this.params['left']
+			|| this.params['top']
+			|| this.params['right']
+			|| this.params['bottom'];
+		},
+
+
+		getHtmlValue: function () {
+			var html = this.params['html'];
+			if (html.indexOf('<') === -1) {
+				html = wdpro.templates.forms.htmlContent({
+					data:  this.getParams(),
+					attrs: this.getAttrs(),
+					html: html
+				});
+			}
+			return html;
+		},
+
+
+		getClass: function () {
+			return this.params['class'];
 		}
 	});
 
@@ -3936,6 +4091,7 @@
 		'Html': wdpro.forms.HtmlElement,
 		'Spinner': wdpro.forms.SpinnerElement,
 		'Email': wdpro.forms.EmailElement,
+		'Privacy': Privacy,
 		'Date': wdpro.forms.DateElement,
 		'Recaptcha3': Recaptcha3Element
 	};

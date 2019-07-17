@@ -141,6 +141,45 @@ if (typeof Array.isArray === 'undefined') {
 	};
 
 
+	wdpro.localStorage = {
+
+
+		/**
+		 * Сохраняет данные в localStorage
+		 * @param name {strong} Имя данных
+		 * @param data {*} Данные
+		 */
+		set: function (name, data) {
+
+			if (data === null) {
+				localStorage.removeItem(name);
+			}
+
+			else {
+				localStorage.setItem(name, JSON.stringify(data));
+			}
+		},
+
+
+		/**
+		 * Загружает данные по имени
+		 *
+		 * @param name {strong} Имя данных
+		 * @return {*}
+		 */
+		get: function (name) {
+			var json = localStorage.getItem(name);
+
+			if (json) {
+				var data = wdpro.parseJSON(json);
+				return data;
+			}
+		}
+	};
+
+
+
+
 	(function(){
 		var initializing = false, fnTest = /xyz/.test(function(){xyz;}) ? /\b_super\b/ : /.*/;
 
@@ -299,6 +338,26 @@ if (typeof Array.isArray === 'undefined') {
 		});
 		
 		return n;
+	};
+
+
+	/**
+	 * Обработка контента
+	 *
+	 * @param content {jQuery}
+	 */
+	wdpro.contentProcess = function (content) {
+		wdpro.trigger('content', content);
+	};
+
+
+	/**
+	 * Установка обработчиков контента
+	 *
+	 * @param callback {function} Каллбэк, в который отправляется контент для обработки
+	 */
+	wdpro.onContent = function (callback) {
+		wdpro.on('content', callback);
 	};
 
 
@@ -725,11 +784,32 @@ if (typeof Array.isArray === 'undefined') {
 		var waiter = new wdpro.Waiter();
 
 		// Добавляем функции кроме последней
-		wdpro.each(args, function (arg, i) {
-			if (i < args.length-1) {
-				waiter.add(arg, true);
-			}
-		});
+		for (var i=0; i < args.length - 1; i ++) {
+			waiter.wait(args[i], true);
+		}
+
+		// Добавляем последнюю функцию
+		waiter.run(args[args.length-1]);
+	};
+
+
+	/**
+	 * Дожидается выполнения всех функций и после этого запускает последнюю
+	 *
+	 * @param fn1 {function} Функция 1
+	 * @param fn2 {function} Функция 2
+	 * @param fnN {function} Функция N
+	 */
+	wdpro.wait = function (fn1, fn2, fnN) {
+
+		var args = wdpro.args(arguments);
+
+		var waiter = new wdpro.Waiter();
+
+		// Добавляем функции кроме последней
+		for (var i=0; i < args.length - 1; i ++) {
+			waiter.wait(args[i]);
+		}
 
 		// Добавляем последнюю функцию
 		waiter.run(args[args.length-1]);
@@ -1915,7 +1995,8 @@ if (typeof Array.isArray === 'undefined') {
 		var query = wdpro.extend(params, {
 				'action': 'wdpro',
 				'wdproAction': params['action'],
-				'lang': wdpro.data.lang
+				'lang': wdpro.data.lang,
+				'get': wdpro.data.get
 			});
 
 			return this.data['ajaxUrl']+'?'+ $.param(query);
@@ -1977,7 +2058,12 @@ if (typeof Array.isArray === 'undefined') {
 			'success': function (json) {
 
 				var data = self.parseJSON(json);
-				data = $.extend({}, data);
+
+				if (typeof data !== 'string') {
+					data = $.extend({}, data);
+				}
+
+				
 				wdpro.trigger('ajaxData', data);
 
 				if (data['reloadPage']) {
@@ -2435,18 +2521,11 @@ if (typeof Array.isArray === 'undefined') {
 					// extract the index of the array
 					var list = list[1].split(']');
 					var index = list[0]
-					// if index is empty, just push the value at the end of the array
-					if (index == '') {
-						if (!params) params = {};
-						if (!params[key] || !$.isArray(params[key])) params[key] = [];
-						params[key].push(value);
-					} else
-					// add the value at the index (must be an integer)
-					{
-						if (!params) params = {};
-						if (!params[key] || !$.isArray(params[key])) params[key] = [];
-						params[key][parseInt(index)] = value;
-					}
+
+
+					if (!params) params = {};
+					if (!params[key]) params[key] = {};
+					params[key][index] = value;
 				} else
 				// just normal key
 				{

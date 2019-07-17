@@ -7,6 +7,15 @@
  * Author URI: https://github.com/mavlutovr/wordpressmvc
  */
 
+// Фикс для хостинга sweb.ru
+if (isset($_SERVER['HTTP_HTTPS']) && $_SERVER['HTTP_HTTPS'] === 'on')
+	$_SERVER['HTTPS'] = 'on';
+
+
+// Дата
+date_default_timezone_set(ini_get('date.timezone'));
+
+
 // Standart Functions
 require(__DIR__ . '/inc/functions.php');
 
@@ -72,11 +81,12 @@ Wdpro\Autoload::add('Wdpro\Lang', __DIR__.'/modules/lang');
 require(__DIR__ . '/Modules.php');
 
 // Add modules
+Wdpro\Modules::addWdpro('adminNotice');
+Wdpro\Modules::addWdpro('secure');
 Wdpro\Modules::addWdpro('form');
 Wdpro\Modules::addWdpro('tools');
 Wdpro\Modules::addWdpro('page');
 Wdpro\Modules::addWdpro('breadcrumbs');
-Wdpro\Modules::addWdpro('adminNotice');
 Wdpro\Modules::addWdpro('sender');
 Wdpro\Modules::addWdpro('counters');
 Wdpro\Modules::addWdpro('extra/downloadFile');
@@ -153,3 +163,9 @@ add_action('wp_footer', function () {
 			}
 			</script>';
 });
+
+
+// Отключаем смайлики в админке, чтобы они не портились в редакторе (не превращались в теги <img> там где не нужно
+if (wdpro_is_admin()) {
+	add_action( "init", "wdpro_disable_emojis" );
+}

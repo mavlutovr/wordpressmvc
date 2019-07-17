@@ -81,7 +81,7 @@ add_action(
 									});
 
 
-								echo('<p>Загатовка плагина-приложения создана. <a 
+								echo('<p>Заготовка плагина-приложения создана. <a 
 class="button-primary"
 href="'.WDPRO_CONSOLE_URL.'plugins.php">Активировать плагин</a>
 </p>
@@ -96,7 +96,7 @@ href="'.WDPRO_CONSOLE_URL.'plugins.php">Активировать плагин</a
 							if ($_GET['create_theme_app']) {
 								wdpro_copy(__DIR__.'/modules/install/default/app_theme',
 									__DIR__.'/../../themes/app');
-								echo('<p>Загатовка темы создана. <a 
+								echo('<p>Заготовка темы создана. <a 
 class="button-primary"
 href="'.WDPRO_CONSOLE_URL.'themes.php">Активировать тему</a>
 </p>');
@@ -131,7 +131,7 @@ href="'.WDPRO_CONSOLE_URL.'themes.php">Активировать тему</a>
 
 								array(
 									'type'=>'html',
-									'htm'=>'<h2>Head</h2>',
+									'html'=>'<h2>Head</h2>',
 								),
 
 								array(
@@ -158,6 +158,13 @@ href="'.WDPRO_CONSOLE_URL.'themes.php">Активировать тему</a>
 									'name'=>'wdpro_compile_less',
 									'right'=>'Компилировать Less в Css',
 								),
+
+								array(
+									'type' => 'submit',
+									'text' => 'Сохранить',
+									'class'=>WDPRO_BUTTON_CSS_CLASS,
+								),
+
 
 								array(
 									'type'=>'html',
@@ -210,6 +217,13 @@ href="'.WDPRO_CONSOLE_URL.'themes.php">Активировать тему</a>
 								),
 
 								array(
+									'type' => 'submit',
+									'text' => 'Сохранить',
+									'class'=>WDPRO_BUTTON_CSS_CLASS,
+								),
+
+
+								array(
 									'type'=>'html',
 									'html'=>'<h2>СЕО</h2>',
 								),
@@ -239,9 +253,16 @@ href="'.WDPRO_CONSOLE_URL.'themes.php">Активировать тему</a>
 
 								array(
 									'name'=>'wdpro_css_to_footer',
-									'right'=>'Переместить Css в футер',
+									'right'=>'Переместить Css в футер (чтобы поставить css в свое место, укажите в коде &lt;!-- cssPlace --&gt;)',
 									'type'=>'checkbox',
 								),
+
+								array(
+									'type' => 'submit',
+									'text' => 'Сохранить',
+									'class'=>WDPRO_BUTTON_CSS_CLASS,
+								),
+
 
 								/*array(
 									'name'=>'wdpro_css_to_footer_w3tc',
@@ -311,6 +332,13 @@ href="'.WDPRO_CONSOLE_URL.'themes.php">Активировать тему</a>
 								),
 
 								array(
+									'type' => 'submit',
+									'text' => 'Сохранить',
+									'class'=>WDPRO_BUTTON_CSS_CLASS,
+								),
+
+
+								/*array(
 									'type' => 'html',
 									'html' => '<h2>Mysql</h2>',
 								),
@@ -320,8 +348,36 @@ href="'.WDPRO_CONSOLE_URL.'themes.php">Активировать тему</a>
 									'name'=>'wdpro_sql_structure_drop_available',
 									'top'=>'Удалять из таблиц поля, которые удалены из структуры таблиц, описанных в php классах таблиц',
 									'bottom'=>'Это сделано на всякий случай. Так как структура таблиц меняется в зависимости от того, что описано в классах таблиц, можно там удалить что-то. От чего можно потерять данные. Имеет смысл включать это на локальной машине и отключать в интернете.',
+								),*/
+
+
+								array(
+									'type'=>'html',
+									'html'=>'<h2>Безопасность</h2>',
 								),
 
+								array(
+									'right'=>'Включить блокировку по IP',
+									'type'=>'check',
+									'name'=>'wdpro_secure_errors_block',
+								),
+
+								array(
+									'right'=>'Количество ошибок безоспасности, после которых сайт блокируется для IP. Например, после ввода 3-х неправильных паролей.',
+									'name'=>'wdpro_secure_errors_n',
+									'center'=>'По-умолчанию: 3',
+									'autoWidth'=>false,
+									'width'=>150,
+								),
+
+								array(
+									'right'=>'Время блокировки (сек)',
+									'name'=>'wdpro_secure_errors_time',
+									'center'=>'По-умолчанию: 60',
+									'autoWidth'=>false,
+									'width'=>150,
+								),
+								
 								array(
 									'type' => 'submit',
 									'text' => 'Сохранить',

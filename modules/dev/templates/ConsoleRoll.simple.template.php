@@ -33,7 +33,7 @@ class ConsoleRoll extends \Wdpro\Console\Roll {
 		return [
 			'labels' => [
 				'label'   => '<?php echo $ConsoleRoll_label; ?>',
-				'add_new' => 'Добавить <?php echo $ConsoleRoll_add_new; ?>',
+				<?php if ($ConsoleRoll_add_new): ?>'add_new' => 'Добавить <?php echo $ConsoleRoll_add_new; ?>',<?php endif;?>
 			],
 			// Когда это дочерний элемент
 			// 'where'  => ['WHERE `post_parent`=%d ORDER BY `<?php echo $ConsoleRoll_sorting_field; ?>`', [$_GET['sectionId']]],

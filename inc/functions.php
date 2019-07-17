@@ -388,7 +388,9 @@ function wdpro_replace_query_params_in_url($url, $queryParams) {
 	$new = array();
 
 	$get = [];
-	parse_str($arr['query'], $get);
+	if (isset($arr['query'])) {
+		parse_str($arr['query'], $get);
+	}
 
 
 	if (is_array($get)) {
@@ -426,6 +428,25 @@ function wdpro_replace_query_params_in_url($url, $queryParams) {
 
 
 /**
+ *
+ *
+ * @param null $queryChanges
+ * @return mixed|string
+ */
+function wdpro_current_post_name($queryChanges=null) {
+	$uri = wdpro_current_uri($queryChanges);
+
+	$siteUrl = get_option('siteurl');
+	$urlArr = parse_url($siteUrl);
+
+	$homeUrl = $urlArr['scheme'].'://'.$urlArr['host'].$uri;
+	$uri = str_replace(home_url(), '', $homeUrl);
+
+	return $uri;
+}
+
+
+/**
  * Возвращает относительный адрес текущей страницы
  *
  * @param null|array $queryChanges Изменить параметры QUERY_STRING согласно этому массиву
@@ -436,6 +457,23 @@ function wdpro_current_uri($queryChanges=null)
 	$uri = '';
 	if (isset($_SERVER['REQUEST_URI_ORIGINAL'])) $uri = $_SERVER['REQUEST_URI_ORIGINAL'];
 	if (!$uri) $uri = $_SERVER['REQUEST_URI'];
+
+	// Преобразуем адрес сайта так, чтобы он начинался от нормального корня сайта
+	// Берем адрес сайта
+	/*$siteUrl = get_option('siteurl');
+	$urlArr = parse_url($siteUrl);
+
+	$homeUrl = $urlArr['scheme'].'://'.$urlArr['host'].$uri;
+	$uri = str_replace(home_url(), '', $homeUrl);*/
+
+
+	// Чтобы адрес начинася с главной папки, когда главная папка находится не в корне домена, а в другой папке
+	/*$arr = explode('/', $uri);
+	$count = count($arr);
+	$uri = '/'.$arr[$count-2].'/';
+	if ($arr[$count-1]) {
+		$uri.=$arr[$count-1];
+	}*/
 
 	if ($queryChanges)
 	{
@@ -455,7 +493,37 @@ function wdpro_current_uri($queryChanges=null)
 function wdpro_current_url($queryChanges=null) {
 	$uri = wdpro_current_uri($queryChanges);
 
+	echo PHP_EOL.'$uri: '.$uri.PHP_EOL;
+
 	return home_url().$uri;
+}
+
+
+/**
+ * Возвращает текущий путь страницы от домена до query_string
+ *
+ * @return string
+ */
+function wdpro_current_path() {
+	$uri = '';
+	if (isset($_SERVER['REQUEST_URI_ORIGINAL'])) $uri = $_SERVER['REQUEST_URI_ORIGINAL'];
+	if (!$uri) $uri = $_SERVER['REQUEST_URI'];
+
+	$parsedUri = parse_url($uri);
+	return $parsedUri['path'];
+}
+
+
+/**
+ * Возвращает имя поста (определяет по адресу, а не по get_post())
+ *
+ * @return string
+ */
+function wdpro_current_post_name_DELETE() {
+	$path = wdpro_current_path();
+	$path = preg_replace('~^/(.*)$~', '$1', $path);
+
+	return $path;
 }
 
 
@@ -1419,9 +1487,12 @@ function wdpro_object($className, $dataOrId=null)
 
 	if (is_array($dataOrId))
 	{
-		if (isset($dataOrId['ID'])) $key = $dataOrId['ID'];
-		else if (isset($dataOrId['id'])) $key = $dataOrId['id'];
-		else $key = null;
+		if (isset($dataOrId['ID']))
+			$key = $dataOrId['ID'];
+		else if (isset($dataOrId['id']))
+			$key = $dataOrId['id'];
+		else
+			$key = null;
 	}
 	else
 	{
@@ -1447,7 +1518,10 @@ function wdpro_object($className, $dataOrId=null)
 			$_wdproObjects[$className][$key] = new $className($dataOrId);
 		}*/
 
-		wdpro_object_add_to_cache(new $className($dataOrId), $key);
+		if (!isset($_wdproObjects[$className][$key]))
+		{
+			wdpro_object_add_to_cache(new $className($dataOrId), $key);
+		}
 
 		return $_wdproObjects[$className][$key];
 	}
@@ -1490,7 +1564,7 @@ function wdpro_object_by_post_id($postId)
 {
 	$postType = get_post_field('post_type', $postId);
 
-	if ($class = wdpro_get_class_by_post_type($postType))
+	if ($class = wdpro_get_entity_class_by_post_type($postType))
 	{
 		return wdpro_object($class, $postId);
 	}
@@ -2239,7 +2313,7 @@ function wdpro_render_text($text, $data=null) {
 	if (is_array($data)) {
 		foreach($data as $key=>$value) {
 
-			$text = str_replace('{'.$key.'}', $value, $text);
+			$text = str_replace('['.$key.']', $value, $text);
 		}
 	}
 
@@ -2325,8 +2399,14 @@ function wdpro_on_url($url, $callback) {
 				$scheme = $_SERVER['REQUEST_SCHEME'];
 			}
 			else {
-				$scheme = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] ?
-					'https' : 'http';
+				if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']
+					|| isset($_SERVER['HTTP_HTTPS']) && $_SERVER['HTTP_HTTPS']) {
+
+					$scheme = 'https';
+				}
+				else {
+					$scheme = 'http';
+				}
 			}
 
 			$absurl = $scheme.'://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
@@ -2354,10 +2434,10 @@ function wdpro_on_uri_content($uri, $callback) {
 		'wp',
 		function () use (&$uri, &$callback) {
 
-			$post = get_post();
-
 			if (!is_array($uri)) $uri = [$uri];
 
+			// Определяем по посту
+			$post = get_post();
 			if ($post) {
 				foreach($uri as $uriOne) {
 					if (($uriOne == $post->post_name)
@@ -2366,6 +2446,13 @@ function wdpro_on_uri_content($uri, $callback) {
 						break;
 					}
 				}
+			}
+
+			// Определяем по адресу
+			else {
+				$currentPostName = wdpro_current_post_name();
+
+				return $currentPostName === $uri;
 			}
 		}
 	);
@@ -2792,6 +2879,7 @@ function noindex_end() {
  *
  * @param \Wdpro\BasePage $post Страница, на которую добавлять шорткод
  * @param string $shortcode Сам шорткод
+ * @throws \Wdpro\EntityException
  */
 function wdpro_add_shortcode_to_post($post, $shortcode) {
 	if ($post && $langs = \Wdpro\Lang\Data::getSuffixes()) {
@@ -3150,5 +3238,61 @@ $wdproJsData = [];
 function wdpro_js_data ($key, $value) {
 	global $wdproJsData;
 
+	if (is_array($value)) {
+		$value = wdpro_json_encode($value);
+	}
+
 	$wdproJsData[$key] = $value;
+}
+
+
+/**
+ * Возвращает ID текущего пользователя
+ *
+ * @return int
+ */
+function wdpro_person_auth_id() {
+
+	$personId = get_current_user_id();
+
+	// Чтобы можно было заменить ID пользователя на какой-нибудь свой
+	$personId = apply_filters(
+		'wdpro_person_auth_id',
+		$personId
+	);
+
+	return $personId;
+}
+
+
+/**
+ * Возвращает ip посетителя
+ *
+ * @return string
+ */
+function wdpro_get_visitor_ip(){
+
+	if (!empty($_SERVER['HTTP_REMOTE_ADDR'])) {
+		$ip = $_SERVER['HTTP_REMOTE_ADDR'];
+	}
+	else if(!empty($_SERVER['HTTP_CLIENT_IP'])){
+		$ip = $_SERVER['HTTP_CLIENT_IP'];
+	}elseif(!empty($_SERVER['HTTP_X_FORWARDED_FOR'])){
+		$ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+	}else{
+		$ip = $_SERVER['REMOTE_ADDR'];
+	}
+	return $ip;
+}
+
+
+// Отключение смайликов
+function wdpro_disable_emojis() {
+	remove_action( "wp_head", "print_emoji_detection_script", 7 );
+	remove_action( "admin_print_scripts", "print_emoji_detection_script" );
+	remove_action( "wp_print_styles", "print_emoji_styles" );
+	remove_action( "admin_print_styles", "print_emoji_styles" );
+	remove_filter( "the_content_feed", "wp_staticize_emoji" );
+	remove_filter( "comment_text_rss", "wp_staticize_emoji" );
+	remove_filter( "wp_mail", "wp_staticize_emoji_for_email" );
 }

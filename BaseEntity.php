@@ -37,7 +37,19 @@ abstract class BaseEntity
 	 *
 	 * @param int|string|array $dataOrId ID или данные объекта
 	 *
-	 * @return self
+	 * @return $this
+	 */
+	public static function instance($dataOrId) {
+		return static::getEntity($dataOrId);
+	}
+
+
+	/**
+	 * Возвращает экземпляр объекта
+	 *
+	 * @param int|string|array $dataOrId ID или данные объекта
+	 *
+	 * @return $this
 	 */
 	public static function getEntity($dataOrId) {
 		return wdpro_object(get_called_class(), $dataOrId);
@@ -152,6 +164,61 @@ abstract class BaseEntity
 
 
 	/**
+	 * Установка данных формы из админки
+	 *
+	 * Для того, чтобы поменять эти данные, переопределите метод prepareDataFromConsoleForm
+	 *
+	 * @param array $data Данные формы
+	 * @return $this
+	 */
+	public function consoleMergeDataFromForm($data) {
+		$data = $this->prepareDataFromConsoleForm($data);
+		$this->mergeData($data);
+		return $this;
+	}
+
+
+	/**
+	 * Обработка данных, которые пришли из формы админки
+	 *
+	 * @param array $data Данные из формы админки
+	 * @return array
+	 */
+	public function prepareDataFromConsoleForm($data) {
+
+		return $data;
+	}
+
+
+	/**
+	 * Возвращает данные для формы админки
+	 *
+	 * Для изменения этих данных переопределите метод prepareDataForConsoleForm
+	 *
+	 * @return array
+	 */
+	public function consoleGetDataForForm() {
+
+		$data = $this->getData();
+		$data = $this->prepareDataForConsoleForm($data);
+
+		return $data;
+	}
+
+
+	/**
+	 * Обработка данных перед отправкой их в форму админки
+	 *
+	 * @param array $data Данные
+	 * @return array
+	 */
+	public function prepareDataForConsoleForm($data) {
+
+		return $data;
+	}
+
+
+	/**
 	 * Возвращает данные сущности
 	 *
 	 * @param null|string $key Ключ данных, которые необходимо получить.
@@ -226,12 +293,17 @@ abstract class BaseEntity
 		if (is_array($data))
 		{
 			$created = false;
-			$data = $this->prepareDataForSave($data);
+
+			// Сначала Запускаем обработку данных перед созданием
 			if (!$this->existsInDb())
 			{
 				$data = $this->_prepareData($data);
 				$created = true;
 			}
+
+			// А потом делаем обработку данных при сохранении
+			// Чтобы во время этой обработки уже были известны результаты обработки перед созданием
+			$data = $this->prepareDataForSave($data);
 			$this->_created = $created;
 			
 			// Если данные это true или false, значит сохранение было прервано
@@ -471,7 +543,7 @@ abstract class BaseEntity
 				
 				if ($this->loaded())
 				{
-					$this->_consoleForm->setData($this->getData());
+					$this->_consoleForm->setData($this->consoleGetDataForForm());
 				}
 			}
 			else
@@ -698,6 +770,7 @@ abstract class BaseEntity
 	 *      'label'=>'Товары',
 	 *
 	 *      // https://developer.wordpress.org/resource/dashicons/#products
+	 *      // https://fontawesome.com/icons
 	 *      'icon'=>'dashicons-products',
 	 *  )
 	 * );

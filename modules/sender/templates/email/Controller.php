@@ -17,7 +17,7 @@ class Controller extends \Wdpro\BaseController {
 
 		// Список шаблонов
 		\Wdpro\Console\Menu::add(array(
-			'n'=>100,
+			'position'=>'settings',
 			'roll'=>ConsoleRoll::class,
 		));
 	}
@@ -74,12 +74,15 @@ class Controller extends \Wdpro\BaseController {
 	 * ]]</pre>
 	 */
 	public static function send($name, $emails, $data=null, $params=null) {
-		
+
 		if (is_string($emails)) {
 			$emails = explode(',', $emails);
 		}
+
+		$data = apply_filters('wdpro_sender_templates_email_data', $data);
 		
-		if ($template = static::getTemplate($name, $params)) {
+		if (is_array($emails)
+			&& $template = static::getTemplate($name, $params)) {
 			
 			foreach($emails as $email) {
 				

@@ -76,13 +76,12 @@ abstract class BaseSqlTable
 	 *
 	 * @param string|array $where Параметры запроса или сам запрос
 	 * 'WHERE a="A"'
-	 * array('WHERE a=%s', 'A')
-	 * array('a'=>'A')
+	 * array('WHERE field=%s', 'value')
+	 * array('field'=>'value')
 	 * @param string $fields Поля, которые выбрать из таблицы
 	 * @param null|array $insertIfNotExistsThisData Данные по-умолчанию
 	 * Они добавяться в таблицу, если строка будет не найдена
 	 * @return array
-	 * @throws TableException
 	 */
 	public static function getRow($where, $fields='*', $insertIfNotExistsThisData=null)
 	{
@@ -154,8 +153,19 @@ abstract class BaseSqlTable
 		echo "format: "; print_r($format);
 		echo "data: "; print_r($data);*/
 	    $wpdb->insert(static::getNameWithPrefix(), $data, $format);
-	    
-	    return $wpdb->insert_id;
+
+	  /*  global $wpdb;
+		echo '$wpdb->insert_id: '.($wpdb->dbh->error).PHP_EOL; exit();*/
+
+		if (!$wpdb->insert_id) {
+			if (defined('WP_DEBUG') && WP_DEBUG) {
+				echo $wpdb->dbh->error.PHP_EOL;
+				exit();
+			}
+			throw new \Exception($wpdb->dbh->error);
+		}
+
+		return $wpdb->insert_id;
 	}
 
 	
@@ -391,7 +401,7 @@ abstract class BaseSqlTable
 	/**
 	 * Проверяет, изменился ли файл таблицы с прошлого раза
 	 * 
-	 * @return bool
+	 * @return int
 	 */
 	protected static function isStructureFileUpdated() {
 
@@ -408,7 +418,7 @@ abstract class BaseSqlTable
 				static::setStatic('isStructureFileUpdated', $currentFileTime);
 			}
 		}
-		
+
 		return static::getStatic('isStructureFileUpdated');
 	}
 
@@ -573,9 +583,13 @@ abstract class BaseSqlTable
 
 				// Если файл таблицы поменялся, обновляем ее структуру
 				if (static::structureUpdateEnable()
-				    && ($currentFileTime = static::isStructureFileUpdated()
-				    || $currentLangTime = static::isLangStructureUpdated()))
+				    && (static::isStructureFileUpdated()
+				    || static::isLangStructureUpdated()))
 				{
+					$currentFileTime = static::isStructureFileUpdated();
+					$currentLangTime = static::isLangStructureUpdated();
+
+
 					// Wordpress (стандартный метод)
 					if (isset($structure[static::SQL]) && $structure[static::SQL])
 					{
@@ -714,12 +728,16 @@ abstract class BaseSqlTable
 					}
 
 
-					update_option( 'sqlTableVersion:' . static::$name,
+					isset($currentFileTime)
+					&& $currentFileTime
+					&& update_option(
+						'sqlTableVersion:' . static::$name,
 						$currentFileTime );
 
 					isset($currentLangTime)
 					&& $currentLangTime
-					&& update_option('sqlTableLangVersion:'.static::$name,
+					&& update_option(
+						'sqlTableLangVersion:'.static::$name,
 						$currentLangTime);
 				}
 
@@ -826,7 +844,7 @@ abstract class BaseSqlTable
 
 
 			// Индекс существует
-			if (is_array($current_index_arr[$index_name]))
+			if (isset($current_index_arr[$index_name]) && is_array($current_index_arr[$index_name]))
 			{
 				// Получаем строки полей для сравнения
 				// Текущий индекс
@@ -875,7 +893,7 @@ abstract class BaseSqlTable
 				if (!($wpdb->query($create_index_query)))
 				{
 					// Выводим ошибку
-					throw new Exception($create_index_query.mysql_error());
+					throw new Exception($create_index_query . $wpdb->print_error());
 				}
 			}
 

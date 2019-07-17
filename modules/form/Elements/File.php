@@ -65,7 +65,8 @@ class File extends Base
 			urldecode($value), true
 		);
 
-		if (count($values))
+
+		if ($values && count($values))
 		{
 			foreach($values as $n=>$fileName)
 			{

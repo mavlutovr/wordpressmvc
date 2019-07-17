@@ -18,6 +18,11 @@
 	wdpro.dialogs = {
 
 
+		// Счетчик открытых окошек
+		// Чтобы, например, можно было выдать предупреждение о закрытии окна, когда есть не закрытые окошки
+		openedCount: 0,
+
+
 		/**
 		 * Возвращает объект окна по его html блоку
 		 *
@@ -211,6 +216,12 @@
 				this.html.on('close', function () {
 					self.close();
 				});
+
+				// Подсчитываем количетсво открытых окошек
+				wdpro.dialogs.openedCount ++;
+				this.on('closed', function () {
+					wdpro.dialogs.openedCount --;
+				});
 			},
 
 
@@ -275,8 +286,7 @@
 					self.close();
 				});
 
-				// Отправляем событие, чтобы можно было обрабатывать контент другим скриптам через wdpro.on('content', function...);
-				wdpro.trigger('content', this.html);
+				wdpro.contentProcess(this.html);
 			},
 
 
@@ -307,6 +317,8 @@
 
 							// Удаление подложки
 							$(self.substrateHtml).remove();
+
+							self.trigger('closed', self);
 
 							// Удаление окна из массива окон
 							delete dialogsList[self.N];

@@ -12,6 +12,13 @@ class Entity extends \Wdpro\BaseEntity {
 	protected function prepareDataForCreate( $data ) {
 
 		$data['secret'] = md5(rand(1000000, 10000000));
+		$data['created'] = time();
+
+		if (!isset($data['visitor_id']))
+			$data['visitor_id'] = wdpro_visitor_session_id();
+
+		if (!isset($data['person_id']))
+		$data['person_id'] = wdpro_person_auth_id();
 		
 		return $data;
 	}
@@ -75,7 +82,7 @@ class Entity extends \Wdpro\BaseEntity {
 		$this->save();
 
 		// Если транзакция подтверждена
-		if ($confirm == 1)
+		if ($confirm)
 		{
 			// Получаем целевой объект
 			$target = wdpro_object_by_key($this->data['target_key']);

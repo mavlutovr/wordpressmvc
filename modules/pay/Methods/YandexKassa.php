@@ -39,8 +39,8 @@ class YandexKassa extends Base implements MethodInterface {
 	 */
 	public static function init() {
 		
-		// Подключение Pop окошек
-		\Wdpro\Modules::addWdpro('dialog');
+			// Подключение Pop окошек
+			\Wdpro\Modules::addWdpro('dialog');
 
 		$md5Source = '';
 

@@ -137,6 +137,33 @@ abstract class BaseController {
 
 
 	/**
+	 * Запуск выполнения скриптов на сайте после инициализации всех модулей
+	 */
+	public static function runSiteStart() {
+
+		wdpro_get_current_page(function ($page) {
+			/** @var \Wdpro\BasePage $page */
+
+			$entityClass = static::getModuleClass('Entity');
+
+			// Это текущая страница
+			if ($entityClass && '\\'.get_class($page) === $entityClass) {
+
+				// Если есть метод, который возвращает файл шаблона
+				if (method_exists($entityClass, 'getTemplateFile') && $templateFile = $entityClass::getTemplateFile()) {
+
+					// Устанавливаем файл шаблона
+					\Wdpro\Templates::setCurrentTemplate($templateFile);
+				}
+			}
+		});
+
+		static::runSite();
+
+	}
+
+
+	/**
 	 * Выполнение скриптов после инициализаций всех модулей (на сайте)
 	 */
 	public static function runSite() {

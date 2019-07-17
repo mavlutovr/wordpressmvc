@@ -421,4 +421,14 @@ abstract class BasePage extends BaseEntity
 		return get_option('show_on_front')
 		       && $this->id() == wdpro_get_option('page_on_front');
 	}
+
+
+	/**
+	 * Возвращает имя файла шаблона для данных страниц
+	 *
+	 * @return string
+	 */
+	public static function getTemplateFile() {
+
+	}
 }

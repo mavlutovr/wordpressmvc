@@ -6,7 +6,7 @@ require __DIR__.'/inc/shortcodes.php';
 do_action('wdpro-ready');
 Wdpro\Modules::run('initSiteStart');
 Wdpro\Modules::run('run');
-Wdpro\Modules::run('runSite');
+Wdpro\Modules::run('runSiteStart');
 do_action('app-ready');
 
 /**
@@ -108,17 +108,6 @@ if (is_file(__DIR__.'/../app/site.js')) {
 
 
 
-// Отключение смайликов
-function wdpro_disable_emojis() {
-	remove_action( "wp_head", "print_emoji_detection_script", 7 );
-	remove_action( "admin_print_scripts", "print_emoji_detection_script" );
-	remove_action( "wp_print_styles", "print_emoji_styles" );
-	remove_action( "admin_print_styles", "print_emoji_styles" );
-	remove_filter( "the_content_feed", "wp_staticize_emoji" );
-	remove_filter( "comment_text_rss", "wp_staticize_emoji" );
-	remove_filter( "wp_mail", "wp_staticize_emoji_for_email" );
-}
-add_action( "init", "wdpro_disable_emojis" );
 
 
 /**
@@ -306,9 +295,14 @@ function wdpro_on_content_type($pageType, $callback, $priority=10) {
 /**
  * Возвращает текст старницы
  *
+ * @param bool $echo Сразу отправить в браузер
  * @return string
  */
-function wdpro_the_content() {
+function wdpro_the_content($echo=true) {
+
+	if (!$echo) {
+		ob_start();
+	}
 
 	if (have_posts())
 	{
@@ -321,16 +315,27 @@ function wdpro_the_content() {
 	else if ($GLOBALS['post']) {
 		echo $GLOBALS['post']->post_content;
 	}
+
+	if (!$echo) {
+		$content = ob_get_contents();
+		ob_clean();
+		ob_end_flush();
+		return $content;
+	}
 }
 
 
 // Ajax
 add_action('wp_enqueue_scripts', function () {
+
+	$post = get_post();
+
 	wp_localize_script('wdpro', 'wdproData', array(
 		'ajaxUrl'=>wdpro_ajax_url(),
 		'homeUrl'=>home_url().'/',
 		'imagesUrl'=>WDPRO_UPLOAD_IMAGES_URL,
 		'lang'=>\Wdpro\Lang\Data::getCurrentLangUri(),
+		'currentPostId'=>$post->ID,
 	));
 });
 
