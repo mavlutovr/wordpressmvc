@@ -101,7 +101,10 @@ class Controller extends \Wdpro\BaseController {
 				if (isset($params['name'])) {
 					$top = wdpro_get_option('contacts_form_element_'.$params['name'].'_top[lang]');
 					if ($top) {
-						$element->mergeParams(['top'=>$top]);
+						$element->mergeParams([
+							'top'=>$top,
+							'center'=>null,
+						]);
 					}
 
 					$left = wdpro_get_option('contacts_form_element_'.$params['name'].'_left[lang]');
