@@ -328,7 +328,9 @@
 
 						// Просто сообщение
 						if (response['message']) {
-							self.showMessage(response['message']);
+							self.showMessage(response['message'], {
+								hideForm: response['hideForm']
+							});
 						}
 
 						// Редирект
@@ -1621,6 +1623,8 @@
 		 * @param data {{}} Элемент или данные элемента
 		 */
 		add: function (data) {
+
+			console.log('data', data);
 			
 			// Данные это данные элемента
 			if (typeof data == 'object' && !(data instanceof BaseElement))
@@ -1728,7 +1732,7 @@
 							// Завершаем ожидание функции
 							Complete();
 						});
-					});
+					}, true);
 				});
 
 
@@ -1750,7 +1754,7 @@
 		 * @param callback {function} callback(BaseElement)
 		 */
 		eachElements: function (callback) {
-			wdpro.each(this.elements, callback);
+			wdpro.each(this.elementsByN, callback);
 		},
 
 
