@@ -20,7 +20,7 @@ class Pagination {
 			/*wdpro_default_file(
 				__DIR__.'/default/templates/pagination_template.php', 
 				WDPRO_TEMPLATE_PATH.'pagination.php');*/
-			$template = WDPRO_TEMPLATE_PATH.'pagination.php';
+			$template = WDPRO_TEMPLATE_PATH.'pagination_template.php';
 		}
 
 		if (isset($params['n'])) {
@@ -32,7 +32,7 @@ class Pagination {
 			'total'=>0,
 			'pageSize'=>10, // Количество элементов на 1 странице
 			'currentPage'=>1, // Текущая страница
-			'template'=>WDPRO_TEMPLATE_PATH.'pagination_template.php',
+			'template'=>$template,
 			'crumbsSize'=>10, // Количество страниц между точками 1 ... 13 14 15 ... 45
 		), $params);
 	}
