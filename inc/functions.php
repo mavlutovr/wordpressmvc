@@ -173,17 +173,18 @@ function wdpro_add_script_to_console_external($absolutePath)
  *                                  добавление скрипта событие и сделать что-то еще
  *                                  после того, как скрипт уже добавлен.
  *                                  Наверное, работает так, я точно не разбирался.
+ * @param bool $inFooter Добавить скрипт в футер
  */
-function wdpro_add_script_to_site($absolutePath, $handle=null)
+function wdpro_add_script_to_site($absolutePath, $handle=null, $inFooter=false)
 {
-	add_action( 'wp_enqueue_scripts', function () use ($absolutePath, $handle)
+	add_action( 'wp_enqueue_scripts', function () use ($absolutePath, $handle, &$inFooter)
 	{
 		if (is_file($absolutePath))
 		{
 			$file = wdpro_path_remove_root($absolutePath);
 			$file = wdpro_fix_directory_separator_in_url($file);
 			if (!$handle) $handle = $file;
-			wp_enqueue_script( $handle, $file );
+			wp_enqueue_script( $handle, $file, [], false, $inFooter );
 		}
 	});
 }
@@ -193,13 +194,14 @@ function wdpro_add_script_to_site($absolutePath, $handle=null)
  * Подключение JavaScript файла к сайту
  *
  * @param string $absolutePath абсолютный путь к файлу
+ * @param bool $inFooter Добавить скрипт в футер
  */
-function wdpro_add_script_to_site_external($absolutePath)
+function wdpro_add_script_to_site_external($absolutePath, $inFooter=false)
 {
-	add_action( 'wp_enqueue_scripts', function () use ($absolutePath)
+	add_action( 'wp_enqueue_scripts', function () use ($absolutePath, &$inFooter)
 	{
-		wp_enqueue_script( $absolutePath, $absolutePath );
-	}, PHP_INT_MAX);
+		wp_enqueue_script( $absolutePath, $absolutePath, [], false, $inFooter );
+	});
 }
 
 

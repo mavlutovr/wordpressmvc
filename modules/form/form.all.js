@@ -18,7 +18,6 @@
 
 			// Получаем параметры формы
 			var jsonDiv = container.find('.js-params');
-			console.log('jsonDiv', jsonDiv);
 			var json = jsonDiv.text();
 			var data = wdpro.parseJSON(json);
 
@@ -154,13 +153,15 @@
 	/**
 	 * Возвращает форму, когда она уже была добавлена на странцу
 	 *
-	 * @param name {string} Имя формы
+	 * @param [name] {string} Имя формы
 	 * @param callback {function} Каллбэк, в который отправляется форма
 	 */
 	wdpro.forms.onFormAddedToPage = function (name, callback) {
-		wdpro.forms.onForm(name, function (form) {
+		var args = wdpro.argumentsSortByTypes(arguments);
+
+		wdpro.forms.onForm(args['string'], function (form) {
 			form.on('addedToPage', function () {
-				callback(form);
+				args['function'](form);
 			}, true);
 		});
 	};
@@ -291,6 +292,8 @@
 					);
 
 					wdpro.ajax(action, data, function (response) {
+
+						console.log('response', response);
 
 						if (response['dialogClose']) {
 							self.closeDialog();
@@ -1820,7 +1823,7 @@
 		 */
 		initParams: function (params) {
 			var self = this;
-			
+
 			if (params['*']) params['required'] = true;
 			
 			if (params['width']) {
@@ -3159,6 +3162,28 @@
 
 
 	/**
+	 * reCaptcha3
+	 */
+	var Recaptcha3Element = wdpro.forms.RecaptchaElement = HiddenElement.extend({
+
+		init: function (data) {
+
+			data = wdpro.extend({
+				'name': 'recaptcha3'
+			}, data);
+
+			this._super(data);
+		},
+
+
+		getClass: function () {
+			return this._super() + ' js-recaptcha3-input';
+		}
+
+	});
+
+
+	/**
 	 * Обычная кнопка
 	 */
 	var ButtonElement = wdpro.forms.ButtonElement = BaseElement.extend({
@@ -4069,7 +4094,8 @@
 		'Spinner': wdpro.forms.SpinnerElement,
 		'Email': wdpro.forms.EmailElement,
 		'Privacy': Privacy,
-		'Date': wdpro.forms.DateElement
+		'Date': wdpro.forms.DateElement,
+		'Recaptcha3': Recaptcha3Element
 	};
 
 
