@@ -146,6 +146,12 @@ function wdpro_the_header()
 		if (isset($page->data['image'])) {
 			$ogImage = WDPRO_UPLOAD_IMAGES_URL.$page->data['image'];
 		}
+		else{
+			$ogImageFile = wdpro_get_option('ogImage');
+			if ($ogImageFile) {
+				$ogImage = WDPRO_UPLOAD_IMAGES_URL.$ogImageFile;
+			}
+		}
 	}
 	// Стандартная
 	if (!$ogImage) {
@@ -162,7 +168,7 @@ function wdpro_the_header()
 	<meta name="keywords" content="<?php echo( htmlspecialchars($keywords) ); ?>" />
 
 	<meta charset="<?php bloginfo( 'charset' ); ?>" />
-	<meta property="og:title" content="<?=$title?>">
+	<meta property="og:title" content="<?=htmlspecialchars($title)?>">
 	<meta property="og:description" content="<?=htmlspecialchars($description)?>">
 	<meta property="og:image" content="<?=$ogImage?>">
 	<meta property="og:url" content="<?=wdpro_current_url()?>">

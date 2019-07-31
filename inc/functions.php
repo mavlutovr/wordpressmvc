@@ -491,9 +491,7 @@ function wdpro_current_uri($queryChanges=null)
 function wdpro_current_url($queryChanges=null) {
 	$uri = wdpro_current_uri($queryChanges);
 
-	echo PHP_EOL.'$uri: '.$uri.PHP_EOL;
-
-	return home_url().$uri;
+	return '//'.$_SERVER['HTTP_HOST'].$uri;
 }
 
 
