@@ -225,9 +225,9 @@ function wdpro_opt($optionName)
 function wdpro_page() {
 
 	global $wdproPage;
-	$post = get_post();
 	if (!isset($wdproPage)) {
 
+		$post = get_post();
 		if (!($wdproPage = wdpro_object_by_post_id($post->ID)))
 			$wdproPage = new \Wdpro\Page\BlankPage();
 	}
