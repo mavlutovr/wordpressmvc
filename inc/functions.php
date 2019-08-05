@@ -433,8 +433,13 @@ function wdpro_replace_query_params_in_url($url, $queryParams) {
  * @param null $queryChanges
  * @return mixed|string
  */
-function wdpro_current_post_name($queryChanges=null) {
-	$uri = wdpro_current_uri($queryChanges);
+function wdpro_current_post_name() {
+	$uri = wdpro_current_uri();
+	$uri = preg_replace(
+		'~\?[.\s\S]*~',
+		'',
+		$uri
+	);
 
 	$siteUrl = get_option('siteurl');
 	$urlArr = parse_url($siteUrl);
