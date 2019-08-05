@@ -3120,7 +3120,7 @@
 		 */
 		initParams: function (params) {
 			params = wdpro.extend({
-				'right': "Я даю свое согласие на обработку персональных данных и соглашаюсь с условиями и <a href='/privacy-policy/' target='_blank'>политикой конфиденциальности</a>",
+				'right': "Я даю свое согласие на обработку персональных данных и соглашаюсь с условиями и <a href='"+wdpro.WDPRO_HOME_URL+"privacy-policy/' target='_blank'>политикой конфиденциальности</a>",
 
 				'containerClass': 'privacy-check',
 				'checked': true,

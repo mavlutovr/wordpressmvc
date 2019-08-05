@@ -34,7 +34,7 @@ class BackForm extends \Wdpro\Form\Form {
 		));
 		$this->add(array(
 			'type'=>'submit',
-			'text'=>'Отправить',
+			'text'=>'Отправить2',
 		));
 		/*$this->add(array(
 			'type'=>static::CHECK,

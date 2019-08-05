@@ -1,11 +1,11 @@
 <?php
 
-$url = home_url().'/privacy/';
+$url = home_url().'/privacy-policy/';
 
 return [
 	'name'=>'Политика конфиденциальности',
 	'text'=>'
-		<p>Должна открываться по адресу <a href="http://giraffes.laboranta.ru/privacy/" target="_blank">http://giraffes.laboranta.ru/privacy/</a></p>
+		<p>Должна открываться по адресу <a href="'.home_url().'/privacy-policy/" target="_blank">'.home_url().'/privacy-policy/</a></p>
 
 <p>В тексте политики необходимо заменить __ТЕМА__, __ТЕМЕ__, __EMAIL__ на свои данные.</p>
 

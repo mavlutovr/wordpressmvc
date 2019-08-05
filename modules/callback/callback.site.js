@@ -66,7 +66,7 @@
 			});
 			form.add({
 				'type': 'check',
-				'right': 'Я даю свое согласие на обработку персональных данных и соглашаюсь с условиями и <a href="/privacy/" target="_blank">политикой конфиденциальности</a>.',
+				'right': 'Я даю свое согласие на обработку персональных данных и соглашаюсь с условиями и <a href="/privacy-policy/" target="_blank">политикой конфиденциальности</a>.',
 				'required': true,
 				'checked': true,
 				'containerClass': 'privacy-check-container'
