@@ -552,7 +552,19 @@ function wdpro_current_uri($queryChanges=null)
 function wdpro_current_url($queryChanges=null) {
 	$uri = wdpro_current_uri($queryChanges);
 
-	return '//'.$_SERVER['HTTP_HOST'].$uri;
+	$http = '';
+	/*if (isset($_SERVER['HTTP_HTTPS']) && $_SERVER['HTTP_HTTPS'] === 'on') {
+		$http = 'https';
+	}
+	else if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
+		$http = 'https';
+	}
+	else if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+		$http = 'https';
+	}*/
+
+
+	return $http.'//'.$_SERVER['HTTP_HOST'].$uri;
 }
 
 
@@ -566,12 +578,34 @@ function wdpro_current_url_rf($queryChanges=null) {
 
 	$url = wdpro_current_url($queryChanges);
 
-	require_once __DIR__.'/idna_convert.php';
-	$punycode = new idna_convert(array('idn_version'=>2008));
+	//$url = stripslashes($url);
 
-	if (stripos($punycode, 'xn--')!==false) {
-		$url = $idn->decode($punycode);
+	require_once __DIR__.'/idna_convert.php';
+	$idn = new idna_convert(array('idn_version'=>2008));
+
+	if (stripos($url, 'xn--')!==false) {
+		$url = $idn->decode($url);
 	}
+
+
+	// Если нету http://
+	if (!strstr($url, 'http://') && !strstr($url, 'https://') && !strstr($url, '//')) {
+
+		$http = '//';
+
+		if (isset($_SERVER['HTTP_HTTPS']) && $_SERVER['HTTP_HTTPS'] === 'on') {
+			$http = 'https://';
+		}
+		else if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
+			$http = 'https://';
+		}
+		else if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+			$http = 'https://';
+		}
+
+		$url = $http.$url;
+	}
+
 
 	return $url;
 }
