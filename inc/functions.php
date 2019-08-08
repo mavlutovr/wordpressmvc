@@ -557,6 +557,29 @@ function wdpro_current_url($queryChanges=null) {
 
 
 /**
+ * Возвращает абсолютный адрес текущей страницы с русскоязычным доменом
+ *
+ * @param null|array $queryChanges Изменить параметры QUERY_STRING согласно этому массиву
+ * @return string
+ */
+function wdpro_current_url_rf($queryChanges=null) {
+
+	$url = wdpro_current_url($queryChanges);
+
+	require_once __DIR__.'/idna_convert.php';
+	$punycode = new idna_convert(array('idn_version'=>2008));
+
+	if (stripos($punycode, 'xn--')!==false) {
+		$url = $idn->decode($punycode);
+	}
+
+	return $url;
+}
+
+
+
+
+/**
  * Возвращает текущий путь страницы от домена до query_string
  *
  * @return string
