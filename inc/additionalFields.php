@@ -137,30 +137,6 @@ function wdpro_the_header()
 		$title = wdpro_the_title_standart();
 	}
 
-
-	// Картинка для Поделиться
-	// Из Wdpro
-	$ogImage = wdpro_data('ogImage');
-	if (!$ogImage) {
-		$page = wdpro_current_page();
-		if (isset($page->data['image'])) {
-			$ogImage = WDPRO_UPLOAD_IMAGES_URL.$page->data['image'];
-		}
-		else{
-			$ogImageFile = wdpro_get_option('ogImage');
-			if ($ogImageFile) {
-				$ogImage = WDPRO_UPLOAD_IMAGES_URL.$ogImageFile;
-			}
-		}
-	}
-	// Стандартная
-	if (!$ogImage) {
-		$post = get_post();
-		if ($post) {
-			$image = wp_get_attachment_image_src(get_post_thumbnail_id($post->ID), 'single-post-thumbnail');
-			$ogImage = $image[0];
-		}
-	}
 	
 ?><title><?php echo($title); ?></title>
 	<meta name="description" content="<?php echo( htmlspecialchars($description) );
@@ -168,13 +144,19 @@ function wdpro_the_header()
 	<meta name="keywords" content="<?php echo( htmlspecialchars($keywords) ); ?>" />
 
 	<meta charset="<?php bloginfo( 'charset' ); ?>" />
-	<meta property="og:title" content="<?=htmlspecialchars($title)?>">
-	<meta property="og:description" content="<?=htmlspecialchars($description)?>">
-	<meta property="og:image" content="<?=$ogImage?>">
-	<meta property="og:url" content="<?=wdpro_current_url()?>">
+
 <?php
 
+	// Og
+	if (\Wdpro\Modules::existsWdpro('og')) {
+		echo \Wdpro\Og\Controller::getHeaderTags([
+			'title' => $title,
+			'description' => $description,
+		]);
+	}
 
+
+	// Дополнительные head теги из админки
 	echo wdpro_get_option('wdpro_head_additional');
 
 	//wdpro_css_header();
