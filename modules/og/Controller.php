@@ -15,7 +15,7 @@ class Controller extends \Wdpro\BaseController {
 
 			$form->add([
 				'name'=>'ogImage',
-				'left'=>'Картинка для социальных сетей',
+				'left'=>'Картинка для социальных сетей (по-умолчанию)',
 				'bottom'=>'Размер от 200x200 пикселей. Лучше от 600×315.',
 				'type'=>$form::IMAGE,
 			]);
@@ -23,6 +23,17 @@ class Controller extends \Wdpro\BaseController {
 			$form->add([
 				'left'=>'ID <a href="https://developers.facebook.com/docs/plugins/share-button?locale=ru_RU" target="_blank">приложения в FB</a>',
 				'name'=>'fbAppId',
+			]);
+
+			$form->add([
+				'name'=>'ogUrlHost',
+				'left'=>'Англоязычный домен',
+				'center'=>'https://...',
+				'bottom'=>'<div style="max-width: 600px; font-weight: normal;">
+<p>Это может пригодиться, когда у вас домен в зоне рф.</p>
+<p>Тогда вы можете сделать дополнительный англоязычный домен (en). Сделать с него редирект на основной (рф). И указать в этом поле этот англоязычный домен (en).</p>
+<p>Тогда в социальные сети будет отправляться англоязычный домен.</p>
+</div>'
 			]);
 
 			$form->add($form::SUBMIT_SAVE);
@@ -42,34 +53,82 @@ class Controller extends \Wdpro\BaseController {
 
 	public static function getHeaderTags($data) {
 
-		$data['url'] = wdpro_current_url();
+		$page = wdpro_current_page();
+
 
 		// Картинка для Поделиться
 		// Из Wdpro
-		$ogImage = wdpro_data('ogImage');
+		$ogImage = '';
+
+		// Из страницы (из специального поля)
 		if (!$ogImage) {
-			$page = wdpro_current_page();
-			if (isset($page->data['image'])) {
-				$ogImage = WDPRO_UPLOAD_IMAGES_URL.$page->data['image'];
-			}
-			else{
-				$ogImageFile = wdpro_get_option('ogImage');
-				if ($ogImageFile) {
-					$ogImage = WDPRO_UPLOAD_IMAGES_URL.$ogImageFile;
-				}
+			if (!empty($page->data['og_image'])) {
+				$ogImage = WDPRO_UPLOAD_IMAGES_URL.$page->data['og_image'];
 			}
 		}
 
-		// Стандартная
+
+		// Из страницы (стандартное поле)
 		if (!$ogImage) {
+			if (!empty($page->data['image'])) {
+				//$ogImage = WDPRO_UPLOAD_IMAGES_URL.$page->data['image'];
+			}
+		}
+
+		// Из настроек
+		if (!$ogImage) {
+			$ogImageFile = wdpro_get_option('ogImage');
+			if ($ogImageFile) {
+				$ogImage = WDPRO_UPLOAD_IMAGES_URL.$ogImageFile;
+			}
+		}
+
+
+		// Из поста
+		/*if (!$ogImage) {
 			$post = get_post();
 			if ($post) {
 				$image = wp_get_attachment_image_src(get_post_thumbnail_id($post->ID), 'single-post-thumbnail');
 				$ogImage = $image[0];
 			}
+		}*/
+
+
+
+		// URL
+		$url = wdpro_current_url_rf();
+
+		/*$replace = wdpro_get_option('ogUrlHost');
+		if ($replace) {
+			$replaceParsed = parse_url($replace);
+
+			$parsedUrl = parse_url($url);
+
+			$scheme = $replaceParsed['scheme'] ?
+				$replaceParsed['scheme'] :
+				$parsedUrl['scheme'];
+
+			$host = $replaceParsed['host'];
+
+			$url = str_replace(
+				$parsedUrl['scheme'].'://'.$parsedUrl['host'],
+				$scheme.'://'.$host,
+				$url
+			);
+		}*/
+
+		$data['url'] = $url;
+		$data['ogImage'] = $ogImage;
+
+
+		// Title, Description
+		if (!empty($page->data['og_title'])) {
+			$data['title'] = $page->data['og_title'];
+		}
+		if (!empty($page->data['og_description'])) {
+			$data['description'] = $page->data['og_description'];
 		}
 
-		$data['ogImage'] = $ogImage;
 
 		$data['fbAppId'] = wdpro_get_option('fbAppId');
 
