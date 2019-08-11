@@ -122,10 +122,20 @@ class Controller extends \Wdpro\BaseController {
 
 
 		// Title, Description
-		if (!empty($page->data['og_title'])) {
+		$og_title_data = wdpro_data('og_title');
+		if ($og_title_data) {
+			$data['title'] = $og_title_data;
+		}
+		else if (!empty($page->data['og_title'])) {
 			$data['title'] = $page->data['og_title'];
 		}
-		if (!empty($page->data['og_description'])) {
+
+		// Description
+		$og_description_data = wdpro_data('og_description');
+		if ($og_description_data) {
+			$data['description'] = $og_description_data;
+		}
+		else if (!empty($page->data['og_description'])) {
 			$data['description'] = $page->data['og_description'];
 		}
 
