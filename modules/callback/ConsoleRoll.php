@@ -21,9 +21,10 @@ class ConsoleRoll extends \Wdpro\Console\Roll
 	 * Возвращает колонки таблицы
 	 *
 	 * @param array $data Данные строки
+	 * @param \Wdpro\BaseEntity $entity Объект списка
 	 * @return array
 	 */
-	public function template( $data ) {
+	public function template( $data, $entity ) {
 
 		return array(
 			wdpro_date($data['time']),
