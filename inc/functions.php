@@ -3410,3 +3410,29 @@ function wdpro_disable_emojis() {
 	remove_filter( "comment_text_rss", "wp_staticize_emoji" );
 	remove_filter( "wp_mail", "wp_staticize_emoji_for_email" );
 }
+
+
+// Определение ОС
+function wdpro_get_os($user_agent = null)
+{
+	if ($user_agent === null) 
+		$user_agent = $_SERVER['HTTP_USER_AGENT'];
+	
+	$os = array(
+		'Windows' => 'Win',
+		'Open BSD' => 'OpenBSD',
+		'Sun OS' => 'SunOS',
+		'Linux' => '(Linux)|(X11)',
+		'Mac OS' => '(Mac_PowerPC)|(Macintosh)',
+		'QNX' => 'QNX',
+		'BeOS' => 'BeOS',
+		'OS/2' => 'OS/2',
+	);
+
+	foreach ($os as $key => $value) {
+		if (preg_match('#' . $value . '#i', $user_agent))
+			return $key;
+	}
+
+	return 'Unknown';
+}
