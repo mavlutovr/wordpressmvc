@@ -19,6 +19,7 @@ class SqlTable extends \Wdpro\BaseSqlTable {
 				'section_type'=>'varchar(40)',
 				'section_id'=>'int',
 				'name',
+				'avatar',
 				'text'=>'text',
 			],
 			
