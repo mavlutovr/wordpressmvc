@@ -454,7 +454,7 @@ class Controller extends \Wdpro\BaseController
 				<p>Для работы этой функции необходимо настроить cron-задания<BR>
 				на сервере (хостинге) на файл wp-cron.php. <BR>Для этого добавьте
 				следующую на сервере (хостинге) cron-задачу: <BR>
-				<span style="color: red;">* * * * * wget -O /dev/null -q 
+				<span style="color: red;">* * * * * wget -O /dev/null  --no-check-certificate -q 
 				'
 				        .site_url().'/wp-cron.php</span></p>'
 			));
