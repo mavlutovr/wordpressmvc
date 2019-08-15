@@ -246,6 +246,7 @@ class Controller extends \Wdpro\BaseController
 						\wp_mail( $row['to'],
 							$row['subject'],
 							$row['message'],
+							'Content-type: text/html; charset=iso-8859-1' . "\r\n".
 							$row['headers'],
 							$row['atachments'] );
 
@@ -320,8 +321,7 @@ class Controller extends \Wdpro\BaseController
 			$headers[] = 'content-type: text/html';
 		}
 		else {
-			if ($headers === null)
-				$headers = '';
+			if ($headers === null) $headers = '';
 			$headers .= 'content-type: text/html' . "\r\n";
 		}
 
