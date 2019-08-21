@@ -197,17 +197,6 @@ function wdpro_breadcrumbs()
 
 
 /**
- * Запоминает новые хлебные крошки
- *
- * @param \Wdpro\Breadcrumbs\Breadcrumbs $newBreadcrumbs
- */
-function wdpro_set_new_breadcrumbs($newBreadcrumbs) {
-	global $breadcrumbs;
-	$breadcrumbs = $newBreadcrumbs;
-}
-
-
-/**
  * Отображает хлебные крошки
  *
  * @return string
