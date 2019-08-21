@@ -18,7 +18,6 @@
 
 			// Получаем параметры формы
 			var jsonDiv = container.find('.js-params');
-			console.log('jsonDiv', jsonDiv);
 			var json = jsonDiv.text();
 			var data = wdpro.parseJSON(json);
 
@@ -154,13 +153,15 @@
 	/**
 	 * Возвращает форму, когда она уже была добавлена на странцу
 	 *
-	 * @param name {string} Имя формы
+	 * @param [name] {string} Имя формы
 	 * @param callback {function} Каллбэк, в который отправляется форма
 	 */
 	wdpro.forms.onFormAddedToPage = function (name, callback) {
-		wdpro.forms.onForm(name, function (form) {
+		var args = wdpro.argumentsSortByTypes(arguments);
+
+		wdpro.forms.onForm(args['string'], function (form) {
 			form.on('addedToPage', function () {
-				callback(form);
+				args['function'](form);
 			}, true);
 		});
 	};
@@ -292,6 +293,8 @@
 
 					wdpro.ajax(action, data, function (response) {
 
+						console.log('response', response);
+
 						if (response['dialogClose']) {
 							self.closeDialog();
 						}
@@ -325,7 +328,9 @@
 
 						// Просто сообщение
 						if (response['message']) {
-							self.showMessage(response['message']);
+							self.showMessage(response['message'], {
+								hideForm: response['hideForm']
+							});
 						}
 
 						// Редирект
@@ -1618,6 +1623,8 @@
 		 * @param data {{}} Элемент или данные элемента
 		 */
 		add: function (data) {
+
+			console.log('data', data);
 			
 			// Данные это данные элемента
 			if (typeof data == 'object' && !(data instanceof BaseElement))
@@ -1725,7 +1732,7 @@
 							// Завершаем ожидание функции
 							Complete();
 						});
-					});
+					}, true);
 				});
 
 
@@ -1747,7 +1754,7 @@
 		 * @param callback {function} callback(BaseElement)
 		 */
 		eachElements: function (callback) {
-			wdpro.each(this.elements, callback);
+			wdpro.each(this.elementsByN, callback);
 		},
 
 
@@ -1820,7 +1827,7 @@
 		 */
 		initParams: function (params) {
 			var self = this;
-			
+
 			if (params['*']) params['required'] = true;
 			
 			if (params['width']) {
@@ -3113,7 +3120,7 @@
 		 */
 		initParams: function (params) {
 			params = wdpro.extend({
-				'right': "Я даю свое согласие на обработку персональных данных и соглашаюсь с условиями и <a href='/privacy/' target='_blank'>политикой конфиденциальности</a>",
+				'right': "Я даю свое согласие на обработку персональных данных и соглашаюсь с условиями и <a href='"+wdpro.WDPRO_HOME_URL+"privacy-policy/' target='_blank'>политикой конфиденциальности</a>",
 
 				'containerClass': 'privacy-check',
 				'checked': true,
@@ -3155,6 +3162,28 @@
 		getClass: function () {
 			return this.params['class'] || '';
 		}
+	});
+
+
+	/**
+	 * reCaptcha3
+	 */
+	var Recaptcha3Element = wdpro.forms.RecaptchaElement = HiddenElement.extend({
+
+		init: function (data) {
+
+			data = wdpro.extend({
+				'name': 'recaptcha3'
+			}, data);
+
+			this._super(data);
+		},
+
+
+		getClass: function () {
+			return this._super() + ' js-recaptcha3-input';
+		}
+
 	});
 
 
@@ -4069,7 +4098,8 @@
 		'Spinner': wdpro.forms.SpinnerElement,
 		'Email': wdpro.forms.EmailElement,
 		'Privacy': Privacy,
-		'Date': wdpro.forms.DateElement
+		'Date': wdpro.forms.DateElement,
+		'Recaptcha3': Recaptcha3Element
 	};
 
 

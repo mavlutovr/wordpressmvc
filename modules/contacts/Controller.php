@@ -98,10 +98,13 @@ class Controller extends \Wdpro\BaseController {
 				/** @var $element \Wdpro\Form\Elements\Base */
 
 				$params = $element->getParams();
-				if (isset($params['name'])) {
+				if (isset($params['name']) && $params['name'] !== 'recaptcha3') {
 					$top = wdpro_get_option('contacts_form_element_'.$params['name'].'_top[lang]');
 					if ($top) {
-						$element->mergeParams(['top'=>$top]);
+						$element->mergeParams([
+							'top'=>$top,
+							'center'=>null,
+						]);
 					}
 
 					$left = wdpro_get_option('contacts_form_element_'.$params['name'].'_left[lang]');
@@ -140,12 +143,22 @@ class Controller extends \Wdpro\BaseController {
 			$form = new static::$backFormClass();
 			
 			$form->setData($data);
-			$form->sendToAdmins('Форма обратной связи');
-			
-			return array(
-				'message'=>wdpro_get_option(
-					'contacts_form_sended[lang]', 'Ваше сообщение отправлено.'),
-			);
+
+			if ($form->valid()) {
+				$form->sendToAdmins('Форма обратной связи');
+
+				return [
+					'message'=>wdpro_get_option(
+						'contacts_form_sended[lang]', 'Ваше сообщение отправлено.'),
+				];
+			}
+			else {
+				return [
+					'error'=>'Отправка не удалась, попробуйте еще раз.',
+				];
+			}
+
+
 		});
 	}
 

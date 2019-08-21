@@ -5,8 +5,15 @@ wdpro.ready(function ($) {
 		form.ajax(function (data) {
 			
 			wdpro.ajax('contactsBack', data, function (res) {
-				
-				form.showMessage(res['message'], { hideForm: true });
+
+				if (res['message']) {
+					form.showMessage(res['message'], { hideForm: true });
+				}
+
+				else if (res['error']) {
+					form.showErrorMessage(res['error'], { hideForm: false });
+					form.loadingStop();
+				}
 			});
 		});
 	});

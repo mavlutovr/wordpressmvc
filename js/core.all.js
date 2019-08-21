@@ -78,7 +78,7 @@ if (typeof Array.isArray === 'undefined') {
 
 		else {
 			// Номер
-			if (!args['number']) {
+			if (args['number'] === undefined) {
 				args['number'] = 10;
 			}
 

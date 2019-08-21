@@ -138,6 +138,8 @@ href="'.WDPRO_CONSOLE_URL.'themes.php">Активировать тему</a>
 									'type'=>'text',
 									'top'=>'Дополнительные мета-теги в head',
 									'name'=>'wdpro_head_additional',
+									'width'=>600,
+									'style'=>'max-width: calc(100vw - 100px);',
 								),
 
 								array(
@@ -163,6 +165,27 @@ href="'.WDPRO_CONSOLE_URL.'themes.php">Активировать тему</a>
 									'class'=>WDPRO_BUTTON_CSS_CLASS,
 								),
 
+
+								array(
+									'type'=>'html',
+									'html'=>'<h2>reCaptcha3</h2>
+											<p>Чтобы защитить формы от спама, зарегистрируйте сайт в <a href="https://www.google.com/recaptcha/intro/v3.html" target="_blank">Google reCAPTCHA</a></p>
+											<p>А затем укажите:</p>',
+								),
+
+								array(
+									'name'=>'wdpro_recaptcha3_site',
+									'top'=>'Ключ сайта',
+									'width'=>600,
+									'style'=>'max-width: calc(100vw - 100px);',
+								),
+
+								array(
+									'name'=>'wdpro_recaptcha3_secret',
+									'top'=>'Секретный ключ',
+									'width'=>600,
+									'style'=>'max-width: calc(100vw - 100px);',
+								),
 
 								array(
 									'type'=>'html',

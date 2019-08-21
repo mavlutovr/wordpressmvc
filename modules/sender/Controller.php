@@ -246,6 +246,7 @@ class Controller extends \Wdpro\BaseController
 						\wp_mail( $row['to'],
 							$row['subject'],
 							$row['message'],
+							'Content-type: text/html; charset=iso-8859-1' . "\r\n".
 							$row['headers'],
 							$row['atachments'] );
 
@@ -320,8 +321,7 @@ class Controller extends \Wdpro\BaseController
 			$headers[] = 'content-type: text/html';
 		}
 		else {
-			if ($headers === null)
-				$headers = '';
+			if ($headers === null) $headers = '';
 			$headers .= 'content-type: text/html' . "\r\n";
 		}
 
@@ -454,7 +454,7 @@ class Controller extends \Wdpro\BaseController
 				<p>Для работы этой функции необходимо настроить cron-задания<BR>
 				на сервере (хостинге) на файл wp-cron.php. <BR>Для этого добавьте
 				следующую на сервере (хостинге) cron-задачу: <BR>
-				<span style="color: red;">* * * * * wget -O /dev/null -q 
+				<span style="color: red;">* * * * * wget -O /dev/null  --no-check-certificate -q 
 				'
 				        .site_url().'/wp-cron.php</span></p>'
 			));

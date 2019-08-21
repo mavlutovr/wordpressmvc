@@ -151,7 +151,7 @@ add_action('wp_footer', function () {
 			$value = 'null';
 		}
 		$data .= PHP_EOL
-			. 'wdpro.'.$key.' = '.$value.';';
+			. 'wdpro.'.$key.' = '.json_encode($value, JSON_UNESCAPED_UNICODE).';';
 	}
 
 	echo '<script>

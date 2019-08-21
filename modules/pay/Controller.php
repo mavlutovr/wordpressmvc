@@ -84,10 +84,17 @@ class Controller extends \Wdpro\BaseController {
 			$getForm = function () {
 
 				// Если есть id и secret
+				// https://проказник.рф/pay/?pay%5Btarget%5D=name%253A%255CApp%255COrder%255CEntity%252Cid%253A10
 				if (isset($_GET['in']) && isset($_GET['sw'])) {
 
 					// Находим транзакцию по ним
 					if ($pay = static::getPayByGet()) {
+
+						// Когда транзакция подтверждена
+						if (!$pay->process()) {
+							// Переходим на страницу "Спасибо за оплату"
+							wdpro_location($pay->getAftersaleUrl());
+						}
 
 						return static::getStartBlock(array(
 							'pay'=>$pay,
@@ -185,6 +192,10 @@ class Controller extends \Wdpro\BaseController {
 		{
 			$pay = static::createTransaction($params);
 			$available = true;
+
+			if (!isset($_GET['in'])) {
+				wdpro_location($pay->getUrl());
+			}
 		}
 
 		// Если такая транзакция есть
@@ -296,7 +307,7 @@ class Controller extends \Wdpro\BaseController {
 					{
 						$targetPayParams['params']['referer'] = urlencode($params['referer']);
 					}
-					else
+					else if (isset($_SERVER['HTTP_REFERER']))
 					{
 						$targetPayParams['params']['referer'] = urlencode($_SERVER['HTTP_REFERER']);
 					}

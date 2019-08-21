@@ -915,8 +915,6 @@ abstract class BaseEntity
 
 
 			$table->delete(array(static::idField()=>$id), array('%d'));
-
-			wdpro_object_remove_from_cache($this);
 			
 			$this->_removed = true;
 			
@@ -925,6 +923,11 @@ abstract class BaseEntity
 			
 			$this->onRemove();
 			$this->trigger('remove', $this->id());
+
+
+			// Раньше это было выше в этом методе
+			// Переместил это вниз, чтобы при onChange еще был доступ к этому объектв
+			wdpro_object_remove_from_cache($this);
 		}
 	}
 

@@ -82,7 +82,7 @@ class Entity extends \Wdpro\BaseEntity {
 		$this->save();
 
 		// Если транзакция подтверждена
-		if ($confirm == 1)
+		if ($confirm)
 		{
 			// Получаем целевой объект
 			$target = wdpro_object_by_key($this->data['target_key']);

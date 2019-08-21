@@ -39,6 +39,7 @@ class Form
 	const DATE = 'date';
 	const MENU_ORDER = 'menuOrder';
 	const MENU_ORDER_TOP = 'menuOrderTop';
+	const RECAPTCHA3 = 'recaptcha3';
 	const PRIVACY = 'privacy';
 
 
@@ -72,6 +73,7 @@ class Form
 		'date'=>'\Wdpro\Form\Elements\Date',
 		'menuOrder'=>'\Wdpro\Form\Elements\MenuOrder',
 		'menuOrderTop'=>'\Wdpro\Form\Elements\MenuOrderTop',
+		'recaptcha3'=>'\Wdpro\Form\Elements\Recaptcha3',
 		'privacy'=>'\Wdpro\Form\Elements\Privacy',
 	);
 
@@ -565,6 +567,11 @@ class Form
 				$startHtml .= $element->getSendTextHtml($data[$name]);
 			}
 		});
+
+		if (!empty($_GET['fromPostId'])) {
+			$post = wdpro_get_post_by_id($_GET['fromPostId']);
+			$startHtml .= '<p>Страница: <a href="'.home_url().'/'.$post->getUri().'" target="_blank">'.$post->getTitle().'</a></p>';
+		}
 		
 		\Wdpro\AdminNotice\Controller::sendMessageHtml($subject, $startHtml);
 	}

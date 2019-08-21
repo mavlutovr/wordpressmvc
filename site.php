@@ -236,9 +236,9 @@ function wdpro_opt($optionName)
 function wdpro_page() {
 
 	global $wdproPage;
-	$post = get_post();
 	if (!isset($wdproPage)) {
 
+		$post = get_post();
 		if (!($wdproPage = wdpro_object_by_post_id($post->ID)))
 			$wdproPage = new \Wdpro\Page\BlankPage();
 	}
@@ -445,3 +445,16 @@ add_action('wp_footer', function () {
 	ob_clean();
 	echo $html;
 }, 1000);
+
+
+// Подключение reCAPTCHA3
+$reCaptcha3SiteKey = get_option('wdpro_recaptcha3_site');
+if ($reCaptcha3SiteKey) {
+	wdpro_add_script_to_site_external(
+		'https://www.google.com/recaptcha/api.js?render='.$reCaptcha3SiteKey,
+		true
+	);
+	wdpro_js_data('reCaptcha3SiteKey', $reCaptcha3SiteKey);
+
+	wdpro_add_script_to_site(__DIR__.'/modules/form/recaptcha3.site.js', null, true);
+}

@@ -173,17 +173,18 @@ function wdpro_add_script_to_console_external($absolutePath)
  *                                  добавление скрипта событие и сделать что-то еще
  *                                  после того, как скрипт уже добавлен.
  *                                  Наверное, работает так, я точно не разбирался.
+ * @param bool $inFooter Добавить скрипт в футер
  */
-function wdpro_add_script_to_site($absolutePath, $handle=null)
+function wdpro_add_script_to_site($absolutePath, $handle=null, $inFooter=false)
 {
-	add_action( 'wp_enqueue_scripts', function () use ($absolutePath, $handle)
+	add_action( 'wp_enqueue_scripts', function () use ($absolutePath, $handle, &$inFooter)
 	{
 		if (is_file($absolutePath))
 		{
 			$file = wdpro_path_remove_root($absolutePath);
 			$file = wdpro_fix_directory_separator_in_url($file);
 			if (!$handle) $handle = $file;
-			wp_enqueue_script( $handle, $file );
+			wp_enqueue_script( $handle, $file, [], false, $inFooter );
 		}
 	});
 }
@@ -193,13 +194,14 @@ function wdpro_add_script_to_site($absolutePath, $handle=null)
  * Подключение JavaScript файла к сайту
  *
  * @param string $absolutePath абсолютный путь к файлу
+ * @param bool $inFooter Добавить скрипт в футер
  */
-function wdpro_add_script_to_site_external($absolutePath)
+function wdpro_add_script_to_site_external($absolutePath, $inFooter=false)
 {
-	add_action( 'wp_enqueue_scripts', function () use ($absolutePath)
+	add_action( 'wp_enqueue_scripts', function () use ($absolutePath, &$inFooter)
 	{
-		wp_enqueue_script( $absolutePath, $absolutePath );
-	}, PHP_INT_MAX);
+		wp_enqueue_script( $absolutePath, $absolutePath, [], false, $inFooter );
+	});
 }
 
 
@@ -374,6 +376,60 @@ function wdpro_array_remove_by_value(&$array, $value) {
 
 
 /**
+ * Возвращает название поискового робота
+ *
+ * https://expange.ru/e/Определить_поискового_бота_(PHP)
+ *
+ * @param string $user_agent
+ * @return bool|mixed
+ */
+function wdpro_search_bot($user_agent=null)
+{
+
+	if ($user_agent === null) {
+		$user_agent = $_SERVER['HTTP_USER_AGENT'];
+	}
+
+
+	if (empty($user_agent)) {
+		return false;
+	}
+
+	$bots = [
+		// Yandex
+		'YandexBot', 'YandexAccessibilityBot', 'YandexMobileBot', 'YandexDirectDyn', 'YandexScreenshotBot',
+		'YandexImages', 'YandexVideo', 'YandexVideoParser', 'YandexMedia', 'YandexBlogs', 'YandexFavicons',
+		'YandexWebmaster', 'YandexPagechecker', 'YandexImageResizer', 'YandexAdNet', 'YandexDirect',
+		'YaDirectFetcher', 'YandexCalendar', 'YandexSitelinks', 'YandexMetrika', 'YandexNews',
+		'YandexNewslinks', 'YandexCatalog', 'YandexAntivirus', 'YandexMarket', 'YandexVertis',
+		'YandexForDomain', 'YandexSpravBot', 'YandexSearchShop', 'YandexMedianaBot', 'YandexOntoDB',
+		'YandexOntoDBAPI', 'YandexTurbo', 'YandexVerticals',
+
+		// Google
+		'Googlebot', 'Googlebot-Image', 'Mediapartners-Google', 'AdsBot-Google', 'APIs-Google',
+		'AdsBot-Google-Mobile', 'AdsBot-Google-Mobile', 'Googlebot-News', 'Googlebot-Video',
+		'AdsBot-Google-Mobile-Apps',
+
+		// Other
+		'Mail.RU_Bot', 'bingbot', 'Accoona', 'ia_archiver', 'Ask Jeeves', 'OmniExplorer_Bot', 'W3C_Validator',
+		'WebAlta', 'YahooFeedSeeker', 'Yahoo!', 'Ezooms', 'Tourlentabot', 'MJ12bot', 'AhrefsBot',
+		'SearchBot', 'SiteStatus', 'Nigma.ru', 'Baiduspider', 'Statsbot', 'SISTRIX', 'AcoonBot', 'findlinks',
+		'proximic', 'OpenindexSpider', 'statdom.ru', 'Exabot', 'Spider', 'SeznamBot', 'oBot', 'C-T bot',
+		'Updownerbot', 'Snoopy', 'heritrix', 'Yeti', 'DomainVader', 'DCPbot', 'PaperLiBot', 'StackRambler',
+		'msnbot', 'msnbot-media', 'msnbot-news',
+	];
+
+	foreach ($bots as $bot) {
+		if (stripos($user_agent, $bot) !== false) {
+			return $bot;
+		}
+	}
+
+	return false;
+}
+
+
+/**
  * Заменяет в адресе query данные или добавляет их
  *
  * @param string $url URL
@@ -426,6 +482,30 @@ function wdpro_replace_query_params_in_url($url, $queryParams) {
 
 
 /**
+ *
+ *
+ * @param null $queryChanges
+ * @return mixed|string
+ */
+function wdpro_current_post_name() {
+	$uri = wdpro_current_uri();
+	$uri = preg_replace(
+		'~\?[.\s\S]*~',
+		'',
+		$uri
+	);
+
+	$siteUrl = get_option('siteurl');
+	$urlArr = parse_url($siteUrl);
+
+	$homeUrl = $urlArr['scheme'].'://'.$urlArr['host'].$uri;
+	$uri = str_replace(home_url(), '', $homeUrl);
+
+	return $uri;
+}
+
+
+/**
  * Возвращает относительный адрес текущей страницы
  *
  * @param null|array $queryChanges Изменить параметры QUERY_STRING согласно этому массиву
@@ -437,6 +517,23 @@ function wdpro_current_uri($queryChanges=null)
 	if (isset($_SERVER['REQUEST_URI_ORIGINAL'])) $uri = $_SERVER['REQUEST_URI_ORIGINAL'];
 	if (!$uri) $uri = $_SERVER['REQUEST_URI'];
 
+	// Преобразуем адрес сайта так, чтобы он начинался от нормального корня сайта
+	// Берем адрес сайта
+	/*$siteUrl = get_option('siteurl');
+	$urlArr = parse_url($siteUrl);
+
+	$homeUrl = $urlArr['scheme'].'://'.$urlArr['host'].$uri;
+	$uri = str_replace(home_url(), '', $homeUrl);*/
+
+
+	// Чтобы адрес начинася с главной папки, когда главная папка находится не в корне домена, а в другой папке
+	/*$arr = explode('/', $uri);
+	$count = count($arr);
+	$uri = '/'.$arr[$count-2].'/';
+	if ($arr[$count-1]) {
+		$uri.=$arr[$count-1];
+	}*/
+
 	if ($queryChanges)
 	{
 		$uri = wdpro_replace_query_params_in_url($uri, $queryChanges);
@@ -444,6 +541,76 @@ function wdpro_current_uri($queryChanges=null)
 
 	return $uri;
 }
+
+
+/**
+ * Возвращает абсолютный адрес текущей страницы
+ *
+ * @param null|array $queryChanges Изменить параметры QUERY_STRING согласно этому массиву
+ * @return string
+ */
+function wdpro_current_url($queryChanges=null) {
+	$uri = wdpro_current_uri($queryChanges);
+
+	$http = '';
+	/*if (isset($_SERVER['HTTP_HTTPS']) && $_SERVER['HTTP_HTTPS'] === 'on') {
+		$http = 'https';
+	}
+	else if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
+		$http = 'https';
+	}
+	else if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+		$http = 'https';
+	}*/
+
+
+	return $http.'//'.$_SERVER['HTTP_HOST'].$uri;
+}
+
+
+/**
+ * Возвращает абсолютный адрес текущей страницы с русскоязычным доменом
+ *
+ * @param null|array $queryChanges Изменить параметры QUERY_STRING согласно этому массиву
+ * @return string
+ */
+function wdpro_current_url_rf($queryChanges=null) {
+
+	$url = wdpro_current_url($queryChanges);
+
+	//$url = stripslashes($url);
+
+	require_once __DIR__.'/idna_convert.php';
+	$idn = new idna_convert(array('idn_version'=>2008));
+
+	if (stripos($url, 'xn--')!==false) {
+		$url = $idn->decode($url);
+	}
+
+
+	// Если нету http://
+	if (!strstr($url, 'http://') && !strstr($url, 'https://') && !strstr($url, '//')) {
+
+		$http = '//';
+
+		if (isset($_SERVER['HTTP_HTTPS']) && $_SERVER['HTTP_HTTPS'] === 'on') {
+			$http = 'https://';
+		}
+		else if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
+			$http = 'https://';
+		}
+		else if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+			$http = 'https://';
+		}
+
+		$url = $http.$url;
+	}
+
+
+	return $url;
+}
+
+
 
 
 /**
@@ -466,24 +633,11 @@ function wdpro_current_path() {
  *
  * @return string
  */
-function wdpro_current_post_name() {
+function wdpro_current_post_name_DELETE() {
 	$path = wdpro_current_path();
 	$path = preg_replace('~^/(.*)$~', '$1', $path);
 
 	return $path;
-}
-
-
-/**
- * Возвращает абсолютный адрес текущей страницы
- *
- * @param null|array $queryChanges Изменить параметры QUERY_STRING согласно этому массиву
- * @return string
- */
-function wdpro_current_url($queryChanges=null) {
-	$uri = wdpro_current_uri($queryChanges);
-
-	return home_url().$uri;
 }
 
 
@@ -3198,6 +3352,10 @@ $wdproJsData = [];
 function wdpro_js_data ($key, $value) {
 	global $wdproJsData;
 
+	if (is_array($value)) {
+		$value = wdpro_json_encode($value);
+	}
+
 	$wdproJsData[$key] = $value;
 }
 
@@ -3251,4 +3409,30 @@ function wdpro_disable_emojis() {
 	remove_filter( "the_content_feed", "wp_staticize_emoji" );
 	remove_filter( "comment_text_rss", "wp_staticize_emoji" );
 	remove_filter( "wp_mail", "wp_staticize_emoji_for_email" );
+}
+
+
+// Определение ОС
+function wdpro_get_os($user_agent = null)
+{
+	if ($user_agent === null) 
+		$user_agent = $_SERVER['HTTP_USER_AGENT'];
+	
+	$os = array(
+		'Windows' => 'Win',
+		'Open BSD' => 'OpenBSD',
+		'Sun OS' => 'SunOS',
+		'Linux' => '(Linux)|(X11)',
+		'Mac OS' => '(Mac_PowerPC)|(Macintosh)',
+		'QNX' => 'QNX',
+		'BeOS' => 'BeOS',
+		'OS/2' => 'OS/2',
+	);
+
+	foreach ($os as $key => $value) {
+		if (preg_match('#' . $value . '#i', $user_agent))
+			return $key;
+	}
+
+	return 'Unknown';
 }
