@@ -3436,3 +3436,16 @@ function wdpro_get_os($user_agent = null)
 
 	return 'Unknown';
 }
+
+
+/**
+ * Запоминает новые хлебные крошки
+ *
+ * @param \Wdpro\Breadcrumbs\Breadcrumbs $newBreadcrumbs
+ */
+function wdpro_set_new_breadcrumbs($newBreadcrumbs) {
+	global $breadcrumbs;
+	$breadcrumbs = $newBreadcrumbs;
+}
+
+
