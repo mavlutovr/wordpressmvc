@@ -502,13 +502,13 @@ abstract class BaseSqlTable
 								$field['params'] = 'varchar';
 							}
 
-							if ($field['params'] == 'int') {
+							if ($field['params'] === 'int') {
 								$field['params'] = 'int(11)';
 							}
-							if ($field['params'] == 'varchar') {
+							else if ($field['params'] === 'varchar') {
 								$field['params'] = 'varchar(255)';
 							}
-							if ($field['params'] == 'tinyint') {
+							else if ($field['params'] === 'tinyint') {
 								$field['params'] = 'tinyint(1)';
 							}
 
