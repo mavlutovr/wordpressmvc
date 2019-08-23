@@ -2932,6 +2932,48 @@
 	
 	var ckEditorI = 1;
 
+
+	/**
+	 * Установка Ckeditor на произвольный textarea
+	 *
+	 * Чтобы его можно было использовать не только в форме wdpro.forms.Form, но и просто вручную
+	 *
+	 * @param textarea
+	 * @param [configName] Имя набора параметров редактора (standart, small)
+	 * @param [configData] Параметры редактора
+	 */
+	wdpro.forms.ckeditor = function (textarea, configName, configData) {
+
+		var args = wdpro.argumentsSortByTypes(arguments);
+
+		configName = args['string'];
+		if (configName === undefined) {
+			configName = 'standart';
+		}
+
+		var config = CKEDITOR.wdproConfigs[configName];
+
+		if (configData) {
+			config = core.extend(config, configData);
+		}
+
+
+		ckEditorI ++;
+		var htmlId = 'js-ckeditor-'+ckEditorI;
+		textarea.attr('id', htmlId);
+
+		var editor = CKEDITOR.replace(htmlId, config);
+
+
+		editor.on('change', function (e) {
+			textarea.val(editor.getData());
+		});
+
+
+		return editor;
+	};
+
+
 	/**
 	 * Ckeditor
 	 */
