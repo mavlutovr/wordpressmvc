@@ -468,23 +468,34 @@ abstract class BaseEntity
 	 */
 	public function nextSortingToData($where)
 	{
-		if (static::sqlTable()->isField('sorting'))
-		{
-			if (!$this->data['sorting'])
+		$run = function ($fieldName) use (&$where) {
+			if (!$this->data[$fieldName])
 			{
 				$where = preg_replace('~(ORDER BY [.`\s\S]+)~', '', $where);
 
-				$where .= ' ORDER BY `sorting` DESC';
+				$where .= ' ORDER BY `'.$fieldName.'` DESC';
 
-				if ($row = static::sqlTable()->getRow($where, 'sorting'))
+				if ($row = static::sqlTable()->getRow($where, $fieldName))
 				{
-					$this->data['sorting'] = ceil(($row['sorting'] + 10)/10)*10;
+					$this->data[$fieldName] = ceil(($row[$fieldName] + 10)/10)*10;
 				}
 				else
 				{
-					$this->data['sorting'] = 10;
+					$this->data[$fieldName] = 10;
 				}
 			}
+		};
+
+
+
+
+		if (static::sqlTable()->isField('sorting'))
+		{
+			$run('sorting');
+		}
+		else if (static::sqlTable()->isField('menu_order'))
+		{
+			$run('menu_order');
 		}
 		
 		return $this;
