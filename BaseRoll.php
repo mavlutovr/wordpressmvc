@@ -54,4 +54,16 @@ abstract class BaseRoll
 
 	}
 
+
+	/**
+	 * Возвращает тип объектов Entity
+	 *
+	 * @return string
+	 */
+	public static function getType() {
+		$class = static::getEntityClass();
+
+		return $class::getType();
+	}
+
 }

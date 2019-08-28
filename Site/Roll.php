@@ -134,7 +134,7 @@ class Roll extends \Wdpro\BaseRoll {
 
 
 	/**
-	 * Возвращает адрес php файла
+	 * Возвращает адрес php файла шаблона
 	 * 
 	 * @return string
 	 * @example return WDPRO_TEMPLATE_PATH.'catalog_list.php';
