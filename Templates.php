@@ -14,6 +14,7 @@ class Templates
 	protected static $templatesByFiles = array();
 	protected static $forms = array();
 	protected static $templateI = 0;
+	protected static $data = [];
 
 
 

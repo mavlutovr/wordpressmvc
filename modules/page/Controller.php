@@ -204,8 +204,15 @@ class Controller extends \Wdpro\BaseController {
 				wdpro_location(wdpro_home_url_with_lang());
 			}
 
-			if (method_exists($page, 'initCard'))
-			$page->initCard();
+			if (method_exists($page, 'initCard')) {
+				$data = $page->initCard();
+				if (isset($data) && is_array($data)) {
+					foreach ($data as $key => $datum) {
+						global $$key;
+						$$key = $datum;
+					}
+				}
+			}
 		});
 		
 		
