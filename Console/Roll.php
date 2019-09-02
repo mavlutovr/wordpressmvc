@@ -843,10 +843,13 @@ title="Удалить"></a>
 	/**
 	 * Возвращает html код картинки по ее адресу
 	 *
-	 * @param string $src Адрес картинки, который хранится в базе
+	 * @param string|array $src Адрес картинки, который хранится в базе
 	 * @return string
 	 */
 	public function getImageHtml($src) {
+
+		if (is_array($src))
+			$src = $src[0];
 
 		if ($src) {
 			return '<a href="'.WDPRO_UPLOAD_IMAGES_URL.$src.'" target="_blank"><img src="'.WDPRO_UPLOAD_IMAGES_URL.$src.'" style="max-width: 200px;"/></a>';
