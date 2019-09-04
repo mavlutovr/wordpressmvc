@@ -10,7 +10,7 @@ class Controller extends \Wdpro\BaseController {
 	 */
 	public static function initConsole() {
 
-		add_action('wp_dashboard_setup',
+		/*add_action('wp_dashboard_setup',
 			function () {
 
 				wp_add_dashboard_widget('wdpro_info_widget',
@@ -20,7 +20,7 @@ class Controller extends \Wdpro\BaseController {
 						echo wdpro_render_php(__DIR__ 
 							. '/templates/plugins.template.php');
 					});
-			});
+			});*/
 
 	}
 
