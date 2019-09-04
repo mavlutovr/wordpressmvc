@@ -54,12 +54,26 @@ abstract class BasePage extends BaseEntity
 
 	/**
 	 * Инициализация страницы до отправки html кода в браузер
+	 *
+	 * @return array Данные, которые попадут в шаблон
+	 * <pre>
+	 * return [
+	 *  'city'=>'Санкт-Петербург',
+	 * ];
+	 * </pre>
+	 *
+	 * Потом в шаблоне:
+	 * <pre>
+	 * <div>Город: <?=$city?></div>
+	 * </pre>
 	 */
 	public function initCard() {
 
 		if (isset($this->data['image']) && $this->data['image']) {
 			wdpro_data('ogImage', WDPRO_UPLOAD_IMAGES_URL.$this->data['image']);
 		}
+
+		return [];
 	}
 
 
