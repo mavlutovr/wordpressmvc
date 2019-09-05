@@ -103,6 +103,8 @@ if (typeof Array.isArray === 'undefined') {
 		$.each(readyFns, function (i, object) {
 			object['function']($);
 		});
+
+		wdpro.body = $('body');
 	});
 
 

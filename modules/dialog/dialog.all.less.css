@@ -4,8 +4,14 @@
   box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2);
   z-index: 201;
   background: #FFF;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
-.dialog_substrate {
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+}
+.dialog-substrate {
   position: fixed;
   z-index: 200;
   width: 100%;
@@ -14,11 +20,18 @@
   top: 0;
   background: rgba(0, 0, 0, 0.5);
 }
-.JS_dialog_close {
-  cursor: pointer;
-  width: 20px;
-  height: 20px;
+.dialog-container-fixed {
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  overflow: auto;
 }
-.dialog_close_td {
-  width: 20px;
+.dialog-close {
+  cursor: pointer;
+}
+.dialog-body-no-scroll {
+  overflow: hidden;
+}
+.dialog-container-no-scroll {
+  overflow: hidden;
 }

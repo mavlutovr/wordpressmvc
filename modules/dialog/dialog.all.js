@@ -60,7 +60,8 @@
 				// Сохраняем параметры
 				params = $.extend({
 					maxWidth: 800,
-					margin: 20
+					margin: 0,
+					closeSymbol: wdpro.dialogs.closeSymbol
 				}, params);
 				this.params = params;
 
@@ -68,16 +69,17 @@
 				this.html = $(dialog_templates.window(params)).hide();
 
 				// Контейнер контента, чтобы потом менять содержимое
-				this.Content = $(this.html).find('.JS_dialog_content');
+				this.Content = $(this.html).find('.js-dialog-content');
 
 				// Контейнер заголовка
-				this.Title = $(this.html).find('.JS_dialog_title');
+				this.Title = $(this.html).find('.js-dialog-title');
 
-				// Добавляем html код окна на страницу
-				$('body').prepend(this.html);
+				this.allContainer = $(dialog_templates.container()).prependTo(wdpro.body);
+
+
 
 				// Обработка клика по кнопке "Закрыть"
-				$(this.html).find('.JS_dialog_close').click(function ()
+				$(this.html).find('.js-dialog-close').click(function ()
 				{
 					if (self.params.hideOnClose)
 					{
@@ -89,6 +91,7 @@
 					}
 				});
 
+				this.allContainer.append(this.html);
 
 				// Если требуется подложка
 				if (params.substrate)
@@ -97,7 +100,7 @@
 					this.substrateHtml = $(dialog_templates.substrate()).hide();
 
 					// Добавляем подложку на страницу
-					$('body').prepend(this.substrateHtml);
+					this.allContainer.prepend(this.substrateHtml);
 
 					// При клике по подложке
 					$(this.substrateHtml).click(function ()
@@ -111,6 +114,11 @@
 							self.close();
 						}
 					});
+
+					// Добавляем окно в подложку
+					this.allContainer.addClass('dialog-container-fixed');
+
+					$(wdpro.body).addClass('dialog-body-no-scroll');
 				}
 
 
@@ -161,23 +169,32 @@
 				{
 					this.params.positioning = function (dialogWindow)
 					{
+						self.allContainer.addClass('dialog-container-no-scroll');
+						dialogWindow.css('margin', 0);
+
 						// X
-						$(dialogWindow).css('max-width', 'none');
+						$(dialogWindow).css('max-width', 'none').css('left', '0');
 						var width = $(dialogWindow).outerWidth();
 
-						var maxWindowWidth = $(window).width() - self.params.margin * 2;
+						var windowWidth = self.allContainer.width();
+
+
+						var maxWindowWidth = windowWidth - self.params.margin * 2;
 						var maxWidth = Math.min(self.params.maxWidth, maxWindowWidth);
 
 						width = Math.min(width, maxWidth);
 
 						var x = Math.round(
-							Math.round($(window).width() / 2)
+							Math.round(windowWidth / 2)
 							- Math.round(width / 2)
 						);
 
+						console.log(x +' = '+Math.round(windowWidth / 2) + ' - ' + Math.round(width / 2));
+
 						// Y
-						var y = Math.max(0, Math.round($(window).height() / 2 - $(dialogWindow).outerHeight() / 2)) +
-						        $(document).scrollTop();
+						var y = Math.max(
+							0,
+							Math.round($(window).height() / 2 - $(dialogWindow).outerHeight() / 2)) /*+ $(document).scrollTop()*/;
 
 
 
@@ -185,6 +202,8 @@
 						.css('max-width', maxWidth+'px')
 						.css('left', x + 'px')
 						.css('top', y + 'px');
+						self.allContainer.removeClass('dialog-container-no-scroll');
+						dialogWindow.css('margin', '');
 					};
 
 					this.params.positioning(this.html);
@@ -317,11 +336,15 @@
 
 							// Удаление подложки
 							$(self.substrateHtml).remove();
+							$(self.allContainer).remove();
 
 							self.trigger('closed', self);
 
 							// Удаление окна из массива окон
 							delete dialogsList[self.N];
+
+							// Включаем скролл страницы
+							$('body').removeClass('dialog-body-no-scroll');
 						}
 					};
 

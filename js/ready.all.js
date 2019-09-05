@@ -9,6 +9,8 @@
 		wdpro.on('content', function (content) {
 			content.find('.js-wdpro-form').wdproForm();
 		});
-		
+
+
+
 	});
 })(jQuery);
