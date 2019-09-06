@@ -100,7 +100,7 @@
 					this.substrateHtml = $(dialog_templates.substrate()).hide();
 
 					// Добавляем подложку на страницу
-					this.allContainer.prepend(this.substrateHtml);
+					wdpro.body.prepend(this.substrateHtml);
 
 					// При клике по подложке
 					$(this.substrateHtml).click(function ()
@@ -118,7 +118,26 @@
 					// Добавляем окно в подложку
 					this.allContainer.addClass('dialog-container-fixed');
 
-					$(wdpro.body).addClass('dialog-body-no-scroll');
+					wdpro.body.addClass('dialog-body-no-scroll');
+
+
+					// Закрытие при клике по substrate
+					(function () {
+
+						var over = false;
+						self.html.on('mouseenter', function () {
+							over = true;
+						})
+							.on('mouseleave', function () {
+								over = false;
+							});
+
+						self.allContainer.on('click', function () {
+							if (!over)
+								self.close();
+						});
+
+					})();
 				}
 
 
@@ -165,31 +184,31 @@
 
 
 				// Позиция по-умолчанию (по центру)
-				if (typeof this.params.positioning != 'function')
+				if (typeof this.params.positioning !== 'function')
 				{
 					this.params.positioning = function (dialogWindow)
 					{
-						self.allContainer.addClass('dialog-container-no-scroll');
+						//self.allContainer.addClass('dialog-container-no-scroll');
 						dialogWindow.css('margin', 0);
 
 						// X
 						$(dialogWindow).css('max-width', 'none').css('left', '0');
-						var width = $(dialogWindow).outerWidth();
+						var dialogWidth = $(dialogWindow).outerWidth();
 
-						var windowWidth = self.allContainer.width();
+						var testWidth = $('<div/>').appendTo(self.allContainer);
+						var windowWidth = testWidth.width();
+						testWidth.remove();
 
 
 						var maxWindowWidth = windowWidth - self.params.margin * 2;
 						var maxWidth = Math.min(self.params.maxWidth, maxWindowWidth);
 
-						width = Math.min(width, maxWidth);
+						dialogWidth = Math.min(dialogWidth, maxWidth);
 
 						var x = Math.round(
 							Math.round(windowWidth / 2)
-							- Math.round(width / 2)
+							- Math.round(dialogWidth / 2)
 						);
-
-						console.log(x +' = '+Math.round(windowWidth / 2) + ' - ' + Math.round(width / 2));
 
 						// Y
 						var y = Math.max(
