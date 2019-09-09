@@ -134,12 +134,34 @@ abstract class BasePage extends BaseEntity
 			/** @var \Wdpro\BasePage $post */
 			$post = wdpro_get_post_by_name($uri);
 			/*if (static::getType() != $post::getType()) {
-				throw new Exception('Родительская страница, указанная в '
-					.get_class($this).'::getSubParentUri() относится к тому же классу
-					страниц');
-			}*/
+					throw new Exception('Родительская страница, указанная в '
+						.get_class($this).'::getSubParentUri() относится к тому же классу
+						страниц');
+				}*/
 			return $post;
 		}
+	}
+
+
+	/**
+	 * Возвращает данные для формы админки
+	 *
+	 * Для изменения этих данных переопределите метод prepareDataForConsoleForm
+	 *
+	 * @return array
+	 */
+	public function consoleGetDataForForm() {
+
+		$data = $this->getData();
+
+		if (empty($data['post_content']) && $data['id']) {
+			$post = get_post($data['id']);
+			$data['post_content'] = $post->post_content;
+		}
+
+		$data = $this->prepareDataForConsoleForm($data);
+
+		return $data;
 	}
 
 

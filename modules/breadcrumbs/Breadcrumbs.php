@@ -309,10 +309,12 @@ class Breadcrumbs
 			}
 			
 			// Рендерим и возвращаем результат
-			return wdpro_render_php(
-				$this->templateFilName,
-				$template
-			);
+			if (!empty($template['elements'][0]['text'])) {
+				return wdpro_render_php(
+					$this->templateFilName,
+					$template
+				);
+			}
 		}
 	}
 

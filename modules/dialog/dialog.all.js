@@ -149,21 +149,21 @@
 
 
 				// Добавляем обработчик закрытия
-				if (typeof this.params.close == 'function')
+				if (typeof this.params.close === 'function')
 				{
 					self.on('closed', this.params.close);
 				}
 
 
 				// Добавляем обработчик показа
-				if (typeof this.params.show == 'function')
+				if (typeof this.params.show === 'function')
 				{
 					self.on('show', this.params.show);
 				}
 
 
 				// Добавляем обработчик скрытия
-				if (typeof this.params.hide == 'function')
+				if (typeof this.params.hide === 'function')
 				{
 					self.on('hide', this.params.hide);
 				}
@@ -248,7 +248,7 @@
 				});
 
 				this.html.draggable({
-					'cancel': '.JS_input_container'
+					'cancel': '.JS_input_container, :input'
 				});
 
 				this.html.on('close', function () {
