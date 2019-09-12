@@ -242,7 +242,7 @@ if (goog.DEBUG) {
 
 
 wdpro.templates.forms.fileField = function(opt_data, opt_ignored) {
-  return ((opt_data.data['nothing']) ? '' : '') + '<div><div><input type="file" value=""' + ((opt_data.data['multiple']) ? 'multiple="multiple"' : '') + wdpro.templates.forms.attrs(opt_data) + '/><input type="hidden" name="' + soy.$$escapeHtml(opt_data.attrs['name']) + '" class="js-file-name" value="' + soy.$$escapeHtml(opt_data.attrs['value']) + '" /></div><div class="js-file_list"></div></div>';
+  return ((opt_data.data['nothing']) ? '' : '') + '<div><div class="wdpro-input-file-container"><input type="file" value=""' + ((opt_data.data['multiple']) ? 'multiple="multiple"' : '') + wdpro.templates.forms.attrs(opt_data) + '/><input type="hidden" name="' + soy.$$escapeHtml(opt_data.attrs['name']) + '" class="js-file-name" value="' + soy.$$escapeHtml(opt_data.attrs['value']) + '" /></div><div class="js-file_list"></div></div>';
 };
 if (goog.DEBUG) {
   wdpro.templates.forms.fileField.soyTemplateName = 'wdpro.templates.forms.fileField';
@@ -266,7 +266,7 @@ if (goog.DEBUG) {
 
 
 wdpro.templates.forms.fileLoaded = function(opt_data, opt_ignored) {
-  return '<div class="g-mt5 js-sortable"><div class="g-inline">' + ((opt_data.url) ? '<a href="' + soy.$$escapeHtml(opt_data.url) + '" target="_blank">' : '') + soy.$$escapeHtml(opt_data.name) + ((opt_data.url) ? '</a>' : '') + '</div><div class="wdpro-button-16 wdpro-button-del js-del" title="\u0423\u0434\u0430\u043B\u0438\u0442\u044C \u0444\u0430\u0439\u043B"></div></div>';
+  return '<div class="g-mt5 js-sortable wdpro-input-file-list-element"><div class="g-inline wdpro-input-file-list-element-label">' + ((opt_data.url) ? '<a href="' + soy.$$escapeHtml(opt_data.url) + '" target="_blank">' : '') + soy.$$escapeHtml(opt_data.name) + ((opt_data.url) ? '</a>' : '') + '</div><div class="wdpro-button-16 wdpro-button-del js-del" title="\u0423\u0434\u0430\u043B\u0438\u0442\u044C \u0444\u0430\u0439\u043B"></div></div>';
 };
 if (goog.DEBUG) {
   wdpro.templates.forms.fileLoaded.soyTemplateName = 'wdpro.templates.forms.fileLoaded';

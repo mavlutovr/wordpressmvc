@@ -149,35 +149,35 @@
 
 
 				// Добавляем обработчик закрытия
-				if (typeof this.params.close == 'function')
+				if (typeof this.params.close === 'function')
 				{
 					self.on('closed', this.params.close);
 				}
 
 
 				// Добавляем обработчик показа
-				if (typeof this.params.show == 'function')
+				if (typeof this.params.show === 'function')
 				{
 					self.on('show', this.params.show);
 				}
 
 
 				// Добавляем обработчик скрытия
-				if (typeof this.params.hide == 'function')
+				if (typeof this.params.hide === 'function')
 				{
 					self.on('hide', this.params.hide);
 				}
 
 
 				// Текст
-				if (params.content != null)
+				if (params.content)
 				{
 					this.setContent(params.content);
 				}
 
 
 				// Заголовок
-				if (params.title != null)
+				if (params.title)
 				{
 					this.setTitle(params.title);
 				}
@@ -248,7 +248,7 @@
 				});
 
 				this.html.draggable({
-					'cancel': '.JS_input_container'
+					'cancel': 'form'
 				});
 
 				this.html.on('close', function () {
@@ -264,12 +264,18 @@
 
 
 			/**
-			* Загружает адрес
-			*/
+			 * Загружает адрес
+			 *
+			 * @param url {string|{}} Адрес или параметры для ajax запроса
+			 */
 			load: function (url) {
 				var self = this;
 
 				this.loadingStart();
+
+				if (typeof url === 'object') {
+					url = wdpro.ajaxUrl(url);
+				}
 
 				wdpro.ajax(url, function (data) {
 
@@ -416,6 +422,7 @@
 			 * @param Content {string|jQuery} Контент
 			 */
 			setContent: function (Content) {
+
 				$(this.Content).empty().append(Content);
 
 				if (this.params && this.params.positioning)
