@@ -554,7 +554,9 @@ abstract class BaseEntity
 				
 				if ($this->loaded())
 				{
-					$this->_consoleForm->setData($this->consoleGetDataForForm());
+					$this->_consoleForm->setData(
+						$this->consoleGetDataForForm()
+					);
 				}
 			}
 			else
