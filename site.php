@@ -89,6 +89,17 @@ themeSoyCompileAndAddToPage();
 // Javascript
 wdpro_add_script_to_site(__DIR__.'/js/ready.all.js');
 wdpro_add_script_to_site(__DIR__.'/js/ready.site.js');
+
+// Webpack
+// Скомпилированный
+if (is_file(WDPRO_TEMPLATE_PATH.'dist/main.js')) {
+	wdpro_add_script_to_site(WDPRO_TEMPLATE_PATH.'dist/main.js');
+}
+// Нескомпилированный
+else if (is_file(WDPRO_TEMPLATE_PATH.'index.js')) {
+	wdpro_add_script_to_site(WDPRO_TEMPLATE_PATH.'index.js');
+}
+
 if (is_file(WDPRO_TEMPLATE_PATH.'script.js')) {
 
 	wdpro_add_script_to_site(WDPRO_TEMPLATE_PATH.'script.js');
