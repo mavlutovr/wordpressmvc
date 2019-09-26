@@ -49,14 +49,12 @@ class ConsoleForm extends \Wdpro\Form\Form {
 			'left'=>'Дата обновления',
 		]);
 
-		if (\Wdpro\Lang\Controller::isLang()) {
-			$this->add([
-				'name'=>'post_content[lang]',
-				'top'=>'Текст страницы',
-				'autoLeft'=>false,
-				'type'=>static::CKEDITOR,
-			]);
-		}
+		$this->add([
+			'name'=>'post_content[lang]',
+			'top'=>'Текст страницы',
+			'autoLeft'=>false,
+			'type'=>static::CKEDITOR,
+		]);
 
 
 		if (Controller::isTags()) {
