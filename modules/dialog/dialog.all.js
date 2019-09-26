@@ -247,9 +247,11 @@
 					self.updatePos();
 				});
 
-				this.html.draggable({
-					'cancel': 'form'
-				});
+				if (this.params.draggable) {
+					this.html.draggable({
+						'cancel': 'form'
+					});
+				}
 
 				this.html.on('close', function () {
 					self.close();
