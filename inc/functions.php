@@ -1091,6 +1091,18 @@ function wdpro_image_watermark($fileFullName, $params) {
 			$originalPath['dirname']
 			. '/' . $params['original']
 			. '/' . $originalPath['basename']);
+
+		$htaccessFileName = $originalPath['dirname']
+			. '/' . $params['original'];
+
+		if (!is_file($htaccessFileName)) {
+			wdpro_copy_file(
+				__DIR__.'/../modules/tools/watermark/default/htaccess',
+				$originalPath['dirname']
+				. '/' . $params['original']
+				. '/.htaccess'
+			);
+		}
 	}
 
 	if ($fileFullName && is_file($fileFullName) && is_file($params['file'])) {
