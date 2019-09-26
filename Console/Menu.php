@@ -88,7 +88,7 @@ class Menu
 		add_action('init', function () use (&$buttonParams, &$roll) {
 
 			// Новые записи
-			if ($buttonParams['showNew']) {
+			if (isset($buttonParams['showNew']) && $buttonParams['showNew']) {
 				if ($newCount = $roll->getNewCount())
 				{
 					$buttonParams['count'] = $newCount;
