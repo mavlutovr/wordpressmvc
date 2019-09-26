@@ -587,7 +587,7 @@
 
 <div>
 
-	<div>
+	<div class="wdpro-input-file-container">
 		<input
 			type="file"
 			value=""
@@ -637,8 +637,8 @@
 * @param url Адрес файла
 */
 {template .fileLoaded}
-<div class="g-mt5 js-sortable">
-	<div class="g-inline">
+<div class="g-mt5 js-sortable wdpro-input-file-list-element">
+	<div class="g-inline wdpro-input-file-list-element-label">
 		{if ($url) }<a href="{$url}" target="_blank">{/if}{$name}{if ($url) }</a>{/if}
 	</div>
 

@@ -331,6 +331,7 @@
 							self.showMessage(response['message'], {
 								hideForm: response['hideForm']
 							});
+							self.updateDialogPos();
 						}
 
 						// Редирект
@@ -3351,6 +3352,22 @@
 	 * Поле для загрузки файла
 	 */
 	wdpro.forms.FileElement = BaseElement.extend({
+
+
+		/**
+		 * Инициализация параметров
+		 *
+		 * @param params
+		 */
+		initParams: function (params) {
+			params = wdpro.extend({
+				'containerClass': 'wdpro-file-input-container',
+			}, params);
+
+			this._super(params);
+		},
+
+
 
 		/**
 		 * Создает HTML код поля

@@ -170,14 +170,14 @@
 
 
 				// Текст
-				if (params.content != null)
+				if (params.content)
 				{
 					this.setContent(params.content);
 				}
 
 
 				// Заголовок
-				if (params.title != null)
+				if (params.title)
 				{
 					this.setTitle(params.title);
 				}
@@ -247,9 +247,11 @@
 					self.updatePos();
 				});
 
-				this.html.draggable({
-					'cancel': '.JS_input_container, :input'
-				});
+				if (this.params.draggable) {
+					this.html.draggable({
+						'cancel': 'form'
+					});
+				}
 
 				this.html.on('close', function () {
 					self.close();
@@ -264,12 +266,18 @@
 
 
 			/**
-			* Загружает адрес
-			*/
+			 * Загружает адрес
+			 *
+			 * @param url {string|{}} Адрес или параметры для ajax запроса
+			 */
 			load: function (url) {
 				var self = this;
 
 				this.loadingStart();
+
+				if (typeof url === 'object') {
+					url = wdpro.ajaxUrl(url);
+				}
 
 				wdpro.ajax(url, function (data) {
 
@@ -416,6 +424,7 @@
 			 * @param Content {string|jQuery} Контент
 			 */
 			setContent: function (Content) {
+
 				$(this.Content).empty().append(Content);
 
 				if (this.params && this.params.positioning)
