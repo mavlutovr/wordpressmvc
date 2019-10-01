@@ -147,7 +147,7 @@ abstract class BaseController {
 			$entityClass = static::getModuleClass('Entity');
 
 			// Это текущая страница
-			if ($entityClass && '\\'.get_class($page) === $entityClass) {
+			if ($page && $entityClass && '\\'.get_class($page) === $entityClass) {
 
 				// Если есть метод, который возвращает файл шаблона
 				if (method_exists($entityClass, 'getTemplateFile') && $templateFile = $entityClass::getTemplateFile()) {

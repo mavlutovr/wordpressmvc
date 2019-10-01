@@ -266,7 +266,7 @@ function wdpro_get_current_page($callback) {
 
 	wdpro_get_post(function ($post) use (&$callback) {
 
-		if ($post) {
+		if ($post && $post->ID) {
 			$callback(wdpro_object_by_post_id($post->ID));
 		}
 	});
