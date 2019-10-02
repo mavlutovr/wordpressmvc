@@ -11,6 +11,9 @@ var wdpro = {
 	WDPRO_UPLOAD_IMAGES_URL: '',
 	WDPRO_HOME_URL: '',
 
+	// Номера клавиш
+	KEY_ESCAPE: 27,
+
 	// base64_decode
 	base64_decode: function (str) {
 		return decodeURIComponent(escape(window.atob( str )));

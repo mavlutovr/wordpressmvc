@@ -1,3 +1,7 @@
+// 1
+// npm install
+//
+// 2
 // webpack -w ./index.js --devtool source-map
 
 module.exports = {
