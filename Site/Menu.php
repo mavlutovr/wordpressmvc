@@ -292,6 +292,7 @@ class Menu extends Roll
 				$row = static::prepareDataForTemplate($row);
 				
 				// Подменю
+				$row['submenu'] = '';
 				if ($submenu) {
 
 					// Указаны параметры

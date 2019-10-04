@@ -62,18 +62,21 @@
 
 			var bg = div.find('.JS_loading_bg');
 
+			var width = self.outerWidth();
+			var height = self.outerHeight();
+
 			self.css('opacity', 0);
 
 			bg
-				.width(self.outerWidth())
-				.height(self.outerHeight())
+				.outerWidth(width)
+				.outerHeight(height)
 			;
 
 
 			// Отступ сверху
 			var targetTop = self.offset().top;
 			var loadingTop = div.offset().top;
-			if (loadingTop != targetTop)
+			if (loadingTop !== targetTop)
 			{
 				var plusTop = targetTop - loadingTop;
 

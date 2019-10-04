@@ -13,6 +13,7 @@ var wdpro = {
 
 	// Номера клавиш
 	KEY_ESCAPE: 27,
+	KEY_ENTER: 13,
 
 	// base64_decode
 	base64_decode: function (str) {

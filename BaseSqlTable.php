@@ -316,6 +316,9 @@ abstract class BaseSqlTable
 			// Если есть первый элемент (Where)
 			if (isset($query[0])) {
 				// Когда второй параметр, это массив
+				if (!isset($query[1])) {
+					return $query[0];
+				}
 				if ( is_array($query[1]) ) {
 					return static::prepareByData($query[0], $query[1]);
 				}
