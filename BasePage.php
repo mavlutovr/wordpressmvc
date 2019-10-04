@@ -277,8 +277,8 @@ abstract class BasePage extends BaseEntity
 		// Просто тип
 		$typeSql = '';
 
-		$postType = $childsRollOrType::getType();
-		if ($postType)
+		//$postType = $childsRollOrType::getType();
+		if ($childsRollOrType)
 		{
 			$typeSql = ' AND post_type=%s ';
 		}
@@ -287,7 +287,7 @@ abstract class BasePage extends BaseEntity
 			'WHERE post_parent=%d '.$typeSql
 			.' AND post_status!="trash" AND post_status!="auto-draft"',
 			$this->id(),
-			$postType
+			$childsRollOrType
 		));
 	}
 

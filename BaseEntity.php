@@ -779,7 +779,7 @@ abstract class BaseEntity
 	 * <pre>
 	 * return array(
 	 *  array(
-	 *      'roll'=>\App\Good\GoodConsoleRoll::class,
+	 *      'roll'=>\App\Good\ConsoleRoll::class,
 	 *      'label'=>'Товары',
 	 *
 	 *      // https://developer.wordpress.org/resource/dashicons/#products
@@ -787,6 +787,15 @@ abstract class BaseEntity
 	 *      'icon'=>'dashicons-products',
 	 *  )
 	 * );
+	 * </pre>
+	 *
+	 *
+	 * Или просто
+	 *
+	 * <pre>
+	 * return [
+	 *  \App\Good\ConsoleRoll::class,
+	 * ];
 	 * </pre>
 	 * 
 	 * @return array|void
