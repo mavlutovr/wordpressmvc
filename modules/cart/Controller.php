@@ -18,7 +18,6 @@ class Controller extends \Wdpro\BaseController
 			/** @var CartElementInterface|BasePage $entity */
 			$entity = wdpro_object_by_key($_POST['key']);
 
-
 			static::updateCount($entity, $_POST['count']);
 
 			return [
@@ -34,9 +33,15 @@ class Controller extends \Wdpro\BaseController
 	 *
 	 * Чтобы, например, на сайте указать количество товаров, добавленных в корзину
 	 *
+	 * @param null|array $params Параметры
+	 *            ['extraColls'] Массив полей, которые дополнительно добавить в список товаров из табицы
+	 *
 	 * @return array
+	 *            ['list'] Список товаров
+	 *            ['count'] Количество элементов в корзине
+	 *            ['count_all'] Количество всех товаров в корзине
 	 */
-	public static function getInfoData()
+	public static function getInfoData($params=null)
 	{
 
 		$info = [
@@ -57,12 +62,20 @@ class Controller extends \Wdpro\BaseController
 				$info['count']++;
 				$info['count_all'] += $row['count'];
 
-				$info['list'][] = [
+				$listElement = [
 					'id' => $row['id'],
 					'cost_for_one' => $row['cost_for_one'],
 					'cost_for_all' => $row['cost_for_all'],
 					'count' => $row['count'],
 				];
+
+				if ($params && is_array($params['extraColls'])) {
+					foreach ($params['extraColls'] as $extraColl) {
+						$listElement[$extraColl] = $row[$extraColl];
+					}
+				}
+
+				$info['list'][] = $listElement;
 			}
 		}
 
@@ -114,7 +127,9 @@ class Controller extends \Wdpro\BaseController
 		else {
 			$row = apply_filters('wdpro_cart_elment_update', $row);
 
-			SqlTable::insert($row);
+			$id = SqlTable::insert($row);
+
+			do_action('wdpro_cart_added', $row['element_key']);
 		}
 	}
 
@@ -150,8 +165,12 @@ class Controller extends \Wdpro\BaseController
 		$templateData = [];
 
 		$templateData['added'] = SqlTable::getRow([
-			'WHERE element_key=%s AND order_id=0',
-			[$entity->getKey()]
+			'WHERE element_key=%s AND order_id=0 AND ( visitor_id=%d OR (person_id=%d AND person_id!=0))',
+			[
+				$entity->getKey(),
+				wdpro_visitor_session_id(),
+				wdpro_person_auth_id(),
+			]
 		]);
 
 		$templateData['entity'] = $entity->getData();
