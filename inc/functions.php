@@ -1634,15 +1634,6 @@ function wdpro_object($className, $dataOrId=null)
 
 	if (is_string($className))
 	{
-		/*if (!isset($_wdproObjects[$className]))
-		{
-			$_wdproObjects[$className] = array();
-		}
-
-		if (!isset($_wdproObjects[$className][$key]))
-		{
-			$_wdproObjects[$className][$key] = new $className($dataOrId);
-		}*/
 
 		if (!isset($_wdproObjects[$className][$key]))
 		{
