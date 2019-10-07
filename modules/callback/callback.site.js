@@ -33,6 +33,11 @@
 							form.loadingStop();
 
 							dialog.setContent(result['message']);
+							if (result['title']) {
+								dialog.setTitle(result['title']);
+							}
+
+							wdpro.yandexMetrika('reachGoal', 'callback');
 						}
 					);
 				});

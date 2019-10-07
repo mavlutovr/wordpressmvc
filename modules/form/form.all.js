@@ -1625,8 +1625,6 @@
 		 */
 		add: function (data) {
 
-			console.log('data', data);
-			
 			// Данные это данные элемента
 			if (typeof data == 'object' && !(data instanceof BaseElement))
 			{

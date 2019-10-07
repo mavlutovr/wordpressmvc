@@ -61,6 +61,7 @@
 				params = $.extend({
 					maxWidth: 800,
 					margin: 0,
+					marginTop: 0,
 					closeSymbol: wdpro.dialogs.closeSymbol
 				}, params);
 				this.params = params;
@@ -192,8 +193,8 @@
 						dialogWindow.css('margin', 0);
 
 						// X
-						$(dialogWindow).css('max-width', 'none').css('left', '0');
-						var dialogWidth = $(dialogWindow).outerWidth();
+						dialogWindow.css('max-width', 'none').css('left', '0');
+						var dialogWidth = dialogWindow.outerWidth();
 
 						var testWidth = $('<div/>').appendTo(self.allContainer);
 						var windowWidth = testWidth.width();
@@ -205,24 +206,30 @@
 
 						dialogWidth = Math.min(dialogWidth, maxWidth);
 
+						dialogWindow
+							.css('max-width', maxWidth+'px');
+
 						var x = Math.round(
 							Math.round(windowWidth / 2)
 							- Math.round(dialogWidth / 2)
 						);
 
+						dialogWindow.css('margin', '').css('top', 0);
+						var marginTop = dialogWindow.position().top;
+
 						// Y
 						var y = Math.max(
 							0,
-							Math.round($(window).height() / 2 - $(dialogWindow).outerHeight() / 2)) /*+ $(document).scrollTop()*/;
+							Math.round(
+								$(window).height() / 2 - dialogWindow.outerHeight() / 2 - marginTop
+							)) /*+ $(document).scrollTop()*/;
 
 
 
-						$(dialogWindow)
-						.css('max-width', maxWidth+'px')
+						dialogWindow
 						.css('left', x + 'px')
 						.css('top', y + 'px');
 						self.allContainer.removeClass('dialog-container-no-scroll');
-						dialogWindow.css('margin', '');
 					};
 
 					this.params.positioning(this.html);

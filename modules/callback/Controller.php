@@ -40,22 +40,14 @@ class Controller extends \Wdpro\BaseController {
 			]);
 
 			return array(
-				'message'=>get_option('callback_message'),
+				'message'=>wdpro_get_option('callback_message'),
+				'title'=>wdpro_get_option('callback_title'),
 			);
 		});
 
 	}
-	
-	
-	public static function run() {
-		
-		\Wdpro\Console\Menu::add(array(
-			'roll'=>ConsoleRoll::class,
-			'icon'=>'dashicons-phone',
-			'position'=>30,
-			'showNew'=>true,
-		));
-	}
+
+
 
 
 	/**
@@ -63,15 +55,31 @@ class Controller extends \Wdpro\BaseController {
 	 */
 	public static function runConsole() {
 
+		// Кнопка меню
+		\Wdpro\Console\Menu::add(array(
+			'roll'=>ConsoleRoll::class,
+			'icon'=>'dashicons-phone',
+			'position'=>30,
+			'showNew'=>true,
+		));
+
+
 		// Настройки
 		\Wdpro\Console\Menu::addSettings('Заказ обратного звонка', function ($form) {
 
 			/** @var \Wdpro\Form\Form $form */
+
+			$form->add([
+				'name'=>'callback_title',
+				'top'=>'Заголовок после отправки формы',
+			]);
+
 			$form->add(array(
 				'name'=>'callback_message',
-				'left'=>'Текст после отправки формы',
+				'top'=>'Текст после отправки формы',
 				'type'=>'ckeditor',
 			));
+
 			$form->add('submitSave');
 
 			return $form;

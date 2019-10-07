@@ -184,6 +184,35 @@ if (typeof Array.isArray === 'undefined') {
 	};
 
 
+	// Yandex Metrika
+	var yandexMetrikaIds = [];
+
+	/**
+	 * Добавляет счетчик Метрики
+	 */
+	wdpro.yandexMetrikaAddId = function (id) {
+		yandexMetrikaIds.push(id);
+	};
+
+
+	/**
+	 * Запускает функцию ym для каждого счетчика метрики
+	 *
+	 * @example
+	 * ym(XXXXXX, 'reachGoal', target[, params[, callback[, ctx]]]);
+	 *
+	 * https://yandex.ru/support/metrica/objects/reachgoal.html
+	 * wdpro.yandexMetrikaAddId(XXXXXX);
+	 * wdpro.yandexMetrika('reachGoal', target[, params[, callback[, ctx]]]);
+	 */
+	wdpro.yandexMetrika = function (...args) {
+		wdpro.each(yandexMetrikaIds, function (id) {
+			var args2 = wdpro.clone(args);
+			args2.unshift(id);
+
+			ym(...args2);
+		});
+	};
 
 
 	(function(){
@@ -1574,7 +1603,7 @@ if (typeof Array.isArray === 'undefined') {
 	 * Возвращает копию объекта
 	 *
 	 * @param object {{}} Оригинальный объект
-	 * @param recursive {boolean} Копировать рекурсивно
+	 * @param [recursive] {boolean} Копировать рекурсивно
 	 * @returns {{}|Array}
 	 */
 	var clone = wdpro.clone = function (object, recursive)
