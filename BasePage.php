@@ -261,24 +261,32 @@ abstract class BasePage extends BaseEntity
 
 
 	/**
-	 * Возвращает количество дочерних элементов
+	 * Возвращает количество дочерних элементов (когда дочерние элементы на основе \Wdpro\BasePage)
 	 *
-	 * @param \Wdpro\Console\Roll|string $childsRollOrType Дочерний список или тип дочерних
+	 * @param \Wdpro\Console\Roll|\Wdpro\Site\Roll|string $childsRollOrType Дочерний список или тип дочерних
 	 * элементов
 	 * @return null|number
 	 */
 	public function getChildsCount($childsRollOrType)
 	{
-		// Список
+		// Объект списка
 		if (is_object($childsRollOrType))
 			return parent::getChildsCount($childsRollOrType);
 
+		// Класс списка
+		if (strstr($childsRollOrType, '\\')) {
+			$type = $childsRollOrType::getType();
+		}
 
-		// Просто тип
+		// Когда это уже тип
+		else {
+			$type = $childsRollOrType;
+		}
+
+
+
 		$typeSql = '';
-
-		//$postType = $childsRollOrType::getType();
-		if ($childsRollOrType)
+		if ($type)
 		{
 			$typeSql = ' AND post_type=%s ';
 		}
@@ -287,7 +295,7 @@ abstract class BasePage extends BaseEntity
 			'WHERE post_parent=%d '.$typeSql
 			.' AND post_status!="trash" AND post_status!="auto-draft"',
 			$this->id(),
-			$childsRollOrType
+			$type
 		));
 	}
 

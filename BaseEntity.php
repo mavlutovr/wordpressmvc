@@ -469,7 +469,7 @@ abstract class BaseEntity
 	public function nextSortingToData($where)
 	{
 		$run = function ($fieldName) use (&$where) {
-			if (!$this->data[$fieldName])
+			if (!isset($this->data[$fieldName]) || !$this->data[$fieldName])
 			{
 				$where = preg_replace('~(ORDER BY [.`\s\S]+)~', '', $where);
 

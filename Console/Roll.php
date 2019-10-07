@@ -513,10 +513,11 @@ title="Удалить"></a>
 	 * // https://fontawesome.com/
 	 * 
 	 *  'subsections'=>false,
-	 *  'where'=>[
-	 *   'WHERE `post_parent`=%d
-	 *    ORDER BY `menu_order`',
-	 *   [ $_GET['sectionId'] ]
+	 *  'where'  => [
+	 *    'WHERE `post_parent`=%d ORDER BY `menu_order`',
+	 *    [
+	 *      isset($_GET['sectionId']) ? $_GET['sectionId'] : 0,
+	 *    ]
 	 *  ],
 	 *
 	 *
