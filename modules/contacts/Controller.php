@@ -2,9 +2,11 @@
 namespace Wdpro\Contacts;
 
 class Controller extends \Wdpro\BaseController {
+
 	
 	/** @var  \Wdpro\Form\Form */
 	protected static $backFormClass = BackForm::class;
+
 
 	/**
 	 * Выполнение скриптов после инициализаций всех модулей (в админке)
@@ -79,14 +81,9 @@ class Controller extends \Wdpro\BaseController {
 	 */
 	public static function runSite() {
 
-		add_shortcode('contacts_list', function ($params) {
-
-			/*wdpro_default_file(
-				__DIR__.'/default/templates/contacts_list.php',
-				WDPRO_TEMPLATE_PATH.'contacts_list.php'
-			);*/
+		add_shortcode('contacts_list', function () {
 			
-			return Roll::getHtml('ORDER BY sorting');
+			return Roll::getHtml('ORDER BY menu_order');
 		});
 		
 		add_shortcode('contacts_form', function () {

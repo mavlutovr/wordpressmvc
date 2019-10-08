@@ -3,5 +3,5 @@
 	<?=$item['text']?>
 
 	<?php if ($item['map'])?>
-	<div class="cont_map"><?=$item['map']?></div>
+	<div class="contacts-map"><?=$item['map']?></div>
 <?endforeach;?>
