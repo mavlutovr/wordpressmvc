@@ -45,9 +45,10 @@ class Controller extends \Wdpro\BaseController
 	{
 
 		$info = [
-			'count' => 0,
+			'count_types' => 0,
 			'count_all' => 0,
 			'list' => [],
+			'cost_total'=>0,
 		];
 
 		$where = [
@@ -59,7 +60,7 @@ class Controller extends \Wdpro\BaseController
 
 			foreach ($sel as $row) {
 
-				$info['count']++;
+				$info['count_types']++;
 				$info['count_all'] += $row['count'];
 
 				$listElement = [
@@ -76,8 +77,11 @@ class Controller extends \Wdpro\BaseController
 				}
 
 				$info['list'][] = $listElement;
+				$info['cost_total'] += $listElement['cost_for_all'];
 			}
 		}
+
+
 
 		return $info;
 	}
@@ -117,17 +121,22 @@ class Controller extends \Wdpro\BaseController
 
 			// Меняем количество
 			if ($current['count'] > 0) {
-				$current = apply_filters('wdpro_cart_elment_update', $current);
+				$current = static::updateData($current, $entityObjectOrKey);
 				SqlTable::update($current, ['id' => $current['id']]);
-			} // Удаляем
+			}
+
+			// Удаляем
 			else {
 				SqlTable::delete(['id' => $current['id']]);
 			}
-		} // Когда нет в корзине
-		else {
-			$row = apply_filters('wdpro_cart_elment_update', $row);
 
-			$id = SqlTable::insert($row);
+		}
+
+		// Когда нет в корзине
+		else {
+			$row = static::updateData($row, $entityObjectOrKey);
+
+			SqlTable::insert($row);
 
 			do_action('wdpro_cart_added', $row['element_key']);
 		}
@@ -135,7 +144,7 @@ class Controller extends \Wdpro\BaseController
 
 
 	/**
-	 * Корректировка данных корзины
+	 * Корректировка данных элемента корзины
 	 *
 	 * @param array $data Данные корзины
 	 * @param CartElementInterface|BasePage $entity
@@ -177,7 +186,7 @@ class Controller extends \Wdpro\BaseController
 		$templateData['key'] = $entity->getKey();
 
 		return wdpro_render_php(
-			WDPRO_TEMPLATE_PATH . 'add_to_cart_button.php',
+			WDPRO_TEMPLATE_PATH . 'cart_add_button.php',
 			$templateData
 		);
 	}
@@ -189,9 +198,35 @@ class Controller extends \Wdpro\BaseController
 	public static function runSite()
 	{
 		wdpro_default_file(
-			__DIR__ . '/default/add_to_cart_button.php',
-			WDPRO_TEMPLATE_PATH . 'add_to_cart_button.php'
+			__DIR__ . '/default/templates/cart_add_button.php',
+			WDPRO_TEMPLATE_PATH . 'cart_add_button.php'
 		);
+
+		wdpro_default_file(
+			__DIR__ . '/default/templates/cart_list.php',
+			WDPRO_TEMPLATE_PATH . 'cart_list.php'
+		);
+
+		wdpro_default_page('cart', __DIR__.'/default/pages/cart.php');
+
+
+		wdpro_on_content_uri('cart', function ($content, $page) {
+
+			wdpro_replace_or_append(
+				$content,
+				'[cart_list]',
+
+				Roll::getHtml([
+					'WHERE order_id=0 AND ( visitor_id=%d OR (person_id=%d AND person_id!=0))',
+					[
+						wdpro_visitor_session_id(),
+						wdpro_person_auth_id(),
+					]
+				])
+			);
+
+			return $content;
+		});
 	}
 
 

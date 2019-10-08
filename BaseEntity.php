@@ -261,6 +261,31 @@ abstract class BaseEntity
 
 
 	/**
+	 * Возвращает данные для шаблона
+	 *
+	 * @return array
+	 */
+	public function getDataForTemplate() {
+		$data = $this->getData();
+
+		$data = $this->prepareDataForTemplate($data);
+
+		return $data;
+	}
+
+
+	/**
+	 * Обработка данных для шаблона
+	 *
+	 * @param array $data Необработанные данные
+	 * @return array Обработанные данные
+	 */
+	public function prepareDataForTemplate($data) {
+		return $data;
+	}
+
+
+	/**
 	 * В BaseEntity и BasePage различается механизм запуска методов для обработки данных
 	 * перед первым сохранением (созданием) сущности в базу
 	 *

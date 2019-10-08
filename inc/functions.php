@@ -2416,8 +2416,16 @@ function wdpro_copy_file($from, $to) {
  *	 'post_name'=>$uri',
  * ]
  */
-function wdpro_default_page($uri, $pageDataCallback) {
-	\Wdpro\Page\Controller::defaultPage($uri, $pageDataCallback);
+function wdpro_default_page($uri, $pageDataCallbackOrFile) {
+
+	if (is_string($pageDataCallbackOrFile)) {
+		\Wdpro\Page\Controller::defaultPage($uri, function () use (&$pageDataCallbackOrFile) {
+			return require $pageDataCallbackOrFile;
+		});
+	}
+	else {
+		\Wdpro\Page\Controller::defaultPage($uri, $pageDataCallbackOrFile);
+	}
 }
 
 
@@ -2494,7 +2502,7 @@ function wdpro_on_uri($uri, $callback) {
 
 			$post = get_post();
 
-			if ($uri == $post->post_name) {
+			if ($uri === $post->post_name) {
 
 				$callback($post);
 			}
