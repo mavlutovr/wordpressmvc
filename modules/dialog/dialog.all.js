@@ -59,7 +59,7 @@
 
 				// Сохраняем параметры
 				params = $.extend({
-					maxWidth: 800,
+					maxWidth: wdpro.dialogs.maxWidth ? wdpro.dialogs.maxWidth : 800,
 					margin: 0,
 					marginTop: 0,
 					closeSymbol: wdpro.dialogs.closeSymbol
@@ -196,6 +196,7 @@
 						dialogWindow.css('max-width', 'none').css('left', '0');
 						var dialogWidth = dialogWindow.outerWidth();
 
+						// Ширина окна
 						var testWidth = $('<div/>').appendTo(self.allContainer);
 						var windowWidth = testWidth.width();
 						testWidth.remove();

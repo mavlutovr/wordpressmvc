@@ -10,8 +10,7 @@
 			var dialog = new wdpro.dialogs.Dialog({
 				title: 'Заказ обратного звонка',
 				content: 'Загрузка...',
-				substrate: true,
-				maxWidth: 400
+				substrate: true
 			});
 			dialog.show();
 			

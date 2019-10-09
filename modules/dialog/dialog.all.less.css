@@ -6,6 +6,7 @@
   background: #FFF;
   margin-top: 20px;
   margin-bottom: 20px;
+  box-sizing: border-box;
 }
 .dialog-header {
   display: flex;

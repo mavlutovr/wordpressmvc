@@ -2516,6 +2516,245 @@ if (typeof Array.isArray === 'undefined') {
 
 
 
+	let originalPlaceId = 0;
+
+	/**
+	 * Добавляет элемент в конец целевого контейнера, сохраняя возможность вернуть элемент обратно на свое место
+	 *
+	 * Чтобы вернуть элемент обратно, используйте $(element).toOriginalPlace();
+	 * @param $to {jQuery} Целевой контейнер
+	 * @return {jQuery}
+	 */
+	$.fn.appendFromOriginalPlaceTo = function ($to) {
+		$(this).each(function () {
+
+			const element = $(this);
+			saveOriginalPlace(element);
+
+
+			element.appendTo($to);
+		});
+
+		return this;
+	};
+
+	/**
+	 * Добавляет элемент в начало целевого контейнера, сохраняя возможность вернуть элемент обратно на свое место
+	 *
+	 * Чтобы вернуть элемент обратно, используйте $(element).toOriginalPlace();
+	 * @param $to {jQuery} Целевой контейнер
+	 * @return {jQuery}
+	 */
+	$.fn.prependFromOriginalPlaceTo = function ($to) {
+		$(this).each(function () {
+
+			const element = $(this);
+			saveOriginalPlace(element);
+
+
+			element.appendTo($to);
+		});
+
+		return this;
+	};
+
+
+	/**
+	 * Возвращает элемент на место после таких перемещения типа $(element).appendFromOriginalPlaceTo
+	 *
+	 * @return {jQuery}
+	 */
+	$.fn.toOriginalPlace = function () {
+		$(this).each(function () {
+
+			const element = $(this);
+			const id = element.data('original-place-id');
+			const originalPlace = $('#js-original-place-'+id);
+			originalPlace.after(element);
+		});
+
+		return this;
+	};
+
+
+	/**
+	 * Сохраняет позицию элемента, чтобы его можно было вернуть потом сюда же
+	 *
+	 * @param element {jQuery}
+	 */
+	const saveOriginalPlace = (element) => {
+
+		if (!element.data('original-place-id')) {
+			originalPlaceId ++;
+
+			const placeHolder = $('<div id="js-original-place-'+originalPlaceId+'"></div>').hide();
+			element.data('original-place-id', originalPlaceId);
+
+			element.after(placeHolder);
+		}
+	};
+
+
+	/**
+	 * Перераспределяет элементы по контейнерам в зависимости от ширины страницы
+	 *
+	 * @example
+	 * <code>
+	 * // Адаптивная перестановка элементов
+	 * wdpro.adaptiveStructure({
+	 *
+	 * 	996: {
+	 *
+	 * 		// Шапка
+	 * 		'#js-mobile-header': [
+	 * 			'*', // Любой элемент, который уже есть в контейнере
+	 * 			'#js-header-cart',
+	 * 			'#js-callback-button'
+	 * 		],
+	 *
+	 * 		// Меню
+	 * 		'#js-mobile-menu': [
+	 * 			'#js-search-form',
+	 * 			'#js-header-phones',
+	 * 			'#js-header-mail',
+	 * 			'#js-header-schedule',
+	 * 			'#js-header-address',
+	 * 			'#js-aside'
+	 * 		]
+	 * 	},
+	 *
+	 *
+	 * 	480: {
+	 *
+	 * 		// Шапка
+	 * 		'#js-mobile-header': [
+	 * 			'*',
+	 * 			'#js-header-cart'
+	 * 		],
+	 *
+	 * 		// Меню
+	 * 		'#js-mobile-menu': [
+	 * 			'#js-search-form',
+	 * 			'#js-callback-button',
+	 * 			'#js-header-phones',
+	 * 			'#js-header-mail',
+	 * 			'#js-header-schedule',
+	 * 			'#js-header-address',
+	 * 			'#js-aside'
+	 * 		]
+	 * 	}
+	 *
+	 * });
+	 * </code>
+	 *
+	 * @param params
+	 */
+	wdpro.adaptiveStructure = (params) => {
+
+		let elements = {};
+		let lastWidth;
+
+
+		const getElement = (selector) => {
+			if (!elements[selector]) {
+				elements[selector] = $(selector);
+			}
+			return elements[selector];
+		};
+
+
+		const rePos = () => {
+
+			let fixI = 0;
+
+			// Ширина окна
+			let windowWidth = window.innerWidth;
+
+			// Находим текущую ширину параметров
+			let paramsWidth;
+			for(let w in params) {
+
+				// Ширина окна меньше ширины параметров
+				if (windowWidth <= w) {
+					if (!paramsWidth) {
+						paramsWidth = w;
+					}
+
+					else {
+						paramsWidth = Math.min(w, paramsWidth);
+					}
+				}
+			}
+
+
+			if (lastWidth === paramsWidth) return false;
+
+
+			// Позиция из параметров
+			if (paramsWidth) {
+
+				// Получаем текущую структуру
+				let structure = params[paramsWidth];
+
+
+				// Перебираем контейнеры
+				$.each(structure, (containerSelector, childIds) => {
+
+					// Получаем контейнер
+					let $container = getElement(containerSelector);
+
+					// Перебираем элементы
+					$.each(childIds, function (i, childSelector) {
+
+						i -= fixI;
+
+						// Если по этому номеру находится другой элемент
+						let $currentElement = $container.children(':eq('+i+')');
+
+						if (!$currentElement.is(childSelector)) {
+
+							// Перед этим элементом ставим тот, который указан в параметрах
+							let $targetElement = getElement(childSelector);
+
+							if ($targetElement.length) {
+
+								saveOriginalPlace($targetElement);
+
+								if (i) {
+									$container.children(':eq('+(i - 1)+')').after($targetElement);
+								}
+
+								else {
+									$container.prepend($targetElement);
+								}
+							}
+
+							else {
+								fixI ++;
+							}
+						}
+					});
+				});
+			}
+
+
+			// Изначальная позиция
+			else {
+				$.each(elements, (i, $element) => {
+					$element.toOriginalPlace();
+				});
+			}
+
+
+			lastWidth = paramsWidth;
+		};
+
+
+		rePos();
+		$(window).on('resize', rePos);
+	};
+
+
 	// Add an URL parser to JQuery that returns an object
 	// This function is meant to be used with an URL like the window.location
 	// Use: $.parseParams('http://mysite.com/?var=string') or $.parseParams() to parse the window.location
