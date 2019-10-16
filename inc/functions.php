@@ -698,8 +698,6 @@ function wdpro_local() {
  */
 function wdpro_location($location)
 {
-	throw new Exception('test');
-
 	if (headers_sent())
 	{
 		echo('<script>window.location = "'.$location.'";</script>');

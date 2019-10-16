@@ -199,10 +199,13 @@ class Controller extends \Wdpro\BaseController {
 		wdpro_on_page_init(function ($page) {
 			/** @var $page \App\BasePage */
 
+			$langUri = \Wdpro\Lang\Controller::getCurrentLangUri();
+			if ($langUri) $langUri .= '/';
+
 			if (is_object($page)
 				&& method_exists($page, 'isHome')
 				&& $page->isHome()
-				&& wdpro_current_post_name() !== '/'.\Wdpro\Lang\Controller::getCurrentLangUri().'/') {
+				&& wdpro_current_post_name() !== '/'.$langUri) {
 				wdpro_location(wdpro_home_url_with_lang());
 			}
 
