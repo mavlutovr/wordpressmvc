@@ -202,28 +202,33 @@ class Controller extends \Wdpro\BaseController {
 			$langUri = \Wdpro\Lang\Controller::getCurrentLangUri();
 			if ($langUri) $langUri .= '/';
 
-			if (is_object($page)
-				&& method_exists($page, 'isHome')
-				&& $page->isHome()
-				&& wdpro_current_post_name() !== '/'.$langUri) {
-				wdpro_location(wdpro_home_url_with_lang());
-			}
 
+			if (is_object($page)) {
 
-			// Чтобы адреса всегда заканчивались на /
-			$uri = $_SERVER['REQUEST_URI'];
-			if (strstr($uri, '?')) {
-				$uri = str_replace('?'.$_SERVER['QUERY_STRING'], '', $uri);
-			}
-			$last = substr($uri, -1);
-			if ($last !== '/') {
-				$uri .= '/';
+				// Редирект главной на /
+				if (method_exists($page, 'isHome')
+					&& $page->isHome()
+					&& wdpro_current_post_name() !== '/'.$langUri) {
+					wdpro_location(wdpro_home_url_with_lang());
 
-				if ($_SERVER['QUERY_STRING']) {
-					$uri .= '?'.$_SERVER['QUERY_STRING'];
 				}
 
-				wdpro_location($uri, 301);
+
+				// Чтобы адреса всегда заканчивались на /
+				$uri = $_SERVER['REQUEST_URI'];
+				if (strstr($uri, '?')) {
+					$uri = str_replace('?'.$_SERVER['QUERY_STRING'], '', $uri);
+				}
+				$last = substr($uri, -1);
+				if ($last !== '/') {
+					$uri .= '/';
+
+					if ($_SERVER['QUERY_STRING']) {
+						$uri .= '?'.$_SERVER['QUERY_STRING'];
+					}
+
+					wdpro_location($uri, 301);
+				}
 			}
 
 
