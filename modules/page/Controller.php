@@ -212,9 +212,19 @@ class Controller extends \Wdpro\BaseController {
 
 			// Чтобы адреса всегда заканчивались на /
 			$uri = $_SERVER['REQUEST_URI'];
+			if (strstr($uri, '?')) {
+				$uri = str_replace('?'.$_SERVER['QUERY_STRING'], '', $uri);
+			}
 			$last = substr($uri, -1);
-			if ($last !== '/')
-				wdpro_location($uri.'/', 301);
+			if ($last !== '/') {
+				$uri .= '/';
+
+				if ($_SERVER['QUERY_STRING']) {
+					$uri .= '?'.$_SERVER['QUERY_STRING'];
+				}
+
+				wdpro_location($uri, 301);
+			}
 
 
 			if (method_exists($page, 'initCard')) {
