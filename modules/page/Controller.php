@@ -209,6 +209,14 @@ class Controller extends \Wdpro\BaseController {
 				wdpro_location(wdpro_home_url_with_lang());
 			}
 
+
+			// Чтобы адреса всегда заканчивались на /
+			$uri = $_SERVER['REQUEST_URI'];
+			$last = substr($uri, -1);
+			if ($last !== '/')
+				wdpro_location($uri.'/', 301);
+
+
 			if (method_exists($page, 'initCard')) {
 				$data = $page->initCard();
 				if (isset($data) && is_array($data)) {
@@ -845,7 +853,7 @@ class Controller extends \Wdpro\BaseController {
 	 * @return \Wdpro\BasePage
 	 */
 	public static function getByPostByName($postName) {
-		
+
 		if ($pageData = SqlTable::getRow(
 			['WHERE `post_name`=%s ', [$postName]],
 			'id'
@@ -857,14 +865,10 @@ class Controller extends \Wdpro\BaseController {
 		// Когда страница есть в базе WP, но нету в MVC
 		else {
 
-			echo 123;
-
 			if ($postData = \Wdpro\Page\SqlTable::getRow([
 					'WHERE post_name = %s',
 				[$postName]
 			])) {
-
-				print_r($postData);
 
 				// Получаем класс страниц по типу
 				if ($class = wdpro_get_entity_class_by_post_type($postData['post_type'])) {

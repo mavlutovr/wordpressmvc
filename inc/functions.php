@@ -695,8 +695,9 @@ function wdpro_local() {
  * Редирект с остановкой текущих скриптов
  *
  * @param string $location Адрес куда перейти
+ * @param null|number $code Код редиректа (301)
  */
-function wdpro_location($location)
+function wdpro_location($location, $code=null)
 {
 	if (headers_sent())
 	{
@@ -704,6 +705,10 @@ function wdpro_location($location)
 	}
 	else
 	{
+		if ($code === 301) {
+			header("HTTP/1.1 301 Moved Permanently");
+		}
+
 		header('Location: '.$location);
 	}
 	exit();
@@ -1701,7 +1706,7 @@ function wdpro_get_post_by_id($postId) {
 
 
 /**
- * Возвращает обхект страницы по ее URI
+ * Возвращает объект страницы по ее URI
  *
  * @param string $postName URI страницы
  * @return \Wdpro\BasePage
