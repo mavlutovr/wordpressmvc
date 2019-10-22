@@ -55,9 +55,6 @@ if (is_file(WDPRO_TEMPLATE_PATH.'style.less'))
 }
 
 
-//do_action('wdpro-site-css');
-
-
 // Soy
 function themeSoyCompileAndAddToPage() {
 
