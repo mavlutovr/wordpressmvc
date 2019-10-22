@@ -39,7 +39,7 @@
 	{
 		for(var i in e.target.classList)
 		{
-			if (e.target.classList[i] == 'wdpro-form')
+			if (e.target.classList[i] === 'wdpro-form')
 			{
 				var id = Number($(e.target).attr('data-form-id'));
 				forms[id].trigger('addedToPage');
@@ -205,6 +205,7 @@
 		 * @param [params] {{}} Данные формы
 		 */
 		init: function (params) {
+
 			var self = this;
 			
 			this.id = currentFormI;
@@ -2530,7 +2531,7 @@
 		 * @returns {*}
 		 */
 		getDataValue: function () {
-			if (typeof this.params['value'] != 'undefined')
+			if (typeof this.params['value'] !== 'undefined')
 			{
 				return this.params['value'];
 			}
@@ -3190,10 +3191,22 @@
 		 * @param Return {Function} Каллбэк, принимающий код элемента
 		 */
 		getHtml: function (Return) {
-			Return(this.templates.hiddenField({
+
+			let self = this;
+
+			this.field = $(this.templates.hiddenField({
 				data:  this.getParams(),
 				attrs: this.getAttrs()
 			}));
+
+			Return(this.field);
+
+			// Если ранее устанавливалось значение
+			if (self.settedValue)
+			{
+				// Устанавливаем это значение
+				self.setValue(self.settedValue);
+			}
 		},
 
 
