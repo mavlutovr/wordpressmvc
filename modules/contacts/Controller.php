@@ -160,6 +160,16 @@ class Controller extends \Wdpro\BaseController {
 	}
 
 
+	/**
+	 * Установка не стандартной формы
+	 *
+	 * @param string $backFormClass Класс формы
+	 */
+	public static function setFormClass($backFormClass) {
+		static::$backFormClass = $backFormClass;
+	}
+
+
 }
 
 return __NAMESPACE__;
