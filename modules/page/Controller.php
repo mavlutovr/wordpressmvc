@@ -202,12 +202,35 @@ class Controller extends \Wdpro\BaseController {
 			$langUri = \Wdpro\Lang\Controller::getCurrentLangUri();
 			if ($langUri) $langUri .= '/';
 
-			if (is_object($page)
-				&& method_exists($page, 'isHome')
-				&& $page->isHome()
-				&& wdpro_current_post_name() !== '/'.$langUri) {
-				wdpro_location(wdpro_home_url_with_lang());
+
+			if (is_object($page)) {
+
+				// Редирект главной на /
+				if (method_exists($page, 'isHome')
+					&& $page->isHome()
+					&& wdpro_current_post_name() !== '/'.$langUri) {
+					wdpro_location(wdpro_home_url_with_lang());
+
+				}
+
+
+				// Чтобы адреса всегда заканчивались на /
+				$uri = $_SERVER['REQUEST_URI'];
+				if (strstr($uri, '?')) {
+					$uri = str_replace('?'.$_SERVER['QUERY_STRING'], '', $uri);
+				}
+				$last = substr($uri, -1);
+				if ($last !== '/') {
+					$uri .= '/';
+
+					if ($_SERVER['QUERY_STRING']) {
+						$uri .= '?'.$_SERVER['QUERY_STRING'];
+					}
+
+					wdpro_location($uri, 301);
+				}
 			}
+
 
 			if (method_exists($page, 'initCard')) {
 				$data = $page->initCard();
@@ -845,7 +868,7 @@ class Controller extends \Wdpro\BaseController {
 	 * @return \Wdpro\BasePage
 	 */
 	public static function getByPostByName($postName) {
-		
+
 		if ($pageData = SqlTable::getRow(
 			['WHERE `post_name`=%s ', [$postName]],
 			'id'
@@ -857,14 +880,10 @@ class Controller extends \Wdpro\BaseController {
 		// Когда страница есть в базе WP, но нету в MVC
 		else {
 
-			echo 123;
-
 			if ($postData = \Wdpro\Page\SqlTable::getRow([
 					'WHERE post_name = %s',
 				[$postName]
 			])) {
-
-				print_r($postData);
 
 				// Получаем класс страниц по типу
 				if ($class = wdpro_get_entity_class_by_post_type($postData['post_type'])) {
