@@ -422,6 +422,17 @@ abstract class BasePage extends BaseEntity
 		return $this->getData('post_title[lang]');
 	}
 
+	public function getH1() {
+		$arr = get_post_meta(get_the_ID(), 'h1'.\Wdpro\Lang\Data::getCurrentSuffix());
+
+		if (is_array($arr) && isset($arr[0]) && $arr[0])
+		{
+			return $arr[0];
+		}
+
+		return $this->getTitle();
+	}
+
 
 	/**
 	 * Обновляет позицию в меню
