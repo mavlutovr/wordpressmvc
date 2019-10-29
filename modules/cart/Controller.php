@@ -166,24 +166,33 @@ class Controller extends \Wdpro\BaseController
 	 * Возвращает кнопку "Добавить в корзину" для элемента
 	 *
 	 * @param CartElementInterface|\Wdpro\BasePage $entity Элемент, который можно добавить в корзину по этой кнопке
+	 * @param null|string|array $entityKey Ключ товара, в котором может хранится не только сам товар,
+	 *    но и дополнительная информация, такая, как цвет и размер.
 	 * @return string
+	 * @throws \Exception
 	 */
-	public static function getAddToCartButton($entity)
+	public static function getAddToCartButton($entity, $entityKey=null)
 	{
 
 		$templateData = [];
 
+		if (!$entityKey)
+			$entityKey = $entity->getKey();
+
+		$entityKey = wdpro_key_parse($entityKey);
+
 		$templateData['added'] = SqlTable::getRow([
-			'WHERE element_key=%s AND order_id=0 AND ( visitor_id=%d OR (person_id=%d AND person_id!=0))',
+			'WHERE element_key=%s AND order_id=0 
+			AND ( visitor_id=%d OR (person_id=%d AND person_id!=0))',
 			[
-				$entity->getKey(),
+				$entityKey['key'],
 				wdpro_visitor_session_id(),
 				wdpro_person_auth_id(),
 			]
 		]);
 
-		$templateData['entity'] = $entity->getData();
-		$templateData['key'] = $entity->getKey();
+		$templateData['entity'] = $entity->getDataForCartButton($entityKey);
+		$templateData['key'] = $entityKey;
 
 		return wdpro_render_php(
 			WDPRO_TEMPLATE_PATH . 'cart_add_button.php',

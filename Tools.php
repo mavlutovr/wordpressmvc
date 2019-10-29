@@ -137,11 +137,32 @@ trait Tools
 	/**
 	 * Возвращает ключ объекта (строку, по которой можно получить этот объект)
 	 *
+	 * @param null|string|array $additionalKeyData Дополнительные данные, добавляемые в ключ
+	 *    Это может пригодиться для того, чтобы сохранить в ключе состояние объекта или его модификацию.
+	 *    Например, когда у товара есть цвета, можно добавить в этот ключ цвет и положить в корзину товар определенного цвета.
+	 *
 	 * @return string
 	 */
-	public function getKey() {
+	public function getKey($additionalKeyData=null) {
 
-		return 'name:' . wdpro_get_class($this).',id:' . $this->id();
+		$key = 'name:' . wdpro_get_class($this).',id:' . $this->id();
+
+		if (is_array($additionalKeyData)) {
+			foreach ($additionalKeyData as $k => $value) {
+				$key .= ','.$k.':'.$value;
+			}
+		}
+
+		else if (is_string($additionalKeyData)) {
+			$key .= ','.$additionalKeyData;
+		}
+
+		return $key;
+	}
+
+
+	public function getKeyModification($keyAdditionalData) {
+		$key = $this->getKey();
 	}
 
 
