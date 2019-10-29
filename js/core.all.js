@@ -2759,6 +2759,78 @@ if (typeof Array.isArray === 'undefined') {
 	};
 
 
+	// Каллбэки на определенные размеры экрана
+	{
+		const list = [];
+
+		const update = () => {
+			const windowWidth = window.innerWidth;
+
+			const inside = (params) => {
+
+				if (typeof params.min === 'number' && params.min >= windowWidth)
+					return false;
+
+				if (typeof params.max === 'number' && params.max <= windowWidth)
+					return false;
+
+				return true;
+			};
+
+			for (let item of list) {
+
+				// Когда каллбэк уже внутри заданного размера
+				if (item.inside === null || item.inside) {
+
+					// Если каллбэк вышел из размера
+					if (!inside(item.params)) {
+						item.off && item.off();
+						item.inside = false;
+						break;
+					}
+				}
+
+				// Когда каллбэк снаружи заданного размера
+				if (item.inside === null || !item.inside) {
+
+					// Если каллбэк вошел в размер
+					if (inside(item.params)) {
+						item.on && item.on();
+						item.inside = true;
+						break;
+					}
+				}
+			}
+		};
+
+		/**
+		 * Запускает каллбэки при определенном размере окна
+		 *
+		 * @param params {{ [min]:number, [max]:number }}
+		 * @param callbackOn {function} Запускается, когда размер окна подходит под заданный размер
+		 * @param callbackOff {function} Запускается, когда размер окна не подходит под заданный размер
+		 */
+		wdpro.onWindowSize = (params, callbackOn, callbackOff) => {
+
+			list.push({
+				params: params,
+				on: callbackOn,
+				off: callbackOff,
+				inside: null
+			});
+
+			update();
+		};
+
+
+		update();
+		$(window).on('resize', update);
+	}
+
+
+
+
+
 	// Add an URL parser to JQuery that returns an object
 	// This function is meant to be used with an URL like the window.location
 	// Use: $.parseParams('http://mysite.com/?var=string') or $.parseParams() to parse the window.location
