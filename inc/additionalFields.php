@@ -250,7 +250,7 @@ function wdpro_the_h1($force=false)
 
 	if (!$h1)
 	$h1 = wdpro_get_post_meta('h1');
-	
+
 	if ($h1 != '-' && $h1 != '—' || $force)
 	{
 		if (!$h1)

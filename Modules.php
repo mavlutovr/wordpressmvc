@@ -51,8 +51,9 @@ class Modules
 			}
 
 			else {
-				if (defined('WP_DEBUG') && WP_DEBUG) {
-					echo 'Нет файла: '.$controllerClassFileName.PHP_EOL.PHP_EOL;
+				// Это отключил, чтобы не мозолило глаза
+				if (false && defined('WP_DEBUG') && WP_DEBUG) {
+					echo 'Notify: Нет файла: '.$controllerClassFileName.PHP_EOL.PHP_EOL;
 				}
 			}
 

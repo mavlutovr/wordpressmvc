@@ -146,7 +146,8 @@ class Controller extends \Wdpro\BaseController {
 
 				return [
 					'message'=>wdpro_get_option(
-						'contacts_form_sended[lang]', 'Ваше сообщение отправлено.'),
+					'contacts_form_sended[lang]', 'Ваше сообщение отправлено.'),
+					'metrika'=>'contacts_form',
 				];
 			}
 			else {
@@ -157,6 +158,16 @@ class Controller extends \Wdpro\BaseController {
 
 
 		});
+	}
+
+
+	/**
+	 * Установка не стандартной формы
+	 *
+	 * @param string $backFormClass Класс формы
+	 */
+	public static function setFormClass($backFormClass) {
+		static::$backFormClass = $backFormClass;
 	}
 
 

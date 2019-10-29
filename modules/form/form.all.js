@@ -339,6 +339,11 @@
 						if (response['location']) {
 							window.location = response['location'];
 						}
+
+						// Метрика
+						if (response['metrika']) {
+							wdpro.yandexMetrika('reachGoal', response['metrika']);
+						}
 					});
 				});
 			}
@@ -3497,7 +3502,8 @@
 			// Change
 			this.field.on('change', function (e)
 			{
-				self.field.loading();
+				var loadingElement = false && self.field.is(':visible') ? self.field : self.field.closest('.JS_element');
+				loadingElement.loading();
 				self.uploadInProcess = true;
 
 				// Данные для отправки
@@ -3561,7 +3567,7 @@
 						success: function (json) {
 
 							var response = wdpro.parseJSON(json);
-							self.field.loadingStop();
+							loadingElement.loadingStop();
 
 							// Все верно
 							if (typeof response.error == 'undefined')
@@ -3597,7 +3603,7 @@
 						},
 
 						error: function (jqXHR, testStatus, errorThrow) {
-							self.field.loadingStop();
+							loadingElement.loadingStop();
 							console.error('При загрузке файла произошла ошибка', jqXHR.getAllResponseHeaders());
 						}
 					};

@@ -214,7 +214,19 @@ if (typeof Array.isArray === 'undefined') {
 			var args2 = wdpro.clone(args);
 			args2.unshift(id);
 
-			ym(...args2);
+			console.log('metrika', args2);
+
+			var counterFnKey = 'yaCounter'+id;
+
+			var counterFn = window[counterFnKey];
+
+			if (counterFn && counterFn[args2[1]]) {
+				console.log('counterFn', args2[1], args2[2])
+				counterFn[args2[1]](args[2]);
+			}
+			else {
+				ym(...args2);
+			}
 		});
 	};
 
