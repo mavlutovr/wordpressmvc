@@ -2840,6 +2840,31 @@ if (typeof Array.isArray === 'undefined') {
 	}
 
 
+	/**
+	 * Добавляет в цену пробелы
+	 *
+	 * @return {jQuery} Объект, в котором находится цена
+	 */
+	$.fn.wdproCostSpaces = function (space) {
+
+		if (typeof space === "undefined")
+			space = ' ';
+
+		$(this).each(function () {
+
+			const $container = $(this);
+			let cost = $container.text();
+
+			if (cost) {
+				cost = cost.replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1'+space);
+				$container.text(cost);
+			}
+
+		});
+
+		return this;
+	};
+
 
 
 

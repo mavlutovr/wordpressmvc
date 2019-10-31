@@ -1730,7 +1730,10 @@ function wdpro_object_by_key($objectKey) {
 
 	$key = wdpro_key_parse($objectKey);
 
-	$obj = wdpro_object($key['object']['name'], isset($key['object']['id']) ? $key['object']['id'] : null);
+	$obj = wdpro_object(
+		$key['object']['name'],
+		isset($key['object']['id']) ? $key['object']['id'] : null
+	);
 
 	if (is_object($obj))
 	{

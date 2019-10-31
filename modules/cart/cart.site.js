@@ -1,4 +1,4 @@
-wdpro.ready(($) => {
+wdpro.ready(20, ($) => {
 
 	$.fn.wdproCartControl = function () {
 
@@ -8,15 +8,24 @@ wdpro.ready(($) => {
 			const $buttons = $container.find('.js-cart-control-button');
 			const $countInput = $container.find('.js-cart-control-count');
 
+			let min = $countInput.attr('data-min');
+			if (min) min = Number(min);
+			else min = 0;
+
 			const save = (count) => {
 
 				if (count === undefined) {
 					count = $countInput.val();
-					if (!count || count < 0) count = 0;
+				}
+
+				if (!count || count < 0) count = 0;
+				if (count) {
+
+					count = Math.max(min, count);
 				}
 
 				$container.loading();
-				let key = $container.attr('data-key');
+				const key = $container.attr('data-key');
 
 				// Запрос на сервер
 				wdpro.ajax(
@@ -60,6 +69,10 @@ wdpro.ready(($) => {
 					count = Number(count);
 					count += delta;
 
+					if (delta < 0 && count < min) {
+						count = 0;
+					}
+
 					save(count);
 				}
 			});
@@ -74,6 +87,8 @@ wdpro.ready(($) => {
 						save();
 					}
 				})*/;
+
+			wdpro.trigger('cart-control', $container);
 
 		});
 

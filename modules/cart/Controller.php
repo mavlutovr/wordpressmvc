@@ -110,7 +110,11 @@ class Controller extends \Wdpro\BaseController
 
 		$where = [
 			'WHERE element_key=%s AND ( visitor_id=%d OR (person_id=%d AND person_id!=0)) ',
-			[$row['element_key'], $row['visitor_id'], $row['person_id']]
+			[
+				$row['element_key'],
+				$row['visitor_id'],
+				$row['person_id']
+			]
 		];
 
 
@@ -147,13 +151,16 @@ class Controller extends \Wdpro\BaseController
 	 * Корректировка данных элемента корзины
 	 *
 	 * @param array $data Данные корзины
-	 * @param CartElementInterface|BasePage $entity
+	 * @param CartElementInterface|BasePage|array|string $entityObjectOrKey
 	 * @return array
 	 */
-	protected static function updateData($data, $entity)
+	protected static function updateData($data, $entityObjectOrKey)
 	{
+		if (is_string($entityObjectOrKey) || is_array($entityObjectOrKey)) {
+			$entityObjectOrKey = wdpro_object_by_key($entityObjectOrKey);
+		}
 
-		$data['cost_for_one'] = $entity->getCost();
+		$data['cost_for_one'] = $entityObjectOrKey->getCost();
 		$data['cost_for_all'] = $data['cost_for_one'] * $data['count'];
 
 		$data = apply_filters('wdpro_cart_elment_update', $data);
@@ -190,6 +197,12 @@ class Controller extends \Wdpro\BaseController
 				wdpro_person_auth_id(),
 			]
 		]);
+
+		// Убираем лишние копейки
+		if ($templateData['added']) {
+			$templateData['added']['cost_for_one'] *= 1;
+			$templateData['added']['cost_for_all'] *= 1;
+		}
 
 		$templateData['entity'] = $entity->getDataForCartButton($entityKey);
 		$templateData['key'] = $entityKey;

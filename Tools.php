@@ -145,34 +145,56 @@ trait Tools
 	 */
 	public function getKey($additionalKeyData=null) {
 
-		$key = 'name:' . wdpro_get_class($this).',id:' . $this->id();
+		$keyData = $this->getKeyArray($additionalKeyData);
 
-		if (is_array($additionalKeyData)) {
-			foreach ($additionalKeyData as $k => $value) {
-				$key .= ','.$k.':'.$value;
-			}
-		}
-
-		else if (is_string($additionalKeyData)) {
-			$key .= ','.$additionalKeyData;
+		$key = '';
+		foreach ($keyData['object'] as $k => $v) {
+			if ($key) $key .= ',';
+			$key .= $k.':'.$v;
 		}
 
 		return $key;
 	}
 
 
-	public function getKeyModification($keyAdditionalData) {
-		$key = $this->getKey();
-	}
-
-
 	/**
-	 * Возвращает ключ в виде массива
+	 * Возвращает ключ объекта (объект с информацией, по которой можно получить этот объект)
+	 *
+	 * @param null|string|array $additionalKeyData Дополнительные данные, добавляемые в ключ
+	 *    Это может пригодиться для того, чтобы сохранить в ключе состояние объекта или его модификацию.
+	 *    Например, когда у товара есть цвета, можно добавить в этот ключ цвет и положить в корзину товар определенного цвета.
 	 *
 	 * @return array
 	 */
-	public function getKeyArray() {
-		return wdpro_key_parse($this->_key);
+	public function getKeyArray($additionalKeyData=null) {
+		$keyData = [
+			'name'=>wdpro_get_class($this),
+			'id'=>$this->id(),
+		];
+
+		if (isset($this->_key)) {
+			$settedKey = $this->_key;
+			$settedKey = wdpro_key_parse($settedKey);
+			foreach ($settedKey['object'] as $k => $v) {
+				$keyData[$k] = $v;
+			}
+		}
+
+		if (is_array($additionalKeyData)) {
+			foreach ($additionalKeyData as $k => $v) {
+				$keyData[$k] = $v;
+			}
+		}
+
+		else if (is_string($additionalKeyData)) {
+			$arr1 = explode(',', $additionalKeyData);
+			foreach ($arr1 as $item) {
+				$arr2 = explode(':', $item);
+				$keyData[$arr2[0]] = $arr2[1];
+			}
+		}
+
+		return [ 'object' => $keyData ];
 	}
 
 
