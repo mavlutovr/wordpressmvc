@@ -344,6 +344,7 @@ add_action('wp_enqueue_scripts', function () {
 		'imagesUrl'=>WDPRO_UPLOAD_IMAGES_URL,
 		'lang'=>\Wdpro\Lang\Data::getCurrentLangUri(),
 		'currentPostId'=>$post->ID,
+		'currentPostName'=>$post->post_name,
 	));
 });
 

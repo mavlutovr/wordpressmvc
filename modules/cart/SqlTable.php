@@ -39,14 +39,14 @@ class SqlTable extends \Wdpro\BaseSqlTable {
 				'count'=>'int', // Количество штук
 				'visitor_id'=>'int', // Посетитель
 				'person_id'=>'int', // Пользователь
-				'element_key',
+				'key',
 				'data'=>'json', // Всякие дополнительные данные, типа величина скидки, другие штуки
 			],
 
 			static::INDEX => [
 				'visitor_id',
 				'person_id',
-				'element_key',
+				'key',
 				'order_id',
 			],
 

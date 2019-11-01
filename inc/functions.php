@@ -1728,6 +1728,9 @@ function wdpro_get_post_by_name($postName) {
  */
 function wdpro_object_by_key($objectKey) {
 
+	if (!$objectKey)
+		throw new \Exception('Попытка получить объект по пустому ключу');
+
 	$key = wdpro_key_parse($objectKey);
 
 	$obj = wdpro_object(

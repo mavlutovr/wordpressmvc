@@ -2089,7 +2089,9 @@ if (typeof Array.isArray === 'undefined') {
 			var $_GET2 = wdpro.extend($_GET_OR_ACTION, {
 				'action': 'wdpro',
 				'wdproAction': $_GET_OR_ACTION['action'],
-				'lang': wdpro.data.lang
+				'lang': wdpro.data['lang'],
+				'currentPostId': wdpro.data['currentPostId'],
+				'currentPostName': wdpro.data['currentPostName'],
 			});
 
 			url = this.data['ajaxUrl']+'?'+ $.param($_GET2);
