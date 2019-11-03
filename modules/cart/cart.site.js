@@ -1,4 +1,4 @@
-wdpro.ready(($) => {
+wdpro.ready(20, ($) => {
 
 	$.fn.wdproCartControl = function () {
 
@@ -8,15 +8,55 @@ wdpro.ready(($) => {
 			const $buttons = $container.find('.js-cart-control-button');
 			const $countInput = $container.find('.js-cart-control-count');
 
-			const save = (count) => {
+			let min = $countInput.attr('data-min');
+			if (min) min = Number(min);
+			else min = 0;
+
+			let step = $countInput.attr('data-step');
+			if (step) step = Number(step);
+			else step = 0;
+
+			const save = (count, removeConfirmMessage) => {
 
 				if (count === undefined) {
 					count = $countInput.val();
-					if (!count || count < 0) count = 0;
+					if (count) count = Number(count);
+				}
+
+				// Минимальное значение
+				if (!count || count < 0) count = 0;
+				if (count) {
+
+					count = Math.max(min, count);
+				}
+
+				// Шаг
+				if (step) {
+					// Допустим, 3
+					let stepCount = count;
+					if (min) stepCount -= min;
+
+					stepCount = Math.round(stepCount / step);
+					stepCount *= step;
+					if (min) stepCount += min;
+					count = stepCount;
+				}
+
+				// Подтверждение удаления
+				if (!count) {
+					if (!removeConfirmMessage) {
+						removeConfirmMessage = $countInput.data('remove-confirm');
+					}
+
+					if (removeConfirmMessage) {
+						if (!confirm(removeConfirmMessage))
+							return false;
+					}
 				}
 
 				$container.loading();
-				let key = $container.attr('data-key');
+				const key = $container.attr('data-key');
+
 
 				// Запрос на сервер
 				wdpro.ajax(
@@ -29,12 +69,18 @@ wdpro.ready(($) => {
 					// Ответ сервера
 					function (res) {
 						$container.loadingStop();
-						let newHtml = $(res['html']);
-						newHtml.wdproCartControl();
-						$container.after(newHtml);
-						$container.remove();
+						let $newHtml;
 
-						wdpro.trigger('cart_info', res['cart_info']);
+						if (count || wdpro.data['currentPostName'] !== 'cart') {
+							let $newHtmlWrap = $('<div>'+res['html']+'</div>');
+							$newHtml = $newHtmlWrap.children('.js-cart-control');
+							$container.after($newHtml);
+							$newHtml.wdproCartControl();
+						}
+						$container.remove();
+						$newHtml && $newHtml.trigger('cart-item-change');
+
+						wdpro.trigger('cart-summary-info', res['cartInfo']);
 					}
 				);
 			};
@@ -60,7 +106,11 @@ wdpro.ready(($) => {
 					count = Number(count);
 					count += delta;
 
-					save(count);
+					if (delta < 0 && count < min) {
+						count = 0;
+					}
+
+					save(count, $button.data('remove-confirm'));
 				}
 			});
 
@@ -68,12 +118,9 @@ wdpro.ready(($) => {
 			$countInput
 				.on('change', function () {
 					save();
-				})
-				/*.on('keyup', function (e) {
-					if (e.keyCode === wdpro.KEY_ENTER) {
-						save();
-					}
-				})*/;
+				});
+
+			wdpro.trigger('cart-item-init', $container);
 
 		});
 

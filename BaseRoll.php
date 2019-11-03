@@ -45,7 +45,7 @@ abstract class BaseRoll
 
 
 
-	public function getKey() {
+	public function getKey($additionalKeyData=null) {
 		
 	}
 

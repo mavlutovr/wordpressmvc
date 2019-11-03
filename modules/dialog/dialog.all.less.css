@@ -1,5 +1,5 @@
 .dialog {
-  position: absolute;
+  position: fixed;
   border: 3px #CCC solid;
   box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2);
   z-index: 201;
@@ -7,6 +7,9 @@
   margin-top: 20px;
   margin-bottom: 20px;
   box-sizing: border-box;
+}
+.dialog-container-fixed .dialog {
+  position: relative;
 }
 .dialog-header {
   display: flex;

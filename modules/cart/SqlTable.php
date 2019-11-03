@@ -34,19 +34,19 @@ class SqlTable extends \Wdpro\BaseSqlTable {
 				'id',
 				//'post_parent'=>'int', // Это и для страниц и для простых элементов
 				'order_id',
-				'cost_for_one'=>'int', // Стоимость за одну штуку
-				'cost_for_all'=>'int', // Стоимость за все штуки
+				'cost_for_one'=>'decimal(11,2)', // Стоимость за одну штуку
+				'cost_for_all'=>'decimal(11,2)', // Стоимость за все штуки
 				'count'=>'int', // Количество штук
 				'visitor_id'=>'int', // Посетитель
 				'person_id'=>'int', // Пользователь
-				'element_key',
+				'key',
 				'data'=>'json', // Всякие дополнительные данные, типа величина скидки, другие штуки
 			],
 
 			static::INDEX => [
 				'visitor_id',
 				'person_id',
-				'element_key',
+				'key',
 				'order_id',
 			],
 

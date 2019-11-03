@@ -27,8 +27,19 @@ class Roll extends \Wdpro\Site\Roll {
 	public static function prepareDataForTemplate($row)
 	{
 		/** @var \Wdpro\BasePage $element */
-		$element = wdpro_object_by_key($row['element_key']);
-		$row['element'] = $element->getDataForTemplate();
+		$element = wdpro_object_by_key($row['key']);
+		$row['good'] = $element->getDataForTemplate();
+
+		$row['cost_for_all'] *= 1;
+		$row['cost_for_one'] *= 1;
+
+		$keyArray = wdpro_key_parse($row['key']);
+		$row['keyArray'] = $keyArray['object'];
+
+		$row['html'] = wdpro_render_php(
+			WDPRO_TEMPLATE_PATH.'cart_list_item.php',
+			$row
+		);
 
 		return $row;
 	}
@@ -45,7 +56,7 @@ class Roll extends \Wdpro\Site\Roll {
 	{
 		$data = parent::getData($where);
 
-		$data['info'] = Controller::getInfoData();
+		$data['info'] = Controller::getSummaryInfo();
 
 		return $data;
 	}

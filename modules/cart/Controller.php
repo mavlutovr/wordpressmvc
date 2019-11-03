@@ -18,11 +18,25 @@ class Controller extends \Wdpro\BaseController
 			/** @var CartElementInterface|BasePage $entity */
 			$entity = wdpro_object_by_key($_POST['key']);
 
-			static::updateCount($entity, $_POST['count']);
+			$cartRow = static::updateCount($entity, $_POST['count']);
+
+			// Когда это страница корзины
+			if ($_GET['currentPostName'] === 'cart') {
+
+				// Возвращаем блок списка корзины
+				$cartRow = Roll::prepareDataForTemplate($cartRow);
+				$html = $cartRow['html'];
+			}
+
+			// Любая другая страница
+			else {
+				// Возвращаем кнопку "Добавить в корзину"
+				$html = static::getAddToCartButton($entity);
+			}
 
 			return [
-				'html' => static::getAddToCartButton($entity),
-				'cart_info' => static::getInfoData(),
+				'html' => $html,
+				'cartInfo' => static::getSummaryInfo(),
 			];
 		});
 	}
@@ -41,14 +55,16 @@ class Controller extends \Wdpro\BaseController
 	 *            ['count'] Количество элементов в корзине
 	 *            ['count_all'] Количество всех товаров в корзине
 	 */
-	public static function getInfoData($params=null)
+	public static function getSummaryInfo($params=null)
 	{
 
-		$info = [
+		$summary = [
 			'count_types' => 0,
 			'count_all' => 0,
 			'list' => [],
-			'cost_total'=>0,
+			'cost'=>0,
+			'discount'=>0,
+			'total'=>0,
 		];
 
 		$where = [
@@ -60,8 +76,8 @@ class Controller extends \Wdpro\BaseController
 
 			foreach ($sel as $row) {
 
-				$info['count_types']++;
-				$info['count_all'] += $row['count'];
+				$summary['count_types']++;
+				$summary['count_all'] += $row['count'];
 
 				$listElement = [
 					'id' => $row['id'],
@@ -76,14 +92,18 @@ class Controller extends \Wdpro\BaseController
 					}
 				}
 
-				$info['list'][] = $listElement;
-				$info['cost_total'] += $listElement['cost_for_all'];
+				$summary['list'][] = $listElement;
+				$summary['cost'] += $listElement['cost_for_all'];
 			}
 		}
 
+		$summary['total'] = $summary['cost'];
 
 
-		return $info;
+		$summary = apply_filters('wdpro_cart_summary', $summary);
+
+
+		return $summary;
 	}
 
 
@@ -102,19 +122,23 @@ class Controller extends \Wdpro\BaseController
 		}
 
 		$row = [
-			'element_key' => $entityObjectOrKey->getKey(),
+			'key' => $entityObjectOrKey->getKey(),
 			'count' => $count,
 			'visitor_id' => wdpro_visitor_session_id(),
 			'person_id' => wdpro_person_auth_id(),
 		];
 
 		$where = [
-			'WHERE element_key=%s AND ( visitor_id=%d OR (person_id=%d AND person_id!=0)) ',
-			[$row['element_key'], $row['visitor_id'], $row['person_id']]
+			'WHERE `key`=%s AND ( visitor_id=%d OR (person_id=%d AND person_id!=0)) ',
+			[
+				$row['key'],
+				$row['visitor_id'],
+				$row['person_id']
+			]
 		];
 
 
-		// Когда элемент уже есть в корзине
+		// Обновляем уже добавленный в корзину товар
 		if ($current = SqlTable::getRow($where)) {
 
 			$current['count'] = $count;
@@ -130,15 +154,24 @@ class Controller extends \Wdpro\BaseController
 				SqlTable::delete(['id' => $current['id']]);
 			}
 
+			return $current;
 		}
 
-		// Когда нет в корзине
+		// Добавляем в корзину новый товар
 		else {
+
 			$row = static::updateData($row, $entityObjectOrKey);
 
-			SqlTable::insert($row);
+			$id = SqlTable::insert($row);
 
-			do_action('wdpro_cart_added', $row['element_key']);
+			$rowSql = SqlTable::getRow([
+				'WHERE id=%d',
+				[ $id ]
+			]);
+
+			do_action('wdpro_cart_added', $rowSql);
+
+			return $rowSql;
 		}
 	}
 
@@ -147,13 +180,16 @@ class Controller extends \Wdpro\BaseController
 	 * Корректировка данных элемента корзины
 	 *
 	 * @param array $data Данные корзины
-	 * @param CartElementInterface|BasePage $entity
+	 * @param CartElementInterface|BasePage|array|string $entityObjectOrKey
 	 * @return array
 	 */
-	protected static function updateData($data, $entity)
+	protected static function updateData($data, $entityObjectOrKey)
 	{
+		if (is_string($entityObjectOrKey) || is_array($entityObjectOrKey)) {
+			$entityObjectOrKey = wdpro_object_by_key($entityObjectOrKey);
+		}
 
-		$data['cost_for_one'] = $entity->getCost();
+		$data['cost_for_one'] = $entityObjectOrKey->getCost();
 		$data['cost_for_all'] = $data['cost_for_one'] * $data['count'];
 
 		$data = apply_filters('wdpro_cart_elment_update', $data);
@@ -166,24 +202,39 @@ class Controller extends \Wdpro\BaseController
 	 * Возвращает кнопку "Добавить в корзину" для элемента
 	 *
 	 * @param CartElementInterface|\Wdpro\BasePage $entity Элемент, который можно добавить в корзину по этой кнопке
+	 * @param null|string|array $entityKey Ключ товара, в котором может хранится не только сам товар,
+	 *    но и дополнительная информация, такая, как цвет и размер.
 	 * @return string
+	 * @throws \Exception
 	 */
-	public static function getAddToCartButton($entity)
+	public static function getAddToCartButton($entity, $entityKey=null)
 	{
 
 		$templateData = [];
 
+		if (!$entityKey)
+			$entityKey = $entity->getKey();
+
+		$entityKey = wdpro_key_parse($entityKey);
+
 		$templateData['added'] = SqlTable::getRow([
-			'WHERE element_key=%s AND order_id=0 AND ( visitor_id=%d OR (person_id=%d AND person_id!=0))',
+			'WHERE `key`=%s AND order_id=0 
+			AND ( visitor_id=%d OR (person_id=%d AND person_id!=0))',
 			[
-				$entity->getKey(),
+				$entityKey['key'],
 				wdpro_visitor_session_id(),
 				wdpro_person_auth_id(),
 			]
 		]);
 
-		$templateData['entity'] = $entity->getData();
-		$templateData['key'] = $entity->getKey();
+		// Убираем лишние копейки
+		if ($templateData['added']) {
+			$templateData['added']['cost_for_one'] *= 1;
+			$templateData['added']['cost_for_all'] *= 1;
+		}
+
+		$templateData['good'] = $entity->getDataForCartButton($entityKey);
+		$templateData['key'] = $entityKey;
 
 		return wdpro_render_php(
 			WDPRO_TEMPLATE_PATH . 'cart_add_button.php',

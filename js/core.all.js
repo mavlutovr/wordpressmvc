@@ -2089,7 +2089,9 @@ if (typeof Array.isArray === 'undefined') {
 			var $_GET2 = wdpro.extend($_GET_OR_ACTION, {
 				'action': 'wdpro',
 				'wdproAction': $_GET_OR_ACTION['action'],
-				'lang': wdpro.data.lang
+				'lang': wdpro.data['lang'],
+				'currentPostId': wdpro.data['currentPostId'],
+				'currentPostName': wdpro.data['currentPostName'],
 			});
 
 			url = this.data['ajaxUrl']+'?'+ $.param($_GET2);
@@ -2769,6 +2771,103 @@ if (typeof Array.isArray === 'undefined') {
 		rePos();
 		$(window).on('resize', rePos);
 	};
+
+
+	// Каллбэки на определенные размеры экрана
+	{
+		const list = [];
+
+		const update = () => {
+			const windowWidth = window.innerWidth;
+
+			const inside = (params) => {
+
+				if (typeof params.min === 'number' && params.min >= windowWidth)
+					return false;
+
+				if (typeof params.max === 'number' && params.max <= windowWidth)
+					return false;
+
+				return true;
+			};
+
+			for (let item of list) {
+
+				// Когда каллбэк уже внутри заданного размера
+				if (item.inside === null || item.inside) {
+
+					// Если каллбэк вышел из размера
+					if (!inside(item.params)) {
+						item.off && item.off();
+						item.inside = false;
+						break;
+					}
+				}
+
+				// Когда каллбэк снаружи заданного размера
+				if (item.inside === null || !item.inside) {
+
+					// Если каллбэк вошел в размер
+					if (inside(item.params)) {
+						item.on && item.on();
+						item.inside = true;
+						break;
+					}
+				}
+			}
+		};
+
+		/**
+		 * Запускает каллбэки при определенном размере окна
+		 *
+		 * @param params {{ [min]:number, [max]:number }}
+		 * @param callbackOn {function} Запускается, когда размер окна подходит под заданный размер
+		 * @param callbackOff {function} Запускается, когда размер окна не подходит под заданный размер
+		 */
+		wdpro.onWindowSize = (params, callbackOn, callbackOff) => {
+
+			list.push({
+				params: params,
+				on: callbackOn,
+				off: callbackOff,
+				inside: null
+			});
+
+			update();
+		};
+
+
+		update();
+		$(window).on('resize', update);
+	}
+
+
+	/**
+	 * Добавляет в цену пробелы
+	 *
+	 * @return {jQuery} Объект, в котором находится цена
+	 */
+	$.fn.wdproCostSpaces = function (space) {
+
+		if (typeof space === "undefined")
+			space = ' ';
+
+		$(this).each(function () {
+
+			const $container = $(this);
+			let cost = $container.text();
+
+			if (cost) {
+				cost = cost.replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1'+space);
+				$container.text(cost);
+			}
+
+		});
+
+		return this;
+	};
+
+
 
 
 	// Add an URL parser to JQuery that returns an object
