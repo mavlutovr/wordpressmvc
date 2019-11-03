@@ -200,35 +200,58 @@ class Controller extends \Wdpro\BaseController {
 			/** @var $page \App\BasePage */
 
 			$langUri = \Wdpro\Lang\Controller::getCurrentLangUri();
-			if ($langUri) $langUri .= '/';
+
+			$urlSlashMode = wdpro_url_slash_at_end_mode();
+			if ($langUri && $urlSlashMode) $langUri .= '/';
 
 
 			if (is_object($page)) {
 
-				// Редирект главной на /
+				// Главная
 				if (method_exists($page, 'isHome')
-					&& $page->isHome()
-					&& wdpro_current_post_name() !== '/'.$langUri) {
-					wdpro_location(wdpro_home_url_with_lang());
+					&& $page->isHome()) {
 
+					// Редирект главной на /
+					if (wdpro_current_post_name() !== '/'.$langUri) {
+
+						wdpro_location(wdpro_home_url_with_lang());
+					}
 				}
 
 
-				// Чтобы адреса всегда заканчивались на /
-				$uri = $_SERVER['REQUEST_URI'];
-				if (strstr($uri, '?')) {
-					$uri = str_replace('?'.$_SERVER['QUERY_STRING'], '', $uri);
-				}
-				$last = substr($uri, -1);
-				if ($last !== '/') {
-					$uri .= '/';
+				// Внутренняя
+				else {
 
-					if ($_SERVER['QUERY_STRING']) {
-						$uri .= '?'.$_SERVER['QUERY_STRING'];
+					// Чтобы адреса всегда заканчивались на / или не /
+					$uri = $_SERVER['REQUEST_URI'];
+					if (strstr($uri, '?')) {
+						$uri = str_replace('?'.$_SERVER['QUERY_STRING'], '', $uri);
+					}
+					$last = substr($uri, -1);
+
+					$redirectUrl = null;
+
+					if ($last === '/') {
+						if (!$urlSlashMode) {
+							$redirectUrl = substr($uri, 0, strlen($uri) - 1);
+						}
 					}
 
-					wdpro_location($uri, 301);
+					else {
+						if ($urlSlashMode) {
+							$redirectUrl = $uri . '/';
+						}
+					}
+
+					if ($redirectUrl !== null) {
+						if ($_SERVER['QUERY_STRING']) {
+							$redirectUrl .= '?'.$_SERVER['QUERY_STRING'];
+						}
+						wdpro_location($redirectUrl, 301);
+					}
 				}
+
+
 			}
 
 
