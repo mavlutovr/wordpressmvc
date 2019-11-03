@@ -53,7 +53,7 @@ class Controller extends \Wdpro\BaseController {
 
 				Roll::getHtml([
 					'WHERE post_status="publish" AND in_menu=1 AND tags[lang] LIKE %s ORDER BY date_added',
-					['%"'.$_GET['tags'].'"%']
+					['%"'.urldecode($_GET['tags']).'"%']
 				])
 			);
 
@@ -69,8 +69,8 @@ class Controller extends \Wdpro\BaseController {
 
 			$page = wdpro_current_page();
 
-			wdpro_data('h1', $page->getH1() . ' - ' . $_GET['tags']);
-			wdpro_data('title', $page->getTitle() . ' - ' . $_GET['tags']);
+			wdpro_data('h1', $page->getH1() . ' - ' . urldecode($_GET['tags']));
+			wdpro_data('title', $page->getTitle() . ' - ' . urldecode($_GET['tags']));
 		});
 	}
 
