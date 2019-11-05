@@ -98,7 +98,7 @@ class Roll extends \Wdpro\BaseRoll {
 		$fields = \Wdpro\Lang\Data::replaceLangShortcode($fields);
 
 		if ($sel = $table::select($where, $fields)) {
-			
+
 			$data = array(
 				'list'=>array(),
 			);
@@ -110,7 +110,7 @@ class Roll extends \Wdpro\BaseRoll {
 			
 			foreach($sel as $n=>$row) {
 				if ( isset($row['post_name'])  && ! isset($row['url'])) {
-					$row['url'] = \Wdpro\Lang\Data::currentUrl() . $row['post_name'] . '/';
+					$row['url'] = \Wdpro\Lang\Data::currentUrl() . $row['post_name'] . wdpro_url_slash_at_end();
 				}
 
 				$data['list'][] = static::prepareDataForTemplate($row);

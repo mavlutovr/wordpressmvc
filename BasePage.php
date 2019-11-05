@@ -193,7 +193,7 @@ abstract class BasePage extends BaseEntity
 	 * @return string
 	 */
 	public function getBreadcrumbsUrl() {
-		return wdpro_home_url_with_lang().$this->getData('post_name').'/';
+		return wdpro_home_url_with_lang().$this->getData('post_name').wdpro_url_slash_at_end();
 	}
 
 

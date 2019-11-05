@@ -8,7 +8,7 @@
  */
 function wdpro_separator_normalize($path)
 {
-	if (DIRECTORY_SEPARATOR != '/')
+	if (DIRECTORY_SEPARATOR !== '/')
 	{
 		$path = str_replace('/', DIRECTORY_SEPARATOR, $path);
 	}
@@ -3474,3 +3474,27 @@ function wdpro_set_new_breadcrumbs($newBreadcrumbs) {
 }
 
 
+/**
+ * Режим слеша в конце адресов
+ *
+ * @return bool
+ */
+function wdpro_url_slash_at_end_mode() {
+	global $_wdpro_url_slash_at_end_mode;
+	if (!isset($_wdpro_url_slash_at_end_mode)) {
+		$last = substr(get_option('permalink_structure'), -1);
+		$_wdpro_url_slash_at_end_mode = $last === '/';
+	}
+	return $_wdpro_url_slash_at_end_mode;
+}
+
+
+/**
+ * Возвращает слэш, когда включен режим слеша в конце адресов
+ *
+ * @return string
+ */
+function wdpro_url_slash_at_end() {
+	if (wdpro_url_slash_at_end_mode()) return '/';
+	return '';
+}
