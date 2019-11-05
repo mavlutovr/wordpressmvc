@@ -52,6 +52,11 @@ abstract class BaseEntity
 	 * @return $this
 	 */
 	public static function getEntity($dataOrId) {
+
+		if (is_string($dataOrId)) {
+			return wdpro_object_by_key($dataOrId);
+		}
+
 		return wdpro_object(get_called_class(), $dataOrId);
 	}
 

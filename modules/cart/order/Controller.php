@@ -3,6 +3,7 @@ namespace Wdpro\Cart\Order;
 
 class Controller extends \Wdpro\BaseController {
 
+
 	/**
 	 * Дополнительная инициализация для сайта
 	 */
@@ -31,13 +32,21 @@ class Controller extends \Wdpro\BaseController {
 
 
 			// Товары
+			$summaryInfo = \Wdpro\Cart\Controller::getSummaryInfo([
+				'extraColls'=>['key'],
+			]);
+			foreach ($summaryInfo['list'] as $i => $item) {
+				$summaryInfo['list'][$i]['keyArray'] = wdpro_key_parse($item['key']);
+			}
+			$summaryInfo = apply_filters('wdpro_checkout_cart_summary_info', $summaryInfo);
+
 			wdpro_replace_or_append(
 				$content,
 				'[cart]',
 
-				print_r(
-					\Wdpro\Cart\Controller::getSummaryInfo(),
-					true
+				wdpro_render_php(
+					WDPRO_TEMPLATE_PATH.'checkout_goods.php',
+					$summaryInfo
 				)
 			);
 
