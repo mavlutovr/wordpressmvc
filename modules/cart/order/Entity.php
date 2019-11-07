@@ -80,7 +80,7 @@ class Entity extends \Wdpro\BaseEntity {
 	public function getUrl() {
 		return home_url().'/order'.wdpro_url_slash_at_end()
 			.'?i='.$this->id()
-			.'&s='.$this->getData('secret');
+			.'&se='.$this->getData('secret');
 	}
 
 

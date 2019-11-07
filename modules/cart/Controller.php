@@ -98,14 +98,14 @@ class Controller extends \Wdpro\BaseController
 					'cost_for_one' => $row['cost_for_one'],
 					'cost_for_all' => $row['cost_for_all'],
 					'count' => $row['count'],
+					'keyArray'=>wdpro_key_parse($row['key']),
 				];
 
-				if ($params && is_array($params['extraColls'])) {
+				if ($params && isset($params['extraColls']) && is_array($params['extraColls'])) {
 					foreach ($params['extraColls'] as $extraColl) {
 						$listElement[$extraColl] = $row[$extraColl];
 					}
 				}
-				$listElement['keyArray'] = wdpro_key_parse($listElement['key']);
 
 				$summary['list'][] = $listElement;
 				$summary['cost'] += $listElement['cost_for_all'];

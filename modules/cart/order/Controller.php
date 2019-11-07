@@ -111,7 +111,7 @@ class Controller extends \Wdpro\BaseController {
 		wdpro_on_uri_content('order', function ($content, $page) {
 
 			$order = \Wdpro\Cart\Order\Entity::instance($_GET['i']);
-			if (!$order->checkSecret($_GET['s'])) {
+			if (!$order->checkSecret($_GET['se'])) {
 				$content = '<p>Ошибка доступа</p>';
 				return $content;
 			}
@@ -137,8 +137,8 @@ class Controller extends \Wdpro\BaseController {
 			// Товары
 			$summaryInfo = \Wdpro\Cart\Controller::getSummaryInfo([
 				'orderId' => $order->id(),
-				'extraColls'=>['key'],
 			]);
+
 			$summaryInfo = apply_filters('wdpro_order_cart_summary_info', $summaryInfo);
 
 			$content = str_replace(
@@ -149,6 +149,19 @@ class Controller extends \Wdpro\BaseController {
 				),
 				$content
 			);
+
+
+			// Сводные данные о заказе
+			foreach ($summaryInfo as $key => $value) {
+
+				if (is_numeric($value) || is_string($value)) {
+					$content = str_replace(
+						'['.$key.']',
+						$value,
+						$content
+					);
+				}
+			}
 
 
 			return $content;
