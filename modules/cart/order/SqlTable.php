@@ -30,11 +30,21 @@ class SqlTable extends \Wdpro\BaseSqlTable {
 	protected static function structure() {
 
 		return [
+
 			static::COLLS => [
 				'id',
-				'post_parent'=>'int', // Это и для страниц и для простых элементов
-
+				'time'=>'int',
+				'status'=>'varchar(32)',
+				'secret'=>'char(32)',
+				'email',
+				'form'=>'json',
 			],
+
+
+			static::INDEX => [
+				'status',
+			],
+
 
 			static::ENGINE => static::INNODB,
 		];

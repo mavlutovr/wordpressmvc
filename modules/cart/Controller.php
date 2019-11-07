@@ -43,6 +43,23 @@ class Controller extends \Wdpro\BaseController
 
 
 	/**
+	 * Перемещает товары, которые сейчас в корзине в заказ
+	 *
+	 * @param Order\Entity $order
+	 */
+	public static function moveCartGoodsToOrder($order) {
+
+		if ($sel = SqlTable::select( static::getWhere() )) {
+			foreach ($sel as $row) {
+
+				$item = Entity::instance($row);
+				$item->moveToOrder($order)->save();
+			}
+		}
+	}
+
+
+	/**
 	 * Возвращает информацию о корзине
 	 *
 	 * Чтобы, например, на сайте указать количество товаров, добавленных в корзину
@@ -67,10 +84,7 @@ class Controller extends \Wdpro\BaseController
 			'total'=>0,
 		];
 
-		$where = [
-			'WHERE ( visitor_id=%d OR (person_id=%d AND person_id!=0)) ',
-			[ wdpro_visitor_session_id(), wdpro_person_auth_id()]
-		];
+		$where = static::getWhere();
 
 		if ($sel = SqlTable::select($where)) {
 
@@ -91,6 +105,7 @@ class Controller extends \Wdpro\BaseController
 						$listElement[$extraColl] = $row[$extraColl];
 					}
 				}
+				$listElement['keyArray'] = wdpro_key_parse($listElement['key']);
 
 				$summary['list'][] = $listElement;
 				$summary['cost'] += $listElement['cost_for_all'];
@@ -278,6 +293,19 @@ class Controller extends \Wdpro\BaseController
 
 			return $content;
 		});
+	}
+
+
+	/**
+	 * Возвращает Where для выборки товаров в корзине для текущего посетителя
+	 *
+	 * @return array
+	 */
+	protected static function getWhere() {
+		return [
+			'WHERE ( visitor_id=%d OR (person_id=%d AND person_id!=0)) ',
+			[ wdpro_visitor_session_id(), wdpro_person_auth_id()]
+		];
 	}
 
 
