@@ -84,7 +84,7 @@ class Controller extends \Wdpro\BaseController
 			'total'=>0,
 		];
 
-		$where = static::getWhere();
+		$where = static::getWhere($params);
 
 		if ($sel = SqlTable::select($where)) {
 
@@ -143,14 +143,9 @@ class Controller extends \Wdpro\BaseController
 			'person_id' => wdpro_person_auth_id(),
 		];
 
-		$where = [
-			'WHERE `key`=%s AND ( visitor_id=%d OR (person_id=%d AND person_id!=0)) ',
-			[
-				$row['key'],
-				$row['visitor_id'],
-				$row['person_id']
-			]
-		];
+		$where = static::getWhere([
+			'key'=>$row['key'],
+		]);
 
 
 		// Обновляем уже добавленный в корзину товар
@@ -232,15 +227,9 @@ class Controller extends \Wdpro\BaseController
 
 		$entityKey = wdpro_key_parse($entityKey);
 
-		$templateData['added'] = SqlTable::getRow([
-			'WHERE `key`=%s AND order_id=0 
-			AND ( visitor_id=%d OR (person_id=%d AND person_id!=0))',
-			[
-				$entityKey['key'],
-				wdpro_visitor_session_id(),
-				wdpro_person_auth_id(),
-			]
-		]);
+		$templateData['added'] = SqlTable::getRow(static::getWhere([
+			'key'=>$entityKey['key']
+		]));
 
 		// Убираем лишние копейки
 		if ($templateData['added']) {
@@ -282,13 +271,7 @@ class Controller extends \Wdpro\BaseController
 				$content,
 				'[cart_list]',
 
-				Roll::getHtml([
-					'WHERE order_id=0 AND ( visitor_id=%d OR (person_id=%d AND person_id!=0))',
-					[
-						wdpro_visitor_session_id(),
-						wdpro_person_auth_id(),
-					]
-				])
+				Roll::getHtml(static::getWhere())
 			);
 
 			return $content;
@@ -299,13 +282,27 @@ class Controller extends \Wdpro\BaseController
 	/**
 	 * Возвращает Where для выборки товаров в корзине для текущего посетителя
 	 *
+	 * @param null|array $params Параметры
+	 *      [orderId] - Номер заказа
+	 *
 	 * @return array
 	 */
-	protected static function getWhere() {
-		return [
-			'WHERE ( visitor_id=%d OR (person_id=%d AND person_id!=0)) ',
-			[ wdpro_visitor_session_id(), wdpro_person_auth_id()]
+	protected static function getWhere($params=null) {
+
+		if ($params === null) $params = [];
+		if (!isset($params['orderId'])) $params['orderId'] = 0;
+
+		$where = [
+			'WHERE ( visitor_id=%d OR (person_id=%d AND person_id!=0)) AND order_id=%d ',
+			[ wdpro_visitor_session_id(), wdpro_person_auth_id(), $params['orderId'] ]
 		];
+
+		if (isset($params['key'])) {
+			$where[0] .= ' AND `key`=%s';
+			$where[1][] = $params['key'];
+		}
+
+		return $where;
 	}
 
 
