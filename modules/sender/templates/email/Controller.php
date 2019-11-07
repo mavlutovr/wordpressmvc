@@ -45,15 +45,18 @@ class Controller extends \Wdpro\BaseController {
 			$params['default']['name'] = $name;
 		}
 		
-		// Шаблон из базы
-		if ($templateData = SqlTable::getRow(
+		// Получаем шаблон
+		$templateData = SqlTable::getRow(
 			['WHERE name=%s ', [$name]],
 			'*',
 			isset($params['default']) ? $params['default'] : null
-		)) {
+		);
 
-			return wdpro_object(Entity::class, $templateData);
+		if (!$templateData) {
+			$templateData['id'] = SqlTable::insert($templateData);
 		}
+
+		return wdpro_object(Entity::class, $templateData);
 	}
 
 

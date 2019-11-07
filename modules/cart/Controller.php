@@ -93,12 +93,16 @@ class Controller extends \Wdpro\BaseController
 				$summary['count_types']++;
 				$summary['count_all'] += $row['count'];
 
+				/** @var \Wdpro\Cart\CartElementInterface $good */
+				$good = wdpro_object_by_key($row['key']);
+
 				$listElement = [
 					'id' => $row['id'],
 					'cost_for_one' => $row['cost_for_one'],
 					'cost_for_all' => $row['cost_for_all'],
 					'count' => $row['count'],
 					'keyArray'=>wdpro_key_parse($row['key']),
+					'good'=>$good->getDataForCartSummaryInfo($row['key']),
 				];
 
 				if ($params && isset($params['extraColls']) && is_array($params['extraColls'])) {

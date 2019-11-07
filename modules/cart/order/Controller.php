@@ -11,6 +11,15 @@ class Controller extends \Wdpro\BaseController {
 
 
 	/**
+	 * Инициализация модуля
+	 */
+	public static function init()
+	{
+		\Wdpro\Modules::addWdpro('sender/templates/email');
+	}
+
+
+	/**
 	 * Дополнительная инициализация для сайта
 	 */
 	public static function initSite()
@@ -72,6 +81,11 @@ class Controller extends \Wdpro\BaseController {
 
 				\Wdpro\Cart\Controller::moveCartGoodsToOrder($order);
 
+
+				// Отправляем письмо покупателю и админу
+				$order->sendFirstEmail();
+
+
 				wdpro_location($order->getUrl().'&done=1');
 
 			});
@@ -117,54 +131,53 @@ class Controller extends \Wdpro\BaseController {
 			}
 
 
-			// Данные формы оформления
-			$content = str_replace(
-				'[formData]',
-				$order->getCustomerHtml(),
-				$content
-			);
+			// Обработка шаблона
+			$content = $order->getHtmlByTemplate($content);
 
 
-			// Статус заказа
-			$statusData = $order->getStatusData();
-			$content = str_replace(
-				'[statusText]',
-				$statusData['text'],
-				$content
-			);
-
-
-			// Товары
-			$summaryInfo = \Wdpro\Cart\Controller::getSummaryInfo([
-				'orderId' => $order->id(),
-			]);
-
-			$summaryInfo = apply_filters('wdpro_order_cart_summary_info', $summaryInfo);
+			// Сообщение
+			$message = empty($_GET['done']) ?
+				'' :
+				wdpro_get_option('wdpro_order_done_message', '
+				<h2>Ваш заказ оформлен</h2>
+				<p>Мы свяжемся с вами в ближайшее время.</p>
+				');
 
 			$content = str_replace(
-				'[cart]',
-				wdpro_render_php(
-					WDPRO_TEMPLATE_PATH.'order_goods.php',
-					$summaryInfo
-				),
+				'[message]',
+				$message,
 				$content
 			);
-
-
-			// Сводные данные о заказе
-			foreach ($summaryInfo as $key => $value) {
-
-				if (is_numeric($value) || is_string($value)) {
-					$content = str_replace(
-						'['.$key.']',
-						$value,
-						$content
-					);
-				}
-			}
 
 
 			return $content;
+		});
+	}
+
+
+	/**
+	 * Выполнение скриптов после инициализаций всех модулей (в админке)
+	 */
+	public static function runConsole()
+	{
+		\Wdpro\Console\Menu::addSettings('Оформление заказа', function ($form) {
+
+			/** @var \Wdpro\Form\Form $form */
+
+			$form->add([
+				'name'=>'wdpro_order_done_message',
+				'top'=>'Сообщение после успешного оформления заказа',
+				'type'=>$form::CKEDITOR,
+			]);
+
+			$form->add([
+				'name'=>'wdpro_order_admin_email',
+				'top'=>'E-mail на который отправлять уведомления о заказах',
+			]);
+
+			$form->add($form::SUBMIT_SAVE);
+
+			return $form;
 		});
 	}
 

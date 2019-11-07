@@ -96,6 +96,73 @@ class Entity extends \Wdpro\BaseEntity {
 
 
 	/**
+	 * Обработка данных для шаблона
+	 *
+	 * @param array $data Необработанные данные
+	 * @return array Обработанные данные
+	 */
+	public function prepareDataForTemplate($data)
+	{
+		// Данные покупателя
+		$data['formData'] = $this->getCustomerHtml();
+
+
+		// Статус заказа
+		$statusData = $this->getStatusData();
+		$data['statusText'] = $statusData['text'];
+
+
+		// Товары
+		$summaryInfo = \Wdpro\Cart\Controller::getSummaryInfo([
+			'orderId' => $this->id(),
+		]);
+		$summaryInfo = apply_filters('wdpro_order_cart_summary_info', $summaryInfo);
+		$data['cart'] = wdpro_render_php(
+			WDPRO_TEMPLATE_PATH.'order_goods.php',
+			$summaryInfo
+		);
+
+
+		// Другие данные
+		foreach ($summaryInfo as $key => $value) {
+
+			if (!isset($data[$key]) && (is_numeric($value) || is_string($value))) {
+				$data[$key] = $value;
+			}
+		}
+
+		return $data;
+	}
+
+
+	/**
+	 * Заменяет в шаблоне шорткоды на соответствующие элементы
+	 *
+	 * @param string $template Шаблон
+	 * @return string
+	 */
+	public function getHtmlByTemplate($template) {
+
+
+		$templateData = $this->getDataForTemplate();
+
+
+		foreach ($templateData as $key => $value) {
+
+			if (is_numeric($value) || is_string($value)) {
+				$template = str_replace(
+					'['.$key.']',
+					$value,
+					$template
+				);
+			}
+		}
+
+		return $template;
+	}
+
+
+	/**
 	 * Возвращает html код данных, которые указал покупатель
 	 *
 	 * @return string
@@ -116,7 +183,10 @@ class Entity extends \Wdpro\BaseEntity {
 			$name = $element->getName();
 
 			if ($label) {
-				$template[$name] = $formData[$name];
+				$template[$name] = [
+					'label'=>$label,
+					'value'=>$formData[$name],
+				];
 			}
 		});
 
@@ -147,4 +217,38 @@ class Entity extends \Wdpro\BaseEntity {
 		return [ 'text' => 'Неизвестен' ];
 	}
 
+
+	public function sendFirstEmail() {
+
+		$default = require __DIR__.'/default/pages/order.php';
+
+		$template = \Wdpro\Sender\Templates\Email\Controller::getTemplate('order_checkout', [
+			'subject'=>'Ваш заказ оформлен',
+			'text'=>$default['post_content'],
+			'info'=>'
+			<p>[statusText] - Текущий заказа.</p>
+			<p>[cart] - Список товаров с итоговой ценой.</p>
+			<p>[formData] - Данные, которые указал покупатель.</p>
+			',
+		]);
+
+		$templateData = $this->getDataForTemplate();
+
+		$template->send($this->getEmail(), $templateData);
+		$template->send(
+			wdpro_get_option('wdpro_order_admin_email', get_option('admin_email')),
+			$templateData
+		);
+
+	}
+
+
+	/**
+	 * Возвращает E-mail покупателя
+	 *
+	 * @return array|mixed
+	 */
+	public function getEmail() {
+		return $this->getData('email');
+	}
 }
