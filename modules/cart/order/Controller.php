@@ -16,6 +16,24 @@ class Controller extends \Wdpro\BaseController {
 	public static function init()
 	{
 		\Wdpro\Modules::addWdpro('sender/templates/email');
+
+
+		// Смена статуса
+		wdpro_ajax('console_order_status', function () {
+
+			if (!current_user_can('administrator')) return false;
+
+			$order = Entity::instance($_POST['key']);
+			if ($order->loaded()) {
+
+				$order->setStatus($_POST['status'])
+					->save();
+
+				return [
+					'html' => $order->getConsoleStatus(),
+				];
+			}
+		});
 	}
 
 
@@ -53,6 +71,18 @@ class Controller extends \Wdpro\BaseController {
 		// Карточка заказа
 		wdpro_default_page('order', function () {
 			return require __DIR__.'/default/pages/order.php';
+		});
+
+
+		// Карточка заказа - Заголовок
+		wdpro_on_uri('order', function ($wpPage) {
+
+			$page = wdpro_get_post_by_id($wpPage->ID);
+
+			$page->setDataForParamsTemplate([
+				'order_id'=>$_GET['i'],
+			]);
+
 		});
 	}
 
@@ -160,6 +190,11 @@ class Controller extends \Wdpro\BaseController {
 	 */
 	public static function runConsole()
 	{
+		// Меню
+		\Wdpro\Console\Menu::add(ConsoleRoll::class);
+
+
+		// Настройки
 		\Wdpro\Console\Menu::addSettings('Оформление заказа', function ($form) {
 
 			/** @var \Wdpro\Form\Form $form */

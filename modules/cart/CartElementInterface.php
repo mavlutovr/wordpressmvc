@@ -32,4 +32,13 @@ interface CartElementInterface {
 	 * @return array
 	 */
 	public function getDataForCartSummaryInfo();
+
+
+	/**
+	 * Возвращает html код для списка товаров заказа в админке
+	 *
+	 * @param array $cartData Данные корзины из таблицы wdpro_cart
+	 * @return string
+	 */
+	public function getConsoleHtml($cartData);
 }

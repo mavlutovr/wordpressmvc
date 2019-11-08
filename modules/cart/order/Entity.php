@@ -16,18 +16,22 @@ class Entity extends \Wdpro\BaseEntity {
 
 		'' => [
 			'text'=>'На обработке',
+			'color'=>'#CCCCCC',
 		],
 
 		'process' => [
 			'text'=>'Выполняется',
+			'color'=>'#87c1ff',
 		],
 
 		'done' => [
 			'text'=>'Выполнен',
+			'color' =>'#94e65e',
 		],
 
 		'canceled' => [
 			'text'=>'Отменен',
+			'color'=>'#fda193',
 		],
 
 	];
@@ -121,6 +125,10 @@ class Entity extends \Wdpro\BaseEntity {
 			WDPRO_TEMPLATE_PATH.'order_goods.php',
 			$summaryInfo
 		);
+
+
+		// Адрес
+		$data['url'] = $this->getUrl();
 
 
 		// Другие данные
@@ -220,21 +228,23 @@ class Entity extends \Wdpro\BaseEntity {
 
 	public function sendFirstEmail() {
 
-		$default = require __DIR__.'/default/pages/order.php';
-
 		$template = \Wdpro\Sender\Templates\Email\Controller::getTemplate('order_checkout', [
-			'subject'=>'Ваш заказ оформлен',
-			'text'=>$default['post_content'],
-			'info'=>'
-			<p>[statusText] - Текущий заказа.</p>
-			<p>[cart] - Список товаров с итоговой ценой.</p>
-			<p>[formData] - Данные, которые указал покупатель.</p>
-			',
+			'default' => function () {
+
+				return require __DIR__.'/default/emails/order.php';
+			},
 		]);
 
 		$templateData = $this->getDataForTemplate();
 
-		$template->send($this->getEmail(), $templateData);
+
+		// Отправка
+		// Покупателю
+		$template->send(
+			$this->getEmail(),
+			$templateData);
+
+		// Администратору
 		$template->send(
 			wdpro_get_option('wdpro_order_admin_email', get_option('admin_email')),
 			$templateData
@@ -251,4 +261,69 @@ class Entity extends \Wdpro\BaseEntity {
 	public function getEmail() {
 		return $this->getData('email');
 	}
+
+
+	/**
+	 * Возвращает html код блока статуса для админки
+	 *
+	 * @return string
+	 */
+	public function getConsoleStatus() {
+
+		$status = $this->getStatusData();
+
+
+		// Цвет текущего
+		$color = '';
+		if ($status['color']) {
+			$color = ' background: '.$status['color'].';';
+		}
+
+
+		// Список
+		$list = '';
+		foreach (static::$statuses as $itemStatusKey => $itemStatus) {
+
+			$itemColor = '';
+			if ($itemStatus['color'])
+				$itemColor = 'background: '.$itemStatus['color'].';';
+
+			$list .= '<div class="js-order-statuc-item order-status-item" style="'.$itemColor.'" data-status="'.$itemStatusKey.'">'.$itemStatus['text'].'</div>';
+		}
+
+
+		return '<div class="js-order-status order-status">
+			<div class="js-order-status-current order-status-current" style="'.$color.'">'.$status['text'].'</div>
+			
+			<div class="js-order-status-list order-status-list g-hid">'.$list.'</div>
+		</div>';
+	}
+
+
+	/**
+	 * Устанавливает статус
+	 *
+	 * @param string $status Новый статус
+	 * @return $this
+	 */
+	public function setStatus($status) {
+		$this->mergeData([
+			'status'=>$status,
+		]);
+		return $this;
+	}
+
+
+	/**
+	 * Возвращает список товаров
+	 *
+	 * @return string
+	 * @throws \Exception
+	 */
+	public function getConsoleGoods() {
+		return \Wdpro\Cart\Controller::getConsoleGoods($this->id());
+	}
+
+
+
 }

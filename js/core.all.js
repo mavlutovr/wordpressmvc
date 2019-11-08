@@ -2855,6 +2855,9 @@ if (typeof Array.isArray === 'undefined') {
 		$(this).each(function () {
 
 			const $container = $(this);
+			if ($container.is('.js-cost-inited')) return true;
+			$container.addClass('js-cost-inited');
+
 			let cost = $container.text();
 
 			if (cost) {

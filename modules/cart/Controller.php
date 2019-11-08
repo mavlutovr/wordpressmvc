@@ -310,6 +310,31 @@ class Controller extends \Wdpro\BaseController
 	}
 
 
+	/**
+	 * Возвращает список товаров заказа для админки
+	 *
+	 * @param int $orderId ID заказа
+	 * @return string
+	 * @throws \Exception
+	 */
+	public static function getConsoleGoods($orderId) {
+
+		$html = '';
+
+		$summaryInfo = static::getSummaryInfo([
+			'orderId'=> $orderId
+		]);
+
+		foreach ($summaryInfo['list'] as $cartData) {
+
+			/** @var CartElementInterface $goodItem */
+			$goodItem = wdpro_object_by_key($cartData['keyArray']);
+
+			$html .= '<div class="order-item">'.$goodItem->getConsoleHtml($cartData).'</div>';
+		}
+
+		return $html;
+	}
 }
 
 

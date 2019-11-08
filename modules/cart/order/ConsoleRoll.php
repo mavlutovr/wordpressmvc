@@ -33,7 +33,7 @@ class ConsoleRoll extends \Wdpro\Console\Roll {
 		return [
 			'labels' => [
 				'label'   => 'Заказы',
-							],
+			],
 			// Когда это дочерний элемент
 			/*'where'  => [
 				'WHERE `post_parent`=%d ORDER BY `menu_order`',
@@ -41,7 +41,11 @@ class ConsoleRoll extends \Wdpro\Console\Roll {
 					isset($_GET['sectionId']) ? $_GET['sectionId'] : 0,
 				]
 			],*/
+			'where'=>'ORDER BY id DESC',
+			'pagination'=>10,
 			'icon' => 'fas fa-shopping-cart',
+			'n'=>1,
+			'showNew'=>true,
 		];
 	}
 
@@ -50,13 +54,48 @@ class ConsoleRoll extends \Wdpro\Console\Roll {
 	 * Возвращает колонки таблицы
 	 *
 	 * @param array $data Данные строки
-	 * @param \Wdpro\BaseEntity $entity Сущность
+	 * @param \Wdpro\BaseEntity|Entity $entity Сущность
 	 * @return array
 	 */
-	public function template($data, $entity) {
+	public function template($data, $entity)
+	{
+
+		$summaryData = \Wdpro\Cart\Controller::getSummaryInfo([ 'orderId' => $data['id'] ]);
 
 		return [
-			$this->getSortingField($data)
+
+			// №
+			'<h1><a href="'.$entity->getUrl().'" target="_blank" style="font-size: 3em; line-height: 1em;">'.$data['id'].'</a></h1>'
+
+			// Дата
+			. '<p>'
+				. wdpro_date($data['time'], [
+					'today' => true,
+					'time' => true,
+				])
+			. '</p>'
+
+			// Статус
+			. '<p>'.$entity->getConsoleStatus().'</p>',
+
+
+			// Товары
+			$entity->getConsoleGoods(),
+
+
+			// Стоимость
+			//'<p>'.$summaryData['cost'].' руб.</p>'
+			apply_filters(
+				'wdpro_order_console_cost',
+				'<p><span class="js-cost">'.$summaryData['cost'].'</span> руб.</p>',
+				$entity,
+				$summaryData
+			),
+
+
+			// Данные покупателя
+			$entity->getCustomerHtml(),
+
 		];
 	}
 
@@ -69,7 +108,14 @@ class ConsoleRoll extends \Wdpro\Console\Roll {
 	public function templateHeaders() {
 
 		return [
-			'№ п.п.',
+
+			'№ / Дата / Статус',
+
+			'Товары',
+
+			'Стоимость',
+
+			'Покупатель',
 		];
 	}
 

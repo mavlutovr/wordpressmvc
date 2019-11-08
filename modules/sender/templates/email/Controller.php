@@ -35,19 +35,42 @@ class Controller extends \Wdpro\BaseController {
 	 *  'text'=>'Текст письма',
 	 *  'info'=>'Информация',
 	 * ]]</pre>
+	 *
+	 * или
+	 *
+	 * <pre>[
+	 * // Шаблон по-умолчанию
+	 *  'default'=>function () { return [
+	 *    'subject'=>'Тема письма',
+	 *    'text'=>'Текст письма',
+	 *    'info'=>'Информация',
+	 *  ] },
+	 * ]</pre>
+	 *
 	 * @return void|Entity
 	 * @throws \Exception
 	 */
 	public static function getTemplate($name, $params=null) {
 
 		if (isset($params['default'])) {
-			
-			$params['default']['name'] = $name;
+
+			if (is_callable($params['default'])) {
+				$default = $params['default'];
+				$params['default'] = function () use (&$name, &$default) {
+					$return = $default();
+					$return['name'] = $name;
+					return $return;
+				};
+			}
+
+			else if (is_array($params['default'])) {
+				$params['default']['name'] = $name;
+			}
 		}
 		
 		// Получаем шаблон
 		$templateData = SqlTable::getRow(
-			['WHERE name=%s ', [$name]],
+			[ 'WHERE name=%s ', [$name] ],
 			'*',
 			isset($params['default']) ? $params['default'] : null
 		);

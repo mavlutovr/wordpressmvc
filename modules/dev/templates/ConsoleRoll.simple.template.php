@@ -22,7 +22,9 @@ class ConsoleRoll extends \Wdpro\Console\Roll {
 	 *  'subsections'=>false,
 	 *  'where'=>["WHERE ... %d, %d", [1, 2]],
 	 *  'pagination'=>10, //  Количество элементов на странице
-	 *  'info'=>'<p>Всякая информация над списком элементов</p>'
+	 *  'info'=>'<p>Всякая информация над списком элементов</p>',
+	 *
+	 *  'showNew' => true, // Показывать в меню количество новых записей
 	 * );
 	 * </pre>
 	 *
@@ -42,9 +44,13 @@ class ConsoleRoll extends \Wdpro\Console\Roll {
 					isset($_GET['sectionId']) ? $_GET['sectionId'] : 0,
 				]
 			],*/
+			'where'=>'ORDER BY id',
 <?php if ($ConsoleRoll_icon): ?>
 			'icon' => '<?php echo $ConsoleRoll_icon; ?>',
 <?php endif; ?>
+
+			// 'pagination'=>10, //  Количество элементов на странице
+			// 'info'=>'<p>Всякая информация над списком элементов</p>',
 		];
 	}
 
