@@ -266,6 +266,11 @@ class Controller extends \Wdpro\BaseController
 			WDPRO_TEMPLATE_PATH . 'cart_list.php'
 		);
 
+		wdpro_default_file(
+			__DIR__.'/default/templates/cart_list_item.php',
+			WDPRO_TEMPLATE_PATH.'cart_list_item.php'
+		);
+
 		wdpro_default_page('cart', __DIR__.'/default/pages/cart.php');
 
 
