@@ -1268,7 +1268,7 @@ if (typeof Array.isArray === 'undefined') {
 					var action = self.eventParseName(actionName);
 
 					// Если имя совпадает с удаляемым
-					if (action.name == actionName) {
+					if (action.name === actionName) {
 						// Удаляем номера этого каллбэка из списка номеров для удаления по пространству имен
 						self.removeByNamespace.unset(actionName);
 					}
@@ -1300,7 +1300,7 @@ if (typeof Array.isArray === 'undefined') {
 				if (callbacks) {
 					// Перебираем прослушки
 					callbacks.each(function (callback) {
-						if (typeof callback.fn == 'function') {
+						if (typeof callback.fn === 'function') {
 							// Запускаем прослушку
 							callback.fn(data);
 
@@ -1331,14 +1331,14 @@ if (typeof Array.isArray === 'undefined') {
 		onList: function (list, keyInList) {
 			var self = this;
 
-			if (typeof list == 'object') {
+			if (typeof list === 'object') {
 				// Список каллбэков в ключе
 				if (keyInList) {
 					list = list[keyInList];
 				}
 
 				// Если есть такой список калббэков
-				if (list && typeof list == 'object') {
+				if (list && typeof list === 'object') {
 					// Перебираем прослушки
 					each(list, function (eventCallback, eventName) {
 						// Добавляем прослушку события
