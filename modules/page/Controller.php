@@ -466,9 +466,13 @@ class Controller extends \Wdpro\BaseController {
 									if ( /*'page' == $post->post_type && */0 != count( get_page_templates( ) ) && get_option( 'page_for_posts' ) != $post->ID ) {
 										$metaPageTemplate = get_post_meta($post->ID, 'page_template');
 										if (is_array($metaPageTemplate)) {
+											if (!count($metaPageTemplate)) $metaPageTemplate = null;
+
 											$metaPageTemplate = $metaPageTemplate[0];
 										}
 										$template = $metaPageTemplate;
+
+										if ($template):
 										?>
 										<p><strong><?php _e('Template') ?></strong></p>
 										<label class="screen-reader-text" for="page_template"><?php _e('Page Template') ?></label><select name="page_template" id="page_template">
@@ -488,6 +492,7 @@ class Controller extends \Wdpro\BaseController {
 											<?php page_template_dropdown($template); ?>
 										</select>
 										<?php
+										endif;
 									}
 
 

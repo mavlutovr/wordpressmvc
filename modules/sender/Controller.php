@@ -277,7 +277,7 @@ class Controller extends \Wdpro\BaseController
 	 */
 	protected static function saveTestFile( $subject, $messageInHtmlFormat ) {
 		
-		if (defined('WP_DEBUG') && defined('WDPRO_MAIL_TEST_DIR') && WP_DEBUG && WDPRO_MAIL_TEST_DIR)
+		if (defined('WDPRO_MAIL_TEST_DIR') && WDPRO_MAIL_TEST_DIR)
 		{
 			$text = '<p style="font-weight: bold">Тема: '.$subject.'</p>';
 

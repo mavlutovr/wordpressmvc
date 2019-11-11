@@ -4,6 +4,8 @@ namespace Wdpro;
 
 abstract class BasePage extends BaseEntity
 {
+	protected $paramsTemplateData;
+
 
 	/**
 	 * Инициализация типа страниц
@@ -255,8 +257,10 @@ abstract class BasePage extends BaseEntity
 	 */
 	public function getButtonText()
 	{
-		return $this->getData('post_title[lang]');
-//		return get_post_field('post_title', $this->id());
+		$buttonText = $this->getData('post_title[lang]');
+		$buttonText = $this->renderParamTemplate($buttonText);
+
+		return $buttonText;
 	}
 
 
@@ -419,15 +423,77 @@ abstract class BasePage extends BaseEntity
 	 * @return string
 	 */
 	public function getTitle() {
-		return $this->getData('post_title[lang]');
+		$title = $this->getData('post_title[lang]');
+		$title = $this->renderParamTemplate($title);
+		return $title;
 	}
 
+
+	/**
+	 * Возвращает description страницы
+	 *
+	 * @return string
+	 */
+	public function getDescription() {
+		$description = wdpro_get_post_meta('description', $this->id());
+		$description = $this->renderParamTemplate($description);
+		return $description;
+	}
+
+
+	/**
+	 * Возвращает keywords страницы
+	 *
+	 * @return string
+	 */
+	public function getKeywords() {
+		$keywords = wdpro_get_post_meta('keywords', $this->id());
+		$keywords = $this->renderParamTemplate($keywords);
+
+		return $keywords;
+	}
+
+
+	/**
+	 * Заменяет в строке типа title, keywords, description... шорткоды на данные
+	 *
+	 * @param string $template Шаблон
+	 * @return string
+	 */
+	protected function renderParamTemplate($template) {
+
+		$template = wdpro_render_text($template, $this->paramsTemplateData);
+
+		return $template;
+	}
+
+
+	/**
+	 * Устанавливает данные для шаблонов title, h1, keywords,...
+	 *
+	 * Это чтобы в title можно было добавить шорткод, типа [order_id] и потом заменить его на номер заказа
+	 *
+	 * @param array $data Данные
+	 */
+	public function setDataForParamsTemplate($data) {
+		$this->paramsTemplateData = $data;
+	}
+
+
+	/**
+	 * Возвращает заголовок H1
+	 *
+	 * @return string
+	 */
 	public function getH1() {
 		$arr = get_post_meta(get_the_ID(), 'h1'.\Wdpro\Lang\Data::getCurrentSuffix());
 
 		if (is_array($arr) && isset($arr[0]) && $arr[0])
 		{
-			return $arr[0];
+			$h1 = $arr[0];
+			$h1 = str_replace('[id]', $this->id(), $h1);
+
+			return $h1;
 		}
 
 		return $this->getTitle();

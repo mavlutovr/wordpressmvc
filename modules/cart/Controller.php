@@ -43,6 +43,23 @@ class Controller extends \Wdpro\BaseController
 
 
 	/**
+	 * Перемещает товары, которые сейчас в корзине в заказ
+	 *
+	 * @param Order\Entity $order
+	 */
+	public static function moveCartGoodsToOrder($order) {
+
+		if ($sel = SqlTable::select( static::getWhere() )) {
+			foreach ($sel as $row) {
+
+				$item = Entity::instance($row);
+				$item->moveToOrder($order)->save();
+			}
+		}
+	}
+
+
+	/**
 	 * Возвращает информацию о корзине
 	 *
 	 * Чтобы, например, на сайте указать количество товаров, добавленных в корзину
@@ -67,10 +84,7 @@ class Controller extends \Wdpro\BaseController
 			'total'=>0,
 		];
 
-		$where = [
-			'WHERE ( visitor_id=%d OR (person_id=%d AND person_id!=0)) ',
-			[ wdpro_visitor_session_id(), wdpro_person_auth_id()]
-		];
+		$where = static::getWhere($params);
 
 		if ($sel = SqlTable::select($where)) {
 
@@ -79,14 +93,19 @@ class Controller extends \Wdpro\BaseController
 				$summary['count_types']++;
 				$summary['count_all'] += $row['count'];
 
+				/** @var \Wdpro\Cart\CartElementInterface $good */
+				$good = wdpro_object_by_key($row['key']);
+
 				$listElement = [
 					'id' => $row['id'],
 					'cost_for_one' => $row['cost_for_one'],
 					'cost_for_all' => $row['cost_for_all'],
 					'count' => $row['count'],
+					'keyArray'=>wdpro_key_parse($row['key']),
+					'good'=>$good->getDataForCartSummaryInfo($row['key']),
 				];
 
-				if ($params && is_array($params['extraColls'])) {
+				if ($params && isset($params['extraColls']) && is_array($params['extraColls'])) {
 					foreach ($params['extraColls'] as $extraColl) {
 						$listElement[$extraColl] = $row[$extraColl];
 					}
@@ -128,14 +147,9 @@ class Controller extends \Wdpro\BaseController
 			'person_id' => wdpro_person_auth_id(),
 		];
 
-		$where = [
-			'WHERE `key`=%s AND ( visitor_id=%d OR (person_id=%d AND person_id!=0)) ',
-			[
-				$row['key'],
-				$row['visitor_id'],
-				$row['person_id']
-			]
-		];
+		$where = static::getWhere([
+			'key'=>$row['key'],
+		]);
 
 
 		// Обновляем уже добавленный в корзину товар
@@ -217,15 +231,9 @@ class Controller extends \Wdpro\BaseController
 
 		$entityKey = wdpro_key_parse($entityKey);
 
-		$templateData['added'] = SqlTable::getRow([
-			'WHERE `key`=%s AND order_id=0 
-			AND ( visitor_id=%d OR (person_id=%d AND person_id!=0))',
-			[
-				$entityKey['key'],
-				wdpro_visitor_session_id(),
-				wdpro_person_auth_id(),
-			]
-		]);
+		$templateData['added'] = SqlTable::getRow(static::getWhere([
+			'key'=>$entityKey['key']
+		]));
 
 		// Убираем лишние копейки
 		if ($templateData['added']) {
@@ -258,6 +266,11 @@ class Controller extends \Wdpro\BaseController
 			WDPRO_TEMPLATE_PATH . 'cart_list.php'
 		);
 
+		wdpro_default_file(
+			__DIR__.'/default/templates/cart_list_item.php',
+			WDPRO_TEMPLATE_PATH.'cart_list_item.php'
+		);
+
 		wdpro_default_page('cart', __DIR__.'/default/pages/cart.php');
 
 
@@ -267,13 +280,7 @@ class Controller extends \Wdpro\BaseController
 				$content,
 				'[cart_list]',
 
-				Roll::getHtml([
-					'WHERE order_id=0 AND ( visitor_id=%d OR (person_id=%d AND person_id!=0))',
-					[
-						wdpro_visitor_session_id(),
-						wdpro_person_auth_id(),
-					]
-				])
+				Roll::getHtml(static::getWhere())
 			);
 
 			return $content;
@@ -281,6 +288,58 @@ class Controller extends \Wdpro\BaseController
 	}
 
 
+	/**
+	 * Возвращает Where для выборки товаров в корзине для текущего посетителя
+	 *
+	 * @param null|array $params Параметры
+	 *      [orderId] - Номер заказа
+	 *
+	 * @return array
+	 */
+	protected static function getWhere($params=null) {
+
+		if ($params === null) $params = [];
+		if (!isset($params['orderId'])) $params['orderId'] = 0;
+
+		$where = [
+			'WHERE ( visitor_id=%d OR (person_id=%d AND person_id!=0)) AND order_id=%d ',
+			[ wdpro_visitor_session_id(), wdpro_person_auth_id(), $params['orderId'] ]
+		];
+
+		if (isset($params['key'])) {
+			$where[0] .= ' AND `key`=%s';
+			$where[1][] = $params['key'];
+		}
+
+		return $where;
+	}
+
+
+	/**
+	 * Возвращает список товаров заказа для админки
+	 *
+	 * @param int $orderId ID заказа
+	 * @return string
+	 * @throws \Exception
+	 */
+	public static function getConsoleGoods($orderId) {
+
+		$html = '';
+
+		$summaryInfo = static::getSummaryInfo([
+			'orderId'=> $orderId
+		]);
+
+		foreach ($summaryInfo['list'] as $cartData) {
+
+			/** @var CartElementInterface $goodItem */
+			$goodItem = wdpro_object_by_key($cartData['keyArray']);
+
+			$html .= '<div class="order-item">'.$goodItem->getConsoleHtml($cartData).'</div>';
+		}
+
+		return $html;
+	}
 }
 
 

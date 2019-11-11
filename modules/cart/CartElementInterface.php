@@ -22,4 +22,23 @@ interface CartElementInterface {
 	 * @return array
 	 */
 	public function getDataForCartButton($entityKey);
+
+
+	/**
+	 * Возвращает данные товара для сводных данных о товарах в корзине
+	 *
+	 * Эти данные так же используются на странице оформления заказа и в карточке заказа
+	 *
+	 * @return array
+	 */
+	public function getDataForCartSummaryInfo();
+
+
+	/**
+	 * Возвращает html код для списка товаров заказа в админке
+	 *
+	 * @param array $cartData Данные корзины из таблицы wdpro_cart
+	 * @return string
+	 */
+	public function getConsoleHtml($cartData);
 }
