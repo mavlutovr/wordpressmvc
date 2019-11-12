@@ -18,6 +18,12 @@ return [
 
 <p>Зайдите в <a href="https://i.imgur.com/uM9cK3n.png" target="_blank">Подразделы</a> страницы. И нажмите <strong>Добавить страницу</strong>.</p>
 
+<h3>Как добавить меню с подразделами</h3>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/wmk_rldE464" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+<p>Чтобы в раздле появилось меню с подразделами. Откройте в админке страницу раздела. И добавьте в текст раздела шорткод [submenu].</p>
+
 <h3>Как убрать страницы из меню</h3>
 
 <p>Уберите галочку <a href="https://i.imgur.com/PxkAQc3.png" target="_blank">Показывать в меню</a></p>
