@@ -195,7 +195,7 @@ class Controller extends \Wdpro\BaseController {
 
 
 		// Настройки
-		\Wdpro\Console\Menu::addSettings('Оформление заказа', function ($form) {
+		\Wdpro\Console\Menu::addSettings('Заказы', function ($form) {
 
 			/** @var \Wdpro\Form\Form $form */
 

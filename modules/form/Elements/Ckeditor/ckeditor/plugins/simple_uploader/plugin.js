@@ -21,6 +21,16 @@ CKEDITOR.plugins.add(
 					icon: mypath+'photo.png'
 				}
 			);
+
+			// Добавляем кнопку загрузки файла
+			editor.ui.addButton(
+				'simple_uploader_file',
+				{
+					label: 'Вставить файл',
+					command: 'simple_uploader_insert_file',
+					icon: mypath+'file.png'
+				}
+			);
 			
 			// Обработка комманды
 			editor.addCommand( 'simple_uploader_insert_photo', new CKEDITOR.dialogCommand( 'simple_uploader_insert_photo' ) );

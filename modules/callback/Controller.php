@@ -65,7 +65,7 @@ class Controller extends \Wdpro\BaseController {
 
 
 		// Настройки
-		\Wdpro\Console\Menu::addSettings('Заказ обратного звонка', function ($form) {
+		\Wdpro\Console\Menu::addSettings('Заказ звонков', function ($form) {
 
 			/** @var \Wdpro\Form\Form $form */
 

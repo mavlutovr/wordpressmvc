@@ -4,6 +4,9 @@ namespace Wdpro\Man;
 class Controller extends \Wdpro\BaseController {
 
 
+	protected static $buttonText;
+
+
 	/**
 	 * Дополниительная инициализация для админки
 	 *
@@ -54,6 +57,31 @@ class Controller extends \Wdpro\BaseController {
 		if (is_file($filePath)) {
 			return require($filePath);
 		}
+	}
+
+
+	/**
+	 * Задает текст кнопки справки в меню админки
+	 *
+	 * Чтобы стандартный текст кнопки "Справка по ТЕКУЩИЙ_ДОМЕН" можно было поменять на другой
+	 *
+	 * @param string $buttonText Текст кнопки
+	 */
+	public static function setButtonText($buttonText) {
+		static::$buttonText = $buttonText;
+	}
+
+
+	/**
+	 * Возвращает текст для кнопки меню в админке "Справка по сайту"
+	 *
+	 * @return string
+	 */
+	public static function getButtonText() {
+		if (isset(static::$buttonText) && static::$buttonText)
+			return static::$buttonText;
+
+		return 'Справка по '.$_SERVER['HTTP_HOST'];
 	}
 }
 

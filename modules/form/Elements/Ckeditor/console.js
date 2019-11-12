@@ -84,7 +84,7 @@ CKEDITOR.editorConfig = function( config ) {
 					'Styles'
 				],
 				'/',
-				[ 'simple_uploader_photo', 'Image'],['EmojiPanel'],['Table'],['WPMore'], ['Link', 'Unlink', 'Anchor' ], [ 'Youtube', 'InsertPre' ],
+				[ 'simple_uploader_file', 'simple_uploader_photo', 'Image'],['EmojiPanel'],['Table'],['WPMore'], ['Link', 'Unlink', 'Anchor' ], [ 'Youtube', 'InsertPre' ],
 				[ 'PasteText', 'PasteFromWord', 'RemoveFormat'],
 				[ 'JustifyLeft', 'JustifyCenter','JustifyRight','JustifyBlock' ],
 				[ 'NumberedList', 'BulletedList' ],
