@@ -37,7 +37,7 @@ class SqlTable extends \Wdpro\BaseSqlTable {
 				'cost_for_one'=>'decimal(11,2)', // Стоимость за одну штуку
 				'cost_for_all'=>'decimal(11,2)', // Стоимость за все штуки
 				'count'=>'int', // Количество штук
-				'visitor_id'=>'int', // Посетитель
+				'visitor_id', // Посетитель
 				'person_id'=>'int', // Пользователь
 				'key',
 				'data'=>'json', // Всякие дополнительные данные, типа величина скидки, другие штуки
