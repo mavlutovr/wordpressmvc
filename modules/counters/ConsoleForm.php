@@ -10,6 +10,7 @@ class ConsoleForm extends \Wdpro\Form\Form {
 			'type'=>'text',
 			'left'=>array('text'=>'Код счетчика', 'nowrap'=>true),
 			'style'=>'width: 600px;',
+			'bottom'=>'<a href="https://metrika.yandex.ru/list">Яндекс.Метрика</a>',
 		));
 		$this->add('sorting');
 		$this->add('submitSave');
