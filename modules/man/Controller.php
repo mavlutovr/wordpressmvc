@@ -20,8 +20,11 @@ class Controller extends \Wdpro\BaseController {
 		]);
 
 
-		// http://localhost/giraffes.ru/wp-admin/admin.php?page=Wdpro.Man.ConsoleRoll
-		// http://localhost/giraffes.ru/wp-admin/admin.php?page=Wdpro.Man.ConsoleRoll&id=4&action=form
+		add_action( 'show_user_profile', [ '\\Wdpro\\Man\\Controller', 'userProfileForm' ] );
+		add_action( 'edit_user_profile', [ '\\Wdpro\\Man\\Controller', 'userProfileForm' ] );
+
+		add_action( 'personal_options_update',  [ '\\Wdpro\\Man\\Controller', 'userProfileSave' ]);
+		add_action( 'edit_user_profile_update', [ '\\Wdpro\\Man\\Controller', 'userProfileSave' ]);
 	}
 
 
@@ -83,6 +86,38 @@ class Controller extends \Wdpro\BaseController {
 
 		return 'Справка по '.$_SERVER['HTTP_HOST'];
 	}
+
+
+	public static function userProfileForm() {
+		global $user;
+		?>
+		<h2>Справка по сайту</h2>
+		<table class="form-table">
+			<tr>
+				<th><label for="wdpro_man_templates">Доступ к шаблонам справки</label></th>
+				<td>
+					<input type="hidden" name="wdpro_man_templates" value="">
+					<input type="checkbox"
+						<?php
+						if (wp_get_current_user()->wdpro_man_templates): ?> checked="checked"<?php endif; ?>
+						     name="wdpro_man_templates" id="wdpro_man_templates" class="regular-text"
+						     value="1" />
+				</td>
+			</tr>
+		</table>
+		<?php
+	}
+
+
+	public static function userProfileSave($user_id) {
+		$saved = false;
+		if ( current_user_can( 'edit_user', $user_id ) ) {
+			update_user_meta( $user_id, 'wdpro_man_templates', $_POST['wdpro_man_templates'] );
+			$saved = true;
+		}
+		return true;
+	}
+
 }
 
 return __NAMESPACE__;
