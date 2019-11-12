@@ -1023,7 +1023,8 @@ abstract class BaseEntity
 		$table = static::sqlTable();
 
 		foreach ($table::getLangsFields() as $coll) {
-			$this->data[$coll] = $this->data[$coll.\Wdpro\Lang\Data::getCurrentSuffix()];
+			if (isset($this->data[$coll]))
+				$this->data[$coll] = $this->data[$coll.\Wdpro\Lang\Data::getCurrentSuffix()];
 		}
 	}
 

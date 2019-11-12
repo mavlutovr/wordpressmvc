@@ -49,6 +49,8 @@ class Form extends \App\BaseForm {
 			'type'=>static::SUBMIT,
 			'value'=>'Оформить заказ',
 		]);
+
+		$this->add(static::PRIVACY);
 	}
 
 
