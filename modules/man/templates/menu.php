@@ -3,24 +3,29 @@ return [
 	'name'=>'Меню, текстовые страницы',
 	'text'=>'<h2>Видео</h2>
 
-<p><iframe allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="" frameborder="0" height="315" src="https://www.youtube.com/embed/ztDF63KrmTA" width="560"></iframe></p>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/PQ1qB-HdzA0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-<p><iframe allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="" frameborder="0" height="315" src="https://www.youtube.com/embed/GeUkOA1QIfU" width="560"></iframe></p>
+<h2>Тезисно</h2>
 
-<h2>Как создавать страницы</h2>
+<h3>Как создавать страницы</h3>
 
-<p>Чтобы добавить страницу в меню, в админке выбираем соответствующее меню и нажимаем там <strong>Добавить страницу</strong>&nbsp;<a href="https://prnt.sc/lq1exv" target="_blank">https://prnt.sc/lq1exv</a></p>
+<p>Чтобы добавить страницу в меню, выберите в админке соответствующее меню и нажимаем там <strong>Добавить страницу</strong>&nbsp;<a href="https://prnt.sc/lq1exv" target="_blank">https://prnt.sc/lq1exv</a></p>
 
-<p>Чтобы добавить страницу без меню, добавляем ее в раздел&nbsp;<strong>Другие страницы</strong></p>
+<p>Чтобы добавить страницу без меню, добавьте ее в раздел <strong>Другие страницы</strong></p>
 
-<h2>Как работать с редактором</h2>
 
-<p><a href="http://prntscr.com/lq1gva" target="_blank">Как вставлять изображения</a></p>
+<h3>Как создавать подразделы</h3>
 
-<p><a href="http://prntscr.com/lq1h7e" target="_blank">Как вставлять текст из Word</a></p>
+<p>Зайдите в <a href="https://i.imgur.com/uM9cK3n.png" target="_blank">Подразделы</a> страницы. И нажмите <strong>Добавить страницу</strong>.</p>
 
-<h2>Как создавать подразделы</h2>
+<h3>Как добавить меню с подразделами</h3>
 
-<p>Заходим в&nbsp;<strong>Подразделы</strong>&nbsp;страницы. И нажимаем&nbsp;<strong>Добавить страницу</strong>.</p>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/wmk_rldE464" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+<p>Чтобы в раздле появилось меню с подразделами. Откройте в админке страницу раздела. И добавьте в текст раздела шорткод [submenu].</p>
+
+<h3>Как убрать страницы из меню</h3>
+
+<p>Уберите галочку <a href="https://i.imgur.com/PxkAQc3.png" target="_blank">Показывать в меню</a></p>
 ',
 ];

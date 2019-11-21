@@ -236,7 +236,7 @@ function wdpro_page() {
 	if (!isset($wdproPage)) {
 
 		$post = get_post();
-		if (!($wdproPage = wdpro_object_by_post_id($post->ID)))
+		if (!$post || !$post->ID || !($wdproPage = wdpro_object_by_post_id($post->ID)))
 			$wdproPage = new \Wdpro\Page\BlankPage();
 	}
 
@@ -343,8 +343,8 @@ add_action('wp_enqueue_scripts', function () {
 		'homeUrl'=>home_url().'/',
 		'imagesUrl'=>WDPRO_UPLOAD_IMAGES_URL,
 		'lang'=>\Wdpro\Lang\Data::getCurrentLangUri(),
-		'currentPostId'=>$post->ID,
-		'currentPostName'=>$post->post_name,
+		'currentPostId'=>!empty($post->ID) ? $post->ID : '',
+		'currentPostName'=>!empty($post->post_name) ? $post->post_name : '',
 	));
 });
 

@@ -23,4 +23,25 @@ class Entity extends \Wdpro\BaseEntity {
 			$text
 		);
 	}
+
+
+	/**
+	 * Устанавливает текст
+	 *
+	 * @param string $text Текст
+	 */
+	public function setText($text) {
+		$this->setData('text', $text);
+	}
+
+
+	/**
+	 * Возвращает текст
+	 *
+	 * @return string
+	 */
+	public function getText() {
+		return $this->getData('text');
+	}
+
 }

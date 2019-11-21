@@ -1809,6 +1809,9 @@ function wdpro_key_parse($key=null)
 				// Делим элемент на ключь и значение
 				$elementParts = explode(':', $element);
 
+				if (!isset($elementParts[1]))
+					throw new \Exception('Ошибка в ключе');
+
 				// Добавляем часть в массив
 				$infoArr[$elementParts[0]] = wdpro_key_unescape($elementParts[1]);
 			}
@@ -2513,7 +2516,7 @@ function wdpro_on_uri($uri, $callback) {
 
 			$post = get_post();
 
-			if ($uri === $post->post_name) {
+			if ($post && $uri === $post->post_name) {
 
 				$callback($post);
 			}

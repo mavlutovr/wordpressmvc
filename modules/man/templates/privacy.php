@@ -5,13 +5,18 @@ $url = home_url().'/privacy-policy/';
 return [
 	'name'=>'Политика конфиденциальности',
 	'text'=>'
-		<p>Должна открываться по адресу <a href="'.home_url().'/privacy-policy/" target="_blank">'.home_url().'/privacy-policy/</a></p>
 
-<p>В тексте политики необходимо заменить __ТЕМА__, __ТЕМЕ__, __EMAIL__ на свои данные.</p>
+<h2>Видео</h2>
 
-<p>Подробнее в видео:&nbsp;</p>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/L1T-zPt4L7s" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-<p><iframe allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="" frameborder="0" height="315" src="https://www.youtube.com/embed/BoEm0e3uLHs" width="560"></iframe></p>
+<h2>Тезисно</h2>
+
+<p><a href="https://tilda.cc/ru/privacy-generator/" target="_blank">Конструктор политики конфиденциальности</a>.</p>
+
+
+<p>адрес страницы Политики конфиденциальности <a href="'.home_url().'/privacy-policy/" target="_blank">'.home_url().'/privacy-policy/</a></p>
+
 
 	',
 ];

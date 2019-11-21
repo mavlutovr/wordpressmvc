@@ -39,7 +39,7 @@ class ConsoleRoll extends \Wdpro\Console\Roll {
 		return [
 			'labels'=>[
 				'name'=>'Справка',
-				'label'=>'Справка по '.$_SERVER['HTTP_HOST'],
+				'label'=>Controller::getButtonText(),
 				'add_new'=>'Добавить справку',
 			],
 

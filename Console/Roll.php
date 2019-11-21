@@ -517,7 +517,7 @@ title="Удалить"></a>
 	 *  'orderby'=>'menu_order',
 	 *  'icon'=>WDPRO_ICONS_PRODUCTS,
 	 *      // https://developer.wordpress.org/resource/dashicons/#lock
-	 * // https://fontawesome.com/
+	 *      // https://fontawesome.com/
 	 * 
 	 *  'subsections'=>false,
 	 *  'where'  => [
