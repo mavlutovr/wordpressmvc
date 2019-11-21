@@ -2109,6 +2109,9 @@ function wdpro_date($time, $params=null)
 		'time'=>false,
 		'dateFormat'=>'d Month Y',
 		'timeFormat'=>', H:i',
+		'todayText'=>'Сегодня',
+		'yesterdayText'=>'Вчера',
+		'tomorrowText'=>'Завтра',
 	), $params);
 
 	$date = null;
@@ -2116,15 +2119,15 @@ function wdpro_date($time, $params=null)
 	{
 		if (date('Y.m.d') == date('Y.m.d', $time))
 		{
-			$date = 'Сегодня';
+			$date = $params['todayText'];
 		}
 		else if (date('Y.m.d') == date('Y.m.d', $time + WDPRO_DAY))
 		{
-			$date = 'Вчера';
+			$date = $params['yesterdayText'];
 		}
 		else if (date('Y.m.d') == date('Y.m.d', $time - WDPRO_DAY))
 		{
-			$date = 'Завтра';
+			$date = $params['tomorrowText'];
 		}
 	}
 
