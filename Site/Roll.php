@@ -116,6 +116,8 @@ class Roll extends \Wdpro\BaseRoll {
 				$data['list'][] = static::prepareDataForTemplate($row);
 			}
 
+			$data = static::prepareDataForTemplateFull($data);
+
 			return $data;
 		}
 	}
@@ -130,6 +132,18 @@ class Roll extends \Wdpro\BaseRoll {
 	public static function prepareDataForTemplate($row) {
 
 		return $row;
+	}
+
+
+	/**
+	 * Дополнительная обработка полных данных для шаблона
+	 *
+	 * @param array $data Данные для шаблона
+	 * @return array
+	 */
+	public static function prepareDataForTemplateFull($data) {
+
+		return $data;
 	}
 
 
