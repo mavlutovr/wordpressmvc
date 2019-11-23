@@ -184,7 +184,8 @@ function wdpro_add_script_to_site($absolutePath, $handle=null, $inFooter=false)
 			$file = wdpro_path_remove_root($absolutePath);
 			$file = wdpro_fix_directory_separator_in_url($file);
 			if (!$handle) $handle = $file;
-			wp_enqueue_script( $handle, $file, [], false, $inFooter );
+			$version = 'v'.filemtime($absolutePath);
+			wp_enqueue_script( $handle, $file, [], $version, $inFooter );
 		}
 	});
 }
@@ -260,7 +261,8 @@ function wdpro_add_css_to_site($absolutePath)
 	{
 		$file = wdpro_path_remove_root($absolutePath);
 		$file = wdpro_fix_directory_separator_in_url($file);
-		wp_enqueue_style( $file, $file );
+		$version = 'v'.filemtime($absolutePath);
+		wp_enqueue_style( $file, $file, [], $version );
 	});
 }
 
