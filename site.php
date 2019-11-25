@@ -3,7 +3,7 @@
 // Редирект с index.php на корень сайта /
 if (wdpro_current_uri() === '/index.php') {
 	header('HTTP/1.1 301 Moved Permanently');
-	header('Location: '.home_url());
+	header('Location: '.home_url().'/');
 	exit();
 }
 
