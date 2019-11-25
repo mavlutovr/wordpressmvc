@@ -184,7 +184,8 @@ function wdpro_add_script_to_site($absolutePath, $handle=null, $inFooter=false)
 			$file = wdpro_path_remove_root($absolutePath);
 			$file = wdpro_fix_directory_separator_in_url($file);
 			if (!$handle) $handle = $file;
-			wp_enqueue_script( $handle, $file, [], false, $inFooter );
+			$version = 'v'.filemtime($absolutePath);
+			wp_enqueue_script( $handle, $file, [], $version, $inFooter );
 		}
 	});
 }
@@ -260,7 +261,8 @@ function wdpro_add_css_to_site($absolutePath)
 	{
 		$file = wdpro_path_remove_root($absolutePath);
 		$file = wdpro_fix_directory_separator_in_url($file);
-		wp_enqueue_style( $file, $file );
+		$version = 'v'.filemtime($absolutePath);
+		wp_enqueue_style( $file, $file, [], $version );
 	});
 }
 
@@ -2109,6 +2111,9 @@ function wdpro_date($time, $params=null)
 		'time'=>false,
 		'dateFormat'=>'d Month Y',
 		'timeFormat'=>', H:i',
+		'todayText'=>'Сегодня',
+		'yesterdayText'=>'Вчера',
+		'tomorrowText'=>'Завтра',
 	), $params);
 
 	$date = null;
@@ -2116,15 +2121,15 @@ function wdpro_date($time, $params=null)
 	{
 		if (date('Y.m.d') == date('Y.m.d', $time))
 		{
-			$date = 'Сегодня';
+			$date = $params['todayText'];
 		}
 		else if (date('Y.m.d') == date('Y.m.d', $time + WDPRO_DAY))
 		{
-			$date = 'Вчера';
+			$date = $params['yesterdayText'];
 		}
 		else if (date('Y.m.d') == date('Y.m.d', $time - WDPRO_DAY))
 		{
-			$date = 'Завтра';
+			$date = $params['tomorrowText'];
 		}
 	}
 

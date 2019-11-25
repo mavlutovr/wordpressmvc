@@ -369,7 +369,14 @@ id="wdpro-console-roll-'.static::getType().'">';
 
 							foreach($headers as $header)
 							{
-								$table .= '<td>'.$header
+								if (!is_array($header)) {
+									$header = [
+										'text'=>$header,
+									];
+								}
+								$table .= '<td style="'
+									.(empty($header['style']) ? '' : $header['style'])
+									.'">'.$header['text']
 									.'</td>';
 							}
 
@@ -784,7 +791,7 @@ title="Удалить"></a>
 				
 				
 			}
-			
+
 			return $where;
 		}
 	}
@@ -847,19 +854,58 @@ title="Удалить"></a>
 	/**
 	 * Возвращает html код картинки по ее адресу
 	 *
-	 * @param string|array $src Адрес картинки, который хранится в базе
+	 * @param string|array $srcs Адрес картинки, который хранится в базе
+	 * @param bool $showAll Показать все картинки, а не только первую
 	 * @return string
 	 */
-	public function getImageHtml($src) {
+	public function getImageHtml($srcs, $showAll=false) {
 
-		if (is_array($src))
-			$src = $src[0];
+		if (!$srcs) return '';
 
-		if ($src) {
-			return '<a href="'.WDPRO_UPLOAD_IMAGES_URL.$src.'" target="_blank"><img src="'.WDPRO_UPLOAD_IMAGES_URL.$src.'" style="max-width: 200px;"/></a>';
+		if (!is_array($srcs))
+			$srcs = [$srcs];
+
+		$html = '';
+
+		foreach ($srcs as $i => $src) {
+
+			if ($i && !$showAll) {
+				break;
+			}
+
+			$html .= '<a href="'.WDPRO_UPLOAD_IMAGES_URL.$src.'" target="_blank"><img src="'.WDPRO_UPLOAD_IMAGES_URL.$src.'" style="max-width: 200px;"/></a>';
 		}
 
-		return '';
+		return '<div class="wdpro-images">'.$html.'</div>';
+	}
+
+
+	/**
+	 * Возвращает html код файла по адресу
+	 *
+	 * @param string|array $srcs Адрес картинки, который хранится в базе
+	 * @param bool $showAll Показать все файлы, а не только первый
+	 * @return string
+	 */
+	public function getFileHtml($srcs, $showAll=false) {
+
+		if (!$srcs) return '';
+
+		if (!is_array($srcs))
+			$srcs = [$srcs];
+
+		$html = '';
+
+		foreach ($srcs as $i => $src) {
+
+			if ($i && !$showAll) {
+				break;
+			}
+
+			$html .= '<a href="'.WDPRO_UPLOAD_FILES_URL.$src.'" target="_blank">'.$src.'</a>';
+		}
+
+		return '<div class="wdpro-files">'.$html.'</div>';
 	}
 
 
