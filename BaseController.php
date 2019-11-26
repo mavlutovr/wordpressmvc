@@ -86,6 +86,16 @@ abstract class BaseController {
 	}
 
 
+	/**
+	 * Возвращает класс сущности
+	 *
+	 * @return string|\Wdpro\BaseEntity|\Wdpro\BasePage
+	 */
+	public static function entityClass() {
+		return static::getModuleClass('Entity');
+	}
+
+
 	public static function initSiteStart() {
 
 		// Список (Это здесь, чтобы инициировались типы страниц)
