@@ -131,11 +131,6 @@ class Menu extends Roll
 			указать тип меню, таблицу или сущность страниц меню');
 		}
 
-		if (isset($params['where'])) {
-			$params['where'] = \Wdpro\Lang\Data::replaceLangShortcode($params['where']);
-		}
-
-
 		// Fields
 		$params = wdpro_extend(array(
 			'post_parent'=>$params['post_parent'],
@@ -203,12 +198,21 @@ class Menu extends Roll
 
 		$params['fields'] = \Wdpro\Lang\Data::replaceLangShortcode($params['fields']);
 
+		if (isset($where[0])) {
+			$where[0] = \Wdpro\Lang\Data::replaceLangShortcode($where[0]);
+		}
+		else if ($where) {
+			$where = \Wdpro\Lang\Data::replaceLangShortcode($where);
+		}
+
+
 		if ($sel = $params['sqlTable']::select($where, $params['fields']))
 		{
+
 			$data = array();
 
 			$homePageId = wdpro_get_option('page_on_front');
-			
+
 			foreach($sel as $row)
 			{
 				if (isset($row['ID']) && $row['ID'])
@@ -318,7 +322,7 @@ class Menu extends Roll
 				
 				$data[] = $row;
 			}
-			
+
 			return $data;
 		}
 	}

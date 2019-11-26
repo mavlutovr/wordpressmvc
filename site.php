@@ -199,21 +199,6 @@ function wdpro_breadcrumbs_init($callback) {
 
 
 /**
- * Возвращает объект хлебных крошек
- *
- * @return \Wdpro\Breadcrumbs\Breadcrumbs
- */
-function wdpro_breadcrumbs()
-{
-	global $breadcrumbs;
-	if (!$breadcrumbs) {
-		$breadcrumbs = new \Wdpro\Breadcrumbs\Breadcrumbs();
-	}
-	return $breadcrumbs;
-}
-
-
-/**
  * Отображает хлебные крошки
  *
  * @return string

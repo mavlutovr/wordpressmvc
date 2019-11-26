@@ -180,3 +180,20 @@ add_action('wp_footer', function () {
 if (wdpro_is_admin()) {
 	add_action( "init", "wdpro_disable_emojis" );
 }
+
+
+/**
+ * Возвращает объект хлебных крошек
+ *
+ * Это не нужно убирать в site.php, потому что используется в ajax запросах
+ *
+ * @return \Wdpro\Breadcrumbs\Breadcrumbs
+ */
+function wdpro_breadcrumbs()
+{
+	global $breadcrumbs;
+	if (!$breadcrumbs) {
+		$breadcrumbs = new \Wdpro\Breadcrumbs\Breadcrumbs();
+	}
+	return $breadcrumbs;
+}
