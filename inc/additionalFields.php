@@ -116,14 +116,6 @@ function wdpro_the_header()
 	$description = wdpro_data('description');
 	$keywords = wdpro_data('keywords');
 
-	// Страница Wdpro
-	$page = wdpro_current_page();
-	if ($page) {
-		$title = $page->getTitle();
-		$description = $page->getDescription();
-		$keywords = $page->getKeywords();
-	}
-
 
 	// Стандартная страница WopdPress
 	if (!$title)
@@ -134,6 +126,19 @@ function wdpro_the_header()
 
 	if (!$keywords)
 		$keywords = wdpro_get_post_meta('keywords');
+
+	// Страница Wdpro
+	$page = wdpro_current_page();
+	if ($page) {
+		if (!$title)
+			$title = $page->getTitle();
+
+		if (!$description)
+			$description = $page->getDescription();
+
+		if (!$keywords)
+			$keywords = $page->getKeywords();
+	}
 
 
 	$h1 = wdpro_the_h1(true);
