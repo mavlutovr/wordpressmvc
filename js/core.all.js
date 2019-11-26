@@ -2076,6 +2076,9 @@ if (typeof Array.isArray === 'undefined') {
 				{
 					callback(data);
 				}
+			},
+			'error': function (error) {
+				console.log(error['responseText'])
 			}
 		};
 
