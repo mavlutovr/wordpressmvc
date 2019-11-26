@@ -17,7 +17,7 @@ class ConsoleRoll extends \Wdpro\Console\Roll {
 				'label'=>'Контакты',
 				'add_new'=>'Добавить блок контактов',
 			),
-			'where'=>'ORDER BY sorting',
+			'where'=>'ORDER BY menu_order',
 		);
 	}
 
@@ -33,7 +33,7 @@ class ConsoleRoll extends \Wdpro\Console\Roll {
 
 		return array(
 			$data['text'],
-			$data['sorting'],
+			$data['menu_order'],
 		);
 	}
 

@@ -79,6 +79,7 @@ class ConsoleRoll extends \Wdpro\Console\Roll {
 		$form->add([
 			'left'  => 'Пространство имен',
 			'name' => 'namespace',
+			'center'=>'App\...',
 			'*'    => true,
 		]);
 		$form->add([
@@ -104,6 +105,7 @@ class ConsoleRoll extends \Wdpro\Console\Roll {
 		$form->add([
 			'left'  => 'Mysql таблица',
 			'name'  => 'SqlTable',
+			'center'=>'app_...',
 		]);
 		$form->add([
 			'type'=>$form::HTML,

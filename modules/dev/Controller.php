@@ -16,7 +16,7 @@ class Controller extends \Wdpro\BaseController {
 		{
 			\Wdpro\Console\Menu::add([
 				'roll'=>ConsoleRoll::class,
-				'n'=>0,
+				'n'=>-20,
 			]);
 		}
 	}

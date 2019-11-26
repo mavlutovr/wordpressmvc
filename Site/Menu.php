@@ -222,6 +222,7 @@ class Menu extends Roll
 				$alternativeUrl = get_post_field(
 					'alternative_url'.\Wdpro\Lang\Data::getCurrentSuffix(),
 					$row['id']);
+
 				if ($alternativeUrl)
 				{
 					if (preg_match('~^https?://~', $alternativeUrl)) {
@@ -245,7 +246,7 @@ class Menu extends Roll
 						$post_name = '';
 					}
 					else {
-						$post_name .= '/';
+						$post_name .= wdpro_url_slash_at_end();
 					}
 
 					$row['url'] = \Wdpro\Lang\Data::currentUrl().$post_name;
@@ -292,6 +293,7 @@ class Menu extends Roll
 				$row = static::prepareDataForTemplate($row);
 				
 				// Подменю
+				$row['submenu'] = '';
 				if ($submenu) {
 
 					// Указаны параметры

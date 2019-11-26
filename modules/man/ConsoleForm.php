@@ -15,7 +15,7 @@ class ConsoleForm extends \Wdpro\Form\Form {
 		$entity = $this->getEntity();
 
 
-		if (!$entity->existsInDb()) {
+		if (!$entity->existsInDb() && wp_get_current_user()->wdpro_man_templates) {
 			$this->add([
 				'name'=>'template',
 				'left'=>'Шаблон',

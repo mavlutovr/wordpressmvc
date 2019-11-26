@@ -1,0 +1,25 @@
+.order-status-current {
+  padding: 5px;
+  cursor: pointer;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+}
+.order-status-list {
+  position: absolute;
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  margin-top: -1px;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+}
+.order-status-item {
+  padding: 5px;
+  cursor: pointer;
+  opacity: .85;
+}
+.order-status-item:hover {
+  opacity: 1;
+}
+.order-item {
+  margin-bottom: 10px;
+  border-left: 3px solid black;
+  padding-left: 10px;
+}

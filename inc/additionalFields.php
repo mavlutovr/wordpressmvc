@@ -113,11 +113,27 @@ function wdpro_the_header()
 	remove_action( 'wp_head', '_wp_render_title_tag', 1 );
 
 	$title = wdpro_data('title');
+	$description = wdpro_data('description');
+	$keywords = wdpro_data('keywords');
 
+	// Страница Wdpro
+	$page = wdpro_current_page();
+	if ($page) {
+		$title = $page->getTitle();
+		$description = $page->getDescription();
+		$keywords = $page->getKeywords();
+	}
+
+
+	// Стандартная страница WopdPress
 	if (!$title)
-	$title = wdpro_get_post_meta('title');
-	$description = wdpro_get_post_meta('description');
-	$keywords = wdpro_get_post_meta('keywords');
+		$title = wdpro_get_post_meta('title');
+
+	if (!$description)
+		$description = wdpro_get_post_meta('description');
+
+	if (!$keywords)
+		$keywords = wdpro_get_post_meta('keywords');
 
 
 	$h1 = wdpro_the_h1(true);
@@ -250,7 +266,7 @@ function wdpro_the_h1($force=false)
 
 	if (!$h1)
 	$h1 = wdpro_get_post_meta('h1');
-	
+
 	if ($h1 != '-' && $h1 != '—' || $force)
 	{
 		if (!$h1)
@@ -286,9 +302,11 @@ function wdpro_the_title_standart()
  * @param string $metaName Имя мета-данных
  * @return mixed
  */
-function wdpro_get_post_meta($metaName)
+function wdpro_get_post_meta($metaName, $postId=null)
 {
-	$arr = get_post_meta(get_the_ID(), $metaName.\Wdpro\Lang\Data::getCurrentSuffix());
+	if ($postId === null) $postId = get_the_ID();
+
+	$arr = get_post_meta($postId, $metaName.\Wdpro\Lang\Data::getCurrentSuffix());
 	
 	if (is_array($arr) && isset($arr[0]) && $arr[0])
 	{

@@ -8,7 +8,7 @@
  */
 function wdpro_separator_normalize($path)
 {
-	if (DIRECTORY_SEPARATOR != '/')
+	if (DIRECTORY_SEPARATOR !== '/')
 	{
 		$path = str_replace('/', DIRECTORY_SEPARATOR, $path);
 	}
@@ -184,7 +184,8 @@ function wdpro_add_script_to_site($absolutePath, $handle=null, $inFooter=false)
 			$file = wdpro_path_remove_root($absolutePath);
 			$file = wdpro_fix_directory_separator_in_url($file);
 			if (!$handle) $handle = $file;
-			wp_enqueue_script( $handle, $file, [], false, $inFooter );
+			$version = 'v'.filemtime($absolutePath);
+			wp_enqueue_script( $handle, $file, [], $version, $inFooter );
 		}
 	});
 }
@@ -260,7 +261,8 @@ function wdpro_add_css_to_site($absolutePath)
 	{
 		$file = wdpro_path_remove_root($absolutePath);
 		$file = wdpro_fix_directory_separator_in_url($file);
-		wp_enqueue_style( $file, $file );
+		$version = 'v'.filemtime($absolutePath);
+		wp_enqueue_style( $file, $file, [], $version );
 	});
 }
 
@@ -695,8 +697,9 @@ function wdpro_local() {
  * Редирект с остановкой текущих скриптов
  *
  * @param string $location Адрес куда перейти
+ * @param null|number $code Код редиректа (301)
  */
-function wdpro_location($location)
+function wdpro_location($location, $code=null)
 {
 	if (headers_sent())
 	{
@@ -704,6 +707,10 @@ function wdpro_location($location)
 	}
 	else
 	{
+		if ($code === 301) {
+			header("HTTP/1.1 301 Moved Permanently");
+		}
+
 		header('Location: '.$location);
 	}
 	exit();
@@ -1091,6 +1098,18 @@ function wdpro_image_watermark($fileFullName, $params) {
 			$originalPath['dirname']
 			. '/' . $params['original']
 			. '/' . $originalPath['basename']);
+
+		$htaccessFileName = $originalPath['dirname']
+			. '/' . $params['original'];
+
+		if (!is_file($htaccessFileName)) {
+			wdpro_copy_file(
+				__DIR__.'/../modules/tools/watermark/default/htaccess',
+				$originalPath['dirname']
+				. '/' . $params['original']
+				. '/.htaccess'
+			);
+		}
 	}
 
 	if ($fileFullName && is_file($fileFullName) && is_file($params['file'])) {
@@ -1622,15 +1641,6 @@ function wdpro_object($className, $dataOrId=null)
 
 	if (is_string($className))
 	{
-		/*if (!isset($_wdproObjects[$className]))
-		{
-			$_wdproObjects[$className] = array();
-		}
-
-		if (!isset($_wdproObjects[$className][$key]))
-		{
-			$_wdproObjects[$className][$key] = new $className($dataOrId);
-		}*/
 
 		if (!isset($_wdproObjects[$className][$key]))
 		{
@@ -1698,7 +1708,7 @@ function wdpro_get_post_by_id($postId) {
 
 
 /**
- * Возвращает обхект страницы по ее URI
+ * Возвращает объект страницы по ее URI
  *
  * @param string $postName URI страницы
  * @return \Wdpro\BasePage
@@ -1720,9 +1730,15 @@ function wdpro_get_post_by_name($postName) {
  */
 function wdpro_object_by_key($objectKey) {
 
+	if (!$objectKey)
+		throw new \Exception('Попытка получить объект по пустому ключу');
+
 	$key = wdpro_key_parse($objectKey);
 
-	$obj = wdpro_object($key['object']['name'], isset($key['object']['id']) ? $key['object']['id'] : null);
+	$obj = wdpro_object(
+		$key['object']['name'],
+		isset($key['object']['id']) ? $key['object']['id'] : null
+	);
 
 	if (is_object($obj))
 	{
@@ -1794,6 +1810,9 @@ function wdpro_key_parse($key=null)
 			{
 				// Делим элемент на ключь и значение
 				$elementParts = explode(':', $element);
+
+				if (!isset($elementParts[1]))
+					throw new \Exception('Ошибка в ключе');
 
 				// Добавляем часть в массив
 				$infoArr[$elementParts[0]] = wdpro_key_unescape($elementParts[1]);
@@ -2092,6 +2111,9 @@ function wdpro_date($time, $params=null)
 		'time'=>false,
 		'dateFormat'=>'d Month Y',
 		'timeFormat'=>', H:i',
+		'todayText'=>'Сегодня',
+		'yesterdayText'=>'Вчера',
+		'tomorrowText'=>'Завтра',
 	), $params);
 
 	$date = null;
@@ -2099,15 +2121,15 @@ function wdpro_date($time, $params=null)
 	{
 		if (date('Y.m.d') == date('Y.m.d', $time))
 		{
-			$date = 'Сегодня';
+			$date = $params['todayText'];
 		}
 		else if (date('Y.m.d') == date('Y.m.d', $time + WDPRO_DAY))
 		{
-			$date = 'Вчера';
+			$date = $params['yesterdayText'];
 		}
 		else if (date('Y.m.d') == date('Y.m.d', $time - WDPRO_DAY))
 		{
-			$date = 'Завтра';
+			$date = $params['tomorrowText'];
 		}
 	}
 
@@ -2145,10 +2167,13 @@ function wdpro_content($callback, $priority=10) {
  * Запускает каллбэк при появлении контента и отправляем в каллбэк обхект страницы
  * \Wdpro\BasePage
  *
- * @param callback $callback Каллбэк function($content, $postWdpro)
+ * @param callable $callback {
+ *  @param string $content
+ *  @param \Wdpro\BasePage $page
+ * }
  * @param int $priority Приоритет
  */
-function wdpro_on_content($callback, $priority=10) {
+function wdpro_on_content(callable $callback, $priority=10) {
 
 	add_filter('the_content', function ($content) use (&$callback) {
 
@@ -2410,8 +2435,16 @@ function wdpro_copy_file($from, $to) {
  *	 'post_name'=>$uri',
  * ]
  */
-function wdpro_default_page($uri, $pageDataCallback) {
-	\Wdpro\Page\Controller::defaultPage($uri, $pageDataCallback);
+function wdpro_default_page($uri, $pageDataCallbackOrFile) {
+
+	if (is_string($pageDataCallbackOrFile)) {
+		\Wdpro\Page\Controller::defaultPage($uri, function () use (&$pageDataCallbackOrFile) {
+			return require $pageDataCallbackOrFile;
+		});
+	}
+	else {
+		\Wdpro\Page\Controller::defaultPage($uri, $pageDataCallbackOrFile);
+	}
 }
 
 
@@ -2488,7 +2521,7 @@ function wdpro_on_uri($uri, $callback) {
 
 			$post = get_post();
 
-			if ($uri == $post->post_name) {
+			if ($post && $uri === $post->post_name) {
 
 				$callback($post);
 			}
@@ -3449,3 +3482,27 @@ function wdpro_set_new_breadcrumbs($newBreadcrumbs) {
 }
 
 
+/**
+ * Режим слеша в конце адресов
+ *
+ * @return bool
+ */
+function wdpro_url_slash_at_end_mode() {
+	global $_wdpro_url_slash_at_end_mode;
+	if (!isset($_wdpro_url_slash_at_end_mode)) {
+		$last = substr(get_option('permalink_structure'), -1);
+		$_wdpro_url_slash_at_end_mode = $last === '/';
+	}
+	return $_wdpro_url_slash_at_end_mode;
+}
+
+
+/**
+ * Возвращает слэш, когда включен режим слеша в конце адресов
+ *
+ * @return string
+ */
+function wdpro_url_slash_at_end() {
+	if (wdpro_url_slash_at_end_mode()) return '/';
+	return '';
+}

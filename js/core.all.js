@@ -11,6 +11,14 @@ var wdpro = {
 	WDPRO_UPLOAD_IMAGES_URL: '',
 	WDPRO_HOME_URL: '',
 
+	// Номера клавиш
+	KEY_ESCAPE: 27,
+	KEY_ENTER: 13,
+	KEY_LEFT: 37,
+	KEY_UP: 38,
+	KEY_RIGHT: 39,
+	KEY_DOWN: 40,
+
 	// base64_decode
 	base64_decode: function (str) {
 		return decodeURIComponent(escape(window.atob( str )));
@@ -180,6 +188,47 @@ if (typeof Array.isArray === 'undefined') {
 	};
 
 
+	// Yandex Metrika
+	var yandexMetrikaIds = [];
+
+	/**
+	 * Добавляет счетчик Метрики
+	 */
+	wdpro.yandexMetrikaAddId = function (id) {
+		yandexMetrikaIds.push(id);
+	};
+
+
+	/**
+	 * Запускает функцию ym для каждого счетчика метрики
+	 *
+	 * @example
+	 * ym(XXXXXX, 'reachGoal', target[, params[, callback[, ctx]]]);
+	 *
+	 * https://yandex.ru/support/metrica/objects/reachgoal.html
+	 * wdpro.yandexMetrikaAddId(XXXXXX);
+	 * wdpro.yandexMetrika('reachGoal', target[, params[, callback[, ctx]]]);
+	 */
+	wdpro.yandexMetrika = function (...args) {
+		wdpro.each(yandexMetrikaIds, function (id) {
+			var args2 = wdpro.clone(args);
+			args2.unshift(id);
+
+			console.log('metrika', args2);
+
+			var counterFnKey = 'yaCounter'+id;
+
+			var counterFn = window[counterFnKey];
+
+			if (counterFn && counterFn[args2[1]]) {
+				console.log('counterFn', args2[1], args2[2])
+				counterFn[args2[1]](args[2]);
+			}
+			else {
+				ym(...args2);
+			}
+		});
+	};
 
 
 	(function(){
@@ -1219,7 +1268,7 @@ if (typeof Array.isArray === 'undefined') {
 					var action = self.eventParseName(actionName);
 
 					// Если имя совпадает с удаляемым
-					if (action.name == actionName) {
+					if (action.name === actionName) {
 						// Удаляем номера этого каллбэка из списка номеров для удаления по пространству имен
 						self.removeByNamespace.unset(actionName);
 					}
@@ -1251,7 +1300,7 @@ if (typeof Array.isArray === 'undefined') {
 				if (callbacks) {
 					// Перебираем прослушки
 					callbacks.each(function (callback) {
-						if (typeof callback.fn == 'function') {
+						if (typeof callback.fn === 'function') {
 							// Запускаем прослушку
 							callback.fn(data);
 
@@ -1282,14 +1331,14 @@ if (typeof Array.isArray === 'undefined') {
 		onList: function (list, keyInList) {
 			var self = this;
 
-			if (typeof list == 'object') {
+			if (typeof list === 'object') {
 				// Список каллбэков в ключе
 				if (keyInList) {
 					list = list[keyInList];
 				}
 
 				// Если есть такой список калббэков
-				if (list && typeof list == 'object') {
+				if (list && typeof list === 'object') {
 					// Перебираем прослушки
 					each(list, function (eventCallback, eventName) {
 						// Добавляем прослушку события
@@ -1570,7 +1619,7 @@ if (typeof Array.isArray === 'undefined') {
 	 * Возвращает копию объекта
 	 *
 	 * @param object {{}} Оригинальный объект
-	 * @param recursive {boolean} Копировать рекурсивно
+	 * @param [recursive] {boolean} Копировать рекурсивно
 	 * @returns {{}|Array}
 	 */
 	var clone = wdpro.clone = function (object, recursive)
@@ -2040,7 +2089,9 @@ if (typeof Array.isArray === 'undefined') {
 			var $_GET2 = wdpro.extend($_GET_OR_ACTION, {
 				'action': 'wdpro',
 				'wdproAction': $_GET_OR_ACTION['action'],
-				'lang': wdpro.data.lang
+				'lang': wdpro.data['lang'],
+				'currentPostId': wdpro.data['currentPostId'],
+				'currentPostName': wdpro.data['currentPostName'],
 			});
 
 			url = this.data['ajaxUrl']+'?'+ $.param($_GET2);
@@ -2483,6 +2534,345 @@ if (typeof Array.isArray === 'undefined') {
 		l.href = url;
 		return l;
 	};
+
+
+
+	let originalPlaceId = 0;
+
+	/**
+	 * Добавляет элемент в конец целевого контейнера, сохраняя возможность вернуть элемент обратно на свое место
+	 *
+	 * Чтобы вернуть элемент обратно, используйте $(element).toOriginalPlace();
+	 * @param $to {jQuery} Целевой контейнер
+	 * @return {jQuery}
+	 */
+	$.fn.appendFromOriginalPlaceTo = function ($to) {
+		$(this).each(function () {
+
+			const element = $(this);
+			saveOriginalPlace(element);
+
+
+			element.appendTo($to);
+		});
+
+		return this;
+	};
+
+	/**
+	 * Добавляет элемент в начало целевого контейнера, сохраняя возможность вернуть элемент обратно на свое место
+	 *
+	 * Чтобы вернуть элемент обратно, используйте $(element).toOriginalPlace();
+	 * @param $to {jQuery} Целевой контейнер
+	 * @return {jQuery}
+	 */
+	$.fn.prependFromOriginalPlaceTo = function ($to) {
+		$(this).each(function () {
+
+			const element = $(this);
+			saveOriginalPlace(element);
+
+
+			element.appendTo($to);
+		});
+
+		return this;
+	};
+
+
+	/**
+	 * Возвращает элемент на место после таких перемещения типа $(element).appendFromOriginalPlaceTo
+	 *
+	 * @return {jQuery}
+	 */
+	$.fn.toOriginalPlace = function () {
+		$(this).each(function () {
+
+			const element = $(this);
+			const id = element.data('original-place-id');
+			const originalPlace = $('#js-original-place-'+id);
+			originalPlace.after(element);
+		});
+
+		return this;
+	};
+
+
+	/**
+	 * Сохраняет позицию элемента, чтобы его можно было вернуть потом сюда же
+	 *
+	 * @param element {jQuery}
+	 */
+	const saveOriginalPlace = (element) => {
+
+		if (!element.data('original-place-id')) {
+			originalPlaceId ++;
+
+			const placeHolder = $('<div id="js-original-place-'+originalPlaceId+'"></div>').hide();
+			element.data('original-place-id', originalPlaceId);
+
+			element.after(placeHolder);
+		}
+	};
+
+
+	/**
+	 * Перераспределяет элементы по контейнерам в зависимости от ширины страницы
+	 *
+	 * @example
+	 * <code>
+	 * // Адаптивная перестановка элементов
+	 * wdpro.adaptiveStructure({
+	 *
+	 * 	996: {
+	 *
+	 * 		// Шапка
+	 * 		'#js-mobile-header': [
+	 * 			'*', // Любой элемент, который уже есть в контейнере
+	 * 			'#js-header-cart',
+	 * 			'#js-callback-button'
+	 * 		],
+	 *
+	 * 		// Меню
+	 * 		'#js-mobile-menu': [
+	 * 			'#js-search-form',
+	 * 			'#js-header-phones',
+	 * 			'#js-header-mail',
+	 * 			'#js-header-schedule',
+	 * 			'#js-header-address',
+	 * 			'#js-aside'
+	 * 		]
+	 * 	},
+	 *
+	 *
+	 * 	480: {
+	 *
+	 * 		// Шапка
+	 * 		'#js-mobile-header': [
+	 * 			'*',
+	 * 			'#js-header-cart'
+	 * 		],
+	 *
+	 * 		// Меню
+	 * 		'#js-mobile-menu': [
+	 * 			'#js-search-form',
+	 * 			'#js-callback-button',
+	 * 			'#js-header-phones',
+	 * 			'#js-header-mail',
+	 * 			'#js-header-schedule',
+	 * 			'#js-header-address',
+	 * 			'#js-aside'
+	 * 		]
+	 * 	}
+	 *
+	 * });
+	 * </code>
+	 *
+	 * @param params
+	 */
+	wdpro.adaptiveStructure = (params) => {
+
+		let elements = {};
+		let lastWidth;
+
+
+		const getElement = (selector) => {
+			if (!elements[selector]) {
+				elements[selector] = $(selector);
+			}
+			return elements[selector];
+		};
+
+
+		const rePos = () => {
+
+			let fixI = 0;
+
+			// Ширина окна
+			let windowWidth = window.innerWidth;
+
+			// Находим текущую ширину параметров
+			let paramsWidth;
+			for(let w in params) {
+
+				// Ширина окна меньше ширины параметров
+				if (windowWidth <= w) {
+					if (!paramsWidth) {
+						paramsWidth = w;
+					}
+
+					else {
+						paramsWidth = Math.min(w, paramsWidth);
+					}
+				}
+			}
+
+
+			if (lastWidth === paramsWidth) return false;
+
+
+			// Позиция из параметров
+			if (paramsWidth) {
+
+				// Получаем текущую структуру
+				let structure = params[paramsWidth];
+
+
+				// Перебираем контейнеры
+				$.each(structure, (containerSelector, childIds) => {
+
+					// Получаем контейнер
+					let $container = getElement(containerSelector);
+
+					// Перебираем элементы
+					$.each(childIds, function (i, childSelector) {
+
+						i -= fixI;
+
+						// Если по этому номеру находится другой элемент
+						let $currentElement = $container.children(':eq('+i+')');
+
+						if (!$currentElement.is(childSelector)) {
+
+							// Перед этим элементом ставим тот, который указан в параметрах
+							let $targetElement = getElement(childSelector);
+
+							if ($targetElement.length) {
+
+								saveOriginalPlace($targetElement);
+
+								if (i) {
+									$container.children(':eq('+(i - 1)+')').after($targetElement);
+								}
+
+								else {
+									$container.prepend($targetElement);
+								}
+							}
+
+							else {
+								fixI ++;
+							}
+						}
+					});
+				});
+			}
+
+
+			// Изначальная позиция
+			else {
+				$.each(elements, (i, $element) => {
+					$element.toOriginalPlace();
+				});
+			}
+
+
+			lastWidth = paramsWidth;
+		};
+
+
+		rePos();
+		$(window).on('resize', rePos);
+	};
+
+
+	// Каллбэки на определенные размеры экрана
+	{
+		const list = [];
+
+		const update = () => {
+			const windowWidth = window.innerWidth;
+
+			const inside = (params) => {
+
+				if (typeof params.min === 'number' && params.min >= windowWidth)
+					return false;
+
+				if (typeof params.max === 'number' && params.max <= windowWidth)
+					return false;
+
+				return true;
+			};
+
+			for (let item of list) {
+
+				// Когда каллбэк уже внутри заданного размера
+				if (item.inside === null || item.inside) {
+
+					// Если каллбэк вышел из размера
+					if (!inside(item.params)) {
+						item.off && item.off();
+						item.inside = false;
+						break;
+					}
+				}
+
+				// Когда каллбэк снаружи заданного размера
+				if (item.inside === null || !item.inside) {
+
+					// Если каллбэк вошел в размер
+					if (inside(item.params)) {
+						item.on && item.on();
+						item.inside = true;
+						break;
+					}
+				}
+			}
+		};
+
+		/**
+		 * Запускает каллбэки при определенном размере окна
+		 *
+		 * @param params {{ [min]:number, [max]:number }}
+		 * @param callbackOn {function} Запускается, когда размер окна подходит под заданный размер
+		 * @param callbackOff {function} Запускается, когда размер окна не подходит под заданный размер
+		 */
+		wdpro.onWindowSize = (params, callbackOn, callbackOff) => {
+
+			list.push({
+				params: params,
+				on: callbackOn,
+				off: callbackOff,
+				inside: null
+			});
+
+			update();
+		};
+
+
+		update();
+		$(window).on('resize', update);
+	}
+
+
+	/**
+	 * Добавляет в цену пробелы
+	 *
+	 * @return {jQuery} Объект, в котором находится цена
+	 */
+	$.fn.wdproCostSpaces = function (space) {
+
+		if (typeof space === "undefined")
+			space = ' ';
+
+		$(this).each(function () {
+
+			const $container = $(this);
+			if ($container.is('.js-cost-inited')) return true;
+			$container.addClass('js-cost-inited');
+
+			let cost = $container.text();
+
+			if (cost) {
+				cost = cost.replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1'+space);
+				$container.text(cost);
+			}
+
+		});
+
+		return this;
+	};
+
 
 
 

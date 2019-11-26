@@ -79,7 +79,7 @@ abstract class BaseSqlTable
 	 * array('WHERE field=%s', 'value')
 	 * array('field'=>'value')
 	 * @param string $fields Поля, которые выбрать из таблицы
-	 * @param null|array $insertIfNotExistsThisData Данные по-умолчанию
+	 * @param null|array|callable $insertIfNotExistsThisData Данные по-умолчанию
 	 * Они добавяться в таблицу, если строка будет не найдена
 	 * @return array
 	 */
@@ -94,6 +94,11 @@ abstract class BaseSqlTable
 		
 		// По-умолчанию
 		else if ($insertIfNotExistsThisData) {
+
+			// Когда данные по-умолчанию это каллбэк
+			if (is_callable($insertIfNotExistsThisData)) {
+				$insertIfNotExistsThisData = $insertIfNotExistsThisData();
+			}
 
 			// Сортировка
 			if (isset($insertIfNotExistsThisData['sortingWhere'])) {
@@ -316,6 +321,9 @@ abstract class BaseSqlTable
 			// Если есть первый элемент (Where)
 			if (isset($query[0])) {
 				// Когда второй параметр, это массив
+				if (!isset($query[1])) {
+					return $query[0];
+				}
 				if ( is_array($query[1]) ) {
 					return static::prepareByData($query[0], $query[1]);
 				}

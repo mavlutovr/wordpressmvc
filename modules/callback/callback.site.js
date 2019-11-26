@@ -10,8 +10,7 @@
 			var dialog = new wdpro.dialogs.Dialog({
 				title: 'Заказ обратного звонка',
 				content: 'Загрузка...',
-				substrate: true,
-				maxWidth: 400
+				substrate: true
 			});
 			dialog.show();
 			
@@ -33,6 +32,11 @@
 							form.loadingStop();
 
 							dialog.setContent(result['message']);
+							if (result['title']) {
+								dialog.setTitle(result['title']);
+							}
+
+							wdpro.yandexMetrika('reachGoal', 'callback');
 						}
 					);
 				});
@@ -73,6 +77,47 @@
 			});
 			
 			Return(form);
+		},
+
+
+		initHtmlForm: function ($form) {
+
+			$form.on('submit', (e) => {
+
+				const $button = $form.find('input[type="submit"], button[type="submit"]');
+				const $inputs = $form.find('input[type="tel"], input[type="text"]');
+				const data = $form.serializeObject();
+
+				$button.loading();
+
+
+				// Отправка на сервер
+				wdpro.ajax(
+					'callback-form',
+					data,
+
+
+					// Ответ сервера
+					(res) => {
+						$button.loadingStop();
+						$inputs.val('');
+
+						if (res.error) {
+							alert(res.error);
+							return false;
+						}
+
+						wdpro.dialogs.open({
+							//substrate: true,
+							content: res.message,
+							title: res.title
+						});
+					}
+				);
+
+				e.preventDefault();
+				return false;
+			});
 		}
 	};
 	

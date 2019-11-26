@@ -34,6 +34,17 @@ require(__DIR__ . '/Templates.php');
 // Обработка ошибок
 require(__DIR__.'/inc/errors.php');
 
+// При смене домена
+// Выключаем модуль разработчика и Soy компиляцию, потому что они не нужны на боевом сервере
+$lastDomainMd5 = get_option('wdpro_current_domain_md5');
+$currentDomainMd5 = md5($_SERVER['HTTP_HOST']);
+$currentDomainMd5 = str_replace('www.', '', $currentDomainMd5);
+if ($currentDomainMd5 !== $lastDomainMd5) {
+	update_option('wdpro_current_domain_md5', $currentDomainMd5);
+	update_option('wdpro_compile_soy', 0);
+	update_option('wdpro_dev_mode', 0);
+}
+
 // JavaScripts
 add_action('wp_enqueue_scripts', function ()
 {

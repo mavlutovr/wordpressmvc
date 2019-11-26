@@ -39,7 +39,7 @@
 	{
 		for(var i in e.target.classList)
 		{
-			if (e.target.classList[i] == 'wdpro-form')
+			if (e.target.classList[i] === 'wdpro-form')
 			{
 				var id = Number($(e.target).attr('data-form-id'));
 				forms[id].trigger('addedToPage');
@@ -205,6 +205,7 @@
 		 * @param [params] {{}} Данные формы
 		 */
 		init: function (params) {
+
 			var self = this;
 			
 			this.id = currentFormI;
@@ -331,11 +332,17 @@
 							self.showMessage(response['message'], {
 								hideForm: response['hideForm']
 							});
+							self.updateDialogPos();
 						}
 
 						// Редирект
 						if (response['location']) {
 							window.location = response['location'];
+						}
+
+						// Метрика
+						if (response['metrika']) {
+							wdpro.yandexMetrika('reachGoal', response['metrika']);
 						}
 					});
 				});
@@ -1624,8 +1631,6 @@
 		 */
 		add: function (data) {
 
-			console.log('data', data);
-			
 			// Данные это данные элемента
 			if (typeof data == 'object' && !(data instanceof BaseElement))
 			{
@@ -2531,7 +2536,7 @@
 		 * @returns {*}
 		 */
 		getDataValue: function () {
-			if (typeof this.params['value'] != 'undefined')
+			if (typeof this.params['value'] !== 'undefined')
 			{
 				return this.params['value'];
 			}
@@ -3191,10 +3196,22 @@
 		 * @param Return {Function} Каллбэк, принимающий код элемента
 		 */
 		getHtml: function (Return) {
-			Return(this.templates.hiddenField({
+
+			let self = this;
+
+			this.field = $(this.templates.hiddenField({
 				data:  this.getParams(),
 				attrs: this.getAttrs()
 			}));
+
+			Return(this.field);
+
+			// Если ранее устанавливалось значение
+			if (self.settedValue)
+			{
+				// Устанавливаем это значение
+				self.setValue(self.settedValue);
+			}
 		},
 
 
@@ -3352,6 +3369,22 @@
 	 */
 	wdpro.forms.FileElement = BaseElement.extend({
 
+
+		/**
+		 * Инициализация параметров
+		 *
+		 * @param params
+		 */
+		initParams: function (params) {
+			params = wdpro.extend({
+				'containerClass': 'wdpro-file-input-container',
+			}, params);
+
+			this._super(params);
+		},
+
+
+
 		/**
 		 * Создает HTML код поля
 		 *
@@ -3469,7 +3502,8 @@
 			// Change
 			this.field.on('change', function (e)
 			{
-				self.field.loading();
+				var loadingElement = false && self.field.is(':visible') ? self.field : self.field.closest('.JS_element');
+				loadingElement.loading();
 				self.uploadInProcess = true;
 
 				// Данные для отправки
@@ -3533,7 +3567,7 @@
 						success: function (json) {
 
 							var response = wdpro.parseJSON(json);
-							self.field.loadingStop();
+							loadingElement.loadingStop();
 
 							// Все верно
 							if (typeof response.error == 'undefined')
@@ -3569,7 +3603,7 @@
 						},
 
 						error: function (jqXHR, testStatus, errorThrow) {
-							self.field.loadingStop();
+							loadingElement.loadingStop();
 							console.error('При загрузке файла произошла ошибка', jqXHR.getAllResponseHeaders());
 						}
 					};

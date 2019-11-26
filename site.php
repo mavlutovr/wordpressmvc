@@ -1,5 +1,14 @@
 <?php
 
+// Редирект с index.php на корень сайта /
+if (wdpro_current_uri() === '/index.php') {
+	header('HTTP/1.1 301 Moved Permanently');
+	header('Location: '.home_url().'/');
+	exit();
+}
+
+
+
 // Шорткоды
 require __DIR__.'/inc/shortcodes.php';
 
@@ -53,9 +62,6 @@ if (is_file(WDPRO_TEMPLATE_PATH.'style.less'))
 		wp_deregister_style('style.css');
 	});
 }
-
-
-//do_action('wdpro-site-css');
 
 
 // Soy
@@ -239,7 +245,7 @@ function wdpro_page() {
 	if (!isset($wdproPage)) {
 
 		$post = get_post();
-		if (!($wdproPage = wdpro_object_by_post_id($post->ID)))
+		if (!$post || !$post->ID || !($wdproPage = wdpro_object_by_post_id($post->ID)))
 			$wdproPage = new \Wdpro\Page\BlankPage();
 	}
 
@@ -266,7 +272,7 @@ function wdpro_get_current_page($callback) {
 
 	wdpro_get_post(function ($post) use (&$callback) {
 
-		if ($post) {
+		if ($post && $post->ID) {
 			$callback(wdpro_object_by_post_id($post->ID));
 		}
 	});
@@ -346,7 +352,8 @@ add_action('wp_enqueue_scripts', function () {
 		'homeUrl'=>home_url().'/',
 		'imagesUrl'=>WDPRO_UPLOAD_IMAGES_URL,
 		'lang'=>\Wdpro\Lang\Data::getCurrentLangUri(),
-		'currentPostId'=>$post->ID,
+		'currentPostId'=>!empty($post->ID) ? $post->ID : '',
+		'currentPostName'=>!empty($post->post_name) ? $post->post_name : '',
 	));
 });
 

@@ -40,12 +40,37 @@ class Controller extends \Wdpro\BaseController {
 			);
 		});
 
+
 		// Статьи по тегам
-		add_shortcode('blog_tag_list', function () {
-			return Roll::getHtml([
-				'WHERE post_status="publish" AND in_menu=1 AND tags[lang] LIKE %s ORDER BY date_added',
-				['%"'.$_GET['tags'].'"%']
-			]);
+		wdpro_on_content_uri('blog_tag_list', function ($content, $page) {
+
+			/** @var \Wdpro\Blog\Entity $page */
+			wdpro_data('h1', $page->getData('h1') . ' - ' . $_GET['tags']);
+
+			wdpro_replace_or_append(
+				$content,
+				'[blog_tag_list]',
+
+				Roll::getHtml([
+					'WHERE post_status="publish" AND in_menu=1 AND tags[lang] LIKE %s ORDER BY date_added',
+					['%"'.urldecode($_GET['tags']).'"%']
+				])
+			);
+
+			//echo 2; exit();
+
+			return $content;
+		});
+
+
+
+
+		wdpro_on_uri('blog_tag_list', function () {
+
+			$page = wdpro_current_page();
+
+			wdpro_data('h1', $page->getH1() . ' - ' . urldecode($_GET['tags']));
+			wdpro_data('title', $page->getTitle() . ' - ' . urldecode($_GET['tags']));
 		});
 	}
 

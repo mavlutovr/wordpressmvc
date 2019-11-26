@@ -52,6 +52,15 @@ abstract class BaseEntity
 	 * @return $this
 	 */
 	public static function getEntity($dataOrId) {
+
+		if (is_numeric($dataOrId)) {
+			return wdpro_object(get_called_class(), $dataOrId);
+		}
+
+		if (is_string($dataOrId)) {
+			return wdpro_object_by_key($dataOrId);
+		}
+
 		return wdpro_object(get_called_class(), $dataOrId);
 	}
 
@@ -257,6 +266,31 @@ abstract class BaseEntity
 
 			if (isset($this->data[$key])) return $this->data[$key];*/
 		}
+	}
+
+
+	/**
+	 * Возвращает данные для шаблона
+	 *
+	 * @return array
+	 */
+	public function getDataForTemplate() {
+		$data = $this->getData();
+
+		$data = $this->prepareDataForTemplate($data);
+
+		return $data;
+	}
+
+
+	/**
+	 * Обработка данных для шаблона
+	 *
+	 * @param array $data Необработанные данные
+	 * @return array Обработанные данные
+	 */
+	public function prepareDataForTemplate($data) {
+		return $data;
 	}
 
 
@@ -469,7 +503,7 @@ abstract class BaseEntity
 	public function nextSortingToData($where)
 	{
 		$run = function ($fieldName) use (&$where) {
-			if (!$this->data[$fieldName])
+			if (!isset($this->data[$fieldName]) || !$this->data[$fieldName])
 			{
 				$where = preg_replace('~(ORDER BY [.`\s\S]+)~', '', $where);
 
@@ -779,7 +813,7 @@ abstract class BaseEntity
 	 * <pre>
 	 * return array(
 	 *  array(
-	 *      'roll'=>\App\Good\GoodConsoleRoll::class,
+	 *      'roll'=>\App\Good\ConsoleRoll::class,
 	 *      'label'=>'Товары',
 	 *
 	 *      // https://developer.wordpress.org/resource/dashicons/#products
@@ -787,6 +821,15 @@ abstract class BaseEntity
 	 *      'icon'=>'dashicons-products',
 	 *  )
 	 * );
+	 * </pre>
+	 *
+	 *
+	 * Или просто
+	 *
+	 * <pre>
+	 * return [
+	 *  \App\Good\ConsoleRoll::class,
+	 * ];
 	 * </pre>
 	 * 
 	 * @return array|void
@@ -980,7 +1023,8 @@ abstract class BaseEntity
 		$table = static::sqlTable();
 
 		foreach ($table::getLangsFields() as $coll) {
-			$this->data[$coll] = $this->data[$coll.\Wdpro\Lang\Data::getCurrentSuffix()];
+			if (isset($this->data[$coll]))
+				$this->data[$coll] = $this->data[$coll.\Wdpro\Lang\Data::getCurrentSuffix()];
 		}
 	}
 

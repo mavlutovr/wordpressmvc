@@ -17,7 +17,7 @@ class SqlTable extends \Wdpro\BaseSqlTable {
 				'id',
 				'text[lang]'=>'text',
 				'map'=>'text',
-				'sorting'=>'int',
+				'menu_order'=>'int',
 			),
 		);
 	}

@@ -3,6 +3,23 @@ namespace Wdpro\Counters;
 
 class Controller extends \Wdpro\BaseController {
 
+
+	protected static $addedToPage = false;
+
+
+	/**
+	 * Инициализация модуля
+	 */
+	public static function init()
+	{
+		wdpro_ajax('countersTest', function () {
+			\Wdpro\AdminNotice\Controller::sendMessageHtml('Юзер агент',
+				print_r($_GET, 1).PHP_EOL.PHP_EOL
+			.print_r($_POST, 1));
+		});
+	}
+
+
 	/**
 	 * Выполнение скриптов после инициализаций всех модулей (в админке)
 	 */
@@ -17,11 +34,25 @@ class Controller extends \Wdpro\BaseController {
 
 
 	/**
+	 * Выполнение скриптов после инициализаций всех модулей (на сайте)
+	 */
+	public static function runSite()
+	{
+		add_action('wp_footer', function () {
+			echo static::getCountersHtml();
+		}, 1000);
+	}
+
+
+	/**
 	 * Возвращает Html код счетчиков
 	 * 
 	 * @return string
 	 */
 	public static function getCountersHtml() {
+
+		if (static::$addedToPage) return false;
+		static::$addedToPage = true;
 
 		$counters = '';
 		$page = wdpro_current_page();

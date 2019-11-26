@@ -11,6 +11,12 @@
  */
 function wdpro_less_compile($lessFile, $cssFile)
 {
+	/*require_once __DIR__.'/../libs/lessphp/lessc.inc.php';
+	$less = new lessc();
+	$less->checkedCompile($lessFile, $cssFile);*/
+
+
+
 	require_once(__DIR__.'/../libs/less.php/Less.php');
 
 	$parser = new Less_Parser();
@@ -18,11 +24,6 @@ function wdpro_less_compile($lessFile, $cssFile)
 
 	$css = $parser->getCss();
 	file_put_contents($cssFile, $css);
-
-	/*require_once(__DIR__.'/../libs/lessc.inc.php');
-	$less = new lessc;
-	$css = $less->compileFile($lessFile);
-	file_put_contents($cssFile, $css);*/
 }
 
 

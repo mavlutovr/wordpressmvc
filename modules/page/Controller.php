@@ -199,10 +199,61 @@ class Controller extends \Wdpro\BaseController {
 		wdpro_on_page_init(function ($page) {
 			/** @var $page \App\BasePage */
 
-			if (is_object($page) && method_exists($page, 'isHome')
-				&& $page->isHome() && wdpro_current_post_name() !== '/') {
-				wdpro_location(wdpro_home_url_with_lang());
+			$langUri = \Wdpro\Lang\Controller::getCurrentLangUri();
+
+			$urlSlashMode = wdpro_url_slash_at_end_mode();
+			if ($langUri && $urlSlashMode) $langUri .= '/';
+
+
+			if (is_object($page)) {
+
+				// Главная
+				if (method_exists($page, 'isHome')
+					&& $page->isHome()) {
+
+					// Редирект главной на /
+					if (wdpro_current_post_name() !== '/'.$langUri) {
+
+						wdpro_location(wdpro_home_url_with_lang());
+					}
+				}
+
+
+				// Внутренняя
+				else {
+
+					// Чтобы адреса всегда заканчивались на / или не /
+					$uri = $_SERVER['REQUEST_URI'];
+					if (strstr($uri, '?')) {
+						$uri = str_replace('?'.$_SERVER['QUERY_STRING'], '', $uri);
+					}
+					$last = substr($uri, -1);
+
+					$redirectUrl = null;
+
+					if ($last === '/') {
+						if (!$urlSlashMode) {
+							$redirectUrl = substr($uri, 0, strlen($uri) - 1);
+						}
+					}
+
+					else {
+						if ($urlSlashMode) {
+							$redirectUrl = $uri . '/';
+						}
+					}
+
+					if ($redirectUrl !== null) {
+						if ($_SERVER['QUERY_STRING']) {
+							$redirectUrl .= '?'.$_SERVER['QUERY_STRING'];
+						}
+						wdpro_location($redirectUrl, 301);
+					}
+				}
+
+
 			}
+
 
 			if (method_exists($page, 'initCard')) {
 				$data = $page->initCard();
@@ -415,9 +466,13 @@ class Controller extends \Wdpro\BaseController {
 									if ( /*'page' == $post->post_type && */0 != count( get_page_templates( ) ) && get_option( 'page_for_posts' ) != $post->ID ) {
 										$metaPageTemplate = get_post_meta($post->ID, 'page_template');
 										if (is_array($metaPageTemplate)) {
+											if (!count($metaPageTemplate)) $metaPageTemplate = null;
+
 											$metaPageTemplate = $metaPageTemplate[0];
 										}
 										$template = $metaPageTemplate;
+
+										if ($template):
 										?>
 										<p><strong><?php _e('Template') ?></strong></p>
 										<label class="screen-reader-text" for="page_template"><?php _e('Page Template') ?></label><select name="page_template" id="page_template">
@@ -437,6 +492,7 @@ class Controller extends \Wdpro\BaseController {
 											<?php page_template_dropdown($template); ?>
 										</select>
 										<?php
+										endif;
 									}
 
 
@@ -840,7 +896,7 @@ class Controller extends \Wdpro\BaseController {
 	 * @return \Wdpro\BasePage
 	 */
 	public static function getByPostByName($postName) {
-		
+
 		if ($pageData = SqlTable::getRow(
 			['WHERE `post_name`=%s ', [$postName]],
 			'id'
@@ -852,14 +908,10 @@ class Controller extends \Wdpro\BaseController {
 		// Когда страница есть в базе WP, но нету в MVC
 		else {
 
-			echo 123;
-
 			if ($postData = \Wdpro\Page\SqlTable::getRow([
 					'WHERE post_name = %s',
 				[$postName]
 			])) {
-
-				print_r($postData);
 
 				// Получаем класс страниц по типу
 				if ($class = wdpro_get_entity_class_by_post_type($postData['post_type'])) {

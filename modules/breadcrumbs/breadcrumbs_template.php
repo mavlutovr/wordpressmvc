@@ -10,4 +10,6 @@
 		?></a><?php endif; ?>
 		
 	<?php endforeach; ?>
+
+	<span class="breadcrumbs-separator">/</span>
 </div>

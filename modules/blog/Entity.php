@@ -5,6 +5,33 @@ use Wdpro\Exception;
 
 class Entity extends \Wdpro\BasePage {
 
+	/**
+	 * Инициализация страницы до отправки html кода в браузер
+	 *
+	 * @return array Данные, которые попадут в шаблон
+	 * <pre>
+	 * return [
+	 *  'city'=>'Санкт-Петербург',
+	 * ];
+	 * </pre>
+	 *
+	 * Потом в шаблоне:
+	 * <pre>
+	 * <div>Город: <?=$city?></div>
+	 * </pre>
+	 */
+	public function initCard()
+	{
+		$postName = $this->getData('post_name');
+		$templateFile = WDPRO_TEMPLATE_PATH.'blog/'.$postName.'/main.php';
+
+		if (is_file($templateFile)) {
+			\Wdpro\Templates::setCurrentTemplate($templateFile);
+		}
+
+		parent::initCard();
+	}
+
 
 	/**
 	 * Текст страницы
