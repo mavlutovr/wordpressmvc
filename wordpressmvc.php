@@ -11,7 +11,6 @@
 if (isset($_SERVER['HTTP_HTTPS']) && $_SERVER['HTTP_HTTPS'] === 'on')
 	$_SERVER['HTTPS'] = 'on';
 
-
 // Дата
 date_default_timezone_set(ini_get('date.timezone'));
 
@@ -63,19 +62,16 @@ require(__DIR__ . '/inc/soy.php');
 // Less Compiler
 require(__DIR__ . '/inc/less.php');
 
-// Additional fields for pages (title, keywords, description, h1, перелинковка)
-require(__DIR__ . '/inc/additionalFields.php');
-
 // Ajax
 if (defined('DOING_AJAX') && DOING_AJAX)
 {
 	$ajaxCallback = function () {
-		
+
 		if (isset($_GET['action']) && $_GET['action'] === 'wdpro')
 		{
 			$wdproAction = $_GET['wdproAction'] ? $_GET['wdproAction'] : '';
 			do_action('wdpro-ajax-'.$wdproAction, $_POST);
-			
+
 			define('WDPRO_AJAX', $wdproAction);
 		}
 	};
@@ -83,7 +79,6 @@ if (defined('DOING_AJAX') && DOING_AJAX)
 	add_action('wp_ajax_nopriv_wdpro', $ajaxCallback);
 	add_action('wp_ajax_wdpro', $ajaxCallback);
 }
-
 
 // Путь к языкам
 Wdpro\Autoload::add('Wdpro\Lang', __DIR__.'/modules/lang');
@@ -104,6 +99,10 @@ Wdpro\Modules::addWdpro('extra/downloadFile');
 Wdpro\Modules::addWdpro('extra/consoleWidget');
 Wdpro\Modules::addWdpro('extra/seo/scripts');
 
+// Additional fields for pages (title, keywords, description, h1, перелинковка)
+require(__DIR__ . '/inc/additionalFields.php');
+
+
 // When it is Console
 if (is_admin())
 {
@@ -118,54 +117,60 @@ else
 }
 
 
+
+if (false) {
+
+
+
+
 // Выключение объединения скриптов
-if (get_option('wdpro_uncatenate_scripts') == 1) {
-	define('CONCATENATE_SCRIPTS', false);
-}
+	if (get_option('wdpro_uncatenate_scripts') == 1) {
+		define('CONCATENATE_SCRIPTS', false);
+	}
 
 
-/**
- * Возвращает хлебные крошки после инициализации
- * 
- * Если ее убрать в site.php, то при вызове этой функции из темы functions.php будет 
- * ошибка
- *
- * @param callback $callback Каллбэк, получающий объект хлебных крошек
- */
-function breadcrumbsInit($callback) {
+	/**
+	 * Возвращает хлебные крошки после инициализации
+	 *
+	 * Если ее убрать в site.php, то при вызове этой функции из темы functions.php будет
+	 * ошибка
+	 *
+	 * @param callback $callback Каллбэк, получающий объект хлебных крошек
+	 */
+	function breadcrumbsInit($callback) {
 
-	add_action('wdpro_breadcrumbs_init', $callback);
-}
+		add_action('wdpro_breadcrumbs_init', $callback);
+	}
 
 
 // Cron
-if (defined('DOING_CRON') && DOING_CRON) {
+	if (defined('DOING_CRON') && DOING_CRON) {
 
-	\Wdpro\Modules::run('cron');
-}
-
-
-
-
-
-/**
- * Скрипты
- */
-add_action('wp_footer', function () {
-
-	global $wdproJsData;
-
-	$data = '';
-
-	foreach ($wdproJsData as $key => $value) {
-		if ($value === '') {
-			$value = 'null';
-		}
-		$data .= PHP_EOL
-			. 'wdpro.'.$key.' = '.json_encode($value, JSON_UNESCAPED_UNICODE).';';
+		\Wdpro\Modules::run('cron');
 	}
 
-	echo '<script>
+
+
+
+
+	/**
+	 * Скрипты
+	 */
+	add_action('wp_footer', function () {
+
+		global $wdproJsData;
+
+		$data = '';
+
+		foreach ($wdproJsData as $key => $value) {
+			if ($value === '') {
+				$value = 'null';
+			}
+			$data .= PHP_EOL
+				. 'wdpro.'.$key.' = '.json_encode($value, JSON_UNESCAPED_UNICODE).';';
+		}
+
+		echo '<script>
 			if (window.wdpro) {
 				wdpro.WDPRO_TEMPLATE_URL = "'.WDPRO_TEMPLATE_URL.'";
 				wdpro.WDPRO_UPLOAD_IMAGES_URL = "'.WDPRO_UPLOAD_IMAGES_URL.'";
@@ -173,27 +178,29 @@ add_action('wp_footer', function () {
 				'.$data.'
 			}
 			</script>';
-});
+	});
 
 
 // Отключаем смайлики в админке, чтобы они не портились в редакторе (не превращались в теги <img> там где не нужно
-if (wdpro_is_admin()) {
-	add_action( "init", "wdpro_disable_emojis" );
-}
-
-
-/**
- * Возвращает объект хлебных крошек
- *
- * Это не нужно убирать в site.php, потому что используется в ajax запросах
- *
- * @return \Wdpro\Breadcrumbs\Breadcrumbs
- */
-function wdpro_breadcrumbs()
-{
-	global $breadcrumbs;
-	if (!$breadcrumbs) {
-		$breadcrumbs = new \Wdpro\Breadcrumbs\Breadcrumbs();
+	if (wdpro_is_admin()) {
+		add_action( "init", "wdpro_disable_emojis" );
 	}
-	return $breadcrumbs;
+
+
+	/**
+	 * Возвращает объект хлебных крошек
+	 *
+	 * Это не нужно убирать в site.php, потому что используется в ajax запросах
+	 *
+	 * @return \Wdpro\Breadcrumbs\Breadcrumbs
+	 */
+	function wdpro_breadcrumbs()
+	{
+		global $breadcrumbs;
+		if (!$breadcrumbs) {
+			$breadcrumbs = new \Wdpro\Breadcrumbs\Breadcrumbs();
+		}
+		return $breadcrumbs;
+	}
 }
+
