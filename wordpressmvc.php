@@ -118,89 +118,83 @@ else
 
 
 
-if (false) {
-
-
-
-
 // Выключение объединения скриптов
-	if (get_option('wdpro_uncatenate_scripts') == 1) {
-		define('CONCATENATE_SCRIPTS', false);
-	}
+if (get_option('wdpro_uncatenate_scripts') == 1) {
+	define('CONCATENATE_SCRIPTS', false);
+}
 
 
-	/**
-	 * Возвращает хлебные крошки после инициализации
-	 *
-	 * Если ее убрать в site.php, то при вызове этой функции из темы functions.php будет
-	 * ошибка
-	 *
-	 * @param callback $callback Каллбэк, получающий объект хлебных крошек
-	 */
-	function breadcrumbsInit($callback) {
+/**
+ * Возвращает хлебные крошки после инициализации
+ *
+ * Если ее убрать в site.php, то при вызове этой функции из темы functions.php будет
+ * ошибка
+ *
+ * @param callback $callback Каллбэк, получающий объект хлебных крошек
+ */
+function breadcrumbsInit($callback) {
 
-		add_action('wdpro_breadcrumbs_init', $callback);
-	}
+	add_action('wdpro_breadcrumbs_init', $callback);
+}
 
 
 // Cron
-	if (defined('DOING_CRON') && DOING_CRON) {
+if (defined('DOING_CRON') && DOING_CRON) {
 
-		\Wdpro\Modules::run('cron');
+	\Wdpro\Modules::run('cron');
+}
+
+
+
+
+
+/**
+ * Скрипты
+ */
+add_action('wp_footer', function () {
+
+	global $wdproJsData;
+
+	$data = '';
+
+	foreach ($wdproJsData as $key => $value) {
+		if ($value === '') {
+			$value = 'null';
+		}
+		$data .= PHP_EOL
+			. 'wdpro.'.$key.' = '.json_encode($value, JSON_UNESCAPED_UNICODE).';';
 	}
 
-
-
-
-
-	/**
-	 * Скрипты
-	 */
-	add_action('wp_footer', function () {
-
-		global $wdproJsData;
-
-		$data = '';
-
-		foreach ($wdproJsData as $key => $value) {
-			if ($value === '') {
-				$value = 'null';
-			}
-			$data .= PHP_EOL
-				. 'wdpro.'.$key.' = '.json_encode($value, JSON_UNESCAPED_UNICODE).';';
+	echo '<script>
+		if (window.wdpro) {
+			wdpro.WDPRO_TEMPLATE_URL = "'.WDPRO_TEMPLATE_URL.'";
+			wdpro.WDPRO_UPLOAD_IMAGES_URL = "'.WDPRO_UPLOAD_IMAGES_URL.'";
+			wdpro.WDPRO_HOME_URL = "'.home_url().'/";
+			'.$data.'
 		}
-
-		echo '<script>
-			if (window.wdpro) {
-				wdpro.WDPRO_TEMPLATE_URL = "'.WDPRO_TEMPLATE_URL.'";
-				wdpro.WDPRO_UPLOAD_IMAGES_URL = "'.WDPRO_UPLOAD_IMAGES_URL.'";
-				wdpro.WDPRO_HOME_URL = "'.home_url().'/";
-				'.$data.'
-			}
-			</script>';
-	});
+		</script>';
+});
 
 
 // Отключаем смайлики в админке, чтобы они не портились в редакторе (не превращались в теги <img> там где не нужно
-	if (wdpro_is_admin()) {
-		add_action( "init", "wdpro_disable_emojis" );
-	}
+if (wdpro_is_admin()) {
+	add_action( "init", "wdpro_disable_emojis" );
+}
 
 
-	/**
-	 * Возвращает объект хлебных крошек
-	 *
-	 * Это не нужно убирать в site.php, потому что используется в ajax запросах
-	 *
-	 * @return \Wdpro\Breadcrumbs\Breadcrumbs
-	 */
-	function wdpro_breadcrumbs()
-	{
-		global $breadcrumbs;
-		if (!$breadcrumbs) {
-			$breadcrumbs = new \Wdpro\Breadcrumbs\Breadcrumbs();
-		}
-		return $breadcrumbs;
+/**
+ * Возвращает объект хлебных крошек
+ *
+ * Это не нужно убирать в site.php, потому что используется в ajax запросах
+ *
+ * @return \Wdpro\Breadcrumbs\Breadcrumbs
+ */
+function wdpro_breadcrumbs()
+{
+	global $breadcrumbs;
+	if (!$breadcrumbs) {
+		$breadcrumbs = new \Wdpro\Breadcrumbs\Breadcrumbs();
 	}
+	return $breadcrumbs;
 }
 
