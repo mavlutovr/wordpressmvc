@@ -3,7 +3,7 @@ return [
 'name'=>'Текстовый редактор',
 'text'=>'<h2>Видео</h2>
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/EvRguQ5MAts" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<p class="youtube-container-1280x720"><iframe allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="" frameborder="0" height="315" src="https://www.youtube.com/embed/EvRguQ5MAts" width="560"></iframe></p>
 
 <h2>Тезисно</h2>
 
@@ -11,22 +11,28 @@ return [
 
 <h3>Как делать заголовки</h3>
 
-<p>Для текста выберите <a href="https://i.imgur.com/KypZXiv.png" target="_blank">тип Заголовок</a>.</p>
+<p>Для текста выберите тип <strong>Заголовок</strong>.</p>
+
+<p><img src="https://i.imgur.com/SKuYWSe.png" alt=""></p>
 
 <p>В том случае, когда вы хотите, чтобы ваш сайт хорошо продвигался, не выбирайте "Заголовок 1". Лучше выберите Заголовок 2, 3 и т.д.</p>
 
+<h3>Как вставлять файлы для скачивания</h3>
 
-<h3>Основные кнопки</h3>
+<p><img src="https://i.imgur.com/fowQiQ0.png" alt=""></p>
 
-<p><a href="https://i.imgur.com/uM9cK3n.png" target="_blank">Как вставлять файлы для скачивания</a>.</p>
+<h3>Как вставлять изображения</h3>
+<p><img src="https://i.imgur.com/zJBmxkQ.png" alt=""></p>
 
-<p><a href="https://i.imgur.com/W1HzLl5.png" target="_blank">Как вставлять изображения</a>.</p>
+<h3>Как вставлять видео из YouTube</h3>
+<p><img src="https://i.imgur.com/MoJ5xty.png" alt=""></p>
 
-<p><a href="https://i.imgur.com/5T673eZ.png" target="_blank">Как вставлять видео из YouTube</a>.</p>
+<h3>Как делать списки</h3>
+<p><img src="https://i.imgur.com/wRquPgx.png" alt=""></p>
 
-<p><a href="https://i.imgur.com/7RXP5Pk.png" target="_blank">Как делать списки</a>.</p>
+<h3>Как вставить чистый текст</h3>
 
-<h3>Как редактор вставлять чистый текст</h3>
+<p>Чтобы в тексте не было оформления, которое тоже иногда копируется.</p>
 
 <p>Ctrl+Shift+V.</p>
 ',
