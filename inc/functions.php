@@ -1114,26 +1114,8 @@ function wdpro_image_watermark($fileFullName, $params) {
 
 	if ($fileFullName && is_file($fileFullName) && is_file($params['file'])) {
 
-		// Imagick
-		if (class_exists('Imagick')) {
 
-			// Оригинальное изображение
-			$image = new Imagick();
-			$image->readImage($fileFullName);
-
-			// Водяной знак
-			$watermark = new Imagick();
-			$watermark->readImage($params['file']);
-
-			if ($params['opacity'] !== 1) {
-				$watermark->setImageOpacity($params['opacity']);
-			}
-
-			// Размеры изображений
-			$sizeBig = $image->getImageGeometry();
-			$sizeSmall = $watermark->getImageGeometry();
-
-			// Расположение
+		$getPos = function ($sizeBig, $sizeSmall) use (&$params) {
 			// Центр (по-умолчанию)
 			$x = round($sizeBig['width'] / 2 - $sizeSmall['width'] / 2);
 			$y = round($sizeBig['height'] / 2 - $sizeSmall['height'] / 2);
@@ -1159,8 +1141,37 @@ function wdpro_image_watermark($fileFullName, $params) {
 					$params['bottom'];
 			}
 
+			return [
+				'x'=>$x,
+				'y'=>$y,
+			];
+		};
+
+		// Imagick
+		if (class_exists('Imagick')) {
+
+			// Оригинальное изображение
+			$image = new Imagick();
+			$image->readImage($fileFullName);
+
+			// Водяной знак
+			$watermark = new Imagick();
+			$watermark->readImage($params['file']);
+
+			if ($params['opacity'] !== 1) {
+				$watermark->setImageOpacity($params['opacity']);
+			}
+
+			// Размеры изображений
+			$sizeBig = $image->getImageGeometry();
+			$sizeSmall = $watermark->getImageGeometry();
+
+			// Расположение
+			$pos = $getPos($sizeBig, $sizeSmall);
+
+
 			// Накладываем изображение
-			$image->compositeImage($watermark, Imagick::COMPOSITE_DEFAULT, $x, $y);
+			$image->compositeImage($watermark, Imagick::COMPOSITE_DEFAULT, $pos['x'], $pos['y']);
 
 			@unlink($fileFullName);
 
@@ -1191,16 +1202,7 @@ function wdpro_image_watermark($fileFullName, $params) {
 			];
 
 			// Отступы
-			if (isset($params['right']) && $params['right']) {
-				$params['left'] =
-					$imgSize['width'] - $watermarkSize['width'] - $params['right'];
-			}
-			if (isset($params['bottom']) && $params['bottom']) {
-				$params['top'] =
-					$imgSize['height'] - $watermarkSize['height'] - $params['bottom'];
-			}
-			if (!isset($params['left'])) $params['left'] = 0;
-			if (!isset($params['top'])) $params['top'] = 0;
+			$pos = $getPos($imgSize, $watermarkSize);
 
 			// Наложение водяного знака
 
@@ -1218,8 +1220,8 @@ function wdpro_image_watermark($fileFullName, $params) {
 			imagecopy(
 				$img,
 				$watermark,
-				$params['left'],
-				$params['top'],
+				$pos['x'],
+				$pos['y'],
 				0,
 				0,
 				$watermarkSize['width'],
