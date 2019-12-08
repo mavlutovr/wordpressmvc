@@ -1116,14 +1116,18 @@ function wdpro_image_watermark($fileFullName, $params) {
 
 		// Imagick
 		if (class_exists('Imagick')) {
-			// Водяной знак
-			$watermark = new Imagick($params['file']);
-			if ($params['opacity']) {
-				$watermark->setImageOpacity($params['opacity']);
-			}
 
 			// Оригинальное изображение
-			$image = new Imagick($fileFullName);
+			$image = new Imagick();
+			$image->readImage($fileFullName);
+
+			// Водяной знак
+			$watermark = new Imagick();
+			$watermark->readImage($params['file']);
+
+			if ($params['opacity'] !== 1) {
+				$watermark->setImageOpacity($params['opacity']);
+			}
 
 			// Размеры изображений
 			$sizeBig = $image->getImageGeometry();
@@ -1157,10 +1161,6 @@ function wdpro_image_watermark($fileFullName, $params) {
 
 			// Накладываем изображение
 			$image->compositeImage($watermark, Imagick::COMPOSITE_DEFAULT, $x, $y);
-			//$image->flattenImages();
-			//$image->setImageAlphaChannel(Imagick::ALPHACHANNEL_REMOVE);
-			//$image->mergeImageLayers(Imagick::LAYERMETHOD_FLATTEN);
-			//$image->setImageCompressionQuality(90);
 
 			@unlink($fileFullName);
 
