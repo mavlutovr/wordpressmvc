@@ -11,7 +11,6 @@
 if (isset($_SERVER['HTTP_HTTPS']) && $_SERVER['HTTP_HTTPS'] === 'on')
 	$_SERVER['HTTPS'] = 'on';
 
-
 // Дата
 date_default_timezone_set(ini_get('date.timezone'));
 
@@ -63,19 +62,16 @@ require(__DIR__ . '/inc/soy.php');
 // Less Compiler
 require(__DIR__ . '/inc/less.php');
 
-// Additional fields for pages (title, keywords, description, h1, перелинковка)
-require(__DIR__ . '/inc/additionalFields.php');
-
 // Ajax
 if (defined('DOING_AJAX') && DOING_AJAX)
 {
 	$ajaxCallback = function () {
-		
+
 		if (isset($_GET['action']) && $_GET['action'] === 'wdpro')
 		{
 			$wdproAction = $_GET['wdproAction'] ? $_GET['wdproAction'] : '';
 			do_action('wdpro-ajax-'.$wdproAction, $_POST);
-			
+
 			define('WDPRO_AJAX', $wdproAction);
 		}
 	};
@@ -83,7 +79,6 @@ if (defined('DOING_AJAX') && DOING_AJAX)
 	add_action('wp_ajax_nopriv_wdpro', $ajaxCallback);
 	add_action('wp_ajax_wdpro', $ajaxCallback);
 }
-
 
 // Путь к языкам
 Wdpro\Autoload::add('Wdpro\Lang', __DIR__.'/modules/lang');
@@ -104,6 +99,10 @@ Wdpro\Modules::addWdpro('extra/downloadFile');
 Wdpro\Modules::addWdpro('extra/consoleWidget');
 Wdpro\Modules::addWdpro('extra/seo/scripts');
 
+// Additional fields for pages (title, keywords, description, h1, перелинковка)
+require(__DIR__ . '/inc/additionalFields.php');
+
+
 // When it is Console
 if (is_admin())
 {
@@ -118,6 +117,7 @@ else
 }
 
 
+
 // Выключение объединения скриптов
 if (get_option('wdpro_uncatenate_scripts') == 1) {
 	define('CONCATENATE_SCRIPTS', false);
@@ -126,8 +126,8 @@ if (get_option('wdpro_uncatenate_scripts') == 1) {
 
 /**
  * Возвращает хлебные крошки после инициализации
- * 
- * Если ее убрать в site.php, то при вызове этой функции из темы functions.php будет 
+ *
+ * Если ее убрать в site.php, то при вызове этой функции из темы functions.php будет
  * ошибка
  *
  * @param callback $callback Каллбэк, получающий объект хлебных крошек
@@ -166,13 +166,13 @@ add_action('wp_footer', function () {
 	}
 
 	echo '<script>
-			if (window.wdpro) {
-				wdpro.WDPRO_TEMPLATE_URL = "'.WDPRO_TEMPLATE_URL.'";
-				wdpro.WDPRO_UPLOAD_IMAGES_URL = "'.WDPRO_UPLOAD_IMAGES_URL.'";
-				wdpro.WDPRO_HOME_URL = "'.home_url().'/";
-				'.$data.'
-			}
-			</script>';
+		if (window.wdpro) {
+			wdpro.WDPRO_TEMPLATE_URL = "'.WDPRO_TEMPLATE_URL.'";
+			wdpro.WDPRO_UPLOAD_IMAGES_URL = "'.WDPRO_UPLOAD_IMAGES_URL.'";
+			wdpro.WDPRO_HOME_URL = "'.home_url().'/";
+			'.$data.'
+		}
+		</script>';
 });
 
 
@@ -197,3 +197,4 @@ function wdpro_breadcrumbs()
 	}
 	return $breadcrumbs;
 }
+
