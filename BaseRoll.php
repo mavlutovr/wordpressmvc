@@ -11,6 +11,9 @@ abstract class BaseRoll
 	use Tools;
 
 
+	protected static $templateExtraData = [];
+
+
 
 	/**
 	 * Возвращает объект сущности списка
@@ -64,6 +67,17 @@ abstract class BaseRoll
 		$class = static::getEntityClass();
 
 		return $class::getType();
+	}
+
+
+	/**
+	 * Устанавливает значение для данных шаблона
+	 *
+	 * @param string $dataKey Ключ (имя) данных
+	 * @param * $dataValue Данные
+	 */
+	public static function set($dataKey, $dataValue) {
+		static::$templateExtraData[$dataKey] = $dataValue;
 	}
 
 }

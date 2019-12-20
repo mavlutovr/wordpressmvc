@@ -61,7 +61,7 @@ class Roll extends \Wdpro\BaseRoll {
 		if ($list = static::getData($where)) {
 			$template = static::getTemplatePhpFile();
 
-			return wdpro_render_php($template, $list);
+			return wdpro_render_php($template, $list, static::$templateExtraData);
 		}
 	}
 
