@@ -221,13 +221,28 @@ if (typeof Array.isArray === 'undefined') {
 			var counterFn = window[counterFnKey];
 
 			if (counterFn && counterFn[args2[1]]) {
-				console.log('counterFn', args2[1], args2[2])
+				console.log('counterFn', args2[1], args2[2]);
 				counterFn[args2[1]](args[2]);
 			}
 			else {
 				ym(...args2);
 			}
 		});
+	};
+
+
+	/**
+	 * Достижение цели
+	 *
+	 * https://yandex.ru/support/metrica/objects/reachgoal.html
+	 *
+	 * target[, params[, callback[, ctx]]]);
+	 */
+	wdpro.yandexMetrikaGoal = function (...args) {
+		var args2 = wdpro.clone(args);
+		args2.unshift('reachGoal');
+
+		wdpro.yandexMetrika(...args2);
 	};
 
 
