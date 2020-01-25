@@ -216,18 +216,40 @@ if (typeof Array.isArray === 'undefined') {
 
 			console.log('metrika', args2);
 
+			// 34580740, "reachGoal", "addedToFav"
+
+
 			var counterFnKey = 'yaCounter'+id;
 
 			var counterFn = window[counterFnKey];
 
+			console.log('counterFn', counterFn);
+			console.log('args2[1]', args2[1]);
+			console.log('args2[2]', args2[2]);
+
 			if (counterFn && counterFn[args2[1]]) {
-				console.log('counterFn', args2[1], args2[2])
+				console.log('counterFn', args2[1], args2[2]);
 				counterFn[args2[1]](args[2]);
 			}
 			else {
 				ym(...args2);
 			}
 		});
+	};
+
+
+	/**
+	 * Достижение цели
+	 *
+	 * https://yandex.ru/support/metrica/objects/reachgoal.html
+	 *
+	 * target[, params[, callback[, ctx]]]);
+	 */
+	wdpro.yandexMetrikaGoal = function (...args) {
+		var args2 = wdpro.clone(args);
+		args2.unshift('reachGoal');
+
+		wdpro.yandexMetrika(...args2);
 	};
 
 

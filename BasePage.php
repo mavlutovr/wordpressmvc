@@ -99,6 +99,8 @@ abstract class BasePage extends BaseEntity
 		$data = wdpro_extend(get_post($this->id(), ARRAY_A), $this->getData());
 
 		$data['url'] = home_url($data['post_name']);
+		$data['test'] = 1;
+		//print_r(debug_backtrace());
 
 		return $data;
 	}
