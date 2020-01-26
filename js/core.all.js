@@ -211,28 +211,28 @@ if (typeof Array.isArray === 'undefined') {
 	 */
 	wdpro.yandexMetrika = function (...args) {
 		wdpro.each(yandexMetrikaIds, function (id) {
-			var args2 = wdpro.clone(args);
-			args2.unshift(id);
+			let argsForNewMethod = wdpro.clone(args);
+			let argsForOldMethod = wdpro.clone(args);
+			argsForOldMethod.unshift(id);
 
-			console.log('metrika', args2);
+			console.log('metrika', argsForOldMethod);
 
-			// 34580740, "reachGoal", "addedToFav"
+			let counterFnKey = 'yaCounter'+id;
+
+			let counter = window[counterFnKey];
+			let method = argsForNewMethod.shift();
 
 
-			var counterFnKey = 'yaCounter'+id;
+			//console.log('counter', counter);
+			//console.log('method', method);
+			//console.log('args', argsForNewMethod);
 
-			var counterFn = window[counterFnKey];
-
-			console.log('counterFn', counterFn);
-			console.log('args2[1]', args2[1]);
-			console.log('args2[2]', args2[2]);
-
-			if (counterFn && counterFn[args2[1]]) {
-				console.log('counterFn', args2[1], args2[2]);
-				counterFn[args2[1]](args[2]);
+			if (counter && counter[argsForOldMethod[1]]) {
+				console.log('counter', method, argsForNewMethod);
+				counter[method](...argsForNewMethod);
 			}
 			else {
-				ym(...args2);
+				ym(...argsForOldMethod);
 			}
 		});
 	};
