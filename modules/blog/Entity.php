@@ -23,7 +23,10 @@ class Entity extends \Wdpro\BasePage {
 	public function initCard()
 	{
 		$postName = $this->getData('post_name');
-		$templateFile = WDPRO_TEMPLATE_PATH.'blog/'.$postName.'/main.php';
+		$path = WDPRO_TEMPLATE_PATH.'blog/'.$postName.'/';
+		$post_url = WDPRO_TEMPLATE_URL.'blog/'.$postName.'/';
+		$templateFile = $path.'main.php';
+		$this->data['post_url'] = $post_url;
 
 		if (is_file($templateFile)) {
 			\Wdpro\Templates::setCurrentTemplate($templateFile);
