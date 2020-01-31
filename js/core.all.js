@@ -211,23 +211,45 @@ if (typeof Array.isArray === 'undefined') {
 	 */
 	wdpro.yandexMetrika = function (...args) {
 		wdpro.each(yandexMetrikaIds, function (id) {
-			var args2 = wdpro.clone(args);
-			args2.unshift(id);
+			let argsForNewMethod = wdpro.clone(args);
+			let argsForOldMethod = wdpro.clone(args);
+			argsForOldMethod.unshift(id);
 
-			console.log('metrika', args2);
+			console.log('metrika', argsForOldMethod);
 
-			var counterFnKey = 'yaCounter'+id;
+			let counterFnKey = 'yaCounter'+id;
 
-			var counterFn = window[counterFnKey];
+			let counter = window[counterFnKey];
+			let method = argsForNewMethod.shift();
 
-			if (counterFn && counterFn[args2[1]]) {
-				console.log('counterFn', args2[1], args2[2])
-				counterFn[args2[1]](args[2]);
+
+			//console.log('counter', counter);
+			//console.log('method', method);
+			//console.log('args', argsForNewMethod);
+
+			if (counter && counter[argsForOldMethod[1]]) {
+				console.log('counter', method, argsForNewMethod);
+				counter[method](...argsForNewMethod);
 			}
 			else {
-				ym(...args2);
+				ym(...argsForOldMethod);
 			}
 		});
+	};
+
+
+	/**
+	 * Достижение цели
+	 *
+	 * https://yandex.ru/support/metrica/objects/reachgoal.html
+	 *
+	 * target[, params[, callback[, ctx]]]);
+	 */
+	wdpro.yandexMetrikaGoal = function (...args) {
+		var args2 = wdpro.clone(args);
+		args2.unshift('reachGoal');
+
+		wdpro.yandexMetrika(...args2);
 	};
 
 

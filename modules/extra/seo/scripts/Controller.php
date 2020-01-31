@@ -41,7 +41,43 @@ class Controller extends \Wdpro\BaseController {
 				$html = preg_replace_callback(
 					'~(<link.*?rel=["\']stylesheet["\'].*?>)~i',
 					function ($arr) {
-						static::$cssFileHtmls .= $arr[1].PHP_EOL;
+
+						if (true && preg_match(
+							"/(http|https|ftp|ftps)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(\/\S*)?/",
+							$arr[1],
+							$arr2
+						)) {
+							$url = $arr2[0];
+							$url = str_replace('"', '', $url);
+							$url = str_replace('\'', '', $url);
+
+							if (true) {
+								$tag = '
+<!--[if IE]>
+  <link rel="stylesheet" href="'.$url.'"> 
+<![endif]-->
+<!--[if !IE]> -->
+      <link rel="stylesheet" href="'.$url.'" lazyload>
+<!-- <![endif]-->';
+							}
+							if (false) {
+								$tag = '<script>
+{
+	const resource = document.createElement(\'link\');
+	resource.setAttribute("rel", "stylesheet");
+  resource.setAttribute("href","'.$url.'");
+  resource.setAttribute("type","text/css");      
+  const head = document.getElementsByTagName(\'head\')[0];
+  head.appendChild(resource);
+}</script>';
+							}
+						}
+
+						else {
+							$tag = $arr[1];
+						}
+
+						static::$cssFileHtmls .= $tag.PHP_EOL;
 						return '';
 					},
 					$html

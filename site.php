@@ -264,6 +264,17 @@ function wdpro_get_current_page($callback) {
 }
 
 
+// Отправка данных страницы в шаблон
+wdpro_get_current_page(function ($page) {
+	global $data;
+
+	if (method_exists($page, 'getDataWithPost')) {
+		$data = $page->getDataWithPost();
+	}
+});
+
+
+
 /**
  * Обработка открытия страницы определенного типа
  *

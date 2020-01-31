@@ -832,7 +832,7 @@ abstract class BaseEntity
 	 * ];
 	 * </pre>
 	 * 
-	 * @return array|void
+	 * @return array
 	 */
 	protected static function childs()
 	{
