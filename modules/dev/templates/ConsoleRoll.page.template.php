@@ -21,6 +21,12 @@ class ConsoleRoll extends \Wdpro\Console\PagesRoll {
 	 *
 	 *  'subsections'=>false,
 	 *  'where'=>["WHERE ... %d, %d", [1, 2]],
+	 *  'where'  => [
+	 *    'WHERE `post_parent`=%d ORDER BY `menu_order`',
+	 *    [
+	 *      wdpro_current_console_section_id(), // ID текущего раздела
+	 *    ]
+	 *  ],
 	 *  'pagination'=>10, //  Количество элементов на странице
 	 *  'info'=>'<p>Всякая информация над списком элементов</p>'
 	 * );

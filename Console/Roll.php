@@ -523,7 +523,7 @@ title="Удалить"></a>
 	 *  'where'  => [
 	 *    'WHERE `post_parent`=%d ORDER BY `menu_order`',
 	 *    [
-	 *      isset($_GET['sectionId']) ? $_GET['sectionId'] : 0,
+	 *      wdpro_current_console_section_id(), // ID текущего раздела
 	 *    ]
 	 *  ],
 	 *

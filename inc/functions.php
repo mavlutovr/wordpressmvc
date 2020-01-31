@@ -3118,6 +3118,20 @@ function wdpro_options_html ($options_array, $selected_id = null) {
 
 
 /**
+ * Возвращает id раздела, в котором сейчас находимся
+ *
+ * @return number
+ */
+function wdpro_current_console_section_id() {
+	if (isset($_POST['get']['sectionId']))
+		return $_POST['get']['sectionId'];
+
+	if (isset($_GET['sectionId']))
+		return $_GET['sectionId'];
+}
+
+
+/**
  * Возвращает roll по адресу, который ?page=App.Gallery.ConsoleRoll
  *
  * @param string $page Адрес $_GET['page']
