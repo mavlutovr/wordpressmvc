@@ -17,9 +17,16 @@
 			var container = $(this);
 
 			// Получаем параметры формы
-			var jsonDiv = container.find('.js-params');
-			var json = jsonDiv.text();
-			var data = wdpro.parseJSON(json);
+			var id = container.data('id');
+			var data;
+			if (window[id]) {
+				data = window[id];
+			}
+			else {
+				var jsonDiv = container.find('.js-params');
+				var json = jsonDiv.text();
+				data = wdpro.parseJSON(json);
+			}
 
 			// Создаем форму
 			var form = new wdpro.forms.Form(data);

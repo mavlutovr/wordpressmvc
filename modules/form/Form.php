@@ -42,6 +42,7 @@ class Form
 	const RECAPTCHA3 = 'recaptcha3';
 	const PRIVACY = 'privacy';
 
+	static $n = 0;
 
 	/**
 	 * Список классов полей формы
@@ -343,12 +344,14 @@ class Form
 	 */
 	public function getHtml()
 	{
-		return '<div 
-			class="js-wdpro-form"><div class="js-params g-hid" 
-			style="display: none">
-'
-		.htmlspecialchars($this->getJson())
-		.'</div></div>';
+		static::$n ++;
+		$id = 'formData'.time().'_'.static::$n;
+
+		return '
+<script>
+window.'.$id.' = '.($this->getJson()).';
+</script>
+<div class="js-wdpro-form" data-id="'.$id.'"></div>';
 	}
 
 
