@@ -1,6 +1,4 @@
 .directory
-**/*.soy.js
-**/*.less.css
 node_modules
 bower_components
 test
