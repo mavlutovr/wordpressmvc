@@ -361,9 +361,13 @@ window.'.$id.' = '.($this->getJson()).';
 	* Чтобы потом на странице с помощью js превратить данные в саму форму
 	*/
 	public function getJson() {
+
+		$params = $this->getParams();
+		unset($params['entity']);
+
 		return json_encode(
-			$this->getParams(), 
-			JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE|JSON_HEX_QUOT
+			$params,
+			JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE|JSON_HEX_QUOT
 		);
 	}
 
