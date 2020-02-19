@@ -2960,32 +2960,49 @@ function wdpro_get_option($optionName, $defaultValue=null) {
  *
  * @param string $phone
  * @param string|array $format +7 (###) ### ####
+ * @param null|int $firstNumber Первая цифра у телефонов (например, 7)
  * @param string $mask
  * @return bool|string
  */
-function wdpro_phone_format($phone, $format, $mask = '#')
+function wdpro_phone_format($phone, $format = [
+	10 => '+7##########',
+	11 => '+###########'
+], $firstNumber = 7, $mask = '#')
 {
-    $phone = preg_replace('/[^0-9]/', '', $phone);
+	$originalFormat = $format;
+	$phone = preg_replace('/[^0-9]/', '', $phone);
 
-    if (is_array($format)) {
-        if (array_key_exists(strlen($phone), $format)) {
-            $format = $format[strlen($phone)];
-        } else {
-            return false;
-        }
-    }
+	/*if ($replace8to7) {
+		$phone = preg_replace('~^(8)~', '7', $phone);
+	}*/
 
-    $pattern = '/' . str_repeat('([0-9])?', substr_count($format, $mask)) . '(.*)/';
+	if (is_array($format)) {
+		if (array_key_exists(strlen($phone), $format)) {
+			$format = $format[strlen($phone)];
+		} else {
+			return false;
+		}
+	}
 
-    $format = preg_replace_callback(
-        str_replace('#', $mask, '/([#])/'),
-        function () use (&$counter) {
-            return '${' . (++$counter) . '}';
-        },
-        $format
-    );
+	$pattern = '/' . str_repeat('([0-9])?', substr_count($format, $mask)) . '(.*)/';
 
-    return ($phone) ? trim(preg_replace($pattern, $format, $phone, 1)) : false;
+	$format = preg_replace_callback(
+		str_replace('#', $mask, '/([#])/'),
+		function () use (&$counter, &$replace8to7) {
+			return '${' . (++$counter) . '}';
+		},
+		$format
+	);
+
+	$formattedPhone = ($phone) ? trim(preg_replace($pattern, $format, $phone, 1)) : false;
+
+	if ($firstNumber) {
+		$formattedPhone = preg_replace('/[^0-9]/', '', $formattedPhone);
+		$formattedPhone = preg_replace('~^.~', $firstNumber, $formattedPhone);
+		return wdpro_phone_format($formattedPhone, $originalFormat, null);
+	}
+
+	return $formattedPhone;
 }
 
 

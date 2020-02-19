@@ -22,6 +22,8 @@
 		// Чтобы, например, можно было выдать предупреждение о закрытии окна, когда есть не закрытые окошки
 		openedCount: 0,
 
+		animate: 0, // Анимация открытия / закрытия в миллисекундах
+
 
 		/**
 		 * Возвращает объект окна по его html блоку
@@ -62,7 +64,8 @@
 					maxWidth: wdpro.dialogs.maxWidth ? wdpro.dialogs.maxWidth : 800,
 					margin: 0,
 					marginTop: 0,
-					closeSymbol: wdpro.dialogs.closeSymbol
+					closeSymbol: wdpro.dialogs.closeSymbol,
+					animate: wdpro.dialogs.animate
 				}, params);
 				this.params = params;
 
@@ -351,7 +354,7 @@
 				var self = this;
 
 				// Если есть функция, обрабатывающая каллбэк
-				if (typeof this.params.close == 'function')
+				if (typeof this.params.close === 'function')
 				{
 					// запускаем каллбэки закрытия
 					this.trigger('closed', this);
@@ -367,19 +370,21 @@
 						if (!self.params.stopClose)
 						{
 							// Удаление самого окна
-							$(self.html).remove();
 
-							// Удаление подложки
-							$(self.substrateHtml).remove();
-							$(self.allContainer).remove();
+							self.hide(() => {
 
-							self.trigger('closed', self);
+								$(self.substrateHtml).remove();
+								$(self.allContainer).remove();
+								$(self.html).remove();
 
-							// Удаление окна из массива окон
-							delete dialogsList[self.N];
+								self.trigger('closed', self);
 
-							// Включаем скролл страницы
-							$('body').removeClass('dialog-body-no-scroll');
+								// Удаление окна из массива окон
+								delete dialogsList[self.N];
+
+								// Включаем скролл страницы
+								$('body').removeClass('dialog-body-no-scroll');
+							});
 						}
 					};
 
@@ -390,14 +395,29 @@
 
 			/**
 			 * Скрывает окно
+			 *
+			 * @param callback {function}
 			 */
-			hide: function () {
+			hide: function (callback) {
 
-				$(this.html).hide();
-				$(this.substrateHtml).hide();
 
-				// Запуск каллбэков скрытия
-				this.trigger('hide', this);
+				const finish = () => {
+					// Запуск каллбэков скрытия
+					this.trigger('hide', this);
+
+					callback && callback();
+				};
+
+				if (this.params.animate) {
+					$(this.html).fadeOut(this.params.animate, finish);
+					$(this.substrateHtml).fadeOut(this.params.animate);
+				}
+
+				else {
+					$(this.html).hide();
+					$(this.substrateHtml).hide();
+					finish();
+				}
 			},
 
 
@@ -406,15 +426,24 @@
 			 */
 			show: function ()
 			{
-				// Показываем окно, чтобы правильно посчиталась позиция
-				$(this.html).show();
-				$(this.substrateHtml).show();
+				const finish = () => {
+					// Позиция окна
+					this.updatePos();
+					// Запуск каллбэков показа
+					this.trigger('show', this);
+				};
 
-				// Позиция окна
-				this.updatePos();
-
-				// Запуск каллбэков показа
-				this.trigger('show', this);
+				if (this.params.animate) {
+					$(this.html).fadeIn(this.params.animate, finish);
+					$(this.substrateHtml).fadeIn(this.params.animate);
+					// Позиция окна
+					this.updatePos();
+				}
+				else {
+					$(this.html).show();
+					$(this.substrateHtml).show();
+					finish();
+				}
 			},
 
 
