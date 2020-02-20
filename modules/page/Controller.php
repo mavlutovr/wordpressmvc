@@ -378,6 +378,8 @@ class Controller extends \Wdpro\BaseController {
 			echo '<script>
 			wdpro.WDPRO_TEMPLATE_URL = "'.WDPRO_TEMPLATE_URL.'";
 			wdpro.WDPRO_UPLOAD_IMAGES_URL = "'.WDPRO_UPLOAD_IMAGES_URL.'";
+			wdpro.WDPRO_UPLOAD_URL = "'.WDPRO_UPLOAD_URL.'";
+			wdpro.WDPRO_UPLOAD_CKEDITOR_URL = "'.WDPRO_UPLOAD_CKEDITOR_URL.'";
 			wdpro.WDPRO_HOME_URL = "'.home_url().'/";
 			</script>';
 		});

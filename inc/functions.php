@@ -811,6 +811,32 @@ function wdpro_upload_dir_url($subDir=false)
 
 
 /**
+ * Возвращает папку для загрузки файлов ckeditor
+ *
+ * @param bool|false|string $subDir Поддиректория внутри основной папки файлов плагина
+ * wdpro
+ * @return string
+ */
+function wdpro_upload_dir_ckeditor_url($subDir=false)
+{
+	$dirs = wp_upload_dir();
+
+	$dir = $dirs['baseurl'] . '/' . 'ckeditor';
+
+	if ($subDir)
+	{
+		$dir .= '/' . $subDir;
+	}
+
+	if (!preg_match('~/$~', $dir)) {
+		$dir .= '/';
+	}
+
+	return $dir;
+}
+
+
+/**
  * Возвращает папку для загрузки файлов плагина wdpro
  *
  * @param bool|false|string $subDir Поддиректория внутри основной папки файлов плагина

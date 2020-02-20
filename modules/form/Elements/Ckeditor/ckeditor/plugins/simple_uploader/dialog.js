@@ -6,7 +6,8 @@
 	 * @type {string}
 	 */
 	//var Dir = '../wp-content/uploads/ckeditor/';
-	var Dir = '../wp-content/uploads/ckeditor/';
+	var Dir = wdpro.WDPRO_UPLOAD_CKEDITOR_URL;
+	console.log('Dir', Dir);
 	
 	// Определение папки, в которой находится скрипт
 	(function () {
@@ -152,6 +153,8 @@
 	 */
 	window.uploaded = function (params)
 	{
+		console.log('uploaded', params);
+
 		// Если есть имя файла
 		if (params.file && fileInsertByType[params.type])
 		{

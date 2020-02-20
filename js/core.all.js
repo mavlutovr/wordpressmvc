@@ -10,6 +10,7 @@ var wdpro = {
 	WDPRO_TEMPLATE_URL: '',
 	WDPRO_UPLOAD_IMAGES_URL: '',
 	WDPRO_HOME_URL: '',
+	WDPRO_UPLOAD_URL: '',
 
 	// Номера клавиш
 	KEY_ESCAPE: 27,
