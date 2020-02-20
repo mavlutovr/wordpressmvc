@@ -3539,3 +3539,31 @@ function wdpro_url_slash_at_end() {
 	if (wdpro_url_slash_at_end_mode()) return '/';
 	return '';
 }
+
+
+/**
+ * Возвращает абсолютный адрес для поста
+ *
+ * @param string $postName Относительный адрес страницы
+ * @param null|int $postId ID поста, чтобы когда это главная, делать адрес /
+ * @return string
+ */
+function wdpro_url_from_post_name($postName, $postId=null) {
+
+	// Когда это главная страница, очищаем $postName
+	if ($postId !== null) {
+		global $homePageId;
+		if (!isset($homePageId))
+			$homePageId = wdpro_get_option('page_on_front');
+
+		if ($postId === $homePageId) {
+			$postName = '';
+		}
+	}
+
+	// Добавляем в конце слэш
+	if ($postName) $postName .= wdpro_url_slash_at_end();
+
+	// Добавляем абсолютную часть адреса
+	return \Wdpro\Lang\Data::currentUrl().$postName;
+}

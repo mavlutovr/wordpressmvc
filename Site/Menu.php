@@ -211,8 +211,6 @@ class Menu extends Roll
 
 			$data = array();
 
-			$homePageId = wdpro_get_option('page_on_front');
-
 			foreach($sel as $row)
 			{
 				if (isset($row['ID']) && $row['ID'])
@@ -243,17 +241,7 @@ class Menu extends Roll
 				
 				else
 				{
-					//$row['url'] = home_url($row['post_name']);
-
-					$post_name = $row['post_name'];
-					if ($row['id'] == $homePageId) {
-						$post_name = '';
-					}
-					else {
-						$post_name .= wdpro_url_slash_at_end();
-					}
-
-					$row['url'] = \Wdpro\Lang\Data::currentUrl().$post_name;
+					$row['url'] = wdpro_url_from_post_name($row['post_name'], $row['id']);
 				}
 				$row['text'] = $row['post_title'];
 
