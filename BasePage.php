@@ -432,6 +432,25 @@ abstract class BasePage extends BaseEntity
 
 
 	/**
+	 * Сохраняет дополнительную информацию о странице
+	 *
+	 * @param string $key Ключ
+	 * @param string|int $value Значение
+	 */
+	public function setMeta($key, $value) {
+		// update_post_meta
+
+		if (!empty($value)) {
+			update_post_meta($this->id(), $key, $value);
+		}
+
+		else {
+			delete_post_meta($this->id(), $key);
+		}
+	}
+
+
+	/**
 	 * Возвращает description страницы
 	 *
 	 * @return string
@@ -554,4 +573,30 @@ abstract class BasePage extends BaseEntity
 	public static function getTemplateFile() {
 
 	}
+
+
+	/**
+	 * Сохранение
+	 *
+	 * @returns bool|array (false или сохраненные данные)
+	 * @throws EntityException
+	 */
+	public function save()
+	{
+		$meta = $this->getData('meta');
+
+		$ret = parent::save();
+
+		if ($ret) {
+			if (is_array($meta)) {
+				foreach ($meta as $key => $value) {
+					$this->setMeta($key, $value);
+				}
+			}
+		}
+
+		return $ret;
+	}
+
+
 }

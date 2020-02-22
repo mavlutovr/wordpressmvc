@@ -1742,6 +1742,15 @@ if (typeof Array.isArray === 'undefined') {
 	 */
 	String.prototype.trim=function(){return this.replace(/^\s+|\s+$/g, '');};
 
+
+	/**
+	 * Удаляет лишние пробелы из конца и начала строки
+	 *
+	 * @param string
+	 * @return {string}
+	 */
+	wdpro.trim = string => string.replace(/^\s+|\s+$/g, '');
+
 	/**
 	 * Удаляет лишние пробелы из всех мест строки
 	 *
@@ -2557,6 +2566,31 @@ if (typeof Array.isArray === 'undefined') {
 		l.href = url;
 		return l;
 	};
+
+
+	/**
+	 * Преобразует url из массива в строку
+	 *
+	 * @param parsedUrl {HTMLAnchorElement|{}}
+	 * @return string
+	 */
+	wdpro.unparseUrl = function(parsedUrl) {
+		return parsedUrl.protocol+"//"
+		+parsedUrl.host
+		+parsedUrl.pathname
+		+parsedUrl.search
+		+parsedUrl.hash;
+	};
+
+
+	/**
+	 * Преобразует относительный адрес в абсолютный
+	 *
+	 * @param relativeUrl {string} Относительный адрес
+	 * @return {string}
+	 */
+	wdpro.relativeUrlToAbsolute = relativeUrl =>
+		wdpro.unparseUrl( wdpro.parseUrl(relativeUrl) );
 
 
 

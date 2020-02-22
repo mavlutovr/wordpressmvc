@@ -665,12 +665,14 @@ window.'.$id.' = '.($this->getJson()).';
 
 	/**
 	 * Возвращает обработанные данные
-	 * 
+	 *
+	 * @param array $data Не стандартные данные (например, когда форма не отправлялась, а просто надо обработать какие-то данные через форму)
 	 * @return array|null
 	 */
-	public function getData()
+	public function getData($data=null)
 	{
-		$data = $this->getSubmitData();
+		if ($data === null)
+			$data = $this->getSubmitData();
 		
 		if ($data)
 		{

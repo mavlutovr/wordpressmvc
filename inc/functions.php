@@ -867,11 +867,24 @@ function wdpro_upload_dir_path($subDir=false)
  *
  * @param string $sourceFile Адрес файла, которыя надо заархивировать
  * @param string $zipFile Адрес файла архива, куда заархивировать файл
- * @return bool trueпри удачном архивировании
+ * @return bool true при удачном архивировании
  */
 function wdpro_gz_encode($sourceFile, $zipFile)
 {
 	$data = file_get_contents($sourceFile);
+	wdpro_gz_encode_data($data, $zipFile);
+}
+
+
+/**
+ * Архивирует данные в .gz архив
+ *
+ * @param string $data Данные
+ * @param string $zipFile Адрес файла архива, куда заархивировать файл
+ * @return bool true при удачном архивировании
+ */
+function wdpro_gz_encode_data($data, $zipFile)
+{
 	if ($gz_data = gzencode($data, 0))
 	{
 		$fp = fopen($zipFile, 'w');
@@ -3193,14 +3206,19 @@ function wdpro_get_roll_by_get_page($page) {
  * Создание поста
  *
  * @param array $data Данные поста
+ * @return \Wdpro\BasePage
+ * @throws \Wdpro\EntityException
  */
 function wdpro_create_post($data) {
 	// Добавляем страницу
 	$data['id'] = wp_insert_post($data);
 
 	$entityClass = wdpro_get_entity_class_by_post_type($data['post_type']);
+	/** @var \Wdpro\BasePage $entity */
 	$entity = new $entityClass($data);
 	$entity->save();
+
+	return $entity;
 }
 
 /**
