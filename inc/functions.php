@@ -785,6 +785,22 @@ AddType application/x-httpd-php-source .phtml .php .php3 .php4 .php5 .php6 .phps
 
 
 /**
+ * Удаляет папку со всем содержимым
+ *
+ * @param string $dir Адрес папки
+ * @return bool
+ */
+function wdpro_rmdir($dir) {
+	if (!is_dir($dir)) return false;
+	$files = array_diff(scandir($dir), array('.','..'));
+	foreach ($files as $file) {
+		(is_dir("$dir/$file")) ? wdpro_rmdir("$dir/$file") : unlink("$dir/$file");
+	}
+	return rmdir($dir);
+}
+
+
+/**
  * Возвращает папку для загрузки файлов плагина wdpro
  *
  * @param bool|false|string $subDir Поддиректория внутри основной папки файлов плагина
@@ -3212,10 +3228,14 @@ function wdpro_get_roll_by_get_page($page) {
 function wdpro_create_post($data) {
 	// Добавляем страницу
 	$data['id'] = wp_insert_post($data);
+	$post = get_post($data['id']);
 
 	$entityClass = wdpro_get_entity_class_by_post_type($data['post_type']);
 	/** @var \Wdpro\BasePage $entity */
 	$entity = new $entityClass($data);
+	$entity->mergeData([
+		'post_name'=>$post->post_name,
+	]);
 	$entity->save();
 
 	return $entity;

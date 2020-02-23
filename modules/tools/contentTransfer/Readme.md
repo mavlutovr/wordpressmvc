@@ -21,3 +21,5 @@ chromium-browser --disable-web-security --test-type --disable-site-isolation-tri
 ### Todo
 
 - [ ] Загрузка картинок из текста
+  https://regex101.com/r/7jsRpJ/1
+- [ ] Редиректы

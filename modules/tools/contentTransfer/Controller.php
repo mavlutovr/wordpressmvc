@@ -1,10 +1,14 @@
 <?php
 namespace Wdpro\Tools\ContentTransfer;
 
+use Wdpro\Exception;
+
 class Controller extends \Wdpro\BaseController {
 
 	static $jobs;
 	static $blockI;
+	const CONTENT_IMAGES_DIR_PATH = WDPRO_UPLOAD_IMAGES_PATH.'contentTransfer';
+	const CONTENT_IMAGES_DIR_URL = WDPRO_UPLOAD_IMAGES_URL.'contentTransfer';
 
 
 	/**
@@ -185,6 +189,13 @@ class Controller extends \Wdpro\BaseController {
 
 				// Стандартный скрипт
 				else {
+
+					// Загрузка изображений
+					$postData['post_content'] = static::loadContentImages(
+						$postData['post_content'],
+						$url['url']
+					);
+
 					$post = static::savePost($postData);
 				}
 
@@ -197,6 +208,7 @@ class Controller extends \Wdpro\BaseController {
 
 		// Удаление собранных материалов
 		wdpro_ajax('contentTransferDrop', function () {
+
 			static::initVaribles();
 
 			ini_set('display_errors', 'on');
@@ -220,7 +232,7 @@ class Controller extends \Wdpro\BaseController {
 							if (is_array($row)) {
 								if ($post = wdpro_get_post_by_id($row['id']))
 									$post->remove();
-								wp_delete_post($row['id']);
+								wp_delete_post($row['id'], true);
 								$table::delete([ 'id'=>$row['id'] ]);
 							}
 
@@ -232,6 +244,9 @@ class Controller extends \Wdpro\BaseController {
 					}
 				}
 			}
+
+			// Удаление картинок
+			wdpro_rmdir(static::CONTENT_IMAGES_DIR_PATH);
 		});
 	}
 
@@ -249,6 +264,127 @@ class Controller extends \Wdpro\BaseController {
 				[ $url['parent_id'] ]
 			]);
 		}
+	}
+
+
+	/**
+	 * Загружает картинку, и возвращает ее новый url адрес
+	 *
+	 * Если картинка с этого же сайта, с которого контент
+	 *
+	 * @param string $src Адрес картинки
+	 * @param string $sourcePageUrl Адрес страницы, на которой расположен тег img картинки
+	 * @return string
+	 */
+	public static function loadImageAndGetNewSrc($src, $sourcePageUrl) {
+
+		$srcOb = parse_url($src);
+		$sourcePageOb = parse_url($sourcePageUrl);
+
+		// Относительный адрес
+		if (empty($srcOb['host'])) {
+
+			// От начала
+			if (preg_match('~^/~', $src)) {
+				$rootDir = $sourcePageOb['scheme'].'://'.$sourcePageOb['host'];
+			}
+
+			// От страницы
+			else {
+				$rootDir = $sourcePageOb['scheme'].'://'.$sourcePageOb['host'].$sourcePageOb['path'];
+				$rootDir = preg_replace('~(/[^/]*)$~', '/', $rootDir);
+			}
+
+			$src = $rootDir.$src;
+			$srcOb = parse_url($src);
+		}
+
+
+		// Если картинка с этого же сайта
+		if ($srcOb['host'] === $sourcePageOb['host']) {
+
+			//$fileName = basename($src);
+			$fileName = pathinfo($src);
+			$subdir = preg_replace('~[^/]*$~', '', $srcOb['path']);
+
+			wdpro_upload_dir_create(static::CONTENT_IMAGES_DIR_PATH);
+			if (!is_dir(static::CONTENT_IMAGES_DIR_PATH.$subdir))
+				mkdir(static::CONTENT_IMAGES_DIR_PATH.$subdir, 0777, true);
+
+			$path = static::CONTENT_IMAGES_DIR_PATH.$subdir
+				.$fileName['filename'].'.'.$fileName['extension'];
+			$newSrc = static::CONTENT_IMAGES_DIR_URL.$subdir
+				.$fileName['filename'].'.'.$fileName['extension'];
+
+
+
+
+			/*$n = 1;
+			$path = static::CONTENT_IMAGES_DIR_PATH
+				.$fileName['filename'].'.'.$fileName['extension'];
+			$newSrc = static::CONTENT_IMAGES_DIR_URL
+				.$fileName['filename'].'.'.$fileName['extension'];
+			while(is_file($path)) {
+				$n ++;
+				$path = static::CONTENT_IMAGES_DIR_PATH
+					.$fileName['filename'].'_'.$n.'.'.$fileName['extension'];
+				$newSrc = static::CONTENT_IMAGES_DIR_URL
+					.$fileName['filename'].'_'.$n.'.'.$fileName['extension'];
+			}*/
+
+//			echo PHP_EOL.'$sourcePageUrl: '.$sourcePageUrl.PHP_EOL;
+//			echo PHP_EOL.'$rootDir: '.$rootDir.PHP_EOL;
+
+//			echo PHP_EOL.'SRC: '.$src.PHP_EOL;
+//			echo PHP_EOL.'NEWSRC: '.$newSrc.PHP_EOL;
+
+			if (!is_file($path)) {
+				$imageData = file_get_contents($src);
+				file_put_contents($path, $imageData);
+
+				/*$ch = curl_init($src);
+				$fp = fopen($path, 'wb');
+				curl_setopt($ch, CURLOPT_FILE, $fp);
+				curl_setopt($ch, CURLOPT_HEADER, 0);
+				curl_exec($ch);
+				curl_close($ch);
+				fclose($fp);*/
+			}
+		}
+
+		return $newSrc;
+	}
+
+
+	/**
+	 * Загружает картинки в контенте и меняет их адреса на новые
+	 *
+	 * @param string $content Контент (html код)
+	 * @param string $sourcePageUrl Адерс страницы, с которой взят html код
+	 * @return string
+	 */
+	public static function loadContentImages($content, $sourcePageUrl) {
+
+		// Картинки
+		$content = preg_replace_callback(
+
+			'/ src=([^ >]+)/',
+
+			function ($arr) use (&$sourcePageUrl) {
+
+				$src = $arr[1];
+				$src = str_replace('"', '', $src);
+				$src = str_replace("'", '', $src);
+				$src = str_replace("\\", '', $src);
+
+				$src = static::loadImageAndGetNewSrc($src, $sourcePageUrl);
+
+				return ' src="'.$src.'"';
+			},
+			$content
+		);
+
+		return $content;
 	}
 
 

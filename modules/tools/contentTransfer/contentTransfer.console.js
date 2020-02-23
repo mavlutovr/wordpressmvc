@@ -209,6 +209,72 @@ wdpro.ready($ => {
 
 				return wdpro.unparseUrl(parsedUrl);
 			}
+
+
+			static fixUrlsSync ($content) {
+
+				// let parsedUrl = wdpro.parseUrl(data['url']['url']);
+				// let homeUrl = parsedUrl.protocol+'://'+parsedUrl.host;
+
+				/**
+				 * Превращает относительный адрес в абсолютный (если он относительный)
+				 *
+				 * @param relativeOrAbsoluteUrl {string} Относительный или абсолютный адрес
+				 * @return {string|null} Абсолютный адрес
+				 */
+				let relativeToAbsolute = relativeOrAbsoluteUrl => {
+					if (!relativeOrAbsoluteUrl) return null;
+					let $a = $('<a/>').attr('href', relativeOrAbsoluteUrl);
+					$content.append($a);
+
+					let link = $a.get(0);
+					let absoluteUrl = link.protocol+"//"
+						+link.host
+						+link.pathname
+						+link.search
+						+link.hash;
+					$a.remove();
+
+					if (relativeOrAbsoluteUrl !== absoluteUrl)
+						console.log(relativeOrAbsoluteUrl, absoluteUrl);
+
+					return absoluteUrl;
+				};
+
+
+				// Ссылки - Относительные в абсолютные
+				$content.find('a').each(function () {
+					let $a = $(this);
+					$a.attr('href', relativeToAbsolute( $a.attr('href') ));
+				});
+
+
+				// Картинки - Относительные в абсолютные
+				$content.find('[src]').each(function () {
+					let $tag = $(this);
+					$tag.attr('src', relativeToAbsolute( $tag.attr('src') ));
+				});
+				$content.find('[srcset]').each(function () {
+					let $tag = $(this);
+					let srcSet = $tag.attr('srcset');
+
+					if (srcSet) {
+						let elements = srcSet.split(',');
+						for (let i in elements) {
+							let element = elements[i];
+							let pieces = element.split(' ');
+							pieces[0] = relativeToAbsolute(wdpro.trim(pieces[0]));
+							elements[i] = pieces.join(' ');
+						}
+
+						srcSet = elements.join(', ');
+						$tag.attr('srcset', srcSet);
+					}
+				});
+
+
+				return $content;
+			};
 		}
 
 
