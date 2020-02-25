@@ -360,7 +360,7 @@ class Controller extends \Wdpro\BaseController {
 			}, 10, 3);
 			
 			// Вообще удаление
-			add_action( 'delete_post', function ($postId) {
+			add_action( 'deleted_post', function ($postId) {
 
 				// Получаем сущность
 				$page = wdpro_get_post_by_id($postId);

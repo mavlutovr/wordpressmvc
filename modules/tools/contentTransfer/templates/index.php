@@ -10,7 +10,7 @@
 			<button class="js-drop-button button-secondary button-link-delete">Удалить собранные материалы</button>
 		</span>
 
-		<button class="js-next-step button-secondary">Сделать шаг</button>
+		<span class="g-inline-block g-inline-block-middle"><button class="js-next-step button-secondary">Сделать шаг</button></span>
 	</p>
 
 	<!-- Сообщение -->

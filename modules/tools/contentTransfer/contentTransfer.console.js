@@ -76,30 +76,7 @@ wdpro.ready($ => {
 						// https://unipakspb.ru/catalog/upakowochnye_kleykie_lenty
 						// https://unipakspb.ru/catalog/upakowochnye_kleykie_lenty
 
-						// Адрес ссылки
-						let link = $a.get(0);
-						let href = link.protocol+"//"
-							+link.host
-							+link.pathname
-							+link.search
-							+link.hash;
-						let urlParsed = wdpro.parseUrl(href);
-						let linkHost = urlParsed.host.replace('www.', '');
-
-						// Адрес страницы
-						let pageUrl = data['url']['url'];
-						let pageUrlParsed = wdpro.parseUrl(pageUrl);
-						let pageHost = pageUrlParsed.host.replace('www.', '');
-
-						// Добавляем ссылку, если она внутренняя
-						if (linkHost === pageHost) {
-							url['url'] =
-								urlParsed.protocol+"//"
-								+urlParsed.host
-								+urlParsed.pathname
-								+urlParsed.search
-								+urlParsed.hash;
-						}
+						url['url'] = Parser.getInternalUrl($a);
 
 						// Текст ссылки
 						url['text'] = wdpro.trim($a.text());
@@ -121,17 +98,51 @@ wdpro.ready($ => {
 					}
 
 
-					if (url.text || url.children || url.url) {
+					if (url['text'] || url['children'] || url['url']) {
 
 						if (prepareUrlData) url = prepareUrlData(url);
 
-						urls.push(url);
+						if (url['url']  !== false)
+							urls.push(url);
 					}
 				});
 
 
 				if (urls.length)
 					return urls;
+			}
+
+
+			/**
+			 * Возвращает адрес ссылки, если она внутренняя
+			 * @param $a
+			 * @return {string|boolean}
+			 */
+			static getInternalUrl($a) {
+				let link = $a.get(0);
+				let href = link.protocol+"//"
+					+link.host
+					+link.pathname
+					+link.search
+					+link.hash;
+				let urlParsed = wdpro.parseUrl(href);
+				let linkHost = urlParsed.host.replace('www.', '');
+
+				// Адрес страницы
+				let pageUrl = data['url']['url'];
+				let pageUrlParsed = wdpro.parseUrl(pageUrl);
+				let pageHost = pageUrlParsed.host.replace('www.', '');
+
+				// Добавляем ссылку, если она внутренняя
+				if (linkHost === pageHost) {
+					return urlParsed.protocol+"//"
+						+urlParsed.host
+						+urlParsed.pathname
+						+urlParsed.search
+						+urlParsed.hash;
+				}
+
+				return false;
 			}
 
 
@@ -314,8 +325,14 @@ wdpro.ready($ => {
 
 			console.log('updateData', res);
 
-			if (res['block']) data['block'] = res['block'];
-			if (res['url']) data['url'] = res['url'];
+			if (res['block']) {
+				data['block'] = res['block'];
+				Parser.block = res['block'];
+			}
+			if (res['url']) {
+				data['url'] = res['url'];
+				Parser.url = res['url'];
+			}
 			if (res['finish']) data['finish'] = res['finish'];
 
 			// Когда пришел новый блок
@@ -334,10 +351,10 @@ wdpro.ready($ => {
 
 		const nextStep = callback => {
 			if (stepByStep) {
-				$buttonNext.show();
+				$buttonNext.loadingStop();
 				nextCallback = () => {
 					callback();
-					$buttonNext.hide();
+					$buttonNext.loading();
 				};
 			}
 
@@ -404,6 +421,7 @@ wdpro.ready($ => {
 			play = false;
 			$buttonStart.show();
 			$buttonStop.hide();
+			$buttonNext.loadingStop();
 		};
 
 
@@ -453,8 +471,10 @@ wdpro.ready($ => {
 			if (play)
 				nextStepRun();
 
-			else
+			else {
+				$buttonNext.loading();
 				start();
+			}
 		});
 	});
 });

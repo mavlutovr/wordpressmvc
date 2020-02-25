@@ -599,4 +599,25 @@ abstract class BasePage extends BaseEntity
 	}
 
 
+	/**
+	 * Удаление сущности
+	 *
+	 * @throws \Exception
+	 */
+	public function remove()
+	{
+		$id = $this->id();
+		parent::remove();
+
+		/*$post = get_post($id);
+		if ($post && $post->ID) {
+			wp_delete_post($id, true);
+		}*/
+		if (empty(static::$deleted[$id])) {
+			static::$deleted[$id] = true;
+			wp_delete_post($id, true);
+		}
+	}
+	protected static $deleted = [];
+
 }

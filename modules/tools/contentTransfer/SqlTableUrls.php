@@ -35,7 +35,9 @@ class SqlTableUrls extends \Wdpro\BaseSqlTable {
 				'parsed_block'=>'tinyint', // Отпарсено в блоке
 				'parsed_time'=>'int', // Время парсинга
 				'parent_id'=>'int', // Подительский id (для древовидной структуры)
+				'has_children'=>'tinyint', // Есть ли доверние разделы
 				'post_id'=>'int', // ID поста, который получился из этой ссылки
+				'menu_order'=>'int', // Сортировка, чтобы по этому порядку парсить
 				'namespace',
 				'url',
 				'text',

@@ -3631,3 +3631,20 @@ function wdpro_url_from_post_name($postName, $postId=null) {
 	// Добавляем абсолютную часть адреса
 	return \Wdpro\Lang\Data::currentUrl().$postName;
 }
+
+
+/**
+ * Превращает \" в "
+ *
+ * @param $array
+ */
+function wdpro_strip_slashes_in_array(&$array) {
+
+	if ($array && is_array($array)) {
+		$stripslashes_gpc = function(&$value)
+		{
+			$value = stripslashes($value);
+		};
+		array_walk_recursive($array, $stripslashes_gpc);
+	}
+}

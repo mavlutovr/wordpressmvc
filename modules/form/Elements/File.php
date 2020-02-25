@@ -240,6 +240,12 @@ class File extends Base
 	 */
 	public function tryToLoadFileFromInternet($file) {
 		if (wdpro_is_absolute_url($file)) {
+
+			$fileHeaders = @get_headers($file);
+			if (!$fileHeaders || !strpos($fileHeaders[0],"200")) {
+				return '';
+			}
+
 			$tmpDir = wdpro_upload_dir('temp');
 			$fileName = parse_url($file, PHP_URL_PATH);
 			$fileName = wdpro_text_to_file_name(

@@ -111,22 +111,49 @@ class Controller extends \Wdpro\BaseController {
 			$block = $_POST['block'];
 			$result = $_POST['result'];
 
-
-			// Запоминаем, что данный адрес уже проверен
-			static::saveUrl($url, [
-				'parsed_block'=>$block['i'],
-				'parsed_time'=>time(),
-			], false);
+			wdpro_strip_slashes_in_array($url);
+			wdpro_strip_slashes_in_array($block);
+			wdpro_strip_slashes_in_array($result);
 
 
-			// Адреса страниц
-			if (!empty($result['urls'])) {
-				foreach ($result['urls'] as $newUrl) {
+			// Меню
+			if (!empty($result['menu'])) {
+				foreach ($result['menu'] as $newUrl) {
 
 					static::saveUrl($newUrl, [
-						'namespace'=>$block['namespace'],
+						'block'=>$block,
 					]);
 				}
+			}
+
+			// Подменю
+			if (!empty($result['submenu']) && is_array($result['submenu'])) {
+
+				$url['children'] = $result['submenu'];
+			}
+
+
+			// Сохранение запрещено
+			if (isset($url['save']) && (!$url['save'] || $url['save'] === 'false')) {
+				// Сохраняем только подменю
+				if (isset($url['children']) && is_array($url['children'])) {
+					foreach ($url['children'] as $child) {
+						static::saveUrl($child, [
+							'block'=>$block,
+						]);
+					}
+				}
+			}
+
+			// Можно сохранить
+			else {
+
+				// Запоминаем, что данный адрес уже проверен
+				static::saveUrl($url, [
+					'parsed_block'=>$block['i'],
+					'parsed_time'=>time(),
+					'block'=>$block,
+				]);
 			}
 
 
@@ -137,7 +164,7 @@ class Controller extends \Wdpro\BaseController {
 				static::saveUrl($url, [
 					'parsed_time'=>time(),
 					'parsed_block'=>$block['i'],
-					'namespace'=>$block['namespace'],
+					'block'=>$block,
 				]);
 
 				// Родительский пост
@@ -153,28 +180,25 @@ class Controller extends \Wdpro\BaseController {
 						$postParentId = $postParent->id();
 				}
 
-				// Тип поста
-				if (!empty($block['post_type']))
-					$postType = $block['post_type'];
-				else
-					return [
-						'error'=>'У блока № '.$block['i'].' не указан тип поста. Например, <code>\'post_type\' => \App\Catalog\Sections\Entity::getType(),</code>.',
-					];
-
 
 				// Данные поста
 				$postData = wdpro_extend([
 					'content_transfer_url_id'=>$url['id'],
 					'post_title'=>$url['text'],
 					'post_parent'=>$postParentId,
-					'post_type'=>$block['post_type'],
 					'post_name'=>wdpro_text_to_file_name($url['text']),
 					'in_menu'=>1,
 				], $result['page']);
 
+
 				// Данные из адреса
 				if (!empty($url['data'])) {
 					$postData = wdpro_extend($url['data'], $postData);
+				}
+
+				// Тип поста
+				if (empty($postData['post_type']) && !empty($block['post_type'])) {
+					$postData['post_type'] = $block['post_type'];
 				}
 
 				// Свой скрипт
@@ -189,6 +213,18 @@ class Controller extends \Wdpro\BaseController {
 
 				// Стандартный скрипт
 				else {
+					if (empty($postData['post_type'])) {
+						return [
+							'error'=>'У блока № '.$block['i'].' не указан тип поста. Например, <code>\'post_type\' => \App\Catalog\Sections\Entity::getType(),</code>.',
+						];
+					}
+					else {
+						if (is_array($postData['post_type'])) {
+							return [
+								'error'=>'Когда в post_type указан массив постов, необходимо вручную выбирать тип поста в скрипте, указанном в <code>\'parser\' => [ \'php\' => \'Пть к скрипту\' ]</code>',
+							];
+						}
+					}
 
 					// Загрузка изображений
 					$postData['post_content'] = static::loadContentImages(
@@ -221,25 +257,31 @@ class Controller extends \Wdpro\BaseController {
 			// Удаление постов
 			foreach (static::$jobs as $block) {
 				if (isset($block['post_type'])) {
-					$entityClass = wdpro_get_entity_class_by_post_type($block['post_type']);
-					$table = $entityClass::getSqlTableClass();
-					if ($table::isField('content_transfer_url_id')) {
 
-						$row = true;
+					$postsType = $block['post_type'];
+					if (!is_array($postsType)) $postsType = [ $postsType ];
 
-						while ($row) {
+					foreach ($postsType as $postType) {
+						$entityClass = wdpro_get_entity_class_by_post_type($postType);
+						$table = $entityClass::getSqlTableClass();
+						if ($table::isField('content_transfer_url_id')) {
 
-							if (is_array($row)) {
-								if ($post = wdpro_get_post_by_id($row['id']))
-									$post->remove();
-								wp_delete_post($row['id'], true);
-								$table::delete([ 'id'=>$row['id'] ]);
+							$row = true;
+
+							while ($row) {
+
+								if (is_array($row)) {
+									if ($post = wdpro_get_post_by_id($row['id']))
+										$post->remove();
+									wp_delete_post($row['id'], true);
+									$table::delete([ 'id'=>$row['id'] ]);
+								}
+
+								$row = $table::getRow(
+									'WHERE content_transfer_url_id>0 ORDER BY id LIMIT 1',
+									'id'
+								);
 							}
-
-							$row = $table::getRow(
-								'WHERE content_transfer_url_id>0 ORDER BY id LIMIT 1',
-								'id'
-							);
 						}
 					}
 				}
@@ -339,8 +381,8 @@ class Controller extends \Wdpro\BaseController {
 //			echo PHP_EOL.'NEWSRC: '.$newSrc.PHP_EOL;
 
 			if (!is_file($path)) {
-				$imageData = file_get_contents($src);
-				file_put_contents($path, $imageData);
+				@$imageData = file_get_contents($src);
+				@file_put_contents($path, $imageData);
 
 				/*$ch = curl_init($src);
 				$fp = fopen($path, 'wb');
@@ -384,6 +426,30 @@ class Controller extends \Wdpro\BaseController {
 			$content
 		);
 
+
+		// Ссылки
+		$content = preg_replace_callback(
+			'/ href=([^ >]+)/',
+
+			function ($arr) use (&$sourcePageUrl) {
+
+				$src = $arr[1];
+				$src = str_replace('"', '', $src);
+				$src = str_replace("'", '', $src);
+				$src = str_replace("\\", '', $src);
+
+				// Картинка
+				if (preg_match('~\.(png|jpg|jpeg|gif|webp)$~', $src)) {
+
+					$src = static::loadImageAndGetNewSrc($src, $sourcePageUrl);
+				}
+
+				return ' href="'.$src.'"';
+			},
+			$content
+		);
+
+
 		return $content;
 	}
 
@@ -396,6 +462,9 @@ class Controller extends \Wdpro\BaseController {
 	 * @throws \Wdpro\EntityException
 	 */
 	public static function savePost($data) {
+
+		if (!$data['post_type'])
+			throw new \Exception('Для поста '.$data['post_title'].' не указан тип поста');
 
 		if (!isset($data['post_status']))
 			$data['post_status'] = 'publish';
@@ -463,13 +532,20 @@ class Controller extends \Wdpro\BaseController {
 			print_r($additionalData);
 		}
 
-		if ($additionalData)
+		if ($additionalData){
 			$data = wdpro_extend($data, $additionalData);
+			if (empty($data['namespace']) && !empty( $additionalData['block'] )) {
+				$data['namespace'] = $additionalData['block']['namespace'];
+			}
+		}
 
 		if ($test) {
 			echo PHP_EOL.'EXTENDED DATA: ';
 			print_r($data);
 		}
+
+		if (isset($data['test']))
+			$data['test'] = substr($data['text'], 0, 254);
 
 		// Отмена сохранения (например, когда это стартовый адрес блока)
 		if (isset($data['save']) && (!$data['save'] || $data['save'] === 'false'))
@@ -533,12 +609,12 @@ class Controller extends \Wdpro\BaseController {
 		}
 
 		if ($id) {
+			unset($data['parent_id']); // Чтобы пункт меню не передвигался, в unipack из-за этого была путаница, там почему-то кнопки появлялись снова в подразделах
+			SqlTableUrls::update($data, [ 'id' => $id ]);
 			if ($test) {
 				echo PHP_EOL . 'UpdateData: ';
 				print_r($data);
 			}
-			unset($data['parent_id']); // Чтобы пункт меню не передвигался, в unipack из-за этого была путаница, там почему-то кнопки появлялись снова в подразделах
-			SqlTableUrls::update($data, [ 'id' => $id ]);
 		}
 
 		else {
@@ -547,9 +623,13 @@ class Controller extends \Wdpro\BaseController {
 
 		// Дочерние
 		if ($data['children']) {
+			SqlTableUrls::update([ 'has_children' => 1 ], [ 'id' => $id ]);
+
 			foreach ($data['children'] as $child) {
 				$child['parent_id'] = $id;
 
+				unset($additionalData['parsed_block']);
+				unset($additionalData['parsed_time']);
 				static::saveUrl($child, $additionalData);
 			}
 		}
@@ -565,9 +645,16 @@ class Controller extends \Wdpro\BaseController {
 
 		$block = static::getBlockData();
 
+		if (!empty( $block['source_namespace'] )) {
+			$namespace = $block['source_namespace'];
+		}
+		else if (!empty( $block['namespace'] )) {
+			$namespace = $block['namespace'];
+		}
+
 		if ($row = SqlTableUrls::getRow([
-			'WHERE namespace=%s AND parsed_block<%d ORDER BY parent_id, id LIMIT 1',
-			[ $block['namespace'], static::$blockI ]
+			'WHERE namespace=%s AND parsed_block<%d ORDER BY parent_id, menu_order, id LIMIT 1',
+			[ $namespace, static::$blockI ]
 		])) {
 
 			return $row;

@@ -264,16 +264,17 @@ class Menu extends Roll
 					$row['breadcrumbs'] = true;
 				}
 
-				// Текущая страница
-				else if (wdpro_breadcrumbs()->getCurrentPage()->isUri($row['post_name'])) {
-					$row['active'] = true;
-					$row['breadcrumbs'] = false;
-				}
-
-				// Не в хлебных крошках
 				else {
-					$row['active'] = false;
-					$row['breadcrumbs'] = false;
+					$currentPage = wdpro_breadcrumbs()->getCurrentPage();
+					if ($currentPage && $currentPage->isUri($row['post_name'])) {
+						$row['active'] = true;
+						$row['breadcrumbs'] = false;
+					}
+
+					else {
+						$row['active'] = false;
+						$row['breadcrumbs'] = false;
+					}
 				}
 
 
