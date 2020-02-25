@@ -3648,3 +3648,59 @@ function wdpro_strip_slashes_in_array(&$array) {
 		array_walk_recursive($array, $stripslashes_gpc);
 	}
 }
+
+
+/**
+ * Добавляет в .htaccess код
+ *
+ * @param string $code Добавляемый код
+ * @param null|array $params Параметры
+ *    ['position'] => 'end', // По-умолчанию код добавляется в начало
+ *    ['name'] => string, // Имя блока, чтобы заменить ранее добавленный блок с таким же именем
+ *    ['info'] => string, // Описание блока
+ */
+function wdpro_add_to_htaccess($code, $params=null) {
+
+	$htaccess = file_get_contents(
+		ABSPATH.'.htaccess'
+	);
+
+	$start = '';
+	$end = '';
+
+	// Когда есть название блока
+	if (!empty($params['name'])) {
+
+		// Удаляем старый блок
+		$htaccess = preg_replace(
+			'~(# BEGIN '.$params['name'].'[\s\S.]*# End '.$params['name'].')~i',
+			'',
+			$htaccess
+		);
+
+		// Создаем метки начало и конца блока
+		$start = '# BEGIN '.$params['name'].PHP_EOL;
+		if (!empty($params['info'])) {
+			$infoArr = explode('
+', $params['info']);
+			$info = '# '.join('
+# ', $infoArr);
+
+			$start .= $info.PHP_EOL;
+		}
+		$start .= PHP_EOL;
+		$end = PHP_EOL.'# END '.$params['name'].PHP_EOL;
+	}
+
+	$adding = $start.$code.$end;
+
+	if (!empty($params['position']) && $params['position'] === 'end') {
+		$htaccess .= $adding;
+	}
+
+	else {
+		$htaccess = $adding . $htaccess;
+	}
+
+	file_put_contents(ABSPATH.'.htaccess', $htaccess);
+}

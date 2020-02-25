@@ -290,6 +290,45 @@ class Controller extends \Wdpro\BaseController {
 			// Удаление картинок
 			wdpro_rmdir(static::CONTENT_IMAGES_DIR_PATH);
 		});
+
+
+		// Редиректы
+		wdpro_ajax('contentTransferRedirects', function () {
+
+			$htaccess = '';
+
+			if ($sel = SqlTableUrls::select(
+				'WHERE post_id>0 ORDER BY id',
+				'url, post_id'
+			)) {
+				foreach ($sel as $row) {
+
+					$fromParsed = parse_url($row['url']);
+					$from = $fromParsed['path'];
+					if ($fromParsed['query'])
+						$from .= '?'.$fromParsed['query'];
+
+					$post = wdpro_get_post_by_id($row['post_id']);
+					$to = null;
+					if ($post->loaded()) {
+						$to = $post->getUrl();
+					}
+
+					if ($from && $to) {
+						$htaccess .= 'Redirect 301 '
+							.$from
+							.' '
+							.$to;
+						$htaccess .= PHP_EOL;
+					}
+				}
+			}
+
+			wdpro_add_to_htaccess($htaccess, [
+				'name'=>'TransferContent',
+				'info'=>'Смена адресов после переноса материалов на новый сайт.',
+			]);
+		});
 	}
 
 

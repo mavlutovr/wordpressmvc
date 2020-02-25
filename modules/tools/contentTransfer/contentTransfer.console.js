@@ -10,6 +10,7 @@ wdpro.ready($ => {
 		const $info = $container.find('.js-info');
 		const $frameContainer = $container.find('.js-frame-container');
 		const $buttonNext = $container.find('.js-next-step');
+		const $buttonRedirects = $container.find('.js-redirects');
 
 		let frameI = 1;
 		let data = /*window.contentTransferStartData || */{};
@@ -475,6 +476,12 @@ wdpro.ready($ => {
 				$buttonNext.loading();
 				start();
 			}
+		});
+		$buttonRedirects.on('click', () => {
+			$buttonRedirects.loading();
+			wdpro.ajax('contentTransferRedirects', () => {
+				$buttonRedirects.loadingStop();
+			});
 		});
 	});
 });

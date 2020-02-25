@@ -66,31 +66,6 @@ class ConsoleRoll extends \Wdpro\Console\Roll {
 	{
 		Controller::initVaribles();
 
-		if (!empty($_GET['test'])) {
-
-			$form = new \Wdpro\Form\Form();
-			$form->add([
-				'name'=>'image',
-				'type'=>$form::IMAGE,
-				'top'=>'Картинка',
-			]);
-			$form->add([
-				'name'=>'test',
-				'top'=>'Тест',
-				'*'=>true,
-			]);
-
-			print_r($form->getData([
-				'image'=>'https://unipakspb.ru/int/upload/5d26ff9b5fa08.jpg',
-			]));
-
-			print_r($form->getJson());
-
-			exit();
-
-			return false;
-		}
-
 		echo wdpro_render_php(
 			__DIR__.'/templates/index.php',
 			[

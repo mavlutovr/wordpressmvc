@@ -44,6 +44,13 @@ class SqlTableUrls extends \Wdpro\BaseSqlTable {
 				'data'=>'json', // Собранные данные
 			],
 
+			static::INDEX => [
+				'parsed_block',
+				'parent_id',
+				'post_id',
+				'namespace',
+			],
+
 			static::ENGINE => static::INNODB,
 		];
 	}

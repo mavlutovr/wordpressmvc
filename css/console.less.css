@@ -562,3 +562,25 @@ h2 {
   grid-gap: 10px;
   grid-template-columns: auto;
 }
+.button-primary i,
+.button-secondary i {
+  font-size: 21px;
+  position: relative;
+  bottom: -3px;
+  margin-right: 5px;
+}
+.button-secondary.button-delete {
+  background: #c74949;
+  color: white;
+  border: 1px solid #c74949;
+}
+.button-secondary.button-delete:hover {
+  background: #cd5d5d;
+  color: white;
+  border: 1px solid #cd5d5d;
+}
+h1:not(.wp-heading-inline) {
+  padding: 20px;
+  background: gainsboro;
+  margin: 0 -20px 30px;
+}

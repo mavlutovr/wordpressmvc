@@ -192,12 +192,24 @@ abstract class BasePage extends BaseEntity
 
 
 	/**
+	 * Возвращает абсолютный адрес страницы
+	 *
+	 * @return string
+	 */
+	public function getUrl() {
+		return wdpro_home_url_with_lang()
+			.$this->getData('post_name')
+			.wdpro_url_slash_at_end();
+	}
+
+
+	/**
 	 * Возвращает адрес для хлебных крошек на сайте
 	 *
 	 * @return string
 	 */
 	public function getBreadcrumbsUrl() {
-		return wdpro_home_url_with_lang().$this->getData('post_name').wdpro_url_slash_at_end();
+		return $this->getUrl();
 	}
 
 
