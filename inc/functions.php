@@ -3226,7 +3226,22 @@ function wdpro_get_roll_by_get_page($page) {
  * @throws \Wdpro\EntityException
  */
 function wdpro_create_post($data) {
-	// Добавляем страницу
+
+	// Чтобы адреса у страниц были разными
+	$postNameN = 0;
+	$postName = $data['post_name'];
+	$isPostName = \Wdpro\Page\SqlTable::count([
+		'WHERE post_name=%s', [ $data['post_name'] ]
+	]);
+	while ($isPostName) {
+		$postNameN ++;
+		$data['post_name'] = $postName.$postNameN;
+		$isPostName = \Wdpro\Page\SqlTable::count([
+			'WHERE post_name=%s', [ $data['post_name'] ]
+		]);
+	}
+
+		// Добавляем страницу
 	$data['id'] = wp_insert_post($data);
 	$post = get_post($data['id']);
 
