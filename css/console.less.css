@@ -580,10 +580,12 @@ h2 {
   border: 1px solid #cd5d5d;
 }
 h1:not(.wp-heading-inline) {
-  padding: 20px;
-  background: gainsboro;
-  margin: 0 -20px 30px;
+  /*padding: 20px;
+	background: gainsboro;
+	margin: 0 -20px 30px;*/
+  margin-bottom: 60px;
 }
+/*
 .wrap {
-  margin-top: 0;
-}
+	margin-top: 0;
+}*/

@@ -59,7 +59,8 @@ class Base
 	 */
 	public function getSaveValue()
 	{
-		return $this->value;
+		if (isset($this->value))
+			return $this->value;
 	}
 
 
@@ -69,8 +70,11 @@ class Base
 	 * @param array $formData Данные запущенной формы
 	 * @returns mixed
 	 */
-	public function getDataFromSubmit($formData)
+	public function getDataFromSubmit($formData=null)
 	{
+		if (!$formData)
+			$formData = $this->form->getData();
+
 		$data = $this->getValueFromDataByName($formData);
 		
 		if (is_string($data)) $data = stripslashes($data);
@@ -289,5 +293,13 @@ class Base
 		if ($label = $this->getLabel()) {
 			return '<p><strong>'.$label.':</strong> '.$saveValue;
 		}
+	}
+
+
+	/**
+	 * Удаляет файлы (этот метод наследуется в Image.php и File.php
+	 */
+	public function removeFiles() {
+
 	}
 }

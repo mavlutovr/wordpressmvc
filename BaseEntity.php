@@ -965,7 +965,12 @@ abstract class BaseEntity
 		if ($id = $this->id())
 		{
 			$table = static::getSqlTable();
-			
+
+			// Удаление файлов, загруженных через форму
+			$form = $this->getConsoleForm();
+			$form->removeFiles();
+
+
 			// Удаление дочерних элементов
 			if ($table::isColl('post_parent')) {
 				if ($selChilds = $table::select([

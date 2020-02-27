@@ -11,7 +11,7 @@ class Checks extends Select
 	 * @param array $formData Данные запущенной формы
 	 * @return mixed|string
 	 */
-	public function getDataFromSubmit($formData)
+	public function getDataFromSubmit($formData=null)
 	{
 		$return =  parent::getDataFromSubmit($formData);
 

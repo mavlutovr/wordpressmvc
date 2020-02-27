@@ -275,8 +275,11 @@ class File extends Base
 	 * @param array $formData Данные формы
 	 * @return string
 	 */
-	public function getDataFromSubmit($formData)
+	public function getDataFromSubmit($formData=null)
 	{
+		if (!$formData)
+			$formData = $this->form->getData();
+
 		// Сдесь файлы в json и urlendode формате
 		$files = $formData[$this->params['name']];
 
@@ -302,6 +305,23 @@ class File extends Base
 
 		return $this->fileCheckResult['files'][0];
 	}
+
+
+	/**
+	 * Удаляет файлы (этот метод наследуется в Image.php и File.php
+	 */
+	public function removeFiles()
+	{
+		$fileName = $this->getDataFromSubmit();
+
+		if ($fileName) {
+			$path = $this->params['dir'].'/'.$fileName;
+			@unlink($path);
+		}
+	}
+
+
+
 
 
 	/**

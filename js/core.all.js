@@ -1751,12 +1751,31 @@ if (typeof Array.isArray === 'undefined') {
 	 */
 	wdpro.trim = string => string.replace(/^\s+|\s+$/g, '');
 
+
 	/**
 	 * Удаляет лишние пробелы из всех мест строки
 	 *
 	 * @returns {string}
 	 */
 	String.prototype.fulltrim=function(){return this.replace(/(?:(?:^|\n)\s+|\s+(?:$|\n))/g,'').replace(/\s+/g,' ');};
+
+
+	/**
+	 * Удаляет лишние пробелы из всех мест строки
+	 *
+	 * @param string
+	 * @return {string}
+	 */
+	wdpro.fulltrim = string => string.replace(/(?:(?:^|\n)\s+|\s+(?:$|\n))/g,'').replace(/\s+/g,' ');
+
+
+	/**
+	 * Делает первую букву заглавной, остальные прописные
+	 *
+	 * @param string
+	 * @return {string}
+	 */
+	wdpro.upercaseFirstLetterSmallOthers = string => string[0].toUpperCase() + string.slice(1).toLowerCase();
 
 
 	/**

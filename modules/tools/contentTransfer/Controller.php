@@ -135,6 +135,7 @@ class Controller extends \Wdpro\BaseController {
 
 			// Сохранение запрещено
 			if (isset($url['save']) && (!$url['save'] || $url['save'] === 'false')) {
+				
 				// Сохраняем только подменю
 				if (isset($url['children']) && is_array($url['children'])) {
 					foreach ($url['children'] as $child) {

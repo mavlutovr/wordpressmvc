@@ -621,6 +621,7 @@ abstract class BasePage extends BaseEntity
 		$id = $this->id();
 		parent::remove();
 
+
 		/*$post = get_post($id);
 		if ($post && $post->ID) {
 			wp_delete_post($id, true);
