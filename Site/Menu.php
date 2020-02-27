@@ -278,6 +278,10 @@ class Menu extends Roll
 				}
 
 
+				// Тип записи
+				$row['entity_type'] = $entityClass::getType();
+
+
 				// Подменюшки
 				if (!empty($params['submenu'])) {
 
@@ -291,10 +295,20 @@ class Menu extends Roll
 
 					foreach ($submenus as $submenu) {
 
+						// Условие в каллбэке
+						if (!empty($submenu['show']) && is_callable($submenu['show'])) {
+							$callableShow = $submenu['show']($row);
+							if (!$callableShow) {
+								$submenu = false;
+							}
+						}
+
 						// В хлебных крошках
 						if (wdpro_breadcrumbs()->isUri($row['post_name'])) {
 							// Указано показывать подменю только если кнопка есть в хлебных крошках
-							if ($submenu === 'breadcrumbs' || $submenu === 'active') {
+							if ($submenu === 'breadcrumbs' || $submenu === 'active'
+							|| isset($submenu['show'])
+								&& ($submenu['show'] === 'breadcrumbs' || $submenu['show'] === 'active')) {
 								$submenu = true;
 							}
 						}
