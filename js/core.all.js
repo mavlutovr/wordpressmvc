@@ -10,6 +10,7 @@ var wdpro = {
 	WDPRO_TEMPLATE_URL: '',
 	WDPRO_UPLOAD_IMAGES_URL: '',
 	WDPRO_HOME_URL: '',
+	WDPRO_UPLOAD_URL: '',
 
 	// Номера клавиш
 	KEY_ESCAPE: 27,
@@ -1741,12 +1742,40 @@ if (typeof Array.isArray === 'undefined') {
 	 */
 	String.prototype.trim=function(){return this.replace(/^\s+|\s+$/g, '');};
 
+
+	/**
+	 * Удаляет лишние пробелы из конца и начала строки
+	 *
+	 * @param string
+	 * @return {string}
+	 */
+	wdpro.trim = string => string.replace(/^\s+|\s+$/g, '');
+
+
 	/**
 	 * Удаляет лишние пробелы из всех мест строки
 	 *
 	 * @returns {string}
 	 */
 	String.prototype.fulltrim=function(){return this.replace(/(?:(?:^|\n)\s+|\s+(?:$|\n))/g,'').replace(/\s+/g,' ');};
+
+
+	/**
+	 * Удаляет лишние пробелы из всех мест строки
+	 *
+	 * @param string
+	 * @return {string}
+	 */
+	wdpro.fulltrim = string => string.replace(/(?:(?:^|\n)\s+|\s+(?:$|\n))/g,'').replace(/\s+/g,' ');
+
+
+	/**
+	 * Делает первую букву заглавной, остальные прописные
+	 *
+	 * @param string
+	 * @return {string}
+	 */
+	wdpro.upercaseFirstLetterSmallOthers = string => string[0].toUpperCase() + string.slice(1).toLowerCase();
 
 
 	/**
@@ -2556,6 +2585,31 @@ if (typeof Array.isArray === 'undefined') {
 		l.href = url;
 		return l;
 	};
+
+
+	/**
+	 * Преобразует url из массива в строку
+	 *
+	 * @param parsedUrl {HTMLAnchorElement|{}}
+	 * @return string
+	 */
+	wdpro.unparseUrl = function(parsedUrl) {
+		return parsedUrl.protocol+"//"
+		+parsedUrl.host
+		+parsedUrl.pathname
+		+parsedUrl.search
+		+parsedUrl.hash;
+	};
+
+
+	/**
+	 * Преобразует относительный адрес в абсолютный
+	 *
+	 * @param relativeUrl {string} Относительный адрес
+	 * @return {string}
+	 */
+	wdpro.relativeUrlToAbsolute = relativeUrl =>
+		wdpro.unparseUrl( wdpro.parseUrl(relativeUrl) );
 
 
 

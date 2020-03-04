@@ -46,7 +46,7 @@ class File extends Base
 
 
 	/**
-	 * Проверка загружаемый файлов
+	 * Проверка загружаемых файлов
 	 * 
 	 * @param $value
 	 * @return bool
@@ -59,11 +59,26 @@ class File extends Base
 		{
 			return true;
 		}
-		
-		
+
+
 		$values = json_decode(
 			urldecode($value), true
 		);
+
+		// Это чтобы можно было вручную отправлять в данные формы файлы в формате массива или просто строки с url картинки
+		if (!$values)
+			$values = $value;
+		if ($values && !is_array($values)) $values = [ $values ];
+
+		// Когда в поле указан абсолютный адрес
+		// Загружаем картинку из интернета
+		if (is_array($values)) {
+			foreach ($values as $n=>$file) {
+				$values[$n] = $this->tryToLoadFileFromInternet($file);
+			}
+		}
+
+		//echo PHP_EOL.'$values: '; print_r($values); exit();
 
 
 		if ($values && count($values))
@@ -216,14 +231,60 @@ class File extends Base
 
 
 	/**
+	 * Загружает файлы из интернета при необходимости
+	 *
+	 * Когда в данных находится абсолютный адрес
+	 *
+	 * @param string $file Адрес файла
+	 * @return string
+	 */
+	public function tryToLoadFileFromInternet($file) {
+		if (wdpro_is_absolute_url($file)) {
+
+			$fileHeaders = @get_headers($file);
+			if (!$fileHeaders || !strpos($fileHeaders[0],"200")) {
+				return '';
+			}
+
+			$tmpDir = wdpro_upload_dir('temp');
+			$fileName = parse_url($file, PHP_URL_PATH);
+			$fileName = wdpro_text_to_file_name(
+				wdpro_ru_en(wdpro_basename($fileName))
+			);
+			$n = 1;
+			$zipFileName = $fileName.'_1.gz';
+			while(is_file($tmpDir.$zipFileName))
+			{
+				$n ++;
+				$zipFileName = $fileName.'_'.$n.'.gz';
+			}
+
+			// Создаем архив с файлом
+			wdpro_gz_encode($file, $tmpDir.$zipFileName);
+
+			$file = 'ZIP: '.$zipFileName;
+		}
+
+		return $file;
+	}
+
+
+	/**
 	 * Возвращает обработанные после отправки формы данные (массив имен фалов)
 	 *
 	 * @param array $formData Данные формы
 	 * @return string
 	 */
-	public function getDataFromSubmit($formData)
+	public function getDataFromSubmit($formData=null)
 	{
-		if (!$this->checkFiles($formData[$this->params['name']]))
+		if (!$formData)
+			$formData = $this->form->getData();
+
+		// Сдесь файлы в json и urlendode формате
+		$files = $formData[$this->params['name']];
+
+
+		if (!$this->checkFiles($files))
 		{
 			return null;
 		}
@@ -244,6 +305,23 @@ class File extends Base
 
 		return $this->fileCheckResult['files'][0];
 	}
+
+
+	/**
+	 * Удаляет файлы (этот метод наследуется в Image.php и File.php
+	 */
+	public function removeFiles()
+	{
+		$fileName = $this->getDataFromSubmit();
+
+		if ($fileName) {
+			$path = $this->params['dir'].'/'.$fileName;
+			@unlink($path);
+		}
+	}
+
+
+
 
 
 	/**

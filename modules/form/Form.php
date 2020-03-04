@@ -206,6 +206,7 @@ class Form
 				if ($element = $this->addElementByParams($params)) {
 					$group[] = $element;
 					$element->setFormI($this->elementI);
+					$element->setForm($this);
 				}
 
 				if (isset($params['name']) && $params['name']) {
@@ -361,9 +362,13 @@ window.'.$id.' = '.($this->getJson()).';
 	* Чтобы потом на странице с помощью js превратить данные в саму форму
 	*/
 	public function getJson() {
+
+		$params = $this->getParams();
+		unset($params['entity']);
+
 		return json_encode(
-			$this->getParams(), 
-			JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE|JSON_HEX_QUOT
+			$params,
+			JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE|JSON_HEX_QUOT
 		);
 	}
 
@@ -661,12 +666,20 @@ window.'.$id.' = '.($this->getJson()).';
 
 	/**
 	 * Возвращает обработанные данные
-	 * 
+	 *
+	 * @param array $data Не стандартные данные (например, когда форма не отправлялась, а просто надо обработать какие-то данные через форму)
 	 * @return array|null
 	 */
-	public function getData()
+	public function getData($data=null)
 	{
-		$data = $this->getSubmitData();
+		if ($data === null)
+			$data = $this->getSubmitData();
+
+		// Это нужно, чтобы при удалении элементов удалялись файлы (например, картинки)
+		// Чтобы поля моглуи получить данные формы без отправки и удалить файлы
+		// Да и в принципе чтобы поля знали введенные в форму данные без отправки формы
+		if (!$data && isset($this->params['data']))
+			$data = $this->params['data'];
 		
 		if ($data)
 		{
@@ -771,7 +784,8 @@ window.'.$id.' = '.($this->getJson()).';
 	 */
 	public function getName()
 	{
-		return $this->params['name'];
+		if (!empty($this->params['name']))
+			return $this->params['name'];
 	}
 
 
@@ -872,6 +886,16 @@ window.'.$id.' = '.($this->getJson()).';
 	 */
 	public function getEntity() {
 		return $this->params['entity'];
+	}
+
+
+	public function removeFiles() {
+		$this->eachElements(function ($element) {
+
+			/** @var \Wdpro\Form\Elements\Base|\Wdpro\Form\Elements\File|\Wdpro\Form\Elements\Image */
+
+			$element->removeFiles();
+		});
 	}
 }
 

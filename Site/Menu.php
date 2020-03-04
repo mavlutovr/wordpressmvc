@@ -211,8 +211,6 @@ class Menu extends Roll
 
 			$data = array();
 
-			$homePageId = wdpro_get_option('page_on_front');
-
 			foreach($sel as $row)
 			{
 				if (isset($row['ID']) && $row['ID'])
@@ -243,46 +241,9 @@ class Menu extends Roll
 				
 				else
 				{
-					//$row['url'] = home_url($row['post_name']);
-
-					$post_name = $row['post_name'];
-					if ($row['id'] == $homePageId) {
-						$post_name = '';
-					}
-					else {
-						$post_name .= wdpro_url_slash_at_end();
-					}
-
-					$row['url'] = \Wdpro\Lang\Data::currentUrl().$post_name;
+					$row['url'] = wdpro_url_from_post_name($row['post_name'], $row['id']);
 				}
 				$row['text'] = $row['post_title'];
-
-
-				$submenu = isset($params['submenu']) ? $params['submenu'] : null;
-
-
-				// В хлебных крошках
-				if (wdpro_breadcrumbs()->isUri($row['post_name'])) {
-					$row['active'] = true;
-					$row['breadcrumbs'] = true;
-
-					// Указано показывать подменю только если кнопка есть в хлебных крошках
-					if ($submenu === 'breadcrumbs' || $submenu === 'active') {
-						$submenu = true;
-					}
-				}
-
-				// Не в хлебных крошках
-				else {
-					$row['active'] = false;
-					$row['breadcrumbs'] = false;
-
-					// Когда у подменю параметры, в которых указано, что отображать кнопку только когда она в хлебных крохах
-					if (isset($submenu['show']) && $submenu['show'] === 'breadcrumbs') {
-						// Убираем подменю
-						$submenu = false;
-					}
-				}
 
 
 				// Прям текущая страница
@@ -293,32 +254,109 @@ class Menu extends Roll
 					$row['current'] = false;
 				}
 
-				
 				$row = static::prepareDataForTemplate($row);
-				
-				// Подменю
-				$row['submenu'] = '';
-				if ($submenu) {
 
-					// Указаны параметры
-					if (is_array($submenu)) {
 
-						$submenu = wdpro_extend(array(
-							'type'=>$paramsForSubmenu['type'],
-							'entity'=>$paramsForSubmenu['entity'],
-						), $submenu);
+				// Выбранность кнопки
+				// В хлебных крошках
+				if (wdpro_breadcrumbs()->isUri($row['post_name'])) {
+					$row['active'] = true;
+					$row['breadcrumbs'] = true;
+				}
+
+				else {
+					$currentPage = wdpro_breadcrumbs()->getCurrentPage();
+					if ($currentPage && $currentPage->isUri($row['post_name'])) {
+						$row['active'] = true;
+						$row['breadcrumbs'] = false;
 					}
 
-					if ($submenu === true || $submenu === 1) {
-
-						$submenu = $paramsForSubmenu;
-					}
-
-					if (is_array($submenu)) {
-						$submenu['post_parent'] = $row['id'];
-						$row['submenu'] = static::getHtml($submenu);
+					else {
+						$row['active'] = false;
+						$row['breadcrumbs'] = false;
 					}
 				}
+
+
+				// Тип записи
+				$row['entity_type'] = $entityClass::getType();
+
+
+				// Подменюшки
+				if (!empty($params['submenu'])) {
+
+					$submenus = $params['submenu'];
+
+					if (!is_array($submenus) || !isset($submenus[0]))
+						$submenus = [$submenus];
+
+					$row['submenu'] = '';
+					$row['submenu_array'] = [];
+
+					foreach ($submenus as $submenu) {
+
+						// Условие в каллбэке
+						if (!empty($submenu['show']) && is_callable($submenu['show'])) {
+							$callableShow = $submenu['show']($row);
+							if (!$callableShow) {
+								$submenu = false;
+							}
+						}
+
+						// В хлебных крошках
+						if (wdpro_breadcrumbs()->isUri($row['post_name'])) {
+							// Указано показывать подменю только если кнопка есть в хлебных крошках
+							if ($submenu === 'breadcrumbs' || $submenu === 'active'
+							|| isset($submenu['show'])
+								&& ($submenu['show'] === 'breadcrumbs' || $submenu['show'] === 'active')) {
+								$submenu = true;
+							}
+						}
+
+						// Не в хлебных крошках
+						else {
+							// Когда у подменю параметры, в которых указано, что отображать кнопку только когда она в хлебных крохах
+							if (isset($submenu['show']) && $submenu['show'] === 'breadcrumbs') {
+								// Убираем подменю
+								$submenu = false;
+							}
+						}
+
+						// Подменю
+						if ($submenu) {
+
+							// Указаны параметры
+							if (is_array($submenu)) {
+
+								$submenu = wdpro_extend(array(
+									'type'=>$paramsForSubmenu['type'],
+									'entity'=>$paramsForSubmenu['entity'],
+									'submenu'=>$submenus,
+									'template'=>$paramsForSubmenu['template'],
+								), $submenu);
+							}
+
+							if ($submenu === true || $submenu === 1) {
+
+								$submenu = $paramsForSubmenu;
+							}
+
+							if (is_array($submenu)) {
+								$submenu['post_parent'] = $row['id'];
+								$submenuHtml = static::getHtml($submenu);
+								$row['submenu'] .= $submenuHtml;
+								$row['submenu_array'][] = $submenuHtml;
+							}
+						}
+					}
+				}
+
+				else {
+					$row['submenu'] = '';
+					$row['submenu_array'] = [];
+				}
+
+
 				
 				$data[] = $row;
 			}

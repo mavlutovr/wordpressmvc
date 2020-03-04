@@ -45,6 +45,16 @@
 
 
 		/**
+		 * Устанавливает кастомную форму
+		 *
+		 * @param form {wdpro.forms.Form} Форма
+		 */
+		setForm: function (form) {
+			this.form = form;
+		},
+
+
+		/**
 		 * Возвращает форму заказа обратного звонка
 		 * 
 		 * Можно переопределять, например, в скриптах темы
@@ -52,6 +62,11 @@
 		 * @param Return {function} Каллбэк, в который отправлять форму
 		 */
 		getForm: function (Return) {
+
+			if (this.form) {
+				Return(this.form);
+				return true;
+			}
 
 			var form = new wdpro.forms.Form();
 			form.add({

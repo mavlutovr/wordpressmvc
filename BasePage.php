@@ -192,12 +192,24 @@ abstract class BasePage extends BaseEntity
 
 
 	/**
+	 * Возвращает абсолютный адрес страницы
+	 *
+	 * @return string
+	 */
+	public function getUrl() {
+		return wdpro_home_url_with_lang()
+			.$this->getData('post_name')
+			.wdpro_url_slash_at_end();
+	}
+
+
+	/**
 	 * Возвращает адрес для хлебных крошек на сайте
 	 *
 	 * @return string
 	 */
 	public function getBreadcrumbsUrl() {
-		return wdpro_home_url_with_lang().$this->getData('post_name').wdpro_url_slash_at_end();
+		return $this->getUrl();
 	}
 
 
@@ -432,6 +444,25 @@ abstract class BasePage extends BaseEntity
 
 
 	/**
+	 * Сохраняет дополнительную информацию о странице
+	 *
+	 * @param string $key Ключ
+	 * @param string|int $value Значение
+	 */
+	public function setMeta($key, $value) {
+		// update_post_meta
+
+		if (!empty($value)) {
+			update_post_meta($this->id(), $key, $value);
+		}
+
+		else {
+			delete_post_meta($this->id(), $key);
+		}
+	}
+
+
+	/**
 	 * Возвращает description страницы
 	 *
 	 * @return string
@@ -554,4 +585,52 @@ abstract class BasePage extends BaseEntity
 	public static function getTemplateFile() {
 
 	}
+
+
+	/**
+	 * Сохранение
+	 *
+	 * @returns bool|array (false или сохраненные данные)
+	 * @throws EntityException
+	 */
+	public function save()
+	{
+		$meta = $this->getData('meta');
+
+		$ret = parent::save();
+
+		if ($ret) {
+			if (is_array($meta)) {
+				foreach ($meta as $key => $value) {
+					$this->setMeta($key, $value);
+				}
+			}
+		}
+
+		return $ret;
+	}
+
+
+	/**
+	 * Удаление сущности
+	 *
+	 * @throws \Exception
+	 */
+	public function remove()
+	{
+		$id = $this->id();
+		parent::remove();
+
+
+		/*$post = get_post($id);
+		if ($post && $post->ID) {
+			wp_delete_post($id, true);
+		}*/
+		if (empty(static::$deleted[$id])) {
+			static::$deleted[$id] = true;
+			wp_delete_post($id, true);
+		}
+	}
+	protected static $deleted = [];
+
 }

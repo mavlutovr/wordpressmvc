@@ -20,7 +20,7 @@ class Html extends Base {
 	 * @param array $formData Данные запущенной формы
 	 * @returns mixed
 	 */
-	public function getDataFromSubmit( $formData ) {
+	public function getDataFromSubmit( $formData=null ) {
 
 		
 	}

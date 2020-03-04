@@ -242,9 +242,7 @@ class Roll extends BaseRoll
 		// Просто список
 		else {
 			// Заголовок и описание
-			$text = '<div class="wrap">
-				<h1>'.$params['labels']['label'].'</h1>
-			</div>';
+			$text = '<h1>'.$params['labels']['label'].'</h1>';
 			if ($about = $this->about())
 			{
 				$text .= '<div class="wdpro-about">'.$about.'</div>';

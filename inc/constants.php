@@ -34,6 +34,7 @@ define('WDPRO_TEMPLATE_URL', get_template_directory_uri().'/');
 
 // Папка загрузок
 define('WDPRO_UPLOAD_URL', wdpro_upload_dir_url());
+define('WDPRO_UPLOAD_CKEDITOR_URL', wdpro_upload_dir_ckeditor_url());
 define('WDPRO_UPLOAD_IMAGES_URL', WDPRO_UPLOAD_URL.'images/');
 define('WDPRO_UPLOAD_FILES_URL', WDPRO_UPLOAD_URL.'files/');
 define('WDPRO_UPLOAD_PATH', wdpro_upload_dir_path());

@@ -785,6 +785,22 @@ AddType application/x-httpd-php-source .phtml .php .php3 .php4 .php5 .php6 .phps
 
 
 /**
+ * Удаляет папку со всем содержимым
+ *
+ * @param string $dir Адрес папки
+ * @return bool
+ */
+function wdpro_rmdir($dir) {
+	if (!is_dir($dir)) return false;
+	$files = array_diff(scandir($dir), array('.','..'));
+	foreach ($files as $file) {
+		(is_dir("$dir/$file")) ? wdpro_rmdir("$dir/$file") : unlink("$dir/$file");
+	}
+	return rmdir($dir);
+}
+
+
+/**
  * Возвращает папку для загрузки файлов плагина wdpro
  *
  * @param bool|false|string $subDir Поддиректория внутри основной папки файлов плагина
@@ -796,6 +812,32 @@ function wdpro_upload_dir_url($subDir=false)
 	$dirs = wp_upload_dir();
 
 	$dir = $dirs['baseurl'] . '/' . 'wdpro';
+
+	if ($subDir)
+	{
+		$dir .= '/' . $subDir;
+	}
+
+	if (!preg_match('~/$~', $dir)) {
+		$dir .= '/';
+	}
+
+	return $dir;
+}
+
+
+/**
+ * Возвращает папку для загрузки файлов ckeditor
+ *
+ * @param bool|false|string $subDir Поддиректория внутри основной папки файлов плагина
+ * wdpro
+ * @return string
+ */
+function wdpro_upload_dir_ckeditor_url($subDir=false)
+{
+	$dirs = wp_upload_dir();
+
+	$dir = $dirs['baseurl'] . '/' . 'ckeditor';
 
 	if ($subDir)
 	{
@@ -841,11 +883,24 @@ function wdpro_upload_dir_path($subDir=false)
  *
  * @param string $sourceFile Адрес файла, которыя надо заархивировать
  * @param string $zipFile Адрес файла архива, куда заархивировать файл
- * @return bool trueпри удачном архивировании
+ * @return bool true при удачном архивировании
  */
 function wdpro_gz_encode($sourceFile, $zipFile)
 {
 	$data = file_get_contents($sourceFile);
+	wdpro_gz_encode_data($data, $zipFile);
+}
+
+
+/**
+ * Архивирует данные в .gz архив
+ *
+ * @param string $data Данные
+ * @param string $zipFile Адрес файла архива, куда заархивировать файл
+ * @return bool true при удачном архивировании
+ */
+function wdpro_gz_encode_data($data, $zipFile)
+{
 	if ($gz_data = gzencode($data, 0))
 	{
 		$fp = fopen($zipFile, 'w');
@@ -2960,32 +3015,49 @@ function wdpro_get_option($optionName, $defaultValue=null) {
  *
  * @param string $phone
  * @param string|array $format +7 (###) ### ####
+ * @param null|int $firstNumber Первая цифра у телефонов (например, 7)
  * @param string $mask
  * @return bool|string
  */
-function wdpro_phone_format($phone, $format, $mask = '#')
+function wdpro_phone_format($phone, $format = [
+	10 => '+7##########',
+	11 => '+###########'
+], $firstNumber = 7, $mask = '#')
 {
-    $phone = preg_replace('/[^0-9]/', '', $phone);
+	$originalFormat = $format;
+	$phone = preg_replace('/[^0-9]/', '', $phone);
 
-    if (is_array($format)) {
-        if (array_key_exists(strlen($phone), $format)) {
-            $format = $format[strlen($phone)];
-        } else {
-            return false;
-        }
-    }
+	/*if ($replace8to7) {
+		$phone = preg_replace('~^(8)~', '7', $phone);
+	}*/
 
-    $pattern = '/' . str_repeat('([0-9])?', substr_count($format, $mask)) . '(.*)/';
+	if (is_array($format)) {
+		if (array_key_exists(strlen($phone), $format)) {
+			$format = $format[strlen($phone)];
+		} else {
+			return false;
+		}
+	}
 
-    $format = preg_replace_callback(
-        str_replace('#', $mask, '/([#])/'),
-        function () use (&$counter) {
-            return '${' . (++$counter) . '}';
-        },
-        $format
-    );
+	$pattern = '/' . str_repeat('([0-9])?', substr_count($format, $mask)) . '(.*)/';
 
-    return ($phone) ? trim(preg_replace($pattern, $format, $phone, 1)) : false;
+	$format = preg_replace_callback(
+		str_replace('#', $mask, '/([#])/'),
+		function () use (&$counter, &$replace8to7) {
+			return '${' . (++$counter) . '}';
+		},
+		$format
+	);
+
+	$formattedPhone = ($phone) ? trim(preg_replace($pattern, $format, $phone, 1)) : false;
+
+	if ($firstNumber) {
+		$formattedPhone = preg_replace('/[^0-9]/', '', $formattedPhone);
+		$formattedPhone = preg_replace('~^.~', $firstNumber, $formattedPhone);
+		return wdpro_phone_format($formattedPhone, $originalFormat, null);
+	}
+
+	return $formattedPhone;
 }
 
 
@@ -3150,14 +3222,38 @@ function wdpro_get_roll_by_get_page($page) {
  * Создание поста
  *
  * @param array $data Данные поста
+ * @return \Wdpro\BasePage
+ * @throws \Wdpro\EntityException
  */
 function wdpro_create_post($data) {
-	// Добавляем страницу
+
+	// Чтобы адреса у страниц были разными
+	$postNameN = 0;
+	$postName = $data['post_name'];
+	$isPostName = \Wdpro\Page\SqlTable::count([
+		'WHERE post_name=%s', [ $data['post_name'] ]
+	]);
+	while ($isPostName) {
+		$postNameN ++;
+		$data['post_name'] = $postName.$postNameN;
+		$isPostName = \Wdpro\Page\SqlTable::count([
+			'WHERE post_name=%s', [ $data['post_name'] ]
+		]);
+	}
+
+		// Добавляем страницу
 	$data['id'] = wp_insert_post($data);
+	$post = get_post($data['id']);
 
 	$entityClass = wdpro_get_entity_class_by_post_type($data['post_type']);
+	/** @var \Wdpro\BasePage $entity */
 	$entity = new $entityClass($data);
+	$entity->mergeData([
+		'post_name'=>$post->post_name,
+	]);
 	$entity->save();
+
+	return $entity;
 }
 
 /**
@@ -3521,4 +3617,105 @@ function wdpro_url_slash_at_end_mode() {
 function wdpro_url_slash_at_end() {
 	if (wdpro_url_slash_at_end_mode()) return '/';
 	return '';
+}
+
+
+/**
+ * Возвращает абсолютный адрес для поста
+ *
+ * @param string $postName Относительный адрес страницы
+ * @param null|int $postId ID поста, чтобы когда это главная, делать адрес /
+ * @return string
+ */
+function wdpro_url_from_post_name($postName, $postId=null) {
+
+	// Когда это главная страница, очищаем $postName
+	if ($postId !== null) {
+		global $homePageId;
+		if (!isset($homePageId))
+			$homePageId = wdpro_get_option('page_on_front');
+
+		if ($postId === $homePageId) {
+			$postName = '';
+		}
+	}
+
+	// Добавляем в конце слэш
+	if ($postName) $postName .= wdpro_url_slash_at_end();
+
+	// Добавляем абсолютную часть адреса
+	return \Wdpro\Lang\Data::currentUrl().$postName;
+}
+
+
+/**
+ * Превращает \" в "
+ *
+ * @param $array
+ */
+function wdpro_strip_slashes_in_array(&$array) {
+
+	if ($array && is_array($array)) {
+		$stripslashes_gpc = function(&$value)
+		{
+			$value = stripslashes($value);
+		};
+		array_walk_recursive($array, $stripslashes_gpc);
+	}
+}
+
+
+/**
+ * Добавляет в .htaccess код
+ *
+ * @param string $code Добавляемый код
+ * @param null|array $params Параметры
+ *    ['position'] => 'end', // По-умолчанию код добавляется в начало
+ *    ['name'] => string, // Имя блока, чтобы заменить ранее добавленный блок с таким же именем
+ *    ['info'] => string, // Описание блока
+ */
+function wdpro_add_to_htaccess($code, $params=null) {
+
+	$htaccess = file_get_contents(
+		ABSPATH.'.htaccess'
+	);
+
+	$start = '';
+	$end = '';
+
+	// Когда есть название блока
+	if (!empty($params['name'])) {
+
+		// Удаляем старый блок
+		$htaccess = preg_replace(
+			'~(# BEGIN '.$params['name'].'[\s\S.]*# End '.$params['name'].')~i',
+			'',
+			$htaccess
+		);
+
+		// Создаем метки начало и конца блока
+		$start = '# BEGIN '.$params['name'].PHP_EOL;
+		if (!empty($params['info'])) {
+			$infoArr = explode('
+', $params['info']);
+			$info = '# '.join('
+# ', $infoArr);
+
+			$start .= $info.PHP_EOL;
+		}
+		$start .= PHP_EOL;
+		$end = PHP_EOL.'# END '.$params['name'].PHP_EOL;
+	}
+
+	$adding = $start.$code.$end;
+
+	if (!empty($params['position']) && $params['position'] === 'end') {
+		$htaccess .= $adding;
+	}
+
+	else {
+		$htaccess = $adding . $htaccess;
+	}
+
+	file_put_contents(ABSPATH.'.htaccess', $htaccess);
 }

@@ -495,14 +495,23 @@ abstract class BaseEntity
 	/**
 	 * Берет следующий порядковый номер и добавляет его в данные
 	 *
-	 * @param string $where WHERE запрос, по которому строиться список этих сущностей, в
+	 * @param string|null $where WHERE запрос, по которому строиться список этих сущностей, в
 	 * котором идет сортировка
 	 * @return $this
 	 * @throws EntityException
 	 */
-	public function nextSortingToData($where)
+	public function nextSortingToData($where=null)
 	{
 		$run = function ($fieldName) use (&$where) {
+
+			if ($where === null) {
+				global $wpdb;
+				$where = $wpdb->prepare(
+					'WHERE post_parent=%d AND post_status="publish"',
+					[$this->getData('post_parent')]
+				);
+			}
+
 			if (!isset($this->data[$fieldName]) || !$this->data[$fieldName])
 			{
 				$where = preg_replace('~(ORDER BY [.`\s\S]+)~', '', $where);
@@ -518,6 +527,8 @@ abstract class BaseEntity
 					$this->data[$fieldName] = 10;
 				}
 			}
+
+			wp_update_post(['ID'=>$this->id(), 'menu_order'=> $this->data[$fieldName]]);
 		};
 
 
@@ -954,7 +965,12 @@ abstract class BaseEntity
 		if ($id = $this->id())
 		{
 			$table = static::getSqlTable();
-			
+
+			// Удаление файлов, загруженных через форму
+			$form = $this->getConsoleForm();
+			$form->removeFiles();
+
+
 			// Удаление дочерних элементов
 			if ($table::isColl('post_parent')) {
 				if ($selChilds = $table::select([

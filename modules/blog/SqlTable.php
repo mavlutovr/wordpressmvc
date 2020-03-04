@@ -21,6 +21,7 @@ class SqlTable extends \Wdpro\BaseSqlTable {
 				'post_parent'=>'int',
 				'date_added'=>'int',
 				'date_edited'=>'int',
+				'content_transfer_url_id'=>'int',
 				'post_status'=>'varchar(20)',
 				'post_name',
 				'post_title[lang]',

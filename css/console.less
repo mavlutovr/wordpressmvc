@@ -1,4 +1,5 @@
 @import "mixins";
+@import "standart";
 
 #adminmenu, #adminmenu .wp-submenu, #adminmenuback, #adminmenuwrap {
     width: 200px;
@@ -16,6 +17,10 @@
 .breadcrumbs
 {
 	margin-top: 20px;
+}
+
+hr {
+
 }
 
 .breadcrumbs_element
@@ -443,3 +448,40 @@ h2 {
 	grid-gap: 10px;
 	grid-template-columns: auto;
 }
+
+.button-primary, .button-secondary {
+
+	i {
+		font-size: 21px;
+		position: relative;
+		bottom: -3px;
+		margin-right: 5px;
+	}
+}
+
+.button-secondary.button-delete {
+
+	@color: #c74949;
+
+	background: @color;
+	color: white;
+	border: 1px solid @color;
+
+	&:hover {
+		background: lighten(@color, 5%);
+		color: white;
+		border: 1px solid lighten(@color, 5%);
+	}
+}
+
+h1:not(.wp-heading-inline) {
+	/*padding: 20px;
+	background: gainsboro;
+	margin: 0 -20px 30px;*/
+	margin-bottom: 60px;
+}
+
+/*
+.wrap {
+	margin-top: 0;
+}*/

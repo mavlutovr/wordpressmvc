@@ -19,7 +19,7 @@ wdpro.ready(($) => {
 });
 ```
 
-## Своя форма обратного звонка
+## Своя форма обратного звонка на странице
 
 Это когда форма не открывается в диалоговом окошке, а находится прямо на странице.
 
@@ -36,11 +36,39 @@ wdpro.ready(($) => {
 ```
 
 ```javascript
-wdpro.ready(($) => {
+wdpro.ready($ => {
 	wdpro.callback.initHtmlForm(
         $('#js-footer-callaback')
     );
 });
+```
+
+## Своя форма обратного звонка в диалоговом окошке
+
+```javascript
+let form = new wdpro.forms.Form();
+form.add({
+    'name': 'name',
+    'top': 'Ваше имя',
+    '*': true
+});
+form.add({
+    'name': 'phone',
+    'top': 'Ваш телефон',
+    '*': true
+});
+form.add({
+    'type': 'submit',
+    'text': 'Заказать обратный звонок'
+});
+form.add({
+    'type': 'check',
+    'right': 'Я даю свое согласие на обработку персональных данных и соглашаюсь с условиями и <a href="/privacy-policy/" target="_blank">политикой конфиденциальности</a>.',
+    'required': true,
+    'checked': true,
+    'containerClass': 'privacy-check-container'
+});
+wdpro.callback.setForm(form);
 ```
 
 

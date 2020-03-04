@@ -1018,8 +1018,8 @@ abstract class BaseSqlTable
 
 
 	/**
-	 * Преобразует данные для сохранения в базе
-	 * 
+	 * Преобразует данные из базы для использования в php
+	 *
 	 * @param string $fieldName Имя поля
 	 * @param mixed $fieldValue Значение
 	 * @return mixed
@@ -1039,7 +1039,7 @@ abstract class BaseSqlTable
 
 
 	/**
-	 * Преобразует данные из базы для использования в php
+	 * Преобразует данные для сохранения в базе
 	 *
 	 * @param string $fieldName Имя поля
 	 * @param mixed $fieldValue Значение

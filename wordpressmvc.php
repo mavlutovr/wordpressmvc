@@ -197,4 +197,3 @@ function wdpro_breadcrumbs()
 	}
 	return $breadcrumbs;
 }
-

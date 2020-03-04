@@ -152,4 +152,27 @@ class Image extends File
 	}
 
 
+
+	/**
+	 * Удаляет файлы (этот метод наследуется в Image.php и File.php
+	 */
+	public function removeFiles()
+	{
+		$fileName = $this->getDataFromSubmit();
+
+		if ($fileName) {
+			$path = $this->params['dir'].'/'.$fileName;
+			@unlink($path);
+
+			if (!empty($this->params['resize']) && is_array($this->params['resize'])) {
+				foreach ($this->params['resize'] as $param) {
+					if (!empty($param['dir'])) {
+						$path = $this->params['dir'].'/'.$param['dir'].'/'.$fileName;
+						@unlink($path);
+					}
+				}
+			}
+		}
+	}
+
 }

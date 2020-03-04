@@ -219,7 +219,7 @@ class Breadcrumbs
 	/**
 	 * Возвращает объект текущей страницы
 	 *
-	 * @return \Wdpro\BaseEntity
+	 * @return \Wdpro\BaseEntity|\Wdpro\BasePage
 	 */
 	public function getCurrentPage()
 	{
