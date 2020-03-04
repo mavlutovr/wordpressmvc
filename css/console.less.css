@@ -589,3 +589,7 @@ h1:not(.wp-heading-inline) {
 .wrap {
 	margin-top: 0;
 }*/
+.wordpressmvc-logo {
+  width: 300px;
+  max-width: 100%;
+}

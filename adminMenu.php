@@ -69,7 +69,7 @@ add_action(
 					'administrator',
 					'wdproOptions',
 					function () {
-						echo('<h1>Настройки Wordpress MVC</h1>');
+						echo('<p><img src="https://webdeveloper.pro/wp-content/plugins/wordpressmvc/logo.svg" class="wordpressmvc-logo" alt=""></p>');
 
 						if (!is_dir(__DIR__.'/../app')) {
 							if ($_GET['create_plugin_app']) {

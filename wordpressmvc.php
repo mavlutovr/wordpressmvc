@@ -1,7 +1,7 @@
 <?php
 /*
- * Plugin Name: Wordpress MVC - Core
- * Description: Easy MVC development on Wordpress
+ * Plugin Name: Wordpress MVC - Основа
+ * Description: MVC разработка на Wordpress
  * Version: 0.1.3
  * Author: Roman Mavlutov
  * Author URI: https://github.com/mavlutovr/wordpressmvc
