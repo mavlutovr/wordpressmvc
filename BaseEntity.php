@@ -968,7 +968,8 @@ abstract class BaseEntity
 
 			// Удаление файлов, загруженных через форму
 			$form = $this->getConsoleForm();
-			$form->removeFiles();
+			if ($form)
+				$form->removeFiles();
 
 
 			// Удаление дочерних элементов
