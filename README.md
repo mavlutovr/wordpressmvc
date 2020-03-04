@@ -1,4 +1,4 @@
-![WordpressMVC Wordpress MVC](images/h1.png)
+![WordpressMVC Wordpress MVC](http://localhost/webdeveloper.pro/wp-content/themes/app/images/wordpressmvc-logo.svg)
 
 # [Wordpress MVC](https://github.com/mavlutovr/wordpressmvc)
 
