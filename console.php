@@ -117,3 +117,11 @@ add_action('admin_enqueue_scripts', function () {
 });
 
 
+add_filter( 'plugin_action_links', function ($actions, $plugin_file, $plugin_data, $context) {
+
+		if ($plugin_file === 'wordpressmvc/wordpressmvc.php') {
+			array_unshift($actions, '<a href="https://github.com/mavlutovr/wordpressmvc/" target="_blank"><img src="https://webdeveloper.pro/wp-content/plugins/wordpressmvc/logo.svg" alt=""></a>');
+	}
+
+	return $actions;
+}, 10, 4);
