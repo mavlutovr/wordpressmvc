@@ -91,7 +91,7 @@ wdpro.ready(20, ($) => {
 				const $button = $(this);
 
 				let count = $button.data('count');
-				if (count) {
+				if (typeof count !== 'undefined') {
 					count = Number(count);
 					save(count);
 					return true;
