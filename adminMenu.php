@@ -137,6 +137,7 @@ href="'.WDPRO_CONSOLE_URL.'themes.php">Активировать тему</a>
 								array(
 									'type'=>'text',
 									'top'=>'Дополнительные мета-теги в head',
+									'bottom'=>'Например, чтобы подтвержать права на сайт в Вебмастере и других сервисах.',
 									'name'=>'wdpro_head_additional',
 									'width'=>600,
 									'style'=>'max-width: calc(100vw - 100px);',
