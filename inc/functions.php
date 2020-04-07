@@ -703,7 +703,7 @@ function wdpro_location($location, $code=null)
 {
 	if (headers_sent())
 	{
-		echo('<script>window.location = "'.$location.'";</script>');
+		echo('<script>window.location = "'.$location.'"; console.log("Перенаправление на '.$location.'");</script>');
 	}
 	else
 	{
