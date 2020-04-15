@@ -25,7 +25,7 @@ class Controller extends \Wdpro\BaseController {
 			return $form;
 		});
 		
-		// Другие страницы
+		// Меню в админке
 		\Wdpro\Console\Menu::add([
 			'roll'=>ConsoleRoll::class,
 			'n'=>50
