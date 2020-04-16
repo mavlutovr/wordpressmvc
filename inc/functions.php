@@ -2580,7 +2580,7 @@ function wdpro_on_uri($uri, $callback) {
 
 			if ($post && $uri === $post->post_name) {
 
-				$callback($post);
+				$callback($post, wdpro_get_post_by_id($post->ID));
 			}
 		}
 	);
