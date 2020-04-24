@@ -2,9 +2,17 @@
 
 # [Wordpress MVC](https://github.com/mavlutovr/wordpressmvc)
 
-Плагин для wordpress, который позволяет вам разрабатывать не стандартный функционал на Wordpress с помощью MVC.
+Плагин для wordpress, который позволяет разрабатывать не стандартный функционал на Wordpress с помощью MVC.
 
 По-сути вы получаете MVC-фреймворк внутри Wordpress.
+
+## Примеры
+
+| ![](https://i.imgur.com/6XzwQlR.png) | ![](https://i.imgur.com/NrzalDS.png) |
+| ------------------------------------ | ------------------------------------ |
+|                                      |                                      |
+
+
 
 
 
