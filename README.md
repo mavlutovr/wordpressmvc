@@ -8,13 +8,11 @@
 
 ## Примеры
 
-| ![](https://i.imgur.com/6XzwQlR.png) | ![](https://i.imgur.com/52K9ZZ1.png) |
-| ------------------------------------ | ------------------------------------ |
-|                                      |                                      |
-
-
-
-
+| Код                                  | Результат                                                    |
+| ------------------------------------ | ------------------------------------------------------------ |
+| ![](https://i.imgur.com/8K4EfBj.png) | ![](https://i.imgur.com/c1HD5sZ.png)                         |
+| ![](https://i.imgur.com/PHQrweJ.png) | Таблица создается автоматически<br />![](https://i.imgur.com/Zen5FYn.png) |
+| ![](https://i.imgur.com/cuTgTqx.png) | ![](https://i.imgur.com/byeUCAd.png)                         |
 
 ## Видеообзор за 8 минут
 
