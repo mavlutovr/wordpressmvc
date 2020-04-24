@@ -8,7 +8,7 @@
 
 ## Примеры
 
-| ![](https://i.imgur.com/6XzwQlR.png) | ![](https://i.imgur.com/NrzalDS.png) |
+| ![](https://i.imgur.com/6XzwQlR.png) | ![](https://i.imgur.com/52K9ZZ1.png) |
 | ------------------------------------ | ------------------------------------ |
 |                                      |                                      |
 
