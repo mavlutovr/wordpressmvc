@@ -525,7 +525,8 @@ abstract class BasePage extends BaseEntity
 	 * @return string
 	 */
 	public function getH1($applyFilters=true) {
-		$arr = get_post_meta(get_the_ID(), 'h1'.\Wdpro\Lang\Data::getCurrentSuffix());
+		//$arr = get_post_meta(get_the_ID(), 'h1'.\Wdpro\Lang\Data::getCurrentSuffix());
+		$arr = get_post_meta($this->id(), 'h1'.\Wdpro\Lang\Data::getCurrentSuffix());
 
 		if (is_array($arr) && isset($arr[0]) && $arr[0])
 		{
