@@ -127,6 +127,9 @@ function wdpro_the_header()
 	if (!$keywords)
 		$keywords = wdpro_get_post_meta('keywords');
 
+	// Применяем фильтры для Title
+	$title = apply_filters('wdpro_title', $title);
+
 	// Страница Wdpro
 	$page = wdpro_current_page();
 	if ($page) {
@@ -274,6 +277,7 @@ function wdpro_the_h1($force=false)
 
 	if ($h1 != '-' && $h1 != '—' || $force)
 	{
+		$h1 = apply_filters('wdpro_h1', $h1);
 		if (!$h1)
 		{
 			$h1 = wdpro_the_title_standart();

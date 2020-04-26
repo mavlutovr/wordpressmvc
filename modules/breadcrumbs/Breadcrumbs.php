@@ -252,6 +252,20 @@ class Breadcrumbs
 
 
 	/**
+	 * Перебирает все элементы в обратном порядке
+	 *
+	 * @param callable $callback
+	 */
+	public function eachReverse($callback) {
+		$elements = $this->getElements();
+
+		for ($i = count($elements) - 1; $i >=0; $i --) {
+			$callback($elements[$i]);
+		}
+	}
+
+
+	/**
 	 * Возвращает данные для шаблона
 	 * 
 	 * @return array

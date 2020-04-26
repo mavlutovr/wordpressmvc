@@ -434,9 +434,10 @@ abstract class BasePage extends BaseEntity
 	/**
 	 * Возвращает title
 	 *
+	 * @param bool $applyFilters Применить фильтры обработки (для мета-шаблонов)
 	 * @return string
 	 */
-	public function getTitle() {
+	public function getTitle($applyFilters=true) {
 		$title = $this->getData('post_title[lang]');
 		$title = $this->renderParamTemplate($title);
 		return $title;
@@ -465,10 +466,13 @@ abstract class BasePage extends BaseEntity
 	/**
 	 * Возвращает description страницы
 	 *
+	 * @param bool $applyFilters Применить фильтры обработки (для мета-шаблонов)
 	 * @return string
 	 */
-	public function getDescription() {
+	public function getDescription($applyFilters=true) {
 		$description = wdpro_get_post_meta('description', $this->id());
+		if ($applyFilters)
+			$description = apply_filters('wdpro_description', $description);
 		$description = $this->renderParamTemplate($description);
 		return $description;
 	}
@@ -481,6 +485,7 @@ abstract class BasePage extends BaseEntity
 	 */
 	public function getKeywords() {
 		$keywords = wdpro_get_post_meta('keywords', $this->id());
+		$keywords = apply_filters('wdpro_keywords', $keywords);
 		$keywords = $this->renderParamTemplate($keywords);
 
 		return $keywords;
@@ -516,20 +521,27 @@ abstract class BasePage extends BaseEntity
 	/**
 	 * Возвращает заголовок H1
 	 *
+	 * @param bool $applyFilters Применить фильтры обработки (для мета-шаблонов)
 	 * @return string
 	 */
-	public function getH1() {
+	public function getH1($applyFilters=true) {
 		$arr = get_post_meta(get_the_ID(), 'h1'.\Wdpro\Lang\Data::getCurrentSuffix());
 
 		if (is_array($arr) && isset($arr[0]) && $arr[0])
 		{
 			$h1 = $arr[0];
-			$h1 = str_replace('[id]', $this->id(), $h1);
-
-			return $h1;
 		}
 
-		return $this->getTitle();
+		else {
+			$h1 = $this->getTitle($applyFilters);
+		}
+
+		if ($applyFilters) {
+			$h1 = apply_filters('wdpro_h1', $h1);
+		}
+		$h1 = $this->renderParamTemplate($h1);
+
+		return $h1;
 	}
 
 
