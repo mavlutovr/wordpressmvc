@@ -713,7 +713,7 @@ class Controller extends \Wdpro\BaseController {
 							//$post = get_post($postId);
 
 							// Данные, которые сохраняются в Entity
-							$data = $form ? $form->getData() : array();
+							$data = $form ? $form->getData(null, true) : array();
 							//print_r($data); exit();
 
 							// Преобразование русских букв в английские в адресе страницы

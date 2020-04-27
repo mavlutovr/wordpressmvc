@@ -228,7 +228,21 @@ class Templates
 			}
 		}
 	}
-	
+
+
+	/**
+	 * Добавляет шаблон для адреса
+	 *
+	 * @param string $uri Адрес страницы
+	 * @param string $templateFile Путь к файлу шаблона WDPRO_TEMPLATE_PATH.'download.php'
+	 */
+	public static function addTemplateForUri($uri, $templateFile) {
+		static::add([
+			'uri'=>$uri,
+			'file'=>$templateFile,
+		]);
+	}
+
 	
 	/**
 	 * Добавить шаблон

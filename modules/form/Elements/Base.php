@@ -73,7 +73,7 @@ class Base
 	public function getDataFromSubmit($formData=null)
 	{
 		if (!$formData)
-			$formData = $this->form->getData();
+			$formData = $this->form->getData(null, true);
 
 		$data = $this->getValueFromDataByName($formData);
 		

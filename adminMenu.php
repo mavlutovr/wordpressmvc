@@ -69,7 +69,7 @@ add_action(
 					'administrator',
 					'wdproOptions',
 					function () {
-						echo('<p><img src="https://webdeveloper.pro/wp-content/plugins/wordpressmvc/logo.svg" class="wordpressmvc-logo" alt=""></p>');
+						echo('<p><img src="https://webdeveloper.pro/wp-content/plugins/wordpressmvc/logo.svg" class="wordpressmvc-logo" alt=""></p><hr><BR>');
 
 						if (!is_dir(__DIR__.'/../app')) {
 							if ($_GET['create_plugin_app']) {
@@ -137,6 +137,7 @@ href="'.WDPRO_CONSOLE_URL.'themes.php">Активировать тему</a>
 								array(
 									'type'=>'text',
 									'top'=>'Дополнительные мета-теги в head',
+									'bottom'=>'Например, чтобы подтвержать права на сайт в Вебмастере и других сервисах.',
 									'name'=>'wdpro_head_additional',
 									'width'=>600,
 									'style'=>'max-width: calc(100vw - 100px);',

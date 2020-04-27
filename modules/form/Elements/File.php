@@ -278,7 +278,7 @@ class File extends Base
 	public function getDataFromSubmit($formData=null)
 	{
 		if (!$formData)
-			$formData = $this->form->getData();
+			$formData = $this->form->getData(null, true);
 
 		// Сдесь файлы в json и urlendode формате
 		$files = $formData[$this->params['name']];

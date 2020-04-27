@@ -538,7 +538,7 @@ window.'.$id.' = '.($this->getJson()).';
 	 */
 	public function onSubmit($validCallback, $noSubmitCallback=null)
 	{
-		$data = $this->getData();
+		$data = $this->getData($this->getSubmitData());
 
 		if ($data)
 		{
@@ -664,21 +664,26 @@ window.'.$id.' = '.($this->getJson()).';
 	}
 
 
+	public function getSubmitProcessedData() {
+
+	}
+
+
 	/**
 	 * Возвращает обработанные данные
 	 *
 	 * @param array $data Не стандартные данные (например, когда форма не отправлялась, а просто надо обработать какие-то данные через форму)
 	 * @return array|null
 	 */
-	public function getData($data=null)
+	public function getData($data=null, $useSettedDataIfNoSubmit = false)
 	{
 		if ($data === null)
 			$data = $this->getSubmitData();
 
 		// Это нужно, чтобы при удалении элементов удалялись файлы (например, картинки)
-		// Чтобы поля моглуи получить данные формы без отправки и удалить файлы
+		// Чтобы поля могли получить данные формы без отправки и удалить файлы
 		// Да и в принципе чтобы поля знали введенные в форму данные без отправки формы
-		if (!$data && isset($this->params['data']))
+		if (!$data && $useSettedDataIfNoSubmit && isset($this->params['data']))
 			$data = $this->params['data'];
 		
 		if ($data)
