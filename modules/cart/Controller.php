@@ -43,6 +43,19 @@ class Controller extends \Wdpro\BaseController
 
 
 	/**
+	 * Возвращает объект данных в корзине для товара, которые еще не в заказе
+	 *
+	 * @param string $key Ключ товара
+	 * @return Entity
+	 */
+	public static function getEntityWithoutOrderByKey ($key) {
+		if ($row = SqlTable::getRow(static::getWhere([ 'key' => $key ]))) {
+			return Entity::instance($row);
+		}
+	}
+
+
+	/**
 	 * Перемещает товары, которые сейчас в корзине в заказ
 	 *
 	 * @param Order\Entity $order
