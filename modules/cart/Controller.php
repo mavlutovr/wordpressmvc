@@ -45,10 +45,12 @@ class Controller extends \Wdpro\BaseController
 	/**
 	 * Возвращает объект данных в корзине для товара, которые еще не в заказе
 	 *
-	 * @param string $key Ключ товара
+	 * @param string|array $key Ключ товара
 	 * @return Entity
 	 */
 	public static function getEntityWithoutOrderByKey ($key) {
+		if (is_array($key))
+			$key = $key['key'];
 		if ($row = SqlTable::getRow(static::getWhere([ 'key' => $key ]))) {
 			return Entity::instance($row);
 		}
@@ -216,7 +218,7 @@ class Controller extends \Wdpro\BaseController
 			$entityObjectOrKey = wdpro_object_by_key($entityObjectOrKey);
 		}
 
-		$data['cost_for_one'] = $entityObjectOrKey->getCost();
+		$data['cost_for_one'] = $entityObjectOrKey->getCost(null, $data);
 		$data['cost_for_all'] = $data['cost_for_one'] * $data['count'];
 
 		$data = apply_filters('wdpro_cart_elment_update', $data);
@@ -315,7 +317,7 @@ class Controller extends \Wdpro\BaseController
 		if (!isset($params['orderId'])) $params['orderId'] = 0;
 
 		$where = [
-			'WHERE ( visitor_id=%d OR (person_id=%d AND person_id!=0)) AND order_id=%d ',
+			'WHERE ( visitor_id=%s OR (person_id=%d AND person_id!=0)) AND order_id=%d ',
 			[ wdpro_visitor_session_id(), wdpro_person_auth_id(), $params['orderId'] ]
 		];
 
