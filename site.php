@@ -479,7 +479,8 @@ add_filter('get_canonical_url', function ($canonical_url, $post) {
 		$canonical_url = get_permalink($post);
 	}
 	// Добавляем в конец слеш, когда адреса со слешем в конце
-	$canonical_url .= wdpro_url_slash_at_end();
+	if (!preg_match('~/$~', $canonical_url))
+		$canonical_url .= wdpro_url_slash_at_end();
 
 	return $canonical_url;
 }, 10, 2);
