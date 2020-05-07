@@ -142,7 +142,7 @@
 	 * Возвращает форму при ее появлении
 	 * 
 	 * @param [name] {string} Имя формы, которое в параметрах указывается как jsName
-	 * @param Return {function} Каллбэк, принимающий форму
+	 * @param Return {callbackForm} Каллбэк, принимающий форму
 	 */
 	wdpro.forms.onForm = function (name, Return) {
 
@@ -156,12 +156,17 @@
 		}
 	};
 
+	/**
+	 * @callback callbackForm
+	 * @param {Form|wdpro.forms.Form} form
+	 */
+
 
 	/**
 	 * Возвращает форму, когда она уже была добавлена на странцу
 	 *
 	 * @param [name] {string} Имя формы
-	 * @param callback {function} Каллбэк, в который отправляется форма
+	 * @param callback {callbackForm} Каллбэк, в который отправляется форма
 	 */
 	wdpro.forms.onFormAddedToPage = function (name, callback) {
 		var args = wdpro.argumentsSortByTypes(arguments);
@@ -201,7 +206,7 @@
 	/**
 	 * Класс формы
 	 * 
-	 * @this {wdpro.forms.Form}
+	 * @type {Form}
 	 */
 	wdpro.forms.Form = wdpro.Event.extend({
 
@@ -3292,7 +3297,7 @@
 		 */
 		createField: function (callback) {
 			
-			if (this.params['tag'] == 'button') {
+			if (this.params['tag'] === 'button') {
 				callback(this.templates.buttonFieldButtonTag({
 					data:  this.getParams(),
 					attrs: this.getAttrs()
@@ -3956,11 +3961,6 @@
 
 
 		createField: function (callback) {
-
-			console.log({
-				data:  this.getParams(),
-				attrs: this.getAttrs()
-			});
 
 			callback(this.templates.checksField({
 				data:  this.getParams(),

@@ -16,7 +16,7 @@ class Checks extends Select
 		$return =  parent::getDataFromSubmit($formData);
 
 		if ($return === 'null') {
-			$return = null;
+			$return = [];
 		}
 
 		return $return;

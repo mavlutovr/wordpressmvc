@@ -730,7 +730,7 @@ window.'.$id.' = '.($this->getJson()).';
 						}
 					}
 
-					if (isset($data[$rootName]) || $value) {
+					if (isset($data[$rootName]) || isset($value)) {
 
 						if (is_array($value)
 							&& isset($fixedData[$rootName])

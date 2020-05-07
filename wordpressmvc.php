@@ -147,12 +147,7 @@ if (defined('DOING_CRON') && DOING_CRON) {
 
 
 
-
-/**
- * Скрипты
- */
-add_action('wp_footer', function () {
-
+function _wdpro_print_js_data () {
 	global $wdproJsData;
 
 	$data = '';
@@ -173,7 +168,13 @@ add_action('wp_footer', function () {
 			'.$data.'
 		}
 		</script>';
-});
+}
+
+/**
+ * Скрипты
+ */
+add_action('wp_footer', '_wdpro_print_js_data');
+add_action('admin_footer', '_wdpro_print_js_data');
 
 
 // Отключаем смайлики в админке, чтобы они не портились в редакторе (не превращались в теги <img> там где не нужно

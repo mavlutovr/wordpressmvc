@@ -30,6 +30,10 @@
 .p_margin_clear_first_last p:last-child {
   margin-bottom: 0;
 }
+.wdpro-form ._error_message {
+  color: red;
+  padding: 20px 0;
+}
 .wdpro-form-width {
   display: inline-block;
 }
@@ -141,7 +145,12 @@
 }
 .wdpro-form-checks-level {
   margin: 10px 0;
+  margin-right: 20px;
+}
+.wdpro-form-checks-level > div {
+  padding: 2px 0;
 }
 .wdpro-form-checks-level .wdpro-form-checks-level {
   margin-left: 20px;
+  margin-right: 0;
 }
