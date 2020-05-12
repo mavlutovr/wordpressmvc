@@ -39,6 +39,7 @@ define('WDPRO_UPLOAD_IMAGES_URL', WDPRO_UPLOAD_URL.'images/');
 define('WDPRO_UPLOAD_FILES_URL', WDPRO_UPLOAD_URL.'files/');
 define('WDPRO_UPLOAD_PATH', wdpro_upload_dir_path());
 define('WDPRO_UPLOAD_IMAGES_PATH', WDPRO_UPLOAD_PATH.'images/');
+define('WDPRO_UPLOAD_FILES_PATH', WDPRO_UPLOAD_PATH.'files/');
 
 // Папка приложения
 define('APP_PATH', wdpro_realpath(__DIR__.'/../../app/').'/');

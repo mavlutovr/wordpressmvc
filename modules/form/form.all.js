@@ -2514,6 +2514,10 @@
 			// Классы поля
 			attrs['class'] = this.getClass();
 
+			if (this.params['disabled']) {
+				attrs['disabled'] = 'disabled';
+			}
+
 			// ID для label
 			if (this.params.labelId)
 			{
