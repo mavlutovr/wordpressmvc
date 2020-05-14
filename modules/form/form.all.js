@@ -3657,7 +3657,8 @@
 			{
 				self.showFileAdd(fileName);
 			});
-			
+
+			if (this.fileBlockContainer.sortable)
 			this.fileBlockContainer.sortable({
 				containment: 'parent',
 				stop: function () {
@@ -3669,6 +3670,9 @@
 					self.updateFieldValue();
 				}
 			});
+
+			else if (window.location.host === 'localhost')
+				console.log('Для того, чтобы загруженные файлы в форме можно было менять местами, необходимо подключить модуль sortable');
 		},
 
 
