@@ -646,4 +646,18 @@ abstract class BasePage extends BaseEntity
 	}
 	protected static $deleted = [];
 
+
+	/**
+	 * Добавляет в список страниц в админке дополнительные элементы
+	 *
+	 * Или удаляет их
+	 *
+	 * @param array $actions Текущие действия
+	 * @return array
+	 */
+	public function adminListItemActionsUpdate($actions) {
+
+		return $actions;
+	}
+
 }
