@@ -20,6 +20,11 @@ class ConsoleForm extends \<?=(
 		'top' => 'Текст страницы',
 		'type' => static::CKEDITOR,
 		]);
+
+<?php else: ?>
+		// Сортировка и сохранение
+		$this->add(static::SORTING);
+		$this->add(static::SUBMIT_SAVE);
 <?php endif; ?>
 
 	}
