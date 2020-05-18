@@ -2798,7 +2798,7 @@
 			var stringVal = this.fieldDate.val();
 			
 			if (stringVal) {
-				this.field.val( moment(stringVal+', 12:00:00').unix() );
+				this.field.val( moment(stringVal+', 12:00:00', 'YYYY.MM.DD').unix() );
 			}
 			
 			else {
