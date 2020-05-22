@@ -347,7 +347,13 @@ class PagesRoll extends Roll
 								$newActions = array('edit' => $actions['edit']) +
 									$newActions;
 
-								return array_merge( $newActions, $actions );
+
+								$totalActions = array_merge( $newActions, $actions );
+
+								// Действия из Entity
+								$totalActions = $entity->adminListItemActionsUpdate($totalActions);
+
+								return $totalActions;
 							}
 						}
 

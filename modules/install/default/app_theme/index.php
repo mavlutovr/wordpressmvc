@@ -1,27 +1,21 @@
 <?php get_header(); ?>
 
-	<div class="wrapper">
+
+	<div class="container">
 
 		<!-- Хлебные крошки -->
 		<?= wdpro_the_breadcrumbs() ?>
 
-		<div class="page-middle">
+		<!-- Заголовок H1 -->
+		<?php if ( $h1 = wdpro_the_h1() ): ?>
+			<h1><?= $h1 ?></h1>
+		<?php endif; ?>
 
-			<!-- Блок сбоку страницы -->
-			<?php get_sidebar(); ?>
+		<article class="page-content">
+			<!-- Текст (содержимое) страницы -->
+			<?= wdpro_the_content(); ?>
 
-			<article class="page-content">
-
-				<!-- Заголовок H1 -->
-				<?php if ( $h1 = wdpro_the_h1() ): ?>
-					<h1><?= $h1 ?></h1>
-				<?php endif; ?>
-
-				<!-- Текст (содержимое) страницы -->
-				<?= wdpro_the_content(); ?>
-
-			</article>
-		</div>
+		</article>
 
 	</div>
 

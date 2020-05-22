@@ -10,9 +10,10 @@ interface CartElementInterface {
 	 *    В котором может содержаться помимо информации для получения самого объекта товара,
 	 *    дополнительная информация, такая как цвет, размер и тд.
 	 *
+	 * @param null|array $cartData Данные корзины этого товара
 	 * @return float
 	 */
-	public function getCost($key=null):float ;
+	public function getCost($key=null, $cartData=null):float ;
 
 
 	/**

@@ -166,7 +166,7 @@ abstract class BaseEntity
 	 */
 	public function mergeData($data)
 	{
-		$this->data = wdpro_extend($this->data, $data);
+		$this->data = wdpro_extend_level1($this->data, $data);
 		
 		return $this;
 	}

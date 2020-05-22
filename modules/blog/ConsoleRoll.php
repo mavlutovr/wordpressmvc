@@ -17,7 +17,7 @@ class ConsoleRoll extends \Wdpro\Console\PagesRoll {
 				'add_new'=>'Добавить статью',
 			),
 			'subsections'=>false,
-			'icon'=>'fa-file-text',
+			'icon'=>'fas fa-file-alt',
 			'order'=>'DESC',
 			'hierarchical'=>1,
 		);

@@ -36,6 +36,7 @@ class ConsoleRoll extends \Wdpro\Console\Roll {
 			'labels' => [
 				'label'   => '<?php echo $ConsoleRoll_label; ?>',
 				<?php if ($ConsoleRoll_add_new): ?>'add_new' => 'Добавить <?php echo $ConsoleRoll_add_new; ?>',<?php endif;?>
+
 			],
 			// Когда это дочерний элемент
 			/*'where'  => [

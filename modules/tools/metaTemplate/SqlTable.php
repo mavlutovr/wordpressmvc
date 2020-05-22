@@ -1,17 +1,19 @@
-<?php echo '<?php'.PHP_EOL; ?>
-namespace <?php echo $namespace; ?>;
+<?php
+namespace Wdpro\Tools\MetaTemplate;
 
 /*
  * Основная Mysql таблица модуля
  */
-class SqlTable extends \<?=$data['parent_namespace']?>\BaseSqlTable {
+class SqlTable extends \Wdpro\BaseSqlTable {
+
 
 	/**
 	 * Имя таблицы
 	 *
 	 * @var string
 	 */
-	protected static $name = '<?php echo $SqlTable; ?>';
+	protected static $name = 'wdpro_meta_template';
+
 
 	/**
 	 * Структура таблицы
@@ -32,16 +34,11 @@ class SqlTable extends \<?=$data['parent_namespace']?>\BaseSqlTable {
 		return [
 			static::COLLS => [
 				'id',
-				'post_parent'=>'int', // Это и для страниц и для простых элементов
-				'menu_order' => 'int',
-<?php if ($type == 'page'): ?>
-				'in_menu' => 'tinyint',
-				'post_status',
-				'post_title',
+				'menu_order'=>'int',
 				'post_name',
-				'post_content' => 'text',
-<?php endif; ?>
-
+				'title[lang]',
+				'description[lang]',
+				'h1[lang]',
 			],
 
 			static::ENGINE => static::INNODB,

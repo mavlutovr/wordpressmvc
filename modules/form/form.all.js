@@ -142,7 +142,7 @@
 	 * Возвращает форму при ее появлении
 	 * 
 	 * @param [name] {string} Имя формы, которое в параметрах указывается как jsName
-	 * @param Return {function} Каллбэк, принимающий форму
+	 * @param Return {callbackForm} Каллбэк, принимающий форму
 	 */
 	wdpro.forms.onForm = function (name, Return) {
 
@@ -156,12 +156,17 @@
 		}
 	};
 
+	/**
+	 * @callback callbackForm
+	 * @param {Form|wdpro.forms.Form} form
+	 */
+
 
 	/**
 	 * Возвращает форму, когда она уже была добавлена на странцу
 	 *
 	 * @param [name] {string} Имя формы
-	 * @param callback {function} Каллбэк, в который отправляется форма
+	 * @param callback {callbackForm} Каллбэк, в который отправляется форма
 	 */
 	wdpro.forms.onFormAddedToPage = function (name, callback) {
 		var args = wdpro.argumentsSortByTypes(arguments);
@@ -201,7 +206,7 @@
 	/**
 	 * Класс формы
 	 * 
-	 * @this {wdpro.forms.Form}
+	 * @type {Form}
 	 */
 	wdpro.forms.Form = wdpro.Event.extend({
 
@@ -2509,6 +2514,10 @@
 			// Классы поля
 			attrs['class'] = this.getClass();
 
+			if (this.params['disabled']) {
+				attrs['disabled'] = 'disabled';
+			}
+
 			// ID для label
 			if (this.params.labelId)
 			{
@@ -2789,7 +2798,7 @@
 			var stringVal = this.fieldDate.val();
 			
 			if (stringVal) {
-				this.field.val( moment(stringVal+', 12:00:00').unix() );
+				this.field.val( moment(stringVal+', 12:00:00', 'YYYY.MM.DD').unix() );
 			}
 			
 			else {
@@ -3292,7 +3301,7 @@
 		 */
 		createField: function (callback) {
 			
-			if (this.params['tag'] == 'button') {
+			if (this.params['tag'] === 'button') {
 				callback(this.templates.buttonFieldButtonTag({
 					data:  this.getParams(),
 					attrs: this.getAttrs()
@@ -3648,7 +3657,8 @@
 			{
 				self.showFileAdd(fileName);
 			});
-			
+
+			if (this.fileBlockContainer.sortable)
 			this.fileBlockContainer.sortable({
 				containment: 'parent',
 				stop: function () {
@@ -3660,6 +3670,9 @@
 					self.updateFieldValue();
 				}
 			});
+
+			else if (window.location.host === 'localhost')
+				console.log('Для того, чтобы загруженные файлы в форме можно было менять местами, необходимо подключить модуль sortable');
 		},
 
 
@@ -3956,11 +3969,6 @@
 
 
 		createField: function (callback) {
-
-			console.log({
-				data:  this.getParams(),
-				attrs: this.getAttrs()
-			});
 
 			callback(this.templates.checksField({
 				data:  this.getParams(),

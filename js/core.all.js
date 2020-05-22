@@ -157,7 +157,7 @@ if (typeof Array.isArray === 'undefined') {
 
 		/**
 		 * Сохраняет данные в localStorage
-		 * @param name {strong} Имя данных
+		 * @param name {string} Имя данных
 		 * @param data {*} Данные
 		 */
 		set: function (name, data) {
@@ -175,7 +175,7 @@ if (typeof Array.isArray === 'undefined') {
 		/**
 		 * Загружает данные по имени
 		 *
-		 * @param name {strong} Имя данных
+		 * @param name {string} Имя данных
 		 * @return {*}
 		 */
 		get: function (name) {

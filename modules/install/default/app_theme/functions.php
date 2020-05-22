@@ -16,3 +16,9 @@ function widgetsInit() {
 add_action( 'widgets_init', 'widgetsInit');
 
 
+wdpro_breadcrumbs_init(function ($breadcrumbs) {
+	/** @var \Wdpro\Breadcrumbs\Breadcrumbs $breadcrumbs */
+
+	$breadcrumbs->unremoveLast();
+	$breadcrumbs->removeLastLink();
+});

@@ -14,7 +14,7 @@ wdpro.ready(20, ($) => {
 
 			let step = $countInput.attr('data-step');
 			if (step) step = Number(step);
-			else step = 0;
+			else step = 1;
 
 			const save = (count, removeConfirmMessage) => {
 
@@ -30,16 +30,21 @@ wdpro.ready(20, ($) => {
 					count = Math.max(min, count);
 				}
 
+
 				// Шаг
 				if (step) {
-					// Допустим, 3
 					let stepCount = count;
-					if (min) stepCount -= min;
 
-					stepCount = Math.round(stepCount / step);
-					stepCount *= step;
-					if (min) stepCount += min;
-					count = stepCount;
+					if (stepCount) {
+						//if (min) stepCount -= min;
+
+						stepCount = Math.round(stepCount / step);
+						stepCount *= step;
+
+						stepCount = Math.max(stepCount, min);
+						// if (min) stepCount += min;
+						count = stepCount;
+					}
 				}
 
 				// Подтверждение удаления
@@ -90,6 +95,7 @@ wdpro.ready(20, ($) => {
 
 				const $button = $(this);
 
+				// На какое количество поменять
 				let count = $button.data('count');
 				if (typeof count !== 'undefined') {
 					count = Number(count);
@@ -97,6 +103,7 @@ wdpro.ready(20, ($) => {
 					return true;
 				}
 
+				// Сколько прибавить
 				let delta = $button.data('delta');
 				if (delta) {
 					delta = Number(delta);

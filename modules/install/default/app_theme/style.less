@@ -3,6 +3,7 @@
 
 body {
 	background: white;
+	margin: 0;
 }
 
 body, p, div {
@@ -12,5 +13,9 @@ body, p, div {
 a {
 	color: #FF5C01;
 }
+
+// Чтобы в firefox вокруг ссылок не было точек при нажатии
+:focus {outline:none;}
+::-moz-focus-inner {border:0;}
 
 // И так далее...

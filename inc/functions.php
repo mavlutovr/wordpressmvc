@@ -364,6 +364,77 @@ function wdpro_extend($arr1, $arr2)
 
 
 /**
+ * Добавление значений из массива 1 в массив 2 с заменой переменных (только 1 уровень массива)
+ *
+ * @param array|null $arr1 Массив 1 (Параметры по-умолчанию)
+ * @param array|null $arr2 Массив 2
+ * @return array
+ */
+function wdpro_extend_level1 ($arr1, $arr2) {
+	if ($arr1 === null)
+	{
+		if (!is_array($arr2))
+		{
+			return array();
+		}
+
+		return $arr2;
+	}
+	if ($arr2 === null || $arr2 === true)
+	{
+		if (!is_array($arr1))
+		{
+			return array();
+		}
+
+		return $arr1;
+	}
+
+	// Проверка на буквенный/числовой массив
+	$assoc = false;
+	foreach($arr2 as $key=>$value)
+	{
+		if (!is_numeric($key))
+		{
+			$assoc = true;
+		}
+	}
+	if (!count($arr2)) {
+		$assoc = true;
+	}
+
+	// Если это буквенный массив
+	if ($assoc)
+	{
+		// Возвращаем обновленный первый массив
+		// Перебираем элементы массива
+		foreach($arr2 as $key=>$value)
+		{
+			// Заменяем значение
+			$arr1[$key] = $arr2[$key];
+		}
+
+		return $arr1;
+	}
+
+	// Если это числовой массив
+	else
+	{
+		// Возвращаем новый массив
+		// Тут было так, что возвращался не новый массив, а значения нового добавлялись
+		// к старому. Я сделал чтобы возвращался новый. Потому что получались лишние
+		// данные при сохранении. Это было обнаружено в проекте tridodo.ru при
+		// сохранении точек карты.
+		return $arr2;
+		/*foreach($arr2 as $value) {
+			$arr1[] = $value;
+		}
+		return $arr1;*/
+	}
+}
+
+
+/**
  * Удаление из массива элемента по значению
  *
  * @param array $array Массив
@@ -939,6 +1010,52 @@ function wdpro_gz_decode($zipFile, $targetFile)
 	return true;
 }
 
+
+/**
+ * Возвращает размер файла в человеческом виде (mb, gb...)
+ *
+ * https://www.php.net/manual/ru/function.filesize.php#106569
+ *
+ * @param int $bytes Байты
+ * @param int $decimals
+ * @return string
+ */
+function wdpro_human_filesize($bytes, $decimals = 2, $comma='.') {
+	$bytes = floatval($bytes);
+	$arBytes = array(
+		0 => array(
+			"UNIT" => "TB",
+			"VALUE" => pow(1024, 4)
+		),
+		1 => array(
+			"UNIT" => "GB",
+			"VALUE" => pow(1024, 3)
+		),
+		2 => array(
+			"UNIT" => "MB",
+			"VALUE" => pow(1024, 2)
+		),
+		3 => array(
+			"UNIT" => "KB",
+			"VALUE" => 1024
+		),
+		4 => array(
+			"UNIT" => "B",
+			"VALUE" => 1
+		),
+	);
+
+	foreach($arBytes as $arItem)
+	{
+		if($bytes >= $arItem["VALUE"])
+		{
+			$result = $bytes / $arItem["VALUE"];
+			$result = str_replace(".", $comma , strval(round($result, 2)))." ".$arItem["UNIT"];
+			break;
+		}
+	}
+	return $result;
+}
 
 /**
  * Преобразует данные в json строку
