@@ -96,37 +96,36 @@ class File extends Base
 				}
 				else
 				{
-					$files[] = $fileName;
+					if ($fileName && $fileName !== '%5B%5D')
+						$files[] = $fileName;
 				}
 			}
 			
 			// Если есть загруженные файлы
 			if (count($files)) {
-				
+
 				// Если это не multiple, берем последнюю фотку (которая скорее всего была
 				// загружена)
 				if (!isset($this->params['multiple']) || !$this->params['multiple'])
 				{
 					$files = array($files[count($files) - 1]);
 				}
+
+				$this->fileCheckResult = array(
+					'files'=>$files,
+				);
 			}
-			
-			// Нет загруженных файлов
+
 			else {
-				$files = '';
+				$this->fileCheckResult = null;
 			}
-			
-			$this->fileCheckResult = array(
-				'files'=>$files,
-			);
+
 		}
 		
 		else {
-			$this->fileCheckResult = array(
-				'files'=>'',
-			);
+			$this->fileCheckResult = null;
 		}
-		
+
 		return true;
 	}
 
@@ -286,7 +285,7 @@ class File extends Base
 
 		if (!$this->checkFiles($files))
 		{
-			return null;
+			return '';
 		}
 		
 		/*if (!$this->fileCheckResult['uploaded'])
@@ -300,10 +299,14 @@ class File extends Base
 		
 		if (isset($this->params['multiple']) && $this->params['multiple'])
 		{
-			return $this->fileCheckResult['files'];
+			if (!empty($this->fileCheckResult['files']))
+				return $this->fileCheckResult['files'];
 		}
 
-		return $this->fileCheckResult['files'][0];
+		if (!empty($this->fileCheckResult['files'][0]))
+			return $this->fileCheckResult['files'][0];
+
+		return '';
 	}
 
 
