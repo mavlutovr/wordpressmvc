@@ -80,6 +80,38 @@ abstract class BasePage extends BaseEntity
 
 
 	/**
+	 * Добавляет в конец текста страницы подменю без шорткода
+	 *
+	 * @param $content Текст страницы
+	 * @throws EntityException
+	 * @throws Exception
+	 */
+	public function getSubmenuStandart(&$content) {
+
+		if ($this->submenuStandartEnabled())
+			wdpro_replace_or_append(
+				$content,
+				'[submenu]',
+				\Wdpro\Site\Menu::getHtml(array(
+					'post_parent'=>$this->id(),
+					'template'=>WDPRO_TEMPLATE_PATH.'submenu_standart.php',
+					'entity'=>static::class,
+				))
+			);
+	}
+
+
+	/**
+	 * Разрешает показ стандартного подменю в конце страницы
+	 *
+	 * @return bool
+	 */
+	public function submenuStandartEnabled() {
+		return true;
+	}
+
+
+	/**
 	 * Инициализация текущей страницы, когда она открывается
 	 *
 	 * Этот метод срабатывает еще до getCard

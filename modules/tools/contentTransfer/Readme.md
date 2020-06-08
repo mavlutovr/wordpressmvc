@@ -18,6 +18,10 @@ chromium-browser --disable-web-security --test-type --disable-site-isolation-tri
 
 
 
+Остальное пока готовится (в посте webdeveloper.pro)
+
+
+
 ### Todo
 
 - [ ] Загрузка картинок из текста

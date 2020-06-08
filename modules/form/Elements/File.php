@@ -61,9 +61,14 @@ class File extends Base
 		}
 
 
-		$values = json_decode(
-			urldecode($value), true
-		);
+		if (is_array($value)) {
+			$values = $value;
+		}
+		else {
+			$values = json_decode(
+				urldecode($value), true
+			);
+		}
 
 		// Это чтобы можно было вручную отправлять в данные формы файлы в формате массива или просто строки с url картинки
 		if (!$values)

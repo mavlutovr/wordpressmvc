@@ -240,6 +240,12 @@ class Controller extends \Wdpro\BaseController {
 					static::setPostToUrl($url, $post);
 
 			}
+
+
+			// Свой скрипт
+			else if (!empty($block['parser']['php'])) {
+				require($block['parser']['php']);
+			}
 		});
 
 
@@ -358,10 +364,11 @@ class Controller extends \Wdpro\BaseController {
 	 * @param string $sourcePageUrl Адрес страницы, на которой расположен тег img картинки
 	 * @return string
 	 */
-	public static function loadImageAndGetNewSrc($src, $sourcePageUrl) {
+	public static function loadImageAndGetNewSrc($src, $sourcePageUrl=null) {
 
 		$srcOb = parse_url($src);
-		$sourcePageOb = parse_url($sourcePageUrl);
+		if ($sourcePageUrl)
+			$sourcePageOb = parse_url($sourcePageUrl);
 
 		// Относительный адрес
 		if (empty($srcOb['host'])) {
@@ -383,7 +390,7 @@ class Controller extends \Wdpro\BaseController {
 
 
 		// Если картинка с этого же сайта
-		if ($srcOb['host'] === $sourcePageOb['host']) {
+		if (!$sourcePageUrl || $srcOb['host'] === $sourcePageOb['host']) {
 
 			//$fileName = basename($src);
 			$fileName = pathinfo($src);
