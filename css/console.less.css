@@ -231,14 +231,12 @@ td {
 .js-auto-show {
   display: none;
 }
-.privacy-check label,
-.wdpro-form-check-container label {
+.privacy-check label {
   font-weight: normal;
   font-size: 90%;
   opacity: .7;
 }
-.privacy-check .wdpro-form-element-input,
-.wdpro-form-check-container .wdpro-form-element-input {
+.privacy-check .wdpro-form-element-input {
   width: 30px;
 }
 #adminmenu,
