@@ -52,16 +52,28 @@ class Roll extends \Wdpro\BaseRoll {
 	/**
 	 * Возвращает html код по запросу
 	 *
-	 * @param array|string $where Запрос типа array('WHERE id=%d', 123)
+	 * @param array|string $params Запрос типа array('WHERE id=%d', 123) или параметры
 	 * @return string
 	 * @throws \Exception
 	 */
-	public static function getHtml($where) {
-		
-		if ($list = static::getData($where)) {
-			$template = static::getTemplatePhpFile();
+	public static function getHtml($params) {
 
-			return wdpro_render_php($template, $list, static::$templateExtraData);
+		if (is_string($params)) {
+			$params = [
+				'where'=>$params,
+			];
+		}
+
+		if (empty($params['where'])) {
+			$params['where'] = $params;
+		}
+		
+		if ($list = static::getData($params['where'])) {
+
+			if (empty($params['template']))
+				$params['template'] = static::getTemplatePhpFile();
+
+			return wdpro_render_php($params['template'], $list, static::$templateExtraData);
 		}
 	}
 
