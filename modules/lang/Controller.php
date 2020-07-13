@@ -14,6 +14,7 @@ class Controller extends \Wdpro\BaseController {
 
 		// Current language define
 		$uri = $_SERVER['REQUEST_URI'];
+		$uri = str_replace('?'.$_SERVER['QUERY_STRING'], '', $uri);
 
 		$_SERVER['REQUEST_URI_ORIGINAL'] = $uri;
 		$setted = false;
@@ -100,7 +101,7 @@ class Controller extends \Wdpro\BaseController {
 
 			$data = Data::getDataForMenu();
 			foreach ($data as $lang) {
-				if (!$lang['active'] && $lang['code']) {
+				if (!$lang['active'] && isset($lang['code']) && $lang['code']) {
 					echo '<link rel="alternate" hreflang="'.$lang['code'].'" href="'.$lang['url'].'"/>';
 				}
 			}

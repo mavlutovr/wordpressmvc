@@ -2661,13 +2661,17 @@ function wdpro_is_absolute_url($url) {
 function wdpro_home_uri() {
 	$url = home_url();
 
-	$url = str_replace(
-		$_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'],
+	$scheme = $_SERVER['REQUEST_SCHEME'];
+	if ($_SERVER['HTTPS'] === 'on')
+		$scheme = 'https';
+
+	$uri = str_replace(
+		$scheme.'://'.$_SERVER['HTTP_HOST'],
 		'',
 		$url
 	);
 
-	return $url;
+	return $uri;
 }
 
 
