@@ -54,6 +54,7 @@ class ConsoleRoll extends \Wdpro\Console\Roll {
 
 		return [
 			$data['name'],
+			$data['code'],
 			wdpro_check_html($data['visible'], 'Отображается на сайте'),
 			$data['sorting'],
 		];
@@ -69,6 +70,7 @@ class ConsoleRoll extends \Wdpro\Console\Roll {
 
 		return [
 			'Язык',
+			'Код языка',
 			'Отображается на сайте',
 			'№ п.п.',
 		];

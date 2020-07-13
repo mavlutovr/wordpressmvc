@@ -12,13 +12,18 @@ class ConsoleForm extends \Wdpro\Form\Form {
 	protected function initFields() {
 		$this->add([
 			'name'=>'uri',
-			'left'=>'Имя языка из 2-х букв (ru, en, de...)',
+			'left'=>'Имя (папка) языка из 2-х букв (ru, en, de...)',
 		]);
 
 		$this->add([
 			'name'=>'name',
 			'left'=>'Полное имя (Русский, English...)',
 			''
+		]);
+
+		$this->add([
+			'name'=>'code',
+			'left'=>'Код языка (en-us)',
 		]);
 
 		$this->add([

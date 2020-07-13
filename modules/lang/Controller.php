@@ -34,6 +34,24 @@ class Controller extends \Wdpro\BaseController {
 
 
 	/**
+	 * Выполнение скриптов после инициализаций всех модулей (на сайте)
+	 */
+	public static function runSite()
+	{
+		// Тег, который говорит поисковикам, что у этой страницы есть копия на другом языке
+		add_action('wp_head', function () {
+
+			$data = Data::getDataForMenu();
+			foreach ($data as $lang) {
+				if (!$lang['active'] && $lang['code']) {
+					echo '<link rel="alternate" hreflang="'.$lang['code'].'" href="'.$lang['url'].'" />';
+				}
+			}
+		});
+	}
+
+
+	/**
 	 * Выполнение скриптов после инициализаций всех модулей (в админке)
 	 */
 	public static function runConsole () {
