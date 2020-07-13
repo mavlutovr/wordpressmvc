@@ -29,7 +29,7 @@ class ConsoleForm extends \Wdpro\Form\Form {
 		$this->add([
 			'name'=>'flag',
 			'left'=>'Флаг для админки',
-			'botton'=>'<a href="http://www.world-globe.ru/countries/flags/">Скачать флаги</a>',
+			'bottom'=>'Download <a href="http://www.world-globe.ru/countries/flags/">flags 1</a>, <a href="https://www.iconfinder.com/iconsets/flags-37" target="_blank">flags 2</a>',
 			'type'=>static::IMAGE,
 			'resize'=>[
 				['height'=>16]

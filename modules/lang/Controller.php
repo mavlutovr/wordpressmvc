@@ -48,6 +48,21 @@ class Controller extends \Wdpro\BaseController {
 				}
 			}
 		});
+
+		// Filter template files include
+		add_filter('template_include', function ($template) {
+
+			$langTemplate = preg_replace(
+				'~(\.php)$~',
+				'.'.Data::getCurrentLangUriNotEmpty().'$1',
+				$template
+			);
+
+			if (is_file($langTemplate))
+				return $langTemplate;
+
+			return $template;
+		});
 	}
 
 
