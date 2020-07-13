@@ -190,7 +190,7 @@ class Data {
 		$lang = Controller::getCurrentLangUri();
 
 		if ( $lang ) {
-			$url .= $lang . '/';
+			$url .= $lang . wdpro_url_slash_at_end();
 		}
 
 		return $url;
@@ -261,7 +261,7 @@ class Data {
 			if ($datum['visible'] == 1) {
 				// Активный язык
 				$datum['active'] = false;
-				if ( Controller::getCurrentLangUri() == $datum['uri'] ) {
+				if ( Controller::getCurrentLangUri() === $datum['uri'] ) {
 					$datum['active'] = true;
 				}
 

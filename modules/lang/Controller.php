@@ -12,13 +12,40 @@ class Controller extends \Wdpro\BaseController {
 	public static function initSite () {
 
 
+		// Current language define
 		$uri = $_SERVER['REQUEST_URI'];
+
 		$_SERVER['REQUEST_URI_ORIGINAL'] = $uri;
 		$setted = false;
 
+		// Each lang uri
 		foreach(Data::getUris() as $langUri) {
-			if (strstr($uri, '/'.$langUri.'/')) {
-				$uri = str_replace('/'.$langUri.'/', '/', $uri);
+
+			// It is uri of lang
+			if (static::isUriOfLang($uri, $langUri)) {
+
+				$langSuffix = $langUri.wdpro_url_slash_at_end();
+				if (!$langSuffix) $langSuffix = '/';
+
+				// Uri without lang uri
+				// Front page
+				$uri = preg_replace(
+					'~^'.preg_quote(wdpro_home_uri()).'/'.$langSuffix.'$~',
+					wdpro_home_uri().wdpro_url_slash_at_end(),
+					$uri
+				);
+
+				// Inner page
+				if ($uri === '') $uri = '/';
+				$uri = str_replace(
+					'/'.$langUri.'/',
+					'/',
+					$uri
+				);
+
+				if ($uri === wdpro_home_uri())
+				$uri.= '/';
+
 				$_SERVER['REQUEST_URI'] = $uri;
 				//$_SERVER['REDIRECT_URL'] = $uri;
 				//print_r($_SERVER); exit();
@@ -30,6 +57,36 @@ class Controller extends \Wdpro\BaseController {
 		if (!$setted) {
 			static::setCurrentLang('');
 		}
+	}
+
+
+	/**
+	 * Check, is specified uri related to specified lang
+	 *
+	 * @param string $uri
+	 * @param string $lang ('', 'en', 'ru'...)
+	 * @return bool
+	 */
+	public static function isUriOfLang($uri, $lang) {
+
+		// Remove root folder
+		$regRoot = '~^'.preg_quote(wdpro_home_uri()).'~';
+		$uri = preg_replace($regRoot, '', $uri);
+
+		$langSuffix = '/';
+		if ($lang) {
+			$langSuffix .= $lang.wdpro_url_slash_at_end();
+		}
+
+		// Front page
+		if ($uri === $langSuffix)
+			return true;
+
+		// Another page
+		if (preg_match('~^/'.$lang.'/~', $uri))
+			return true;
+
+		return false;
 	}
 
 
@@ -48,6 +105,7 @@ class Controller extends \Wdpro\BaseController {
 				}
 			}
 		});
+
 
 		// Filter template files include
 		add_filter('template_include', function ($template) {

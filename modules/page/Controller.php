@@ -207,11 +207,11 @@ class Controller extends \Wdpro\BaseController {
 
 			if (is_object($page)) {
 
-				// Главная
+				// Front Page
 				if (method_exists($page, 'isHome')
 					&& $page->isHome()) {
 
-					// Редирект главной на /
+					// 301 redirect to /
 					if (wdpro_current_post_name() !== '/'.$langUri) {
 
 						wdpro_location(wdpro_home_url_with_lang());
