@@ -101,7 +101,7 @@ class Controller extends \Wdpro\BaseController {
 			$data = Data::getDataForMenu();
 			foreach ($data as $lang) {
 				if (!$lang['active'] && $lang['code']) {
-					echo '<link rel="alternate" hreflang="'.$lang['code'].'" href="'.$lang['url'].'" />';
+					echo '<link rel="alternate" hreflang="'.$lang['code'].'" href="'.$lang['url'].'"/>';
 				}
 			}
 		});

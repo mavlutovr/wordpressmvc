@@ -24,6 +24,7 @@ class ConsoleForm extends \Wdpro\Form\Form {
 		$this->add([
 			'name'=>'code',
 			'left'=>'Код языка (en-us)',
+			'bottom'=>'<a href="https://autoit-script.ru/docs/appendix/oslangcodes.htm" target="_blank">Коды яызков</a> (en-US, ru-RU)'
 		]);
 
 		$this->add([
