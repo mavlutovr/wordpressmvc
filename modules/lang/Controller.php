@@ -34,6 +34,28 @@ class Controller extends \Wdpro\BaseController {
 
 
 	/**
+	 * Выполнение скриптов после инициализаций всех модулей (на сайте)
+	 */
+	public static function runSite()
+	{
+		// Filter template files include
+		add_filter('template_include', function ($template) {
+
+			$langTemplate = preg_replace(
+				'~(\.php)$~',
+				'.'.Data::getCurrentLangUriNotEmpty().'$1',
+				$template
+			);
+
+			if (is_file($langTemplate))
+				return $langTemplate;
+
+			return $template;
+		});
+	}
+
+
+	/**
 	 * Выполнение скриптов после инициализаций всех модулей (в админке)
 	 */
 	public static function runConsole () {
@@ -42,6 +64,9 @@ class Controller extends \Wdpro\BaseController {
 			'roll'=>ConsoleRoll::class,
 			'n'=>1000,
 		]);
+
+
+
 	}
 
 
