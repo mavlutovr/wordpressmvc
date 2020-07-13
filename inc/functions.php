@@ -3761,7 +3761,7 @@ function wdpro_url_from_post_name($postName, $postId=null) {
 	if ($postName) $postName .= wdpro_url_slash_at_end();
 
 	// Добавляем абсолютную часть адреса
-	return \Wdpro\Lang\Data::currentUrl().$postName;
+	return \Wdpro\Lang\Data::currentUrl(true).$postName;
 }
 
 

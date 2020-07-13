@@ -183,14 +183,16 @@ class Data {
 	/**
 	 * Возвращает адрес главной страницы текущего языка
 	 *
+	 * @param boolean $forseSlashAtEnd
 	 * @return string
 	 */
-	public static function currentUrl () {
+	public static function currentUrl ($forseSlashAtEnd=false) {
 		$url  = home_url() . '/';
 		$lang = Controller::getCurrentLangUri();
 
 		if ( $lang ) {
-			$url .= $lang . wdpro_url_slash_at_end();
+			$slash = $forseSlashAtEnd ? '/' : wdpro_url_slash_at_end();
+			$url .= $lang . $slash;
 		}
 
 		return $url;
