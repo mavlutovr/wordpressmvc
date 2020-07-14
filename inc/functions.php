@@ -2662,7 +2662,7 @@ function wdpro_home_uri() {
 	$url = home_url();
 
 	$scheme = $_SERVER['REQUEST_SCHEME'];
-	if ($_SERVER['HTTPS'] === 'on')
+	if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on')
 		$scheme = 'https';
 
 	$uri = str_replace(
@@ -2678,10 +2678,11 @@ function wdpro_home_uri() {
 /**
  * Возвращает uri главной страницы текущего языка
  *
+ * @param bool $slashAtEnd add slash at and in eny situations
  * @return string
  */
-function wdpro_home_url_with_lang() {
-	return \Wdpro\Lang\Data::currentUrl();
+function wdpro_home_url_with_lang($slashAtEnd=true) {
+	return \Wdpro\Lang\Data::currentUrl($slashAtEnd);
 }
 
 
