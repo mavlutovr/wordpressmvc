@@ -306,12 +306,12 @@ href="'.WDPRO_CONSOLE_URL.'themes.php">Активировать тему</a>
 									'right' => 'Убрать дополнительные поля для страниц и постов (метатеги)',
 									'type'  => 'checkbox'
 								),
-								array(
+								/*array(
 									'name'=>'wdpro_remove_redirect_canonical',
 									'right'=>'Убрать ошибку циклической переадресации ERR_TOO_MANY_REDIRECTS',
 									'type'=>'checkbox',
-								),
-								array(
+								),*/
+								/*array(
 									'name'=>'wdpro_uncatenate_scripts',
 									'right'=>'Выключить объединение скриптов',
 									'bottom'=>'(Иногда 
@@ -319,10 +319,15 @@ href="'.WDPRO_CONSOLE_URL.'themes.php">Активировать тему</a>
 									ресурсов, чтобы доделать это объединение и админка 
 									выглядит не доделанной)',
 									'type'=>'checkbox',
-								),
+								),*/
 								array(
 									'name'=>'use_smilies',
 									'right'=>'Использовать смайлики',
+									'type'=>'check',
+								),
+								array(
+									'name'=>'wdpro_standard_submenu',
+									'right'=>'Add submenu to end of text (to add menu without this option use shortcode [submenu])',
 									'type'=>'check',
 								),
 								array(

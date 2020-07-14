@@ -286,7 +286,8 @@ class Controller extends \Wdpro\BaseController {
 				$page->getCard($content);
 
 				// Добавляем стандартное подменю
-				$page->getSubmenuStandart($content);
+				if (wdpro_get_option('wdpro_standard_submenu'))
+					$page->getSubmenuStandart($content);
 			}
 
 			return $content;
