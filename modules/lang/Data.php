@@ -277,7 +277,7 @@ class Data {
 				// Главной на текущем языке
 				$homeUrl = home_url() . '/';
 				if ( $datum['uri'] ) {
-					$homeUrl .= $datum['uri'] . '/';
+					$homeUrl .= $datum['uri'] . wdpro_url_slash_at_end();
 				}
 
 				$datum['homeUrl'] = $homeUrl;

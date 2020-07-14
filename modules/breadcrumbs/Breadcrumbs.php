@@ -136,7 +136,7 @@ class Breadcrumbs
 	public function prependFrontPage() {
 		$this->prepend(array(
 			'text'=>wdpro_get_option('wdpro_breadcrumbs_home[lang]', 'Главная'),
-			'uri'=>wdpro_home_url_with_lang(),
+			'uri'=>wdpro_home_url_with_lang(false),
 		));
 	}
 

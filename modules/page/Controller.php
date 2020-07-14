@@ -215,7 +215,7 @@ class Controller extends \Wdpro\BaseController {
 					// 301 redirect to /
 					if (wdpro_current_post_name() !== '/'.$langUri) {
 
-						wdpro_location(wdpro_home_url_with_lang());
+						wdpro_location(wdpro_home_url_with_lang(false));
 					}
 				}
 
