@@ -241,7 +241,9 @@ class Menu extends Roll
 				
 				else
 				{
-					$row['url'] = wdpro_url_from_post_name($row['post_name'], $row['id']);
+					$post = wdpro_get_post_by_id($row['id']);
+					$row['url'] = $post->getUrl();
+//					$row['url'] = wdpro_url_from_post_name($row['post_name'], $row['id']);
 				}
 				$row['text'] = $row['post_title'];
 

@@ -248,12 +248,14 @@ class Data {
 	/**
 	 * Возвращает данные для языкового меню на сайте
 	 *
+	 * @param null|\Wdpro\BasePage $page
 	 * @return array
 	 */
-	public static function getDataForMenu () {
+	public static function getDataForMenu ($page=null) {
 		$data = static::getData();
 
-		$page = wdpro_current_page();
+		if (!$page)
+			$page = wdpro_current_page();
 
 		$return = [];
 
@@ -285,7 +287,7 @@ class Data {
 				// Адрес текущей страницы на этом языке
 				$datum['pageUrl'] = $homeUrl;
 				if ( ! $isHome ) {
-					$datum['pageUrl'] .= $page->getUri() . '/';
+					$datum['pageUrl'] .= $page->getPostNameWithPrefix() . '/';
 				}
 
 				// Адрес для кнопки языка в зависимости от того, есть ли перевод или нет

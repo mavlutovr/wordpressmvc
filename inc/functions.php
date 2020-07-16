@@ -2656,9 +2656,10 @@ function wdpro_is_absolute_url($url) {
 /**
  * Возвращает сайта uri относительно домена
  *
+ * @param bool $slashAtEnd add slash to end
  * @return string
  */
-function wdpro_home_uri() {
+function wdpro_home_uri($slashAtEnd=false) {
 	$url = home_url();
 
 	$scheme = $_SERVER['REQUEST_SCHEME'];
@@ -2670,6 +2671,30 @@ function wdpro_home_uri() {
 		'',
 		$url
 	);
+
+	if ($slashAtEnd && !preg_match('~/$~', $uri))
+		$uri .= '/';
+
+	return $uri;
+}
+
+
+/**
+ *
+ *
+ * @param bool $slashAtEnd
+ * @return string
+ */
+function wdpro_home_uri_with_lang($slashAtEnd=true) {
+
+	$uri = wdpro_home_uri($slashAtEnd);
+
+	if (\Wdpro\Modules::existsWdpro('lang')) {
+		$uri .= \Wdpro\Lang\Controller::getCurrentLangUri();
+	}
+
+	if ($slashAtEnd && !preg_match('~/$~', $uri))
+		$uri .= '/';
 
 	return $uri;
 }
@@ -3446,13 +3471,14 @@ function wdpro_check_html($visible, $title='') {
  * Когда уже известно, что за страница открыта, что в хлебных крошках...
  *
  * @param callable $callback Каллбэк, в который отправляется объект страницы
+ * @param int $priority
  */
-function wdpro_on_page_init($callback) {
+function wdpro_on_page_init($callback, $priority=10) {
 	add_action('wdpro_breadcrumbs_init', function ($breadcrumbs) use (&$callback) {
 		/** @var $breadcrumbs \Wdpro\Breadcrumbs\Breadcrumbs */
 
 		$callback($breadcrumbs->getFirstEntity());
-	});
+	}, $priority);
 }
 
 
