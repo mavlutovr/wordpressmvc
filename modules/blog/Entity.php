@@ -25,7 +25,7 @@ class Entity extends \Wdpro\BasePage {
 		$postName = $this->getData('post_name');
 		$path = WDPRO_TEMPLATE_PATH.'blog/'.$postName.'/';
 		$post_url = WDPRO_TEMPLATE_URL.'blog/'.$postName.'/';
-		$langSuffix = \Wdpro\Lang\Data::getCurrentLangUriNotEmpty();
+		$langSuffix = \Wdpro\Lang\Data::getCurrentLangUri();
 		if ($langSuffix) $langSuffix = '.'.$langSuffix;
 		$templateFile = $path.'main'.$langSuffix.'.php';
 		$this->data['post_url'] = $post_url;
