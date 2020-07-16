@@ -11,14 +11,12 @@ class ConsoleForm extends \Wdpro\Form\Form {
 	 */
 	protected function initFields() {
 
-		if (\Wdpro\Lang\Controller::isLang()) {
-			$this->add([
-				'name'=>'post_title[lang]',
-				'left'=>'Заголовок',
-				'*'=>true,
-				'langs_skip'=>[''], // Не показывать в языках
-			]);
-		}
+		$this->add([
+			'name'=>'post_title[lang]',
+			'left'=>'Заголовок',
+			'*'=>true,
+			'langs_skip'=>[''], // Не показывать в языках
+		]);
 
 		$this->add(array(
 			'name'=>'image',
