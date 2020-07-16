@@ -183,14 +183,16 @@ class Data {
 	/**
 	 * Возвращает адрес главной страницы текущего языка
 	 *
+	 * @param boolean $forseSlashAtEnd
 	 * @return string
 	 */
-	public static function currentUrl () {
+	public static function currentUrl ($forseSlashAtEnd=false) {
 		$url  = home_url() . '/';
 		$lang = Controller::getCurrentLangUri();
 
 		if ( $lang ) {
-			$url .= $lang . '/';
+			$slash = $forseSlashAtEnd ? '/' : wdpro_url_slash_at_end();
+			$url .= $lang . $slash;
 		}
 
 		return $url;
@@ -246,12 +248,14 @@ class Data {
 	/**
 	 * Возвращает данные для языкового меню на сайте
 	 *
+	 * @param null|\Wdpro\BasePage $page
 	 * @return array
 	 */
-	public static function getDataForMenu () {
+	public static function getDataForMenu ($page=null) {
 		$data = static::getData();
 
-		$page = wdpro_current_page();
+		if (!$page)
+			$page = wdpro_current_page();
 
 		$return = [];
 
@@ -261,7 +265,7 @@ class Data {
 			if ($datum['visible'] == 1) {
 				// Активный язык
 				$datum['active'] = false;
-				if ( Controller::getCurrentLangUri() == $datum['uri'] ) {
+				if ( Controller::getCurrentLangUri() === $datum['uri'] ) {
 					$datum['active'] = true;
 				}
 
@@ -275,7 +279,7 @@ class Data {
 				// Главной на текущем языке
 				$homeUrl = home_url() . '/';
 				if ( $datum['uri'] ) {
-					$homeUrl .= $datum['uri'] . '/';
+					$homeUrl .= $datum['uri'] . wdpro_url_slash_at_end();
 				}
 
 				$datum['homeUrl'] = $homeUrl;
@@ -283,7 +287,10 @@ class Data {
 				// Адрес текущей страницы на этом языке
 				$datum['pageUrl'] = $homeUrl;
 				if ( ! $isHome ) {
-					$datum['pageUrl'] .= $page->getUri() . '/';
+					if (!preg_match('~/$~', $datum['pageUrl']))
+						$datum['pageUrl'] .= '/';
+
+					$datum['pageUrl'] .= $page->getPostNameWithPrefix() . wdpro_url_slash_at_end();
 				}
 
 				// Адрес для кнопки языка в зависимости от того, есть ли перевод или нет

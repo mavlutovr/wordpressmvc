@@ -8,6 +8,29 @@ abstract class BasePage extends BaseEntity
 
 
 	/**
+	 * @param array|int|null $idOrData ID or data
+	 */
+	public function __construct($idOrData = null)
+	{
+		parent::__construct($idOrData);
+
+
+		// On change
+		$this->on('change', function () {
+
+			if (\Wdpro\Modules::existsWdpro('page/postNamePrefix')) {
+				if ($this->removed()) {
+					\Wdpro\Page\PostNamePrefix\Controller::remove($this);
+				}
+				else {
+					\Wdpro\Page\PostNamePrefix\Controller::set($this);
+				}
+			}
+		});
+	}
+
+
+	/**
 	 * Инициализация типа страниц
 	 */
 	public static function init() {
@@ -224,14 +247,52 @@ abstract class BasePage extends BaseEntity
 
 
 	/**
+	 * Return URI with post_name prefix (/blog/article1/)
+	 *
+	 * @return string
+	 */
+	public function getUriWithPrefix() {
+
+		// /en/
+		$uri = wdpro_home_uri_with_lang(true);
+
+		if (!$this->isHome()) {
+			// /en/blog
+			$uri .= $this->getPostNameWithPrefix();
+			// /en/blog/
+			$uri .= wdpro_url_slash_at_end();
+		}
+
+		return $uri;
+	}
+
+
+	/**
+	 * Return post_name with prefix (blog/article1)
+	 *
+	 * @return string
+	 */
+	public function getPostNameWithPrefix() {
+		$uri = '';
+		$uri .= $this->getPostNamePrefix();
+		$uri .= $this->getUri();
+		return $uri;
+	}
+
+
+	/**
 	 * Возвращает абсолютный адрес страницы
 	 *
 	 * @return string
 	 */
 	public function getUrl() {
-		return wdpro_home_url_with_lang()
-			.$this->getData('post_name')
-			.wdpro_url_slash_at_end();
+
+		$url = wdpro_home_url_with_lang();
+		$url .= $this->getPostNamePrefix();
+		$url .= $this->getData('post_name');
+		$url .= wdpro_url_slash_at_end();
+
+		return $url;
 	}
 
 
@@ -691,5 +752,18 @@ abstract class BasePage extends BaseEntity
 
 		return $actions;
 	}
+
+
+	/**
+	 * Возвращает префикс для адреса страницы
+	 *
+	 * @return string
+	 */
+	public function getPostNamePrefix() {
+
+	}
+
+
+
 
 }

@@ -2656,28 +2656,58 @@ function wdpro_is_absolute_url($url) {
 /**
  * Возвращает сайта uri относительно домена
  *
+ * @param bool $slashAtEnd add slash to end
  * @return string
  */
-function wdpro_home_uri() {
+function wdpro_home_uri($slashAtEnd=false) {
 	$url = home_url();
 
-	$url = str_replace(
-		$_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'],
+	$scheme = $_SERVER['REQUEST_SCHEME'];
+	if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on')
+		$scheme = 'https';
+
+	$uri = str_replace(
+		$scheme.'://'.$_SERVER['HTTP_HOST'],
 		'',
 		$url
 	);
 
-	return $url;
+	if ($slashAtEnd && !preg_match('~/$~', $uri))
+		$uri .= '/';
+
+	return $uri;
+}
+
+
+/**
+ *
+ *
+ * @param bool $slashAtEnd
+ * @return string
+ */
+function wdpro_home_uri_with_lang($slashAtEnd=true) {
+
+	$uri = wdpro_home_uri($slashAtEnd);
+
+	if (\Wdpro\Modules::existsWdpro('lang')) {
+		$uri .= \Wdpro\Lang\Controller::getCurrentLangUri();
+	}
+
+	if ($slashAtEnd && !preg_match('~/$~', $uri))
+		$uri .= '/';
+
+	return $uri;
 }
 
 
 /**
  * Возвращает uri главной страницы текущего языка
  *
+ * @param bool $slashAtEnd add slash at and in eny situations
  * @return string
  */
-function wdpro_home_url_with_lang() {
-	return \Wdpro\Lang\Data::currentUrl();
+function wdpro_home_url_with_lang($slashAtEnd=true) {
+	return \Wdpro\Lang\Data::currentUrl($slashAtEnd);
 }
 
 
@@ -3441,13 +3471,14 @@ function wdpro_check_html($visible, $title='') {
  * Когда уже известно, что за страница открыта, что в хлебных крошках...
  *
  * @param callable $callback Каллбэк, в который отправляется объект страницы
+ * @param int $priority
  */
-function wdpro_on_page_init($callback) {
+function wdpro_on_page_init($callback, $priority=10) {
 	add_action('wdpro_breadcrumbs_init', function ($breadcrumbs) use (&$callback) {
 		/** @var $breadcrumbs \Wdpro\Breadcrumbs\Breadcrumbs */
 
 		$callback($breadcrumbs->getFirstEntity());
-	});
+	}, $priority);
 }
 
 
@@ -3761,7 +3792,7 @@ function wdpro_url_from_post_name($postName, $postId=null) {
 	if ($postName) $postName .= wdpro_url_slash_at_end();
 
 	// Добавляем абсолютную часть адреса
-	return \Wdpro\Lang\Data::currentUrl().$postName;
+	return \Wdpro\Lang\Data::currentUrl(true).$postName;
 }
 
 

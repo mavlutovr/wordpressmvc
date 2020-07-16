@@ -488,3 +488,9 @@ add_filter('get_canonical_url', function ($canonical_url, $post) {
 
 	return $canonical_url;
 }, 10, 2);
+
+
+// Remove link rel=’prev’ and link rel=’next’
+if (get_option('wdpro_remove_link_rel_prev_and_next')) {
+	remove_action( 'wp_head', 'adjacent_posts_rel_link_wp_head', 10, 0 );
+}
