@@ -336,6 +336,11 @@ href="'.WDPRO_CONSOLE_URL.'themes.php">Активировать тему</a>
 									скриптах на почту',
 									'type'=>'check',
 								),
+								array(
+									'name'=>'wdpro_remove_link_rel_prev_and_next',
+									'right'=>'Remove link rel=’prev’ and link rel=’next’',
+									'type'=>'check',
+								),
 
 								array(
 									'type' => 'submit',

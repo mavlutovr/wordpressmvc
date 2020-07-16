@@ -58,6 +58,37 @@ class Controller extends \Wdpro\BaseController {
 		if (!$setted) {
 			static::setCurrentLang('');
 		}
+
+
+
+		// Add language pages to sitemap.xml (Plugin "Google XML Sitemaps")
+		$sitemapGeneratorLastPostId = 0;
+		add_action('sm_addurl', function ($page) use (&$sitemapGeneratorLastPostId) {
+			/** @var \GoogleSitemapGeneratorPage $page */
+
+			$postId = $page->GetPostID();
+			if ($postId) {
+
+				if ($sitemapGeneratorLastPostId === $postId) return false;
+				$sitemapGeneratorLastPostId = $postId;
+
+				$post = wdpro_get_post_by_id($postId);
+				$langs = Data::getDataForMenu($post);
+
+				foreach ($langs as $lang) {
+					if ($lang['uri'] && $lang['isLang'] && $lang['pageUrl']) {
+						$generator = \GoogleSitemapGenerator::GetInstance();
+						$generator->AddUrl(
+							$lang['pageUrl'],
+							$page->GetLastMod(),
+							$page->GetChangeFreq(),
+							$page->GetPriority(),
+							$postId
+						);
+					}
+				}
+			}
+		});
 	}
 
 

@@ -251,8 +251,6 @@ class Controller extends \Wdpro\BaseController {
 						wdpro_location($redirectUrl, 301);
 					}
 				}
-
-
 			}
 
 
