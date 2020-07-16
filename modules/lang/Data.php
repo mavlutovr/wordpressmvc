@@ -287,7 +287,10 @@ class Data {
 				// Адрес текущей страницы на этом языке
 				$datum['pageUrl'] = $homeUrl;
 				if ( ! $isHome ) {
-					$datum['pageUrl'] .= $page->getPostNameWithPrefix() . '/';
+					if (!preg_match('~/$~', $datum['pageUrl']))
+						$datum['pageUrl'] .= '/';
+
+					$datum['pageUrl'] .= $page->getPostNameWithPrefix() . wdpro_url_slash_at_end();
 				}
 
 				// Адрес для кнопки языка в зависимости от того, есть ли перевод или нет
