@@ -94,7 +94,11 @@ class Controller extends \Wdpro\BaseController {
 				if (preg_match($reg, $_SERVER['REQUEST_URI'])) {
 					$uri = preg_replace($reg, $homeUri, $_SERVER['REQUEST_URI']);
 
-					if ($uri !== \wdpro_home_uri_with_lang()) {
+					$wdpro_home_uri = wdpro_home_uri();
+					if (!\preg_match('~/$~', $wdpro_home_uri))
+						$wdpro_home_uri .= '/';
+
+					if ($uri !== $wdpro_home_uri) {
 						if (!isset($_SERVER['REQUEST_URI_ORIGINAL']))
 							$_SERVER['REQUEST_URI_ORIGINAL'] = $_SERVER['REQUEST_URI'];
 
