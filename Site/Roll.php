@@ -108,7 +108,7 @@ class Roll extends \Wdpro\BaseRoll {
 
 		$fields = static::sqlFields();
 		$fields = \Wdpro\Lang\Data::replaceLangShortcode($fields);
-		$fields = '*';
+		// $fields = '*';
 
 		if ($sel = $table::select($where, $fields)) {
 
@@ -125,8 +125,9 @@ class Roll extends \Wdpro\BaseRoll {
 				if ( isset($row['post_name'])  && ! isset($row['url'])) {
 					// $post = wdpro_get_post_by_id($row['id']);
 					$post = static::getEntityByData($row);
-					$row['url'] = $post->getUrl();
-					//$row['url'] = \Wdpro\Lang\Data::currentUrl() . $row['post_name'] . wdpro_url_slash_at_end();
+					$row = $post->getDataForTemplate();
+					//$row['url'] = $post->getUrl();
+				//$row['url'] = \Wdpro\Lang\Data::currentUrl() . $row['post_name'] . wdpro_url_slash_at_end();
 					// print_r($row);
 				}
 
