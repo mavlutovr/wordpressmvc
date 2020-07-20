@@ -495,7 +495,7 @@ abstract class BasePage extends BaseEntity
 				'<a href="'
 				.WDPRO_CONSOLE_URL.'edit.php?post_type='.static::getType().'&sectionId='
 				.$parentId
-				.'" class="js-subsections"><span 
+				.'" class="js-subsections"><span
 									class="fa fa-folder"></span> Подразделы</a>';
 		}*/
 

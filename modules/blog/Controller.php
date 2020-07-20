@@ -5,6 +5,7 @@ namespace Wdpro\Blog;
 class Controller extends \Wdpro\BaseController {
 
 	protected static $tags = false;
+	protected static $postNamePrefix = false;
 
 
 	/**
@@ -28,11 +29,11 @@ class Controller extends \Wdpro\BaseController {
 
 		// Статьи
 		add_shortcode('blog_posts', function () {
-			
+
 			$post = get_post();
-			
+
 			return Roll::getHtml(
-				['WHERE `post_status`="publish" 
+				['WHERE `post_status`="publish"
 				AND `post_parent`=%d
 				AND `in_menu`=1
 				AND `post_title[lang]`!=""
@@ -85,24 +86,24 @@ class Controller extends \Wdpro\BaseController {
 	public static function initConsole() {
 
 		\Wdpro\Console\Menu::addSettings('Блог', function ($form) {
-			
+
 			/** @var \Wdpro\Form\Form $form */
-			
+
 			// Отправка события на дополнительную инициализацию формы настроек
 			do_action('wdpro_blog_init_console', $form);
-			
+
 			$form->add([
 				'name'=>'blog_codes',
 				'top'=>'Вставить html код под статью',
 				'bottom'=>'Сервисы социальных кнопок:
-<a href="https://usocial.pro/" target="_blank">social.pro</a>, 
-<a href="https://tech.yandex.ru/share/" target="_blank">tech.yandex.ru/share/</a>
-',
+					<a href="https://usocial.pro/" target="_blank">social.pro</a>,
+					<a href="https://tech.yandex.ru/share/" target="_blank">tech.yandex.ru/share/</a>
+				',
 				'type'=>$form::TEXT,
 				'width'=>600,
 			]);
 			$form->add($form::SUBMIT_SAVE);
-			
+
 			return $form;
 		});
 	}
@@ -110,11 +111,11 @@ class Controller extends \Wdpro\BaseController {
 
 	/**
 	 * Дополнительная обработка формы
-	 * 
+	 *
 	 * @param callback $callback Каллбэк, принимающий форму
 	 */
 	public static function initForm($callback) {
-		
+
 		add_action('blog_console_form', $callback);
 	}
 
@@ -188,6 +189,23 @@ class Controller extends \Wdpro\BaseController {
 
 		return $tags;
 	}
+
+
+	/**
+	 * Set prefix uri mode (blog/article_post_name)
+	 * @param bool enabled
+	 */
+	 public static function usePostNamePrefix($enabled) {
+		 static::$postNamePrefix = $enabled;
+	 }
+
+
+	 /**
+	  * Return post prefix mode (enabled)
+	  */
+	 public static function isPostNamePrefix() {
+		 return static::$postNamePrefix;
+	 }
 }
 
 return __NAMESPACE__;

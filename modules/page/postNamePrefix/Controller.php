@@ -45,6 +45,11 @@ class Controller extends \Wdpro\BaseController {
 	}
 
 
+	/**
+	 * Change standard link to link with prefix for add to page
+	 * @param string $permalink
+	 * @param WP_Post $post
+	 */
 	public static function changePermalinks($permalink, $post) {
 
 //		echo PHP_EOL.'LINK: '.$permalink.PHP_EOL.PHP_EOL;
@@ -70,7 +75,7 @@ class Controller extends \Wdpro\BaseController {
 		// Redirect to url with prefix
 		wdpro_on_page_init(function ($page) {
 			/** @var $page \App\BasePage */
-			\Wdpro\Page\PostNamePrefix\Controller::redirectToPrefixUriIfNeed($page);
+			static::redirectToPrefixUriIfNeed($page);
 		}, 9);
 
 
@@ -89,10 +94,12 @@ class Controller extends \Wdpro\BaseController {
 				if (preg_match($reg, $_SERVER['REQUEST_URI'])) {
 					$uri = preg_replace($reg, $homeUri, $_SERVER['REQUEST_URI']);
 
-					if (!isset($_SERVER['REQUEST_URI_ORIGINAL']))
-						$_SERVER['REQUEST_URI_ORIGINAL'] = $_SERVER['REQUEST_URI'];
+					if ($uri !== \wdpro_home_uri_with_lang()) {
+						if (!isset($_SERVER['REQUEST_URI_ORIGINAL']))
+							$_SERVER['REQUEST_URI_ORIGINAL'] = $_SERVER['REQUEST_URI'];
 
-					$_SERVER['REQUEST_URI'] = $uri;
+						$_SERVER['REQUEST_URI'] = $uri;
+					}
 				}
 			}
 		});
