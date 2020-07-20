@@ -770,7 +770,7 @@ function wdpro_local() {
  * @param string $location Адрес куда перейти
  * @param null|number $code Код редиректа (301)
  */
-function wdpro_location($location, $code=null)
+function wdpro_location($location, $code=301)
 {
 	if (headers_sent())
 	{
@@ -3708,9 +3708,9 @@ function wdpro_disable_emojis() {
 // Определение ОС
 function wdpro_get_os($user_agent = null)
 {
-	if ($user_agent === null) 
+	if ($user_agent === null)
 		$user_agent = $_SERVER['HTTP_USER_AGENT'];
-	
+
 	$os = array(
 		'Windows' => 'Win',
 		'Open BSD' => 'OpenBSD',
