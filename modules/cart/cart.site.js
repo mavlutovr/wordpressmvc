@@ -63,6 +63,10 @@ wdpro.ready(20, ($) => {
 				const key = $container.attr('data-key');
 
 
+				// Yandex Metrika
+				wdpro.trigger('cart-add');
+
+
 				// Запрос на сервер
 				wdpro.ajax(
 					'cart_count',
