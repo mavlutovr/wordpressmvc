@@ -770,7 +770,7 @@ function wdpro_local() {
  * @param string $location Адрес куда перейти
  * @param null|number $code Код редиректа (301)
  */
-function wdpro_location($location, $code=null)
+function wdpro_location($location, $code=301)
 {
 	if (headers_sent())
 	{

@@ -13,7 +13,8 @@ class Roll extends \Wdpro\Site\Roll {
 	 * @example return "ID, post_title";
 	 */
 	public static function sqlFields () {
-		return 'id, post_name, tags[lang] as tags, post_title[lang] as post_title, anons[lang] as anons, date_added, date_edited, image';
+		return '*';
+		//return 'id, post_name, tags[lang] as tags, post_title[lang] as post_title, anons[lang] as anons, date_added, date_edited, image';
 	}
 
 

@@ -4,11 +4,11 @@ namespace Wdpro;
 
 /**
  * Запоминалка статических данных для разных данных
- * 
+ *
  * Обычные статичные данные остаются одинаковыми в разных классах при наследовании
  * И чтобы они становились разными, надо их переопределять
  * Чтобы не переопределять, подключается вот эта штука
- * 
+ *
  * @package Wdpro
  */
 trait Tools
@@ -21,14 +21,14 @@ trait Tools
 
 	/**
 	 * Запоминает данные
-	 * 
+	 *
 	 * @param string $name Название данных
 	 * @param mixed $value Значение
 	 */
 	public static function setStatic($name, $value) {
 
 		$key = get_called_class();
-		
+
 		if (!isset(static::$staticsList[$key])) static::$staticsList[$key] = array();
 
 		static::$staticsList[$key][$name] = $value;
@@ -37,14 +37,14 @@ trait Tools
 
 	/**
 	 * Возвращает данные
-	 * 
+	 *
 	 * @param string $name Название данных
-	 * @return mixed 
+	 * @return mixed
 	 */
 	public static function getStatic($name) {
-		
+
 		$key = get_called_class();
-		
+
 		if (isset(static::$staticsList[$key][$name]))
 		{
 			return static::$staticsList[$key][$name];
@@ -54,7 +54,7 @@ trait Tools
 
 	/**
 	 * Проверяет наличие данных
-	 * 
+	 *
 	 * @param string $name Имя данных
 	 * @return bool
 	 */
@@ -87,7 +87,7 @@ trait Tools
 
 	/**
 	 * Возвращает объект таблицы сущности
-	 * 
+	 *
 	 * @return \Wdpro\BaseSqlTable
 	 * @throws EntityException
 	 */
@@ -98,17 +98,17 @@ trait Tools
 			//return $tableClass;
 			return wdpro_object($tableClass);
 		}
-		
+
 		else
 		{
 			throw new EntityException(
-				'У сущности '.get_called_class().' не указано класс таблицы в методе 
+				'У сущности '.get_called_class().' не указано класс таблицы в методе
 				getSqlTableClass()'
 			);
 		}
 	}
 
-	
+
 	/**
 	 * Дополнительная таблица
 	 *
@@ -120,17 +120,28 @@ trait Tools
 	}
 
 
-
 	/**
 	 * Возвращает имя класса контроллера
-	 * 
+	 *
 	 * @return \Wdpro\BaseController
 	 */
 	public static function getController() {
-		
+
 		$namespace = static::getNamespace();
-		
+
 		return $namespace.'\\Controller';
+	}
+
+
+	/**
+	 * Return instanse of Entity
+	 * @return \Wdpro\BasePage
+	 */
+	public static function getEntityByData($data) {
+		$controller = static::getController();
+		$entityClass = $controller::getEntityClass();
+		$entity = $entityClass::instance($data);
+		return $entity;
 	}
 
 
@@ -243,29 +254,29 @@ trait Tools
 
 	/**
 	 * Прослушка события
-	 * 
+	 *
 	 * @param string $eventName Имя события
 	 * @param callback $callback Каллбэк, запускающийся при событии
 	 */
 	public function on($eventName, $callback) {
-		
+
 		if (!isset($this->events[$eventName]))
 			$this->events[$eventName] = [];
-		
+
 		$this->events[$eventName][] = $callback;
 	}
 
 
 	/**
 	 * Запуск события
-	 * 
+	 *
 	 * @param string $eventName Имя события
 	 * @param null|array $data Данные, отправляемые в каллбэки, которые ожидают событие
 	 */
 	public function trigger($eventName, $data=null) {
-		
+
 		if (isset($this->events[$eventName])) {
-			
+
 			foreach($this->events[$eventName] as $callback) {
 				/** @var callback $callback */
 				$callback($data);
@@ -282,7 +293,7 @@ trait Tools
 	 * @param callback $callback Каллбэк, запускающийся при событии
 	 */
 	public static function onStatic($eventName, $callback) {
-		
+
 		$eventNameFull = get_called_class().':'.$eventName;
 		if (!isset(static::$eventsStatic[$eventNameFull]))
 			static::$eventsStatic[$eventNameFull] = [];
@@ -295,7 +306,7 @@ trait Tools
 	 * Запуск события
 	 *
 	 * @param string $eventName Имя события
-	 * @param null|array|mixed $data Данные, отправляемые в каллбэки, которые ожидают 
+	 * @param null|array|mixed $data Данные, отправляемые в каллбэки, которые ожидают
 	 * событие
 	 */
 	public static function triggerStatic($eventName, $data) {

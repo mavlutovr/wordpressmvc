@@ -297,6 +297,20 @@ abstract class BasePage extends BaseEntity
 
 
 	/**
+	 * Возвращает данные для шаблона
+	 *
+	 * @return array
+	 */
+	public function getDataForTemplate() {
+		$data = parent::getDataForTemplate();
+
+		$data['url'] = $this->getUrl();
+
+		return $data;
+	}
+
+
+	/**
 	 * Возвращает адрес для хлебных крошек на сайте
 	 *
 	 * @return string
@@ -495,7 +509,7 @@ abstract class BasePage extends BaseEntity
 				'<a href="'
 				.WDPRO_CONSOLE_URL.'edit.php?post_type='.static::getType().'&sectionId='
 				.$parentId
-				.'" class="js-subsections"><span 
+				.'" class="js-subsections"><span
 									class="fa fa-folder"></span> Подразделы</a>';
 		}*/
 
