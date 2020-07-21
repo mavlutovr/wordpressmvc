@@ -2516,6 +2516,9 @@ function wdpro_render_php($file, $templateData=null) {
 
 	extract($data, EXTR_SKIP);
 
+	// Template of another language
+	$file = \Wdpro\Lang\Controller::getFilenameForCurrentLang($file);
+
 	if ($file && is_file($file))
 	{
 		require($file);
@@ -2956,6 +2959,8 @@ function wdpro_ajax_url($params=null) {
 			$params['wdproAction'] = $params['action'];
 			$params['action'] = 'wdpro';
 		}
+
+		$params['lang'] = \Wdpro\Lang\Controller::getCurrentLangUri();
 
 		$url .= '?'.http_build_query($params);
 	}
@@ -3708,9 +3713,9 @@ function wdpro_disable_emojis() {
 // Определение ОС
 function wdpro_get_os($user_agent = null)
 {
-	if ($user_agent === null) 
+	if ($user_agent === null)
 		$user_agent = $_SERVER['HTTP_USER_AGENT'];
-	
+
 	$os = array(
 		'Windows' => 'Win',
 		'Open BSD' => 'OpenBSD',
