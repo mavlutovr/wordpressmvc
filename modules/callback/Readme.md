@@ -70,12 +70,3 @@ form.add({
 });
 wdpro.callback.setForm(form);
 ```
-
-
-## Яндекс.Метрика
-
-Отправляются следующие javascript-события:
-
-- `callback--open` - При открытии формы.
-
-- `callback--send` - При отправке формы.

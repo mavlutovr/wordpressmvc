@@ -245,9 +245,3 @@ public static function runSiteStart()
     });
 }
 ```
-
-## Яндекс.Метрика
-
-Отправляются следующие javascript-события:
-
-- `cart--add-good` - При добавлении товара в корзину.
