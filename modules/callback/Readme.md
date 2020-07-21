@@ -76,6 +76,6 @@ wdpro.callback.setForm(form);
 
 Отправляются следующие javascript-события:
 
-- `callback-open` - При открытии формы.
+- `callback--open` - При открытии формы.
 
-- `callback-send` - При отправке формы.
+- `callback--send` - При отправке формы.

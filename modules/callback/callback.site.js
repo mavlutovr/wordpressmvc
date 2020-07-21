@@ -14,7 +14,7 @@
 			});
 			dialog.show();
 
-			wdpro.yandexMetrika('reachGoal', 'callback-open');
+			wdpro.yandexMetrika('reachGoal', 'callback--open');
 
 			wdpro.callback.getForm(function (form) {
 
@@ -38,7 +38,7 @@
 								dialog.setTitle(result['title']);
 							}
 
-							wdpro.yandexMetrika('reachGoal', 'callback-send');
+							wdpro.yandexMetrika('reachGoal', 'callback--send');
 						}
 					);
 				});

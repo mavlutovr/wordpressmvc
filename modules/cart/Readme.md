@@ -250,4 +250,4 @@ public static function runSiteStart()
 
 Отправляются следующие javascript-события:
 
-- `cart-add-good` - При добавлении товара в корзину.
+- `cart--add-good` - При добавлении товара в корзину.
