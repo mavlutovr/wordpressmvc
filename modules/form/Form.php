@@ -902,4 +902,34 @@ window.'.$id.' = '.($this->getJson()).';
 			$element->removeFiles();
 		});
 	}
+
+
+	/**
+	 * Добавляет в форму галочку для согласия с политикой конфиденциальности
+	 *
+	 * @throws \Wdpro\Exception
+	 */
+	public function addPrivacy() {
+
+		if (\Wdpro\Lang\Data::enabled()) {
+			$right = [
+
+				'ru'=>'Я даю свое согласие на обработку персональных данных и соглашаюсь с условиями и <a href="'.wdpro_home_url_with_lang(true).'/privacy-policy/" target="_blank">политикой конфиденциальности</a>.',
+
+				'en'=>'I give my consent to the processing of personal data and agree to the terms and <a href="'.wdpro_home_url_with_lang(true).'/privacy-policy/" target="_blank">privacy policy</a>.',
+			];
+		}
+		else {
+			$right = 'Я даю свое согласие на обработку персональных данных и соглашаюсь с условиями и <a href="'.wdpro_home_url_with_lang(true).'/privacy-policy/" target="_blank">политикой конфиденциальности</a>.';
+		}
+
+		$this->add([
+			'name'=>'privacy',
+			'type'=>static::CHECK,
+			'right'=>$right,
+			'*'=>true,
+			'checked'=>true,
+		]);
+
+	}
 }
