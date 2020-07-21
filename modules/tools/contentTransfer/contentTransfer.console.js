@@ -452,6 +452,7 @@ wdpro.ready($ => {
 				callback(doc);
 			});
 
+			console.log('data', data);
 			$frame.attr('src', data['url']['url']);
 
 			frameI++;

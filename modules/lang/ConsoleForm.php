@@ -12,7 +12,7 @@ class ConsoleForm extends \Wdpro\Form\Form {
 	protected function initFields() {
 		$this->add([
 			'name'=>'uri',
-			'left'=>'Имя языка из 2-х букв (ru, en, de...)',
+			'left'=>'Имя (папка) языка из 2-х букв (ru, en, de...)',
 		]);
 
 		$this->add([
@@ -22,9 +22,15 @@ class ConsoleForm extends \Wdpro\Form\Form {
 		]);
 
 		$this->add([
+			'name'=>'code',
+			'left'=>'Код языка (en-us)',
+			'bottom'=>'<a href="https://autoit-script.ru/docs/appendix/oslangcodes.htm" target="_blank">Коды яызков</a> (en-US, ru-RU)'
+		]);
+
+		$this->add([
 			'name'=>'flag',
 			'left'=>'Флаг для админки',
-			'botton'=>'<a href="http://www.world-globe.ru/countries/flags/">Скачать флаги</a>',
+			'bottom'=>'Download <a href="http://www.world-globe.ru/countries/flags/">flags 1</a>, <a href="https://www.iconfinder.com/iconsets/flags-37" target="_blank">flags 2</a>',
 			'type'=>static::IMAGE,
 			'resize'=>[
 				['height'=>16]

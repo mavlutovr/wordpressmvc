@@ -25,11 +25,11 @@ wdpro.ready(($) => {
 
 ```html
 <form id="js-footer-callaback">
-    
+
 	<input type="text" name="name" required placeholder="Ваше имя">
-    
+
     <input type="tel" name="phone" required placeholder="Номер телефона">
-    
+
     <input type="submit" value="Перезвоните мне">
 
 </form>
@@ -70,6 +70,3 @@ form.add({
 });
 wdpro.callback.setForm(form);
 ```
-
-
-

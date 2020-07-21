@@ -10,8 +10,9 @@ class Controller extends \Wdpro\BaseController {
 	 */
 	public static function initConsole() {
 
-		// Настройки
-		\Wdpro\Console\Menu::addSettings('Страницы', function ($form) {
+
+		// Элементы страниц
+		\Wdpro\Console\Menu::addSettings('Элементы страниц', function ($form) {
 			
 			/** @var \Wdpro\Form\Form $form */
 
@@ -24,6 +25,7 @@ class Controller extends \Wdpro\BaseController {
 			
 			return $form;
 		});
+
 		
 		// Меню в админке
 		\Wdpro\Console\Menu::add([

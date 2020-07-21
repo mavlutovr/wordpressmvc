@@ -46,7 +46,7 @@ class Form
 
 	/**
 	 * Список классов полей формы
-	 * 
+	 *
 	 * @var array
 	 */
 	protected static $elementsClasses = array(
@@ -90,55 +90,55 @@ class Form
 				'name'=>$params,
 			);
 		}
-		
+
 		$this->params = wdpro_extend(array(
 			'action'=>'',
 			'method'=>static::$defaultMethod,
 			'elements'=>[],
 			'attributes'=>[],
 		), $params);
-		
+
 		foreach($this->params['elements'] as $elementParams)
 		{
 			$this->add($elementParams);
 		}
-		
+
 		$this->initFields();
 	}
 
 
 	/**
 	 * Установка параметра
-	 * 
+	 *
 	 * @param string $paramName Имя параметра
 	 * @param mixed $paramValue Значение параметра
 	 */
 	public function setParam($paramName, $paramValue) {
-		
+
 		$this->params[$paramName] = $paramValue;
 	}
 
 
 	/**
 	 * Установка css класса
-	 * 
+	 *
 	 * @param string $cssClassName Css класс
 	 */
 	public function setClass($cssClassName) {
-		
+
 		$this->setParam('class', $cssClassName);
 	}
 
 
 	/**
 	 * Инициализация полей
-	 * 
+	 *
 	 * Здесь поля добавляются в дочерних классах через $this->add(array(...)) когда они
 	 * не добавлены через конструктор
 	 */
 	protected function initFields()
 	{
-		
+
 	}
 
 
@@ -152,14 +152,14 @@ class Form
 	protected function addElementByParams($params)
 	{
 		$type = isset($params['type']) ? $params['type'] : 'string';
-		
+
 		if (static::$elementsClasses[$type])
 		{
 			/** @var \Wdpro\Form\Elements\Base $element */
 			$element = new static::$elementsClasses[$type]($params);
 
 			$this->elements[$this->elementI] = $element;
-			
+
 			return $element;
 		}
 		else
@@ -293,7 +293,7 @@ class Form
 
 	/**
 	 * Возвращает объект элемента по имени
-	 * 
+	 *
 	 * @param string $elementName Имя элемента
 	 * @return Elements\Base
 	 */
@@ -308,9 +308,9 @@ class Form
 
 	/**
 	 * Технический метод для использования элементами формы
-	 * 
+	 *
 	 * Обновляет инфу в самой форме при обновлении ее в элементе
-	 * 
+	 *
 	 * @param $i Номер элемента в списке элементов
 	 * @param $elementParams
 	 */
@@ -326,11 +326,11 @@ class Form
 
 	/**
 	 * Добавляет Html блок
-	 * 
+	 *
 	 * @param string $html Html блок
 	 */
 	public function addHtml($html) {
-		
+
 		$this->add([
 			'type'=>'html',
 			'html'=>$html,
@@ -358,7 +358,7 @@ window.'.$id.' = '.($this->getJson()).';
 
 	/**
 	* Возвращает Json строку с данными формы
-	* 
+	*
 	* Чтобы потом на странице с помощью js превратить данные в саму форму
 	*/
 	public function getJson() {
@@ -399,7 +399,7 @@ window.'.$id.' = '.($this->getJson()).';
 				$params['elements'][$element->getFormI()] = $elementParams;
 			});
 		}
-		
+
 		$this->eachGroups(function ($elements) use (&$params)
 		{
 			$groupParams = array();
@@ -418,10 +418,10 @@ window.'.$id.' = '.($this->getJson()).';
 				}
 				$groupParams[] = $elementParams;
 			}
-			
+
 			$params['elements'][] = $groupParams;
 		});
-		
+
 		return $params;
 	}
 
@@ -449,7 +449,7 @@ window.'.$id.' = '.($this->getJson()).';
 
 	/**
 	* Переключает в режим ajax
-	* 
+	*
 	* @param boolean|string|array $ajaxEnableOrAjaxUrl
 	*/
 	public function setAjax($ajaxEnableOrAjaxUrl=true) {
@@ -503,7 +503,7 @@ window.'.$id.' = '.($this->getJson()).';
 
 	/**
 	 * Перебор групп
-	 * 
+	 *
 	 * @param callback $callback Каллбэк, принимающий группу
 	 */
 	public function eachGroups($callback)
@@ -525,7 +525,7 @@ window.'.$id.' = '.($this->getJson()).';
 	public function setData($data)
 	{
 		$this->params['data'] = $data;
-		
+
 		return $this;
 	}
 
@@ -564,13 +564,13 @@ window.'.$id.' = '.($this->getJson()).';
 	public function sendToAdmins($subject, $startHtml='') {
 
 		$startHtml = '';
-		
+
 		$data = $this->getSubmitData();
-		
+
 		$this->eachElements(function ($element) use (&$startHtml, &$data) {
-			
+
 			/** @var \Wdpro\Form\Elements\Base $element */
-			
+
 			if ($name = $element->getName()) {
 				$startHtml .= $element->getSendTextHtml($data[$name]);
 			}
@@ -580,14 +580,14 @@ window.'.$id.' = '.($this->getJson()).';
 			$post = wdpro_get_post_by_id($_GET['fromPostId']);
 			$startHtml .= '<p>Страница: <a href="'.home_url().'/'.$post->getUri().'" target="_blank">'.$post->getTitle().'</a></p>';
 		}
-		
+
 		\Wdpro\AdminNotice\Controller::sendMessageHtml($subject, $startHtml);
 	}
 
 
 	/**
 	 * Проверка на правильную заполненность поля
-	 * 
+	 *
 	 * @return bool
 	 */
 	public function valid()
@@ -605,8 +605,8 @@ window.'.$id.' = '.($this->getJson()).';
 				if (!$element->valid($data))
 				{
 					$valid = false;
-					
-					/*$this->params['errors'][$element->getName()] = 
+
+					/*$this->params['errors'][$element->getName()] =
 						$element->getError();*/
 				}
 			}
@@ -639,7 +639,7 @@ window.'.$id.' = '.($this->getJson()).';
 
 	/**
 	 * True, Если форма запущена
-	 * 
+	 *
 	 * @return bool
 	 */
 	public function sended() {
@@ -655,11 +655,11 @@ window.'.$id.' = '.($this->getJson()).';
 
 	/**
 	 * True, если форма запущена и верно заполнена
-	 * 
+	 *
 	 * @return bool
 	 */
 	public function sendedAndValid() {
-		
+
 		return $this->sended() && $this->valid();
 	}
 
@@ -685,7 +685,7 @@ window.'.$id.' = '.($this->getJson()).';
 		// Да и в принципе чтобы поля знали введенные в форму данные без отправки формы
 		if (!$data && $useSettedDataIfNoSubmit && isset($this->params['data']))
 			$data = $this->params['data'];
-		
+
 		if ($data)
 		{
 			$fixedData = array();
@@ -694,7 +694,7 @@ window.'.$id.' = '.($this->getJson()).';
 			foreach($this->elements as $element)
 			{
 				$names = $element->getName();
-				
+
 				if ($names)
 				{
 					// Создаем место в массиве данных для этих данных
@@ -709,7 +709,7 @@ window.'.$id.' = '.($this->getJson()).';
 					//  ]
 					//]
 					if (!is_array($names)) $names = [$names];
-					
+
 					// Основной ключ
 					$rootName = array_shift($names);
 
@@ -769,7 +769,7 @@ window.'.$id.' = '.($this->getJson()).';
 
 	/**
 	 * Установка Javascript имени формы
-	 * 
+	 *
 	 * По этому имени форму можно будет получить через wdpro.forms.onForm()
 	 *
 	 * @param string $name Javascript Имя формы
@@ -784,7 +784,7 @@ window.'.$id.' = '.($this->getJson()).';
 
 	/**
 	 * Возвращает имя формы
-	 * 
+	 *
 	 * @return null|string
 	 */
 	public function getName()
@@ -805,26 +805,26 @@ window.'.$id.' = '.($this->getJson()).';
 
 	/**
 	 * Добавляет в форму сообщение об ошибке
-	 * 
+	 *
 	 * @param string $message Сообщение
 	 */
 	public function showErrorMessage($message) {
-		
+
 		$this->showMessage($message, ['err' => true]);
 	}
 
 
 	/**
 	 * Добавляет в форму сообщение
-	 * 
+	 *
 	 * @param string $message Текст сообщения
 	 * @param null|array $params Параметры сообщения
 	 */
 	public function showMessage($message, $params=null) {
-		
+
 		if (!isset($this->params['messages']))
 			$this->params['messages'] = [];
-		
+
 		$this->params['messages'][] = [
 			'message'=>$message,
 			'params'=>$params,
@@ -902,10 +902,21 @@ window.'.$id.' = '.($this->getJson()).';
 			$element->removeFiles();
 		});
 	}
+
+
+	/**
+	 * Добавляет в форму галочку для согласия с политикой конфиденциальности
+	 *
+	 * @throws \Wdpro\Exception
+	 */
+	public function addPrivacy() {
+
+		$this->add([
+			'name'=>'privacy',
+			'type'=>static::CHECK,
+			'*'=>true,
+			'checked'=>true,
+		]);
+
+	}
 }
-
-
-
-
-
-

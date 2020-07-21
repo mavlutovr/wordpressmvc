@@ -40,12 +40,12 @@ class Base
 
 	/**
 	 * Обновляет параметры поля
-	 * 
+	 *
 	 * @param array $newParams Новые параметры
 	 */
 	public function mergeParams($newParams) {
 		$this->params = wdpro_extend($this->params, $newParams);
-		
+
 		if ($this->form) {
 			$this->form->_mergeElementParamsByI($this->formI, $newParams);
 		}
@@ -76,39 +76,39 @@ class Base
 			$formData = $this->form->getData(null, true);
 
 		$data = $this->getValueFromDataByName($formData);
-		
+
 		if (is_string($data)) $data = stripslashes($data);
-		
+
 		return $data;
 	}
 
 
 	/**
 	 * Возвращает значение из данных по имени, заданному в параметрах
-	 * 
-	 * Имя может быть в виде массива имен, тогда данные будут браться из общих данных 
+	 *
+	 * Имя может быть в виде массива имен, тогда данные будут браться из общих данных
 	 * следующим образом
 	 * $data[$name1][$name2][$nameN]
-	 * 
+	 *
 	 * @param $data
 	 * @return mixed
 	 */
 	public function getValueFromDataByName($data) {
-		
+
 		$names = $this->getName();
 		if (!is_array($names)) $names = [$names];
-		
+
 		foreach($names as $name) {
-			
+
 			if (isset($data[$name])) {
 				$data = $data[$name];
 			}
-			
+
 			else {
 				$data = null;
 			}
 		}
-		
+
 		if ($data !== null)
 		return $data;
 	}
@@ -165,7 +165,7 @@ class Base
 			$text .= '<BR>';
 		}
 		$text .= $errorText;
-		
+
 		update_option($key, $text);
 	}
 
@@ -250,22 +250,35 @@ class Base
 
 	/**
 	 * Возвращает описание поля
-	 * 
+	 *
 	 * @return string
 	 */
 	public function getLabel() {
 
 		$label = null;
-		
+
 		if (isset($this->params['label'])) return $this->params['label'];
 
 		if (isset($this->params['top'])) $label = $this->params['top'];
 		if (isset($this->params['left'])) $label = $this->params['left'];
 		if (isset($this->params['center'])) $label = $this->params['center'];
 		if (isset($this->params['right'])) $label = $this->params['right'];
-		
+
 		if ($label) {
-			if (is_array($label)) return $label['text'];
+			if (is_array($label)) {
+
+				$lang = \Wdpro\Lang\Controller::getCurrentLangUriNotEmpty();
+				if (isset($label[$lang])) {
+					return $label[$lang];
+				}
+
+				if (isset($label['text'])) {
+					if (isset($label['text'][$lang])) {
+						return $label['text'][$lang];
+					}
+				}
+				return $label['text'];
+			}
 			return $label;
 		}
 	}
@@ -273,11 +286,11 @@ class Base
 
 	/**
 	 * Возвращает значение поля для отправки
-	 * 
+	 *
 	 * @return string
 	 */
 	public function getSendValue() {
-		
+
 		return $this->getSaveValue();
 	}
 
@@ -289,7 +302,7 @@ class Base
 	 * @return string
 	 */
 	public function getSendTextHtml($saveValue) {
-		
+
 		if ($label = $this->getLabel()) {
 			return '<p><strong>'.$label.':</strong> '.$saveValue;
 		}

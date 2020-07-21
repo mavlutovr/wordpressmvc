@@ -25,7 +25,9 @@ class Entity extends \Wdpro\BasePage {
 		$postName = $this->getData('post_name');
 		$path = WDPRO_TEMPLATE_PATH.'blog/'.$postName.'/';
 		$post_url = WDPRO_TEMPLATE_URL.'blog/'.$postName.'/';
-		$templateFile = $path.'main.php';
+		$langSuffix = \Wdpro\Lang\Data::getCurrentLangUri();
+		if ($langSuffix) $langSuffix = '.'.$langSuffix;
+		$templateFile = $path.'main'.$langSuffix.'.php';
 		$this->data['post_url'] = $post_url;
 
 		if (is_file($templateFile)) {
@@ -43,9 +45,9 @@ class Entity extends \Wdpro\BasePage {
 	 * @throws \Exception
 	 */
 	public function getCard( &$content ) {
-		
+
 		//print_r($this->getDataWithPost());
-		
+
 		// Дополнительная внешняя обработка текста
 		//$content = apply_filters('wdpro_blog_card_data', $content);
 		//$content = $this->data['post_content'.\Wdpro\Lang\Data::getCurrentSuffix()];
@@ -87,7 +89,7 @@ class Entity extends \Wdpro\BasePage {
 
 		$arr = [];
 		$arr = apply_filters('wdpro_blog_entity_childs', $arr);
-		
+
 		return $arr;
 	}
 
@@ -157,4 +159,14 @@ class Entity extends \Wdpro\BasePage {
 	}
 
 
+	/**
+	 * Return prefix for post_name
+	 *
+	 * @return string
+	 */
+	public function getPostNamePrefix() {
+		if (Controller::isPostNamePrefix()) {
+			return $this->getParent()->getUri().'/';
+		}
+	}
 }

@@ -169,6 +169,10 @@ function wdpro_the_header()
 
 	<meta charset="<?php bloginfo( 'charset' ); ?>" />
 
+	<?php if (wdpro_data('noindex')):?>
+	<meta name="googlebot" content="noindex">
+	<?php endif; ?>
+
 <?php
 
 	// Og
