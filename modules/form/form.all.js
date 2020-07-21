@@ -1871,6 +1871,9 @@
 
 			// Обработка данных текстовых полей
 			var normalizeTextData = function (textData) {
+
+				if (textData === null || textData === undefined) return textData;
+
 				if (textData)
 				{
 					if (textData === true) {
@@ -1879,13 +1882,18 @@
 
 					// Current language
 					if (typeof textData === 'object') {
+
+						if (textData['_normalized']) return textData;
+
 						let lang = wdpro.langNotEmpty();
 
-						if (typeof textData['text'] === 'object' && typeof textData['text'][lang] !== 'undefined') {
-							textData['text'] = textData['text'][lang];
-						}
-						if (typeof textData[lang] !== 'undefined') {
-							textData = textData[lang];
+						if (lang !== undefined) {
+							if (typeof textData['text'] === 'object' && typeof textData['text'][lang] !== 'undefined') {
+								textData['text'] = textData['text'][lang];
+							}
+							if (typeof textData[lang] !== 'undefined') {
+								textData = textData[lang];
+							}
 						}
 					}
 
@@ -1915,9 +1923,18 @@
 						textData['labelId'] = labelIdText;
 					}
 
+					textData['_normalized'] = true;
+
 					return textData;
 				};
 			};
+
+
+			this.params['left'] = normalizeTextData(this.params['left']);
+			this.params['top'] = normalizeTextData(this.params['top']);
+			this.params['right'] = normalizeTextData(this.params['right']);
+			this.params['bottom'] = normalizeTextData(this.params['bottom']);
+			this.params['center'] = normalizeTextData(this.params['center']);
 
 			// Иконка
 			this.params['icon'] && (function () {
@@ -1949,12 +1966,6 @@
 				self.params['left'] += ' ' + icon;
 
 			})();
-
-			this.params['left'] = normalizeTextData(this.params['left']);
-			this.params['top'] = normalizeTextData(this.params['top']);
-			this.params['right'] = normalizeTextData(this.params['right']);
-			this.params['bottom'] = normalizeTextData(this.params['bottom']);
-			this.params['center'] = normalizeTextData(this.params['center']);
 
 			// Label ID
 			if (labelIdText)
