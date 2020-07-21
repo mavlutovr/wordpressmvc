@@ -34,8 +34,8 @@
 			form.getHtml(function (html) {
 				container.append(html);
 			});
-			
-			
+
+
 		});
 
 		return this;
@@ -68,7 +68,7 @@
 		{
 			console.log(e.target.classList);
 		}
-		
+
 		if (e.target.nodeName == 'FORM')
 		{
 			console.log(e.target);
@@ -123,16 +123,16 @@
 
 	/**
 	 * Порядковый номер формы
-	 * 
+	 *
 	 * Чтобы можно было найти форму по ее jquery объекту
-	 * 
+	 *
 	 * @type {number}
 	 */
 	var currentFormI = 1;
 
 	/**
 	 * Список форм по номерам
-	 * 
+	 *
 	 * @type {{}}
 	 */
 	var forms = {};
@@ -140,7 +140,7 @@
 
 	/**
 	 * Возвращает форму при ее появлении
-	 * 
+	 *
 	 * @param [name] {string} Имя формы, которое в параметрах указывается как jsName
 	 * @param Return {callbackForm} Каллбэк, принимающий форму
 	 */
@@ -205,7 +205,7 @@
 
 	/**
 	 * Класс формы
-	 * 
+	 *
 	 * @type {Form}
 	 */
 	wdpro.forms.Form = wdpro.Event.extend({
@@ -219,10 +219,10 @@
 		init: function (params) {
 
 			var self = this;
-			
+
 			this.id = currentFormI;
 			currentFormI++;
-			
+
 			// Запоминаем форму по номеру
 			forms[this.id] = this;
 
@@ -268,18 +268,18 @@
 
 			// Еще 1 способ инициализации элементов через класс наследника
 			this.initElements();
-			
+
 			// Установка значений полей
 			this.params['data'] && this.setData(this.params['data']);
-			
+
 			this.on('addedToPage', function () {
-				
+
 				self.eachElements(function (element)
 				{
 					element.trigger('addedToPage');
 				});
 			});
-			
+
 			// Отправка формы в каллбэки, которые ожидают ее появления
 			if (this.params['jsName']) {
 				wdpro.trigger('form-'+this.params['jsName'], this);
@@ -376,7 +376,7 @@
 		 * @param elements Элементы одной группы (одной строки),
 		 * данные элемента или объект группы
 		 * @param [elements.containerClass] string Класс всего блока вместе с описанием
-		 * @param [elements.class] Класс самого поля 
+		 * @param [elements.class] Класс самого поля
 		 * @param [elements.left] Подпись слева
 		 * @param [elements.top] Подпись сверху
 		 * @param [elements.right] Подпись справа
@@ -390,7 +390,7 @@
 		add: function (elements) {
 			var self = this;
 			elements = wdpro.args(arguments);
-			
+
 			// Когда внутри первого элемента находится не элемент, а список элементов
 			if (elements[0] && elements[0][0] && !elements[1])
 			{
@@ -399,7 +399,7 @@
 				{
 					newElements.push(element)
 				});
-				
+
 				elements = newElements;
 			}
 			var selfElements = this.elements;
@@ -456,7 +456,7 @@
 				// Если у первого элемента есть левый текст
 				if (firstElement.leftExists())
 				{
-					// Запоминаем что у элементов в форме есть левый текст, 
+					// Запоминаем что у элементов в форме есть левый текст,
 					// чтобы потом поставить левый отступ у кнопки ОК
 					self.leftExists = true;
 				}
@@ -579,7 +579,7 @@
 
 				// Перебираем группы
 				wdpro.each(this.groups, function (group) {
-					// Добавляем в группу ожидаемых функций 
+					// Добавляем в группу ожидаемых функций
 					// функцию добавления html кода группы в данные шаблона
 					waiter.wait(function (Complete) {
 						// Получаем html код группы
@@ -587,7 +587,7 @@
 							// Если есть блок группы
 							if (html)
 							{
-								// Добавляем в данные шаблона метку шаблона, 
+								// Добавляем в данные шаблона метку шаблона,
 								// которая замениться на jQuery блок группы
 								templateData.groups.push(
 									wdpro.jQueryToHtml(html, 'form')
@@ -608,7 +608,7 @@
 					 * @param element {BaseElement}
 					 */
 					function (element) {
-						// Добавляем в группу ожидаемых функций функцию, 
+						// Добавляем в группу ожидаемых функций функцию,
 						// которая добавляет в данные шаблона html код элемента
 						waiter.wait(function (Complete) {
 							// Получаем html элемента
@@ -631,7 +631,7 @@
 
 				// Запускаем выполнение ожидаемых функций
 				waiter.onCompletion(function () {
-					
+
 					// Получаем шаблон формы
 					self.html = $(self.templates.form(templateData));
 
@@ -641,13 +641,13 @@
 					// Расставляем по всем меткам соответствующие элементы
 					wdpro.jQueryToHtmlRun(self.html, 'form');
 
-					// Запоминаем контейнер групп, 
+					// Запоминаем контейнер групп,
 					// чтобы можно было добавлять элементы в форму после этого места
 					self.jGroupsContainer = $(self.html).find('.JS_groups_container');
 
 					// Выравниваем колонки
 					self.align();
-					
+
 					// Через секунду
 					setTimeout(function () { self.align(); }, 10);
 					setTimeout(function () { self.align(); }, 1000);
@@ -670,7 +670,7 @@
 					$(window).resize(function () {
 						self.align();
 					});
-					
+
 					self.html.attr('data-form-id', self.id);
 
 					callback(self.html);
@@ -685,7 +685,7 @@
 		 * @returns {*}
 		 */
 		getData: function () {
-			
+
 			// Чтобы все поля подготовились к получению данных
 			// Это в первую очередь касается Ckeditor
 			this.eachElements(function (element) {
@@ -695,17 +695,17 @@
 			return this.jForm.serializeObject();
 		},
 
-		
+
 		/**
 		 * Установка значений полей формы
-		 * 
+		 *
 		 * @param data {{}} Значения полей
 		 */
 		setData: function (data) {
 			this.setValues(data);
 		},
 
-		
+
 		/**
 		 * Проверка заполненности формы на корректность
 		 *
@@ -720,8 +720,8 @@
 				errorsExists: false, // Ошибки (не правильно заполненные поля)
 				errorsList:   [] // Список полей с ошибками
 			};
-			
-			
+
+
 			var waiter = new wdpro.Waiter();
 
 			// Перебираем элементы формы
@@ -736,13 +736,13 @@
 							{
 								sendParams.submit = false;
 							}
-							
+
 							waitComplete();
 						});
 					});
 				}
 			);
-			
+
 			// При завершении проверок всех полей
 			waiter.run(function ()
 			{
@@ -757,7 +757,7 @@
 						})
 					);
 				}
-				
+
 				Return(sendParams.submit);
 			});
 		},
@@ -788,13 +788,13 @@
 					{
 					}
 
-					else 
+					else
 					{
 						self.forseSubmit = true;
 						self.jForm.submit();
 					}
 				}
-				
+
 				else
 				{
 					self.loadingStop();
@@ -834,10 +834,10 @@
 
 			// Контейнер сообщений
 			this.messagesContainer = this.html.find('.JS_messages_container');
-			
+
 			// При отправке формы
 			this.jForm.submit(function (e) {
-				
+
 				if (self.forseSubmit)
 				{
 					return true;
@@ -860,12 +860,12 @@
 
 		/**
 		 * Ищет в форме как jQuery.find()
-		 * 
+		 *
 		 * @param selector {string} Параметры поиска
 		 * @returns {*}
 		 */
 		find: function (selector) {
-			
+
 			return this.jForm.find(selector);
 		},
 
@@ -953,12 +953,12 @@
 
 		/**
 		 * Возвращает параметр формы
-		 * 
+		 *
 		 * @param paramName {string} Имя параметра
 		 * @returns {*}
 		 */
 		getParam: function (paramName) {
-			
+
 			return this.params[paramName];
 		},
 
@@ -1009,7 +1009,7 @@
 
 			// Обновляем позицию Dialog, когда форма в окошке
 			self.updateDialogPos();
-			
+
 			if (this.params['align'])
 			{
 				// Группы
@@ -1038,7 +1038,7 @@
 				//var elementsOfColl = [];
 
 
-				// X левой колонки, по нему определяется, что элемент не поместился в своей строке 
+				// X левой колонки, по нему определяется, что элемент не поместился в своей строке
 				// и перешел на следующую
 				var firstX = null;
 
@@ -1371,7 +1371,7 @@
 							var groupI = 0;
 							while (alignRun && groups[groupI])
 							{
-								// Получаем группу	
+								// Получаем группу
 								var group = groups[groupI];
 
 								// Если у данной группы есть заданная колонка
@@ -1411,7 +1411,7 @@
 							groupI = 0;
 							while (alignRun && groups[groupI])
 							{
-								// Получаем группу	
+								// Получаем группу
 								var group = groups[groupI];
 
 								// Если у данной группы есть заданная колонка
@@ -1436,10 +1436,10 @@
 										/*$(nextRowDiv).closest('.JS_group')
 										 .nextAll('.JS_group').find('.JS_next_row').remove();*/
 
-										// Перемещаем этот и последующие элементы так, 
+										// Перемещаем этот и последующие элементы так,
 										// чтобы этот элемент начинался с первой колонки
 
-										// Создаем новую группу 
+										// Создаем новую группу
 										// и перемещаем в нее этот и последующие элементы группы
 										//console.log('Удаление');
 										//console.log('До');
@@ -1667,7 +1667,7 @@
 					console.log('Для типа поля ' + data['type'] +
 					            ' не указан класс в списке ElementsClasses');
 				}
-				
+
 				if (!ElementsClasses[data['type']])
 				{
 					throw new Error('Нет поля формы с классом '+data['type']);
@@ -1824,7 +1824,7 @@
 		 * @param params {ElementData} Данные элемента
 		 */
 		init: function (params) {
-			
+
 			// Шаблоны по-умолчанию
 			this.setTemplates(wdpro.templates.forms);
 
@@ -1846,7 +1846,7 @@
 			var self = this;
 
 			if (params['*']) params['required'] = true;
-			
+
 			if (params['width']) {
 				if (typeof params['width'] === 'number')
 				params['width'] = params['width'] + 'px';
@@ -1862,53 +1862,39 @@
 				//templates: wdpro.templates.forms
 
 			}, params);
-			
+
 			// Звездочка "Обязательно для заполнения" установлена
 			var requireStarSetted = false;
 
 			// Label
 			var labelIdText = '';
 
-			// Иконка
-			this.params['icon'] && (function () {
-
-				var icon = self.templates.icon({
-					data: self.params
-				});
-
-				if (self.params['top']) {
-					self.params['top'] += ' ' + icon;
-					return true;
-				}
-
-				if (self.params['left']) {
-					if (self.params['left'] === true) {
-						self.params['left'] = '';
-					}
-					self.params['left'] += ' ' + icon;
-					return true;
-				}
-
-				if (self.params['right']) {
-					self.params['right'] += ' ' + icon;
-					return true;
-				}
-
-				if (self.params['bottom']) {
-					self.params['bottom'] += ' ' + icon;
-					return true;
-				}
-
-				self.params['left'] += ' ' + icon;
-
-			})();
-
 			// Обработка данных текстовых полей
 			var normalizeTextData = function (textData) {
+
+				if (textData === null || textData === undefined) return textData;
+
 				if (textData)
 				{
 					if (textData === true) {
 						textData = '';
+					}
+
+					// Current language
+					if (typeof textData === 'object') {
+
+						if (textData['_normalized']) return textData;
+
+						let lang = wdpro.langNotEmpty();
+
+						if (lang !== undefined) {
+							if (typeof textData['text'] === 'object' && typeof textData['text'][lang] !== 'undefined') {
+								textData['text'] = textData['text'][lang];
+							}
+							if (typeof textData[lang] !== 'undefined') {
+								textData = textData[lang];
+							}
+						}
 					}
 
 					if (typeof textData === 'string')
@@ -1937,15 +1923,49 @@
 						textData['labelId'] = labelIdText;
 					}
 
+					textData['_normalized'] = true;
+
 					return textData;
 				};
 			};
+
 
 			this.params['left'] = normalizeTextData(this.params['left']);
 			this.params['top'] = normalizeTextData(this.params['top']);
 			this.params['right'] = normalizeTextData(this.params['right']);
 			this.params['bottom'] = normalizeTextData(this.params['bottom']);
 			this.params['center'] = normalizeTextData(this.params['center']);
+
+			// Иконка
+			this.params['icon'] && (function () {
+
+				var icon = self.templates.icon({
+					data: self.params
+				});
+
+				if (self.params['top'] && self.params['top']['text']) {
+					self.params['top']['text'] += ' ' + icon;
+					return true;
+				}
+
+				if (self.params['left'] && self.params['left']['text']) {
+					self.params['left']['text'] += ' ' + icon;
+					return true;
+				}
+
+				if (self.params['right'] && self.params['right']['text']) {
+					self.params['right']['text'] += ' ' + icon;
+					return true;
+				}
+
+				if (self.params['bottom'] && self.params['bottom']['text']) {
+					self.params['bottom']['text'] += ' ' + icon;
+					return true;
+				}
+
+				self.params['left'] += ' ' + icon;
+
+			})();
 
 			// Label ID
 			if (labelIdText)
@@ -1979,14 +1999,14 @@
 		 * @param complete {function} Каллбэк, срабатывающий при завершении проверки
 		 */
 		submitPermit: function (params, complete) {
-			
+
 			var self = this;
-			
+
 			var value = this.getValue();
-			
+
 			// Основная проверка
 			var valid = !(this.params['required'] && !value);
-			
+
 			// Все ок
 			var ok = function () {
 				// Убираем выделение поля как ошибочного
@@ -1994,7 +2014,7 @@
 
 				complete(true);
 			};
-			
+
 			// Ошибка
 			var err = function (errorText) {
 
@@ -2016,22 +2036,22 @@
 
 				complete();
 			};
-			
+
 			// Все ок
 			if (valid) {
 				// Дополнительная проверка
 				self.valid(value, function (valid) {
-					
+
 					if (valid) {
 						ok();
 					}
-					
+
 					else {
 						err();
 					}
 				});
 			}
-			
+
 			// Ошибка
 			else {
 				err(self.getLabel());
@@ -2041,12 +2061,12 @@
 
 		/**
 		 * Проверяет, правильно ли заполнено поле (дополнительная проверка)
-		 * 
+		 *
 		 * @param value {*} Значение
 		 * @param Return {function} Каллбэк, получающий результат
 		 */
 		valid: function (value, Return) {
-			
+
 			Return(true);
 		},
 
@@ -2141,7 +2161,7 @@
 
 				// Html код самого поля
 				waiter.wait(function (Complete) {
-					
+
 					// Если поле уже есть
 					if (self.fieldBlock !== undefined)
 					{
@@ -2154,7 +2174,7 @@
 					{
 						// Создаем его
 						self.createField(function (fieldHtml) {
-							
+
 							// Создаем jQuery объект поля
 							var field = $(fieldHtml);
 
@@ -2189,13 +2209,13 @@
 
 				// При завершении ожидаемых функций
 				waiter.onCompletion(function () {
-					
+
 					// Создаем html блок
 					self.html = $(self.templates.element({
 						data:  self.getParams(),
 						attrs: self.getAttrs()
 					}));
-					
+
 					if (self.params['elementClass']) {
 						self.html.addClass(self.params['elementClass']);
 					}
@@ -2206,7 +2226,7 @@
 						// Устанавливаем это значение
 						self.setValue(self.settedValue);
 					}
-					
+
 					self.initCenter();
 
 					// Возвращаем html блок
@@ -2225,17 +2245,17 @@
 
 
 		/**
-		 * Инифиирование описания поля в самом поле 
-		 * 
+		 * Инифиирование описания поля в самом поле
+		 *
 		 * (которое исчезает, когда вводиться текст)
 		 */
 		initCenter: function () {
 
 			var self = this;
-			
+
 			if (this.params['center']) {
 				var focused = false;
-				
+
 				var update = function () {
 					if (self.getValue() != '' || focused) {
 						self.center.hide();
@@ -2257,7 +2277,7 @@
 				});
 				this.field.on('focus change keyup', update);
 				update();
-				
+
 				// Фокус
 				this.field.on('focus', function () {
 						focused = true;
@@ -2309,9 +2329,9 @@
 					self.trigger('change');
 				})
 			;
-			
+
 			field.on('focus', function () {
-				
+
 			});
 		},
 
@@ -2334,7 +2354,7 @@
 		getParams: function () {
 			var data = wdpro.extend({}, this.params);
 
-			// Инфа о том, что у формы есть поля в первой колонке с левым текстом, 
+			// Инфа о том, что у формы есть поля в первой колонке с левым текстом,
 			// чтобы, например, у кнопки Отправить потом сделать отступ слева
 			data.leftExists = this.form ? this.form.leftExists : false;
 
@@ -2570,7 +2590,7 @@
 		 * @returns {*}
 		 */
 		getValue: function () {
-			
+
 			if (this.field) {
 				return this.field.val();
 			}
@@ -2598,9 +2618,9 @@
 		 * @param value {{}} Значения формы
 		 */
 		setFormValue: function (value) {
-			
+
 			var value = this.getElementValueFromFormData(value);
-			
+
 			if (typeof value !== undefined) {
 				this.setValue(value);
 			}
@@ -2733,16 +2753,16 @@
 	 * Дата
 	 */
 	wdpro.forms.DateElement = BaseElement.extend({
-		
-		
+
+
 		init: function (data) {
-			
+
 			var self = this;
-			
+
 			this._super(data);
-			
+
 			this.classArr = ['js-date'];
-			
+
 			this.on('addedToPage', function () {
 
 				$(self.html.find('.js-date')).datepicker({
@@ -2750,8 +2770,8 @@
 				});
 			});
 		},
-		
-		
+
+
 		/**
 		 * Создает HTML код поля
 		 *
@@ -2779,11 +2799,11 @@
 		 */
 		onField: function (field) {
 			var self = this;
-			
+
 			this._super(field);
-			
+
 			this.fieldDate = field.find('.js-date');
-			
+
 			this.fieldDate.on('change', function () {
 				self.valueFronVisibleToHidden();
 			});
@@ -2796,15 +2816,15 @@
 		valueFronVisibleToHidden: function () {
 
 			var stringVal = this.fieldDate.val();
-			
+
 			if (stringVal) {
 				this.field.val( moment(stringVal+', 12:00:00', 'YYYY.MM.DD').unix() );
 			}
-			
+
 			else {
 				this.field.val(0);
 			}
-			
+
 		},
 
 
@@ -2816,9 +2836,9 @@
 		getValue: function () {
 
 			if (this.field) {
-				
+
 				var value = this.fieldDate.val();
-				
+
 				if (value) {
 					return moment(value+', 12:00:00').unix();
 				}
@@ -2833,11 +2853,11 @@
 		 * @param value
 		 */
 		setValue: function (value) {
-			
+
 			if (this.field)
 			{
 				if (value > 0) {
-					
+
 					var dateString = moment(value * 1000).format('YYYY.MM.DD');
 
 					this.fieldDate.val(dateString);
@@ -2847,21 +2867,21 @@
 
 			this.settedValue = value;
 		}
-		
-		
+
+
 	});
 
 
 	/**
 	 * Поле для указания № п.п. (Сортировка)
-	 * 
+	 *
 	 * Отличается от StringElement тем, что короче, что у него есть стандартная
 	 * приписка слева "№ п.п." и у него имя по-умолчанию "sorting"
 	 */
 	wdpro.forms.SortingElement = wdpro.forms.StringElement.extend({
-		
+
 		init: function (params) {
-			
+
 			params = wdpro.extend({
 				'left': {
 					'text': '№ п.п',
@@ -2870,22 +2890,22 @@
 				'name': 'sorting',
 				'class': 'wdpro-form-sorting'
 			}, params);
-			
+
 			if (params['top'] === true) {
 				params['top'] = params['left'];
 				delete params['left'];
 			}
-			
+
 			this._super(params);
 		},
-		
-		
+
+
 		getAttrs: function () {
-			
+
 			var attrs = this._super();
-			
+
 			attrs['size'] = 5;
-			
+
 			return attrs;
 		}
 	});
@@ -2933,10 +2953,10 @@
 
 		init: function (data) {
 			this._super(data);
-			
+
 			this.classArr = ['wdpro-form-textarea', 'wdpro-form-input', 'input', 'JS_field'];
 		},
-		
+
 		/**
 		 * Создает HTML код поля
 		 *
@@ -2950,7 +2970,7 @@
 		}
 	});
 
-	
+
 	var ckEditorI = 1;
 
 
@@ -2999,21 +3019,21 @@
 	 * Ckeditor
 	 */
 	wdpro.forms.CkeditorElement = wdpro.forms.TextElement.extend({
-		
+
 		init: function (data) {
-			
+
 			var self = this;
-			
+
 			data = $.extend({
 				'config': 'standart',
 				'autoWidth': false,
 				'autoLeft': false
 			}, data);
-			
+
 			this._super(data);
-			
+
 			this.classArr = ['js-sckeditor', 'wdpro-form-ckeditor', 'JS_field'];
-			
+
 			if (this.params['config'])
 			{
 				this.config = CKEDITOR.wdproConfigs[this.params['config']];
@@ -3039,7 +3059,7 @@
 			}
 
 			this.on('addedToPage', function () {
-				
+
 				self.html.addClass('wdpro-form-element-ckeditor');
 				if (!CKEDITOR.instances[self.htmlId]) {
 					var editor = CKEDITOR.replace(self.htmlId, self.config);
@@ -3055,20 +3075,20 @@
 				}
 			});
 		},
-		
-		
+
+
 		onField: function (field) {
 			this.ckEditorI = ckEditorI;
 			ckEditorI++;
-			
+
 			this.htmlId = 'js-ckeditor-'+this.ckEditorI;
 
 			field.attr('id', this.htmlId);
 		},
-		
-		
+
+
 		creatField: function (callback) {
-			
+
 			this._super(callback);
 		}
 	});
@@ -3079,7 +3099,7 @@
 	 */
 	var CheckElement = BaseElement.extend({
 
-		
+
 		init: function (data) {
 
 			var self = this;
@@ -3094,7 +3114,7 @@
 			});
 		},
 
-		
+
 		/**
 		 * Инициализация параметров
 		 *
@@ -3122,7 +3142,7 @@
 		createField: function (callback) {
 			var params = this.getParams();
 			params['fieldName'] = this.getName();
-			
+
 			callback(this.templates.checkField({
 				data:  params,
 				attrs: this.getAttrs()
@@ -3183,7 +3203,7 @@
 		 */
 		initParams: function (params) {
 			params = wdpro.extend({
-				'right': "Я даю свое согласие на обработку персональных данных и соглашаюсь с условиями и <a href='"+wdpro.WDPRO_HOME_URL+"privacy-policy/' target='_blank'>политикой конфиденциальности</a>",
+				//'right': "Я даю свое согласие на обработку персональных данных и соглашаюсь с условиями и <a href='"+wdpro.WDPRO_HOME_URL+"privacy-policy/' target='_blank'>политикой конфиденциальности</a>",
 
 				'containerClass': 'privacy-check',
 				'checked': true,
@@ -3274,6 +3294,13 @@
 				data['value'] = data['text'];
 			}
 
+			if (typeof data['value'] === 'object') {
+				let lang = wdpro.langNotEmpty();
+				if (data['value'][lang]) {
+					data['value'] = data['value'][lang];
+				}
+			}
+
 			// Добавление в данные дополнительных атрибутов
 			data = wdpro.extend({
 				attrs: {
@@ -3300,14 +3327,14 @@
 		 * @param callback {function}
 		 */
 		createField: function (callback) {
-			
+
 			if (this.params['tag'] === 'button') {
 				callback(this.templates.buttonFieldButtonTag({
 					data:  this.getParams(),
 					attrs: this.getAttrs()
 				}));
 			}
-			
+
 			else {
 				callback(this.templates.buttonField({
 					data:  this.getParams(),
@@ -3325,7 +3352,7 @@
 		getData_DELETE: function () {
 			var data = this._super();
 
-			// Добавляем к элементу кнопки класс, 
+			// Добавляем к элементу кнопки класс,
 			// который добавляет такой же левый отступ, как у предыдущего или следующего элемента
 			if (!data['elementClass']) data['elementClass'] = '';
 			if (data['elementClass']) data['elementClass']+=' ';
@@ -3367,14 +3394,14 @@
 	 * Кнопка отправки формы с текстом "Сохранить"
 	 */
 	wdpro.forms.SubmitSaveElement = wdpro.forms.SubmitElement.extend({
-		
+
 		init: function (params) {
-			
+
 			params = wdpro.extend({
 				'text': 'Сохранить',
 				'class': 'button button-primary button-large'
 			}, params);
-			
+
 			this._super(params);
 		}
 	});
@@ -3407,7 +3434,7 @@
 		 * @param callback
 		 */
 		createField: function (callback) {
-			
+
 			callback(this.templates.fileField({
 				data:  this.getParams(),
 				attrs: this.getAttrs()
@@ -3417,35 +3444,35 @@
 
 		/**
 		 * Возвращает атрибуты поля
-		 * 
+		 *
 		 * @returns {*}
 		 */
 		getAttrs: function () {
-			
+
 			var attrs = this._super();
-			
+
 			if (this.params['multiple'])
 			{
 				attrs['multiple'] = 'multiple';
 			}
-			
+
 			return attrs;
 		},
 
 
 		/**
 		 * Разрешение на отправку формы
-		 * 
+		 *
 		 * @param sendParams {{}} Параметры проверки
 		 * @param complete {function} Каллбэк, срабатывающий при завершении проверки
 		 */
 		submitPermit: function (params, complete) {
-			
+
 			if (this.uploadInProcess)
 			{
 				this.submitOnUpload = complete;
 			}
-			
+
 			else
 			{
 				complete(true);
@@ -3455,11 +3482,11 @@
 
 		/**
 		 * Возвращает значение поля
-		 * 
+		 *
 		 * @returns {string}
 		 */
 		getValue: function () {
-			
+
 			return this.fileNameField.val();
 		},
 
@@ -3470,7 +3497,7 @@
 		 * @param value
 		 */
 		setValue: function (value) {
-			
+
 			if (typeof value === 'string')
 			{
 				value = [value];
@@ -3499,22 +3526,22 @@
 
 		/**
 		 * Обработка поля
-		 * 
+		 *
 		 * @param fieldBlock {jQuery} Блок поля
 		 */
 		onField: function (fieldBlock) {
-			
+
 			var self = this;
-			
+
 			// Поле, в котором содержиться имя файла, которое и сохраняется в базе
 			this.fileNameField = fieldBlock.find('.js-file-name');
-			
+
 			this.fileBlockContainer = fieldBlock.find('.js-file_list');
-			
+
 			// Загруженный файл
 			this.showCurrentFiles();
-			
-			
+
+
 			// Change
 			this.field.on('change', function (e)
 			{
@@ -3582,7 +3609,15 @@
 						// Ответ сервера
 						success: function (json) {
 
-							var response = wdpro.parseJSON(json);
+							var response;
+
+							try {
+								var response = wdpro.parseJSON(json);
+							}
+							catch (e) {
+								console.log('ajax', ajax);
+								return;
+							}
 							loadingElement.loadingStop();
 
 							// Все верно
@@ -3633,7 +3668,7 @@
 
 		/**
 		 * Добавление файла
-		 * 
+		 *
 		 * @param file {string} Имя файла
 		 */
 		addFile: function (file) {
@@ -3648,9 +3683,9 @@
 		 * Отображает текущий файл
 		 */
 		showCurrentFiles: function () {
-			
+
 			var self = this;
-			
+
 			this.fileBlockContainer.empty();
 
 			wdpro.each(this.settedValue, function (fileName)
@@ -3678,13 +3713,13 @@
 
 		/**
 		 * Добавить файл в отображаемую зону под полем для загрузки файлов
-		 * 
+		 *
 		 * @param fileName {string} Имя файла
 		 */
 		showFileAdd: function (fileName) {
 
 			var self = this;
-			
+
 			if (fileName)
 			{
 				var url;
@@ -3726,7 +3761,7 @@
 			this.updateFieldValue();
 		}
 	});
-	
+
 
 	/**
 	 * Поле для загрузки изображения
@@ -3737,7 +3772,7 @@
 		showFileAdd: function (fileName) {
 
 			var self = this;
-			
+
 			if (fileName)
 			{
 				var url;
@@ -3791,32 +3826,32 @@
 	 * Select
 	 */
 	wdpro.forms.SelectElement = wdpro.forms.BaseElement.extend({
-		
+
 		init: function (data) {
-			
+
 			var self = this;
-			
+
 			this._super(data);
 			if (data['value']) {
 				this.setValue(data['value']);
 			}
 			this.classArr = ['wdpro-form-select', 'JS_field'];
-			
+
 			this.on('addedToPage', function () {
-				
+
 				self.fieldBlock.parent().addClass('wdpro-form-select-container');
 			});
-			
+
 			// Преобразование options ''=>'' в ''=>[key, value]
 			if (this.params['options']) {
 				var options = [];
 				wdpro.each(this.params['options'], function (value, key) {
-					
+
 					// 'key'=>'value'
 					if (typeof value != 'object') {
 						options.push([key, value]);
 					}
-					
+
 					// 1=>[key, value]
 					else {
 						options.push(value);
@@ -3825,44 +3860,44 @@
 				this.params['options'] = options;
 			}
 		},
-		
+
 		createField: function (callback) {
-			
+
 			callback(this.templates.selectField({
 				data:  this.getParams(),
 				attrs: this.getAttrs()
 			}));
 		},
-		
-		
+
+
 		getAttrs: function () {
 			var attrs = this._super();
 			delete attrs['value'];
-			
+
 			if (this.params['multiple']) {
 				attrs['multiple'] = 'multiple';
 			}
-			
+
 			return attrs;
 		},
-		
-		
+
+
 		getName: function () {
-			
+
 			var name = this._super();
-			
+
 			if (this.params['multiple']) name += '[]';
-			
+
 			return name;
 		},
-		
-		
+
+
 		onField: function (field) {
-			
+
 			var self = this;
 
 			field.val(this.settedValue);
-			
+
 			field.on('change', function () {
 				self.trigger('change');
 			});
@@ -3880,14 +3915,14 @@
 			{
 				return '';
 			}
-			
+
 			var ret = null;
 
 			// Имя в виде массива
 			if (typeof this.params['name'] == 'object')
 			{
 				var elementData = formData;
-				
+
 				wdpro.each(this.params['name'], function (name) {
 
 					if (elementData)
@@ -3908,10 +3943,10 @@
 			{
 				ret = formData[this.params['name']];
 			}
-			
-			if (ret === undefined) 
+
+			if (ret === undefined)
 			ret = this.params['value'];
-			
+
 			return ret;
 		}
 
@@ -4119,15 +4154,15 @@
 	wdpro.forms.SpinnerElement = wdpro.forms.StringElement.extend({
 
 		init: function (params) {
-			
+
 			params = wdpro.extend({
 				'min': 0,
 				'max': null
 			}, params);
-			
+
 			this._super(params);
 		},
-		
+
 		createField: function (callback) {
 
 			callback(this.templates.spinnerField({
@@ -4135,18 +4170,18 @@
 				attrs: this.getAttrs()
 			}));
 		},
-		
-		
+
+
 		onField: function (field) {
-			
+
 			var self = this;
-			
+
 			this._super(field);
-			
+
 			this.fieldBlock.find('.js-spinner-button').click(function () {
-				
+
 				var delta = Number($(this).attr('data-delta'));
-				
+
 				var currentVal = Number(self.getValue());
 				currentVal += delta;
 
@@ -4156,13 +4191,13 @@
 				if (self.params['max'] !== null) {
 					currentVal = Math.min(self.params['max'], currentVal);
 				}
-				
+
 				self.setValue(currentVal);
 				self.trigger('change');
 			});
 		}
 	});
-	
+
 
 	// Набор классов элементов, по этому списку их можно будет найти через скрипты
 	var ElementsClasses = {
@@ -4195,22 +4230,3 @@
 
 
 })(jQuery);
-			
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

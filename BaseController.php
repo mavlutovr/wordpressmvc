@@ -96,6 +96,14 @@ abstract class BaseController {
 	}
 
 
+	/**
+	 * Preudonim of entityClass
+	 */
+	public static function getEntityClass() {
+		return static::entityClass();
+	}
+
+
 	public static function initSiteStart() {
 
 		// Список (Это здесь, чтобы инициировались типы страниц)

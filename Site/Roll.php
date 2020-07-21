@@ -8,11 +8,11 @@ class Roll extends \Wdpro\BaseRoll {
 
 	/**
 	 * Класс таблицы, из которой происходит выборка
-	 * 
+	 *
 	 * @return \Wdpro\BaseSqlTable
 	 */
 	public static function sqlTable() {
-		
+
 		$controller = static::getController();
 		///$table = $controller::
 		$table = $controller::sqlTable();
@@ -25,7 +25,7 @@ class Roll extends \Wdpro\BaseRoll {
 
 	/**
 	 * Необходимые для списка поля
-	 * 
+	 *
 	 * @return string
 	 * @example return "ID, post_title";
 	 */
@@ -41,7 +41,7 @@ class Roll extends \Wdpro\BaseRoll {
 	 *  'n'=>10,
 	 *  'key'=>'videoPage',
 	 * ]
-	 * 
+	 *
 	 * @return void|\Wdpro\Tools\Pagination
 	 */
 	public static function pagination() {
@@ -52,16 +52,28 @@ class Roll extends \Wdpro\BaseRoll {
 	/**
 	 * Возвращает html код по запросу
 	 *
-	 * @param array|string $where Запрос типа array('WHERE id=%d', 123)
+	 * @param array|string $params Запрос типа array('WHERE id=%d', 123) или параметры
 	 * @return string
 	 * @throws \Exception
 	 */
-	public static function getHtml($where) {
-		
-		if ($list = static::getData($where)) {
-			$template = static::getTemplatePhpFile();
+	public static function getHtml($params) {
 
-			return wdpro_render_php($template, $list, static::$templateExtraData);
+		if (is_string($params)) {
+			$params = [
+				'where'=>$params,
+			];
+		}
+
+		if (empty($params['where'])) {
+			$params['where'] = $params;
+		}
+
+		if ($list = static::getData($params['where'])) {
+
+			if (empty($params['template']))
+				$params['template'] = static::getTemplatePhpFile();
+
+			return wdpro_render_php($params['template'], $list, static::$templateExtraData);
 		}
 	}
 
@@ -80,7 +92,7 @@ class Roll extends \Wdpro\BaseRoll {
 		$where[0] = \Wdpro\Lang\Data::replaceLangShortcode($where[0]);
 
 		$table = static::sqlTable();
-		
+
 		if (!strstr($where[0], 'LIMIT ') && $pagination = static::pagination()) {
 
 			if ($pagination === true || $pagination === 1) {
@@ -96,6 +108,7 @@ class Roll extends \Wdpro\BaseRoll {
 
 		$fields = static::sqlFields();
 		$fields = \Wdpro\Lang\Data::replaceLangShortcode($fields);
+		// $fields = '*';
 
 		if ($sel = $table::select($where, $fields)) {
 
@@ -107,10 +120,15 @@ class Roll extends \Wdpro\BaseRoll {
 			if (isset($pagination) && $pagination) {
 				$data['pagination'] = $pagination->getHtml();
 			}
-			
+
 			foreach($sel as $n=>$row) {
 				if ( isset($row['post_name'])  && ! isset($row['url'])) {
-					$row['url'] = \Wdpro\Lang\Data::currentUrl() . $row['post_name'] . wdpro_url_slash_at_end();
+					// $post = wdpro_get_post_by_id($row['id']);
+					$post = static::getEntityByData($row);
+					$row = $post->getDataForTemplate();
+					//$row['url'] = $post->getUrl();
+				//$row['url'] = \Wdpro\Lang\Data::currentUrl() . $row['post_name'] . wdpro_url_slash_at_end();
+					// print_r($row);
 				}
 
 				$data['list'][] = static::prepareDataForTemplate($row);
@@ -149,12 +167,12 @@ class Roll extends \Wdpro\BaseRoll {
 
 	/**
 	 * Возвращает адрес php файла шаблона
-	 * 
+	 *
 	 * @return string
 	 * @example return WDPRO_TEMPLATE_PATH.'catalog_list.php';
 	 */
 	public static function getTemplatePhpFile() {
-		
-		
+
+
 	}
 }

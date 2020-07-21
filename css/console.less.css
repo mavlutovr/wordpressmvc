@@ -267,9 +267,6 @@ th#wdpro_in_menu {
 .wp-list-table .column-date {
   width: 150px;
 }
-.wp-list-table {
-  opacity: 0.1;
-}
 .wdpro-form-width,
 .wdpro-form-group,
 .wdpro-form-element-ckeditor {
@@ -546,6 +543,12 @@ a:hover .wdpro-rounded-count {
   list-style: disc;
   padding-left: 20px;
   padding-top: 0;
+}
+h2,
+.h2,
+.widefat td .h2 {
+  font-size: 1.3em;
+  font-weight: bold;
 }
 h2 {
   margin-top: 2em;

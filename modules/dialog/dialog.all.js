@@ -22,6 +22,8 @@
 		// Чтобы, например, можно было выдать предупреждение о закрытии окна, когда есть не закрытые окошки
 		openedCount: 0,
 
+		maxWidth: 800,
+
 		animate: 0, // Анимация открытия / закрытия в миллисекундах
 
 
@@ -61,7 +63,7 @@
 
 				// Сохраняем параметры
 				params = $.extend({
-					maxWidth: wdpro.dialogs.maxWidth ? wdpro.dialogs.maxWidth : 800,
+					maxWidth: wdpro.dialogs.maxWidth,
 					margin: 0,
 					marginTop: 0,
 					closeSymbol: wdpro.dialogs.closeSymbol,

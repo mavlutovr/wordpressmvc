@@ -164,11 +164,11 @@ class Controller extends \Wdpro\BaseController {
 	 */
 	public static function initSite() {
 		
-		// Подменю по-умолчанию
+		// Default submenu at end of page text
 		wdpro_default_file(__DIR__.'/../install/default/app_theme/submenu_standart.php',
 			WDPRO_TEMPLATE_PATH.'submenu_standart.php');
 
-		// Подменю
+		// Submenu by shortcode
 		add_shortcode('submenu', function () {
 			
 			$post = get_post();
@@ -182,7 +182,8 @@ class Controller extends \Wdpro\BaseController {
 		});
 		
 
-		// Текст из другой страницы
+		// Text from another page
+		if (false)
 		add_shortcode('page_text', function ($params) {
 			
 			if (isset($params['id']) && $params['id']) {
@@ -195,7 +196,7 @@ class Controller extends \Wdpro\BaseController {
 		});
 
 
-		// Инициализация страницы до отправки html кода в браузер
+		// Init page before send first content to browser
 		wdpro_on_page_init(function ($page) {
 			/** @var $page \App\BasePage */
 
@@ -207,22 +208,22 @@ class Controller extends \Wdpro\BaseController {
 
 			if (is_object($page)) {
 
-				// Главная
+				// Front Page
 				if (method_exists($page, 'isHome')
 					&& $page->isHome()) {
 
-					// Редирект главной на /
+					// 301 redirect to /
 					if (wdpro_current_post_name() !== '/'.$langUri) {
 
-						wdpro_location(wdpro_home_url_with_lang());
+						wdpro_location(wdpro_home_url_with_lang(false));
 					}
 				}
 
 
-				// Внутренняя
+				// Inner page
 				else {
 
-					// Чтобы адреса всегда заканчивались на / или не /
+					// Fix end of url (with or without "/")
 					$uri = $_SERVER['REQUEST_URI'];
 					if (strstr($uri, '?')) {
 						$uri = str_replace('?'.$_SERVER['QUERY_STRING'], '', $uri);
@@ -250,8 +251,6 @@ class Controller extends \Wdpro\BaseController {
 						wdpro_location($redirectUrl, 301);
 					}
 				}
-
-
 			}
 
 
@@ -267,7 +266,7 @@ class Controller extends \Wdpro\BaseController {
 		});
 		
 		
-		// Карточка страницы
+		// Card of page
 		wdpro_on_content(function ($content, $page) {
 
 			// Преобразуем данные так, чтобы в основных данных были данные текущего языка
@@ -283,6 +282,10 @@ class Controller extends \Wdpro\BaseController {
 
 				/** @var \Wdpro\BasePage $page */
 				$page->getCard($content);
+
+				// Добавляем стандартное подменю
+				if (wdpro_get_option('wdpro_standard_submenu'))
+					$page->getSubmenuStandart($content);
 			}
 
 			return $content;
