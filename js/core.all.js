@@ -232,7 +232,7 @@ if (typeof Array.isArray === 'undefined') {
 				console.log('counter', method, argsForNewMethod);
 				counter[method](...argsForNewMethod);
 			}
-			else {
+			else if (window.ym) {
 				ym(...argsForOldMethod);
 			}
 		});
