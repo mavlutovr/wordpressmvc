@@ -436,6 +436,89 @@ if (typeof Array.isArray === 'undefined') {
 
 
 	/**
+	 * Run filter
+	 *
+	 * @param  {string}   filterName
+	 * @param  {*}   data
+	 * @param  {Function} callback
+	 */
+	wdpro.doFilter = (filterName, data, callback) => {
+
+		if (!this._filters || !this._filters[filterName]) {
+			callback(data);
+			return;
+		}
+
+		wdpro.orderList(
+			this._filters[filterName],
+
+			(filter, next) => {
+				filter(data, newData => {
+					data = newData;
+					next();
+				});
+			},
+
+			() => callback(data)
+		);
+	};
+
+
+	/**
+	 * Add filter
+	 *
+	 * @param {string}   filterName
+	 * @param {Function} callback
+	 */
+	wdpro.addFilter = (filterName, callback) => {
+		this._filters = this._filters || {};
+		this._filters[filterName] = this._filters[filterName] || [];
+
+		this._filters[filterName].push(callback);
+	};
+
+
+	/**
+	 * Запускает каллбэк для каждого элемента поочереди, после чего запускает завершающий каллбэк
+	 *
+	 * @param list {{}|[]|Set} Список элементов
+	 * @param callbackEachElement {function} Каллбэк, принимающия элементы
+	 * @param [callbackFinish] {function} Каллбэк, запускающийся в конце
+	 */
+	wdpro.orderList = (list, callbackEachElement, callbackFinish) => {
+		wdpro.waitList (list, callbackEachElement, callbackFinish, true);
+	};
+
+
+	/**
+	 * Запускает каллбэк для каждого элемента поочереди, после чего запускает завершающий каллбэк
+	 *
+	 * @param list {{}|[]|Set} Список элементов
+	 * @param callbackEachElement {function} Каллбэк, принимающия элементы
+	 * @param callbackFinish {function} Каллбэк, запускающийся в конце
+	 * @param [oneByOne] {boolean} Поочереди
+	 */
+	wdpro.waitList = (list, callbackEachElement, callbackFinish, oneByOne) => {
+		let waiter = new Waiter();
+
+		if (list instanceof Set) {
+			list.forEach(element => {
+				waiter.add(next => callbackEachElement(element, next), oneByOne);
+			});
+		}
+
+		else {
+			for (let key in list) {
+				let element = list[key];
+				waiter.add(next => callbackEachElement(element, next), oneByOne);
+			}
+		}
+
+		waiter.run(callbackFinish);
+	};
+
+
+	/**
 	 * Возвращает простой объект без всяких строгих типов
 	 *
 	 * @param object
@@ -706,6 +789,17 @@ if (typeof Array.isArray === 'undefined') {
 
 			      this.functions.push(ob);
 		      },
+
+
+		/**
+		 * Добавить функцию, выполнение которой надо дождаться
+		 *
+		 * @param fn {function} Функция
+		 * @param [params] Параметры
+		 */
+		add: function (fn, params) {
+			this.wait(fn, params);
+		},
 
 
 		/**
