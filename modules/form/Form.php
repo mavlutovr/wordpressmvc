@@ -911,12 +911,7 @@ window.'.$id.' = '.($this->getJson()).';
 	 */
 	public function addPrivacy() {
 
-		$this->add([
-			'name'=>'privacy',
-			'type'=>static::CHECK,
-			'*'=>true,
-			'checked'=>true,
-		]);
+		$this->add(static::PRIVACY);
 
 	}
 }

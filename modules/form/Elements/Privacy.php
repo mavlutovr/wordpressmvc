@@ -22,7 +22,7 @@ class Privacy extends Check
 
 		$params = wdpro_extend(array(
 			'name' => 'privacy',
-			'right'=>$right,
+			'right' => $right,
 			'required' => true,
 		), $params);
 
