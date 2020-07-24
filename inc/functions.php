@@ -1104,7 +1104,9 @@ function wdpro_text_to_file_name($text, $toLowerCase=false)
 	//$text = strtolower(ru_en($text));
 	$text = (wdpro_ru_en($text));
 	//$text = str_replace(' ', '-', $text);
-	$text = preg_replace("/[^a-яa-z0-9\/,\. \-_#:]/ui", "", $text);  // Удаляем лишние символы
+	//$text = preg_replace("/[^a-z0-9\_\-\.]/i", "", $text);  // Удаляем лишние символы
+	$text = preg_replace("/[^\x{0000}-\x{FFFF}]/u", "", $text);  // Удаляем лишние символы
+	// $text = str_replace('', 'i', $text);
 	$text = preg_replace("/[,-]/ui", " ", $text);                // Заменяем на пробелы
 	$text = preg_replace("/[\s]+/ui", "-", $text);                // Заменяем 1 и более
 
