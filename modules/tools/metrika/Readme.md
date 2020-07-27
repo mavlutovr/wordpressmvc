@@ -24,6 +24,12 @@ wdpro.yandexMetrikaGoal(target[, params[, callback[, ctx]]]);
 
 ## Standard goals
 
+### Contacts form
+
+* `contacts--start-fill` - On start fill contacts form.
+* `contacts--try-to-send` - On try to send contacts form.
+* `contacts--send` - On send contacts form.
+
 ### Callback form
 
 - `callback--open` - On open callback form.
