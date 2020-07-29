@@ -147,7 +147,7 @@ class Controller extends \Wdpro\BaseController {
 				return [
 					'message'=>wdpro_get_option(
 					'contacts_form_sended[lang]', 'Ваше сообщение отправлено.'),
-					'metrika'=>'contacts_form',
+					'metrika'=>'contacts--send',
 				];
 			}
 			else {

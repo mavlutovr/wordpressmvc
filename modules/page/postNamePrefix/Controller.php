@@ -90,9 +90,18 @@ class Controller extends \Wdpro\BaseController {
 			foreach (static::$prefixes as $prefix) {
 				$reg = '~^('.preg_quote($homeUri.$prefix).')~';
 
+				$requestUrl = $_SERVER['REQUEST_URI'];
+				$queryReg = '~(\?[\S]*)$~';
+				$query = '';
+				$queryArr = [];
+				if (\preg_match($queryReg, $requestUrl, $queryArr)) {
+					$query = $queryArr[1];
+					$requestUrl = \preg_replace($queryReg, '', $requestUrl);
+				}
+
 				// if uri start with prefix
-				if (preg_match($reg, $_SERVER['REQUEST_URI'])) {
-					$uri = preg_replace($reg, $homeUri, $_SERVER['REQUEST_URI']);
+				if (preg_match($reg, $requestUrl)) {
+					$uri = preg_replace($reg, $homeUri, $requestUrl);
 
 					$wdpro_home_uri = wdpro_home_uri();
 					if (!\preg_match('~/$~', $wdpro_home_uri))
@@ -102,7 +111,7 @@ class Controller extends \Wdpro\BaseController {
 						if (!isset($_SERVER['REQUEST_URI_ORIGINAL']))
 							$_SERVER['REQUEST_URI_ORIGINAL'] = $_SERVER['REQUEST_URI'];
 
-						$_SERVER['REQUEST_URI'] = $uri;
+						$_SERVER['REQUEST_URI'] = $uri.$query;
 					}
 				}
 			}
