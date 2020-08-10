@@ -18,6 +18,15 @@
 
 			wdpro.callback.getForm(function (form) {
 
+				form.on('startFill', () => {
+					wdpro.yandexMetrikaGoal('callback--start-fill');
+				});
+
+
+				form.on('trySend', () => {
+					wdpro.yandexMetrikaGoal('callback--try-to-send');
+				});
+
 				form.getHtml(function (html) {
 					dialog.setContent(html);
 				});
@@ -71,6 +80,7 @@
 			}
 
 			var form = new wdpro.forms.Form();
+
 			form.add({
 				'name': 'name',
 				'center': 'Ваше имя',

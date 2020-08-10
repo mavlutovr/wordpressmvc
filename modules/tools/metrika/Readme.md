@@ -33,7 +33,8 @@ wdpro.yandexMetrikaGoal(target[, params[, callback[, ctx]]]);
 ### Callback form
 
 - `callback--open` - On open callback form.
-
+- `callback--start-fill `- On start fill callback form.
+- `callback--try-to-send` - On try to send callback form.
 - `callback--send` - On send callback form.
 
 ### Cart
