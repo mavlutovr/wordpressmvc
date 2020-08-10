@@ -274,6 +274,8 @@
 
 			this.on('addedToPage', function () {
 
+				self._initSubmit();
+
 				self.eachElements(function (element)
 				{
 					element.trigger('addedToPage');
@@ -845,18 +847,7 @@
 			this.messagesContainer = this.html.find('.JS_messages_container');
 
 			// При отправке формы
-			this.jForm.submit(function (e) {
-
-				if (self.forseSubmit)
-				{
-					return true;
-				}
-				// Обрабатываем отправку формы
-				//return self.submit();
-				self.submit();
-				e.preventDefault();
-				return false;
-			});
+			this._initSubmit();
 
 			// Сообщения, которые надо сразу отобразить
 			if (this.params['messages']) {
@@ -864,6 +855,26 @@
 					self.showMessage(message['message'], message['params']);
 				});
 			}
+		},
+
+
+		/**
+		 * Инициализация отправки
+		 */
+		_initSubmit() {
+
+			// При отправке формы
+			this.jForm.off('submit.form').on('submit.form', e => {
+
+				if (this.forseSubmit) return true;
+
+				// Обрабатываем отправку формы
+				//return self.submit();
+				this.submit();
+				e.preventDefault();
+				return false;
+			});
+
 		},
 
 

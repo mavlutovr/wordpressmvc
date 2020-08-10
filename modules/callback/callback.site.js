@@ -5,13 +5,15 @@
 		/**
 		 * Открывает окошко с формой заказа обратного звонка
 		 */
-		openWindow: function () {
+		openWindow: function (params) {
 
-			var dialog = new wdpro.dialogs.Dialog({
+			params = wdpro.extend({
 				title: 'Заказ обратного звонка',
 				content: 'Загрузка...',
 				substrate: true
-			});
+			}, params);
+
+			var dialog = new wdpro.dialogs.Dialog(params);
 			dialog.show();
 
 			wdpro.yandexMetrika('reachGoal', 'callback--open');

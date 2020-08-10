@@ -2320,6 +2320,15 @@ if (typeof Array.isArray === 'undefined') {
 
 
 	/**
+	 * Return value of current lang from object
+	 *
+	 * @param  {{}} texts {{ en: '...', ru: '...' }}
+	 * @return {string|*}
+	 */
+	wdpro.langTranslate = texts => texts[wdpro.langNotEmpty()];
+
+
+	/**
 	 * Отправка событие во все прослушки этого события
 	 *
 	 * @param actionName {string} Имя события без пространства имен
