@@ -575,7 +575,7 @@ window.'.$id.' = '.($this->getJson()).';
 				$startHtml .= $element->getSendTextHtml($data[$name]);
 			}
 		});
-
+		
 		if (!empty($_GET['fromPostId'])) {
 			$post = wdpro_get_post_by_id($_GET['fromPostId']);
 			$startHtml .= '<p>Страница: <a href="'.home_url().'/'.$post->getUri().'" target="_blank">'.$post->getTitle().'</a></p>';

@@ -7,7 +7,7 @@
 
 	<?php foreach ($data['list'] as $item): ?>
 
-		<p><?=$item['good']['post_title']?>, размер: <?=$item['keyArray']['object']['size']?>, <?=$item['count']?> шт., стоимость: <?=$item['cost_for_all']?></p>
+		<p><?=$item['good']['post_title']?>, размер: <?=$item['keyArray']['object']['size']?>, <?=$item['count']?> шт., стоимость: <?=$item['cost_for_all'] * 1?> рублей.</p>
 
 	<?php endforeach; ?>
 

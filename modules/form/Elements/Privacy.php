@@ -28,6 +28,11 @@ class Privacy extends Check
 
 		parent::__construct($params);
 	}
+	
+	
+	public function getName() {
+		
+	}
 
 
 	/**
@@ -38,6 +43,11 @@ class Privacy extends Check
 	public function getSendValue()
 	{
 
+	}
+	
+	
+	public function getSaveValue() {
+		
 	}
 
 

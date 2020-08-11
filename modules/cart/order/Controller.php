@@ -101,7 +101,7 @@ class Controller extends \Wdpro\BaseController {
 
 			// Обработка формы
 			$form->onSubmit(function ($data) {
-
+				
 				// Создаем заказ
 				$order = new Entity([
 					'form' => $data,
