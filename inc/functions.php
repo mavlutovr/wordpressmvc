@@ -770,7 +770,7 @@ function wdpro_local() {
  * @param string $location Адрес куда перейти
  * @param null|number $code Код редиректа (301)
  */
-function wdpro_location($location, $code=null)
+function wdpro_location($location, $code=301)
 {
 	if (headers_sent())
 	{
@@ -1104,7 +1104,9 @@ function wdpro_text_to_file_name($text, $toLowerCase=false)
 	//$text = strtolower(ru_en($text));
 	$text = (wdpro_ru_en($text));
 	//$text = str_replace(' ', '-', $text);
-	$text = preg_replace("/[^a-яa-z0-9\/,\. \-_#:]/ui", "", $text);  // Удаляем лишние символы
+	//$text = preg_replace("/[^a-z0-9\_\-\.]/i", "", $text);  // Удаляем лишние символы
+	$text = preg_replace("/[^\x{0000}-\x{FFFF}]/u", "", $text);  // Удаляем лишние символы
+	// $text = str_replace('', 'i', $text);
 	$text = preg_replace("/[,-]/ui", " ", $text);                // Заменяем на пробелы
 	$text = preg_replace("/[\s]+/ui", "-", $text);                // Заменяем 1 и более
 
@@ -2516,6 +2518,9 @@ function wdpro_render_php($file, $templateData=null) {
 
 	extract($data, EXTR_SKIP);
 
+	// Template of another language
+	$file = \Wdpro\Lang\Controller::getFilenameForCurrentLang($file);
+
 	if ($file && is_file($file))
 	{
 		require($file);
@@ -2956,6 +2961,8 @@ function wdpro_ajax_url($params=null) {
 			$params['wdproAction'] = $params['action'];
 			$params['action'] = 'wdpro';
 		}
+
+		$params['lang'] = \Wdpro\Lang\Controller::getCurrentLangUri();
 
 		$url .= '?'.http_build_query($params);
 	}
@@ -3708,9 +3715,9 @@ function wdpro_disable_emojis() {
 // Определение ОС
 function wdpro_get_os($user_agent = null)
 {
-	if ($user_agent === null) 
+	if ($user_agent === null)
 		$user_agent = $_SERVER['HTTP_USER_AGENT'];
-	
+
 	$os = array(
 		'Windows' => 'Win',
 		'Open BSD' => 'OpenBSD',

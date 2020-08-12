@@ -173,10 +173,20 @@ class Data {
 	 * @return mixed
 	 */
 	public static function replaceLangShortcode ($string) {
-		$suffix = static::getSuffix(Controller::getCurrentLangUri());
+		$suffix = static::getCurrentSuffix();
 		$string = str_replace('[lang]', $suffix, $string);
 
 		return $string;
+	}
+
+
+	/**
+	 * Return suffix for sql-tables fields (fieldname_de) of current language
+	 *
+	 * @return string
+	 */
+	public static function getCurrentLangSuffix() {
+		return static::getCurrentSuffix();
 	}
 
 

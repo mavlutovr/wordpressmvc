@@ -50,7 +50,7 @@ class Form extends \App\BaseForm {
 			'value'=>'Оформить заказ',
 		]);
 
-		$this->add(static::PRIVACY);
+		$this->addPrivacy();
 	}
 
 

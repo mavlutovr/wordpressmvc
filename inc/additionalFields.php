@@ -6,7 +6,7 @@
 
 /**
  * Показывает форму дополнительных полей для поста и страницы
- * 
+ *
  * @param $post
  */
 function wdproShowMetaForm($post)
@@ -21,7 +21,11 @@ function wdproShowMetaForm($post)
 	$form->add([ 'name'=>'title[lang]', 'top'=>'Title' ]);
 	$form->add([ 'name'=>'h1[lang]', 'top'=>'H1' ]);
 	$form->add([ 'name'=>'keywords[lang]', 'top'=>'Keywords' ]);
-	$form->add([ 'name'=>'description[lang]', 'top'=>'Description' ]);
+	$form->add([
+		'name'=>'description[lang]',
+		'top'=>'Description',
+		'type'=> $form::TEXT,
+	]);
 	$form->add([ 'name'=>'madein[lang]', 'top'=>'Ссылка "Сделано в студии"',
 	             'type'=>$form::TEXT
 	]);
@@ -61,15 +65,15 @@ add_action('admin_init', function () {
 			'wdproShowMetaForm',
 			'post',
 			'normal');
-	
-	
+
+
 		add_meta_box('extra_fields',
 			'Дополнительно',
 			'wdproShowMetaForm',
 			'page',
 			'normal');
 	}
-	
+
 }, 1);
 
 
@@ -78,7 +82,7 @@ add_action('admin_init', function () {
 add_action('save_post', function ($postId) {
 
 	// Если форма не прошла проверку
-	if ( (isset($_POST['wdpro_nonce']) 
+	if ( (isset($_POST['wdpro_nonce'])
 		&& !wp_verify_nonce( $_POST['wdpro_nonce'], __FILE__))
 			|| (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE)
 			|| !current_user_can('edit_post', $postId)
@@ -88,8 +92,8 @@ add_action('save_post', function ($postId) {
 		// Завершаем процесс сохранения преждевременно
 		return false;
 	}
-	
-	
+
+
 	// Перебираем данные и сохраняем
 	foreach($_POST['wdpro'] as $key=>$value)
 	{
@@ -97,14 +101,14 @@ add_action('save_post', function ($postId) {
 			? delete_post_meta($postId, $key)
 			: update_post_meta($postId, $key, $value);
 	}
-	
+
 	return $postId;
-	
+
 }, 0);
 
 
 
-	
+
 /**
  * Возвращает внутренности <head>
  */
@@ -161,7 +165,7 @@ function wdpro_the_header()
 		$title = wdpro_the_title_standart();
 	}
 
-	
+
 ?><title><?php echo($title); ?></title>
 	<meta name="description" content="<?php echo( htmlspecialchars($description) );
 	?>" />
@@ -286,15 +290,15 @@ function wdpro_the_h1($force=false)
 		{
 			$h1 = wdpro_the_title_standart();
 		}
-		
+
 		return $h1;
 	}
 }
-	
+
 
 /**
  * Возвращает стандартный Title
- * 
+ *
  * @return null|string
  */
 function wdpro_the_title_standart()
@@ -307,11 +311,11 @@ function wdpro_the_title_standart()
 
 	return get_the_title();
 }
-	
+
 
 /**
  * Возвращает Meta данные поста
- * 
+ *
  * @param string $metaName Имя мета-данных
  * @return mixed
  */
@@ -320,17 +324,17 @@ function wdpro_get_post_meta($metaName, $postId=null)
 	if ($postId === null) $postId = get_the_ID();
 
 	$arr = get_post_meta($postId, $metaName.\Wdpro\Lang\Data::getCurrentSuffix());
-	
+
 	if (is_array($arr) && isset($arr[0]) && $arr[0])
 	{
 		return $arr[0];
 	}
 }
-	
+
 
 /**
  * Возвращает сблок перенинковки
- * 
+ *
  * @return mixed
  */
 function wdpro_links()
@@ -343,14 +347,14 @@ function wdpro_counters() {
 
 	echo(\Wdpro\Counters\Controller::getCountersHtml());
 }
-	
+
 
 /**
  * Возвращает ссылку на веб-студию
- * 
- * Рекоменудется устанавливать индексируемую ссылку на веб-студию только на главной 
+ *
+ * Рекоменудется устанавливать индексируемую ссылку на веб-студию только на главной
  * странице
- * 
+ *
  * @return mixed
  */
 function wdpro_madein()
@@ -364,7 +368,7 @@ add_action(
 	'admin_menu',
 
 	function () {
-		
+
 		// Options
 		add_options_page(
 			'Настройки WDPro',

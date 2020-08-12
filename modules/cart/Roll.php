@@ -52,7 +52,7 @@ class Roll extends \Wdpro\Site\Roll {
 	 * @return array
 	 * @throws \Exception
 	 */
-	public static function getData($where)
+	public static function getData($where, $fields=null)
 	{
 		$data = parent::getData($where);
 

@@ -45,7 +45,7 @@ class Controller extends \Wdpro\BaseController {
 				);
 
 				if ($uri === wdpro_home_uri())
-				$uri.= '/';
+					$uri.= '/';
 
 				$_SERVER['REQUEST_URI'] = $uri;
 				//$_SERVER['REDIRECT_URL'] = $uri;
@@ -169,6 +169,16 @@ class Controller extends \Wdpro\BaseController {
 
 
 	/**
+	 * Return current lang, when it's core languane, it's return it code
+	 *
+	 * @return string
+	 */
+	public static function getCurrentLangUriNotEmpty() {
+		return Data::getCurrentLangUriNotEmpty();
+	}
+
+
+	/**
 	 * Установка текущего языка
 	 *
 	 * @param string $lang ru, en, de...
@@ -189,11 +199,72 @@ class Controller extends \Wdpro\BaseController {
 
 
 	/**
+	 * Return piece of file name of current language
+	 *
+	 * @return string
+	 */
+	public static function getCurrentLangFileSuffix() {
+		$currentLangUrl = static::getCurrentLangUri();
+
+		if ($currentLangUrl) {
+			return $currentLangUrl.'.';
+		}
+
+		return '';
+	}
+
+
+	/**
+	 * Return filename with current lang suffix (posts.php -> posts.en.php)
+	 *
+	 * @param  string $originalFilename
+	 * @return string
+	 */
+	public static function getFilenameForCurrentLang($originalFilename) {
+
+		$suffix = static::getCurrentLangFileSuffix();
+
+		if (!$suffix) return $originalFilename;
+
+		$arr = explode('.', $originalFilename);
+
+		$last = count($arr) - 1;
+		$arr[$last] = $suffix.$arr[$last];
+
+		$lanfFilename = implode('.', $arr);
+		if (is_file($lanfFilename)) {
+			return $lanfFilename;
+		}
+
+		return $originalFilename;
+	}
+
+
+	/**
 	 * Обновление данных о языка
 	 */
 	public static function updateData() {
 		if ($sel = SqlTable::select('ORDER BY sorting')) {
 			Data::setData($sel);
+		}
+	}
+
+
+	/**
+	 * Return text of current lang from texts array
+	 *
+	 * @param  array $texts array('ru'=>'ВордПресс', 'en'=>'WordPress')
+	 * @return string
+	 */
+	public static function getText($texts) {
+		$currentLang = static::getCurrentLangUriNotEmpty();
+
+		if (isset($texts[$currentLang])) {
+			return $texts[$currentLang];
+		}
+
+		foreach ($texts as $text) {
+			return $text;
 		}
 	}
 

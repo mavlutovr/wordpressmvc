@@ -3,7 +3,7 @@ namespace Wdpro\Contacts;
 
 class Controller extends \Wdpro\BaseController {
 
-	
+
 	/** @var  \Wdpro\Form\Form */
 	protected static $backFormClass = BackForm::class;
 
@@ -19,10 +19,10 @@ class Controller extends \Wdpro\BaseController {
 			'n'=>95,
 			'icon'=>'fas fa-map-marked',
 		));
-		
+
 		// Настройки
 		\Wdpro\Console\Menu::addSettings('Страница &quot;Контакты&quot;', function ($form) {
-			
+
 			/** @var \Wdpro\Form\Form $form */
 			$form->add(array(
 				'name'=>'contacts_form_sended[lang]',
@@ -37,7 +37,7 @@ class Controller extends \Wdpro\BaseController {
 				/** @var $element \Wdpro\Form\Elements\Base */
 
 				$params = $element->getParams();
-				if (isset($params['name'])) {
+				if (isset($params['name']) && $params['name'] !== 'privacy') {
 					if (isset($params['top'])) {
 						$form->add([
 							'name'=>'contacts_form_element_'.$params['name'].'_top[lang]',
@@ -70,7 +70,7 @@ class Controller extends \Wdpro\BaseController {
 			});
 
 			$form->add('submitSave');
-			
+
 			return $form;
 		});
 	}
@@ -82,12 +82,12 @@ class Controller extends \Wdpro\BaseController {
 	public static function runSite() {
 
 		add_shortcode('contacts_list', function () {
-			
+
 			return Roll::getHtml('ORDER BY menu_order');
 		});
-		
+
 		add_shortcode('contacts_form', function () {
-			
+
 			/** @var \Wdpro\Form\Form $form */
 			$form = new static::$backFormClass();
 
@@ -122,7 +122,7 @@ class Controller extends \Wdpro\BaseController {
 					}
 				}
 			});
-			
+
 			return $form->getHtml();
 		});
 	}
@@ -138,7 +138,7 @@ class Controller extends \Wdpro\BaseController {
 
 			/** @var \Wdpro\Form\Form $form */
 			$form = new static::$backFormClass();
-			
+
 			$form->setData($data);
 
 			if ($form->valid()) {
@@ -147,7 +147,7 @@ class Controller extends \Wdpro\BaseController {
 				return [
 					'message'=>wdpro_get_option(
 					'contacts_form_sended[lang]', 'Ваше сообщение отправлено.'),
-					'metrika'=>'contacts_form',
+					'metrika'=>'contacts--send',
 				];
 			}
 			else {

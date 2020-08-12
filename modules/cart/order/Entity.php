@@ -190,7 +190,7 @@ class Entity extends \Wdpro\BaseEntity {
 			$label = $element->getLabel();
 			$name = $element->getName();
 
-			if ($label) {
+			if ($label && $name !== 'privacy') {
 				$template[$name] = [
 					'label'=>$label,
 					'value'=>$formData[$name],

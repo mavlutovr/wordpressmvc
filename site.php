@@ -352,6 +352,7 @@ add_action('wp_enqueue_scripts', function () {
 		'homeUrl' => home_url() . '/',
 		'imagesUrl' => WDPRO_UPLOAD_IMAGES_URL,
 		'lang' => \Wdpro\Lang\Data::getCurrentLangUri(),
+		'langNotEmpty'=>\Wdpro\Lang\Data::getCurrentLangUriNotEmpty(),
 		'currentPostId' => !empty($post->ID) ? $post->ID : '',
 		'currentPostName' => !empty($post->post_name) ? $post->post_name : '',
 	));

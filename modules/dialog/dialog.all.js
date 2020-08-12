@@ -321,7 +321,9 @@
 			* Показывает Loading...
 			*/
 			loadingStart: function () {
-				this.setContent('Загрузка...');
+        wdpro.doFilter('dialog--loading', 'Загрузка...', value => {
+          this.setContent(value);
+        });
 			},
 
 
