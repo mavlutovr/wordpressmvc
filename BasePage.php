@@ -19,7 +19,7 @@ abstract class BasePage extends BaseEntity
 		$this->on('change', function () {
 
 			if (\Wdpro\Modules::existsWdpro('page/postNamePrefix')) {
-				if ($this->removed()) {
+				if ($this->removed() || $this->data['post_status'] !== 'publish') {
 					\Wdpro\Page\PostNamePrefix\Controller::remove($this);
 				}
 				else {
@@ -184,6 +184,10 @@ abstract class BasePage extends BaseEntity
 		if (isset($data['post_parent']) && $data['post_parent'])
 		{
 			return wdpro_object_by_post_id($data['post_parent']);
+		}
+
+		if (is_admin() && !empty($_GET['sectionId'])) {
+			//return wdpro_object_by_post_id($_GET['sectionId']);
 		}
 
 		// Когда есть адрес родительской страницы
