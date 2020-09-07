@@ -37,6 +37,7 @@ class SqlTable extends \Wdpro\BaseSqlTable {
 				'uri',
 				'name',
 				'flag',
+				'code',
 			],
 
 			static::ENGINE => static::INNODB,

@@ -2,7 +2,7 @@
 namespace Wdpro\Callback;
 
 class Controller extends \Wdpro\BaseController {
-	
+
 	public static function init() {
 
 		\Wdpro\Autoload::add('Wdpro\Callback', __DIR__);
@@ -27,21 +27,21 @@ class Controller extends \Wdpro\BaseController {
 				'data'=>$data,
 			));
 			$callback->save();
-			
+
 			// Отправляем сообщение админам
 			\Wdpro\AdminNotice\Controller::sendMessageHtml(
 				'Заказ обратного звонка',
 				$data['form_text']
 			);
-			
+
 			// Отправляем событие о заказе звонка
 			do_action('wdpro_callback', [
 				'data'=>$data,
 			]);
 
 			return array(
-				'message'=>wdpro_get_option('callback_message'),
-				'title'=>wdpro_get_option('callback_title'),
+				'message'=>wdpro_get_option('callback_message[lang]', '<h2>Мы свяжемся с вами в ближайшее время</h2>'),
+				'title'=>wdpro_get_option('callback_title[lang]'),
 			);
 		});
 
@@ -70,12 +70,12 @@ class Controller extends \Wdpro\BaseController {
 			/** @var \Wdpro\Form\Form $form */
 
 			$form->add([
-				'name'=>'callback_title',
+				'name'=>'callback_title[lang]',
 				'top'=>'Заголовок после отправки формы',
 			]);
 
 			$form->add(array(
-				'name'=>'callback_message',
+				'name'=>'callback_message[lang]',
 				'top'=>'Текст после отправки формы',
 				'type'=>'ckeditor',
 			));

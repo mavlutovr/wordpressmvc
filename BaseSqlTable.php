@@ -6,7 +6,7 @@ $sqlFieldsTypes = array();
 
 /**
  * Базовый класс Sql таблиц
- * 
+ *
  * @package Wdpro
  */
 abstract class BaseSqlTable
@@ -23,10 +23,12 @@ abstract class BaseSqlTable
 	const MYISAM = 'MyISAM';
 	const INNODB = 'InnoDB';
 
+	protected static $test = false;
+
 
 	/**
 	 * Типы полей
-	 * 
+	 *
 	 * @var array
 	 */
 	protected static $types = array(
@@ -56,6 +58,12 @@ abstract class BaseSqlTable
 
 		static::check();
 
+		if (static::$test) {
+			echo 'TEST Where: '.PHP_EOL;
+			print_r($where);
+			echo PHP_EOL.PHP_EOL;
+		}
+
 		if ( is_array($where) ) {
 			$where = static::prepare($where);
 		}
@@ -63,6 +71,12 @@ abstract class BaseSqlTable
 		$query = 'SELECT ' . $fields . ' FROM ' . static::getNameWithPrefix() . ' ' . $where;
 
 		$query = \Wdpro\Lang\Data::replaceLangShortcode($query);
+
+		if (static::$test) {
+			echo 'TEST Query: '.PHP_EOL;
+			print_r($query);
+			echo PHP_EOL.PHP_EOL;
+		}
 
 		$results = $wpdb->get_results($query, ARRAY_A);
 		$results = static::sqlToValueList($results);
@@ -91,7 +105,7 @@ abstract class BaseSqlTable
 	    {
 	        return $list[0];
 	    }
-		
+
 		// По-умолчанию
 		else if ($insertIfNotExistsThisData) {
 
@@ -118,20 +132,20 @@ abstract class BaseSqlTable
 
 			// Сохранение
 			$id = static::insert($insertIfNotExistsThisData);
-			
+
 			$idFieldName = 'id';
 			if (static::isField('ID')) $idFieldName = 'ID';
 			return static::getRow(
-				['WHERE `'.$idFieldName.'`=%d', [$id]], 
+				['WHERE `'.$idFieldName.'`=%d', [$id]],
 				$fields
 			);
 		}
 	}
-	
-	
+
+
 	/**
 	 * Вставляет данные в таблицу
-	 * 
+	 *
 	 * @param array $data Данные
 	 * @param string|array $format Форматы вставляемых данных
 	 * array('%s', '%d', '%f');
@@ -151,9 +165,9 @@ abstract class BaseSqlTable
 				$data[$field] = '';
 			}
 		}
-		
+
 		if (!$format) $format = static::getFormatForDataKeys($data);
-	    
+
 		/*echo("\n\n\n\n-------".static::getName()."------------\n\n");
 		echo "format: "; print_r($format);
 		echo "data: "; print_r($data);*/
@@ -173,10 +187,10 @@ abstract class BaseSqlTable
 		return $wpdb->insert_id;
 	}
 
-	
+
 	/**
 	 * Обновление данных
-	 * 
+	 *
 	 * @param array $data Новые данные
 	 * @param array|string $where Параметры запроса (Тут надо по-особенному задавать where)
 	 * array('id'=>3)
@@ -193,12 +207,12 @@ abstract class BaseSqlTable
 		static::check();
 
 		$data = static::valueToSqlRow($data);
-		
+
 		if (!$format)
 		{
 			$format = static::getFormatForDataKeys($data);
 		}
-		
+
 		if (!$whereFormat)
 		{
 			$whereFormat = array();
@@ -218,7 +232,7 @@ abstract class BaseSqlTable
 	 *
 	 *     ::delete( 'table', array( 'ID' => 1 ) )
 	 *     ::delete( 'table', array( 'ID' => 1 ), array( '%d' ) )
-	 * 
+	 *
 	 * @param array $where array('ID'=>1)
 	 * @param array|string|null $format array( '%d' )
 	 */
@@ -246,34 +260,34 @@ abstract class BaseSqlTable
 
 	/**
 	 * Выполнение произвольного запроса
-	 * 
+	 *
 	 * @param string$query Запрос
 	 */
 	public static function query($query) {
-		
+
 		global $wpdb;
-		
+
 		$query = str_replace('{table}', static::getNameWithPrefix(), $query);
-		
+
 		$wpdb->query($query);
 	}
 
 
 	/**
 	 * Возвращает формат для данных
-	 * 
+	 *
 	 * @param array $data Данные
 	 * @return array
 	 */
 	protected static function getFormatForDataKeys($data)
 	{
 		$format = array();
-		
+
 		foreach($data as $key=>$value)
 		{
 			$format[$key] = static::getFieldFormat($key);
 		}
-		
+
 		return $format;
 	}
 
@@ -383,7 +397,7 @@ abstract class BaseSqlTable
 	protected static function check($checkInited=true) {
 
 		if (!isset(static::$name)) {
-			
+
 			throw new TableException(
 				'У таблицы '.get_called_class().' не указано имя: '
 				.'protected static $name'
@@ -392,11 +406,11 @@ abstract class BaseSqlTable
 
 		if ($checkInited) {
 			static::init();
-			
+
 			if (!static::issetStatic('sqlTablesInited'))
 			{
 				throw new TableException(
-					'Таблица '.get_called_class().' не подготовлена. Ее необходимо 
+					'Таблица '.get_called_class().' не подготовлена. Ее необходимо
 				подготовить перед использованием с помощью запуска метода '.
 					get_called_class().'::init().
 				 Это желательно делать в {moduleName}.init.php файле модуля.'
@@ -408,7 +422,7 @@ abstract class BaseSqlTable
 
 	/**
 	 * Проверяет, изменился ли файл таблицы с прошлого раза
-	 * 
+	 *
 	 * @return int
 	 */
 	protected static function isStructureFileUpdated() {
@@ -456,19 +470,19 @@ abstract class BaseSqlTable
 
 	/**
 	 * Обновление структуры таблицы
-	 * 
+	 *
 	 * @throws TableException
 	 */
 	public static function init()
 	{
 		global $wpdb;
-		
+
 		static::check(false);
-		
+
 		if (!static::getStatic('sqlTablesInited')) {
-			
+
 			static::setStatic('sqlTablesInited', true);
-			
+
 			if ($structure = static::structure()) {
 
 				$deltaQuery = null;
@@ -479,14 +493,14 @@ abstract class BaseSqlTable
 				if (isset($structure[static::FORMAT])) {
 					$format = $structure[static::FORMAT];
 				}
-				
-				
+
+
 				if ($structure[static::COLLS]) {
-					
+
 					$format = array();
 
 					foreach ($structure[static::COLLS] as $fieldName => $fieldParams) {
-						
+
 						$field = array(
 							'format'=>'%s',
 							'params'=>$fieldParams,
@@ -502,9 +516,9 @@ abstract class BaseSqlTable
 							$fields[$field['name']] = $field;
 							$format[$field['name']] = $field['format'];
 						}
-						
+
 						else {
-							
+
 							if (is_numeric( $fieldName )) {
 								$field['name'] = $fieldParams;
 								$field['params'] = 'varchar';
@@ -604,8 +618,8 @@ abstract class BaseSqlTable
 						require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 						dbDelta( $structure['sql'] );
 					}
-					
-					
+
+
 					// Wdpro метод
 					if ($structure[static::COLLS])
 					{
@@ -614,8 +628,8 @@ abstract class BaseSqlTable
 							. static::getNameWithPrefix() . '`',
 							ARRAY_A
 						);
-						
-						
+
+
 						// Создание новой таблицы
 						if (!$sqlFields)
 						{
@@ -624,31 +638,31 @@ abstract class BaseSqlTable
 							foreach($fields as $field)
 							{
 								if ($collsQuery != '') $collsQuery .= ', ';
-								
+
 								$collsQuery .= '`'.$field['name'].'` '
 								.$field['type'].' '.$field['params'];
 							}
-							
+
 							// Тип таблицы
 							if (!isset($structure[static::ENGINE]))
 							{
 								$structure[static::ENGINE] = static::MYISAM;
 							}
-							
+
 							$wpdb->query(
 								'CREATE TABLE `'.static::getNameWithPrefix() .'` ('
 								.$collsQuery.') ENGINE = '.$structure[static::ENGINE]
 							);
 						}
-						
-						
+
+
 						// Редактирование существующей таблицы
 						else
 						{
 							// Список колонок для удаления
 							$remove = array();
 							foreach($sqlFields as $sqlField) {
-								
+
 								$remove[$sqlField['Field']] = $sqlField;
 							}
 
@@ -656,21 +670,21 @@ abstract class BaseSqlTable
 
 							// Перебираем новые поля
 							foreach($fields as $fieldN=>$field) {
-								
+
 								// Если такое поле есть
 								if (isset($remove[$field['name']]))
 								{
 									$sqlField = $remove[$field['name']];
 									unset($remove[$field['name']]);
-									
+
 									// Если тип не совпадает с текущими
 									if ($sqlField['Type'] != $field['type'])
 									{
 										// Обновляем поле
 										$wpdb->query(
-											'ALTER TABLE 
-											`'.static::getNameWithPrefix().'` 
-											CHANGE `'.$field['name'].'` 
+											'ALTER TABLE
+											`'.static::getNameWithPrefix().'`
+											CHANGE `'.$field['name'].'`
 											`'.$field['name'].'` '
 											.$field['type']
 											.' '.$field['params']
@@ -678,7 +692,7 @@ abstract class BaseSqlTable
 										);
 									}
 								}
-								
+
 								// Такого поля нет (создаем)
 								else
 								{
@@ -686,7 +700,7 @@ abstract class BaseSqlTable
 										.static::getNameWithPrefix().'` '
 										.' ADD '.$field['name']
 										.' '.$field['type'].' '.$field['params'];
-									
+
 									if ($lastFieldName)
 									{
 										$query .= ' AFTER `'.$lastFieldName.'`';
@@ -698,11 +712,11 @@ abstract class BaseSqlTable
 
 									$wpdb->query($query);
 								}
-								
+
 								$lastFieldName = $field['name'];
 							}
-							
-							
+
+
 							// Удаление
 							if (wdpro_get_option('wdpro_sql_structure_drop_available')) {
 								foreach($remove as $field)
@@ -759,16 +773,16 @@ abstract class BaseSqlTable
 
 	/**
 	 * Проверяет наличие колонки
-	 * 
+	 *
 	 * Аналог isColl
-	 * 
+	 *
 	 * @param string $fieldName Название колонки
 	 * @return bool
 	 */
 	public static function isField($fieldName)
 	{
 		static::check();
-		
+
 		global $sqlFieldsFormat;
 		return isset($sqlFieldsFormat[static::getName()][$fieldName]);
 	}
@@ -776,9 +790,9 @@ abstract class BaseSqlTable
 
 	/**
 	 * Проверяет наличие колонки
-	 * 
+	 *
 	 * Аналог isField
-	 * 
+	 *
 	 * @param string $fieldName Название колонки
 	 * @return bool
 	 */
@@ -789,7 +803,7 @@ abstract class BaseSqlTable
 
 	/**
 	 * Возвращает массик имен полей
-	 * 
+	 *
 	 * @return array
 	 */
 	public static function getFieldsNames() {
@@ -801,7 +815,7 @@ abstract class BaseSqlTable
 
 	/**
 	 * Приводит индексы к виду, который указан в списке индексов
-	 * 
+	 *
 	 * @param string $type Тип индексов
 	 * @param array $indexes Список индексов
 	 * @throws Exception
@@ -809,7 +823,7 @@ abstract class BaseSqlTable
 	protected static function makeIndexes($type, $indexes)
 	{
 		global $wpdb;
-		
+
 		// Массив текущих индексов
 		$current_index_arr = array();
 
@@ -839,7 +853,7 @@ abstract class BaseSqlTable
 			if (!is_array($index_colls)) {
 				$index_colls = [$index_colls];
 			}
-			
+
 			// Если имя индекса не указано
 			if (is_numeric($index_name))
 			{
@@ -926,7 +940,7 @@ abstract class BaseSqlTable
 
 	/**
 	 * Возвращает имя таблицы с префиксом
-	 * 
+	 *
 	 * @return string
 	 */
 	public static function getNameWithPrefix()
@@ -938,7 +952,7 @@ abstract class BaseSqlTable
 
 	/**
 	 * Возвращает имя таблицы без префикса
-	 * 
+	 *
 	 * @return string
 	 */
 	public static function getName()
@@ -958,11 +972,11 @@ abstract class BaseSqlTable
 	 *  ],
 	 * ];
 	 * </pre>
-	 * 
+	 *
 	 * @return array array('sql'=>'CREATE TABLE ...', 'format'=>array('field_name'=>'%d')
 	 */
 	protected static function structure() {
-		
+
 	}
 
 
@@ -979,7 +993,7 @@ abstract class BaseSqlTable
 
 	/**
 	 * Добавляет тип поля
-	 * 
+	 *
 	 * @param string $fieldName Имя поля
 	 * @param string $type Класс типа поля
 	 */
@@ -1002,7 +1016,7 @@ abstract class BaseSqlTable
 
 	/**
 	 * Возвращает класс типа поля для поля
-	 * 
+	 *
 	 * @param string $fieldName Имя поля
 	 * @return SqlTypeBase
 	 */
@@ -1027,13 +1041,13 @@ abstract class BaseSqlTable
 	protected static function sqlToValue($fieldName, $fieldValue)
 	{
 		global $sqlFieldsTypes;
-		
+
 		if (isset($sqlFieldsTypes[static::getName()][$fieldName]))
 		{
 			$class = $sqlFieldsTypes[static::getName()][$fieldName];
 			return $class::sqlToValue($fieldValue);
 		}
-		
+
 		return $fieldValue;
 	}
 
@@ -1060,7 +1074,7 @@ abstract class BaseSqlTable
 
 	/**
 	 * Преобразует строку данных из базы для использования в php
-	 * 
+	 *
 	 * @param array $row Строка с данными
 	 * @return array
 	 */
@@ -1070,7 +1084,7 @@ abstract class BaseSqlTable
 		{
 			$row[$fieldName] = static::sqlToValue($fieldName, $fieldValue);
 		}
-		
+
 		// Метка о том, что эти данные из базы
 		// По этой метке потом можно понять, что ни не новые
 		// Это нужно например для того, чтобы при сохранении объектов проверять новые
@@ -1107,7 +1121,7 @@ abstract class BaseSqlTable
 
 	/**
 	 * Преобразует список строк из базы для использования в php
-	 * 
+	 *
 	 * @param array $list Список с данными
 	 * @return array
 	 */
@@ -1162,7 +1176,7 @@ abstract class BaseSqlTable
 				unset($row['_from_db']);
 				$row = array_values($row);
 				$text = '';
-				
+
 				if (isset($row[1])) {
 					$i = 1;
 					while(isset($row[$i]))
@@ -1189,7 +1203,7 @@ abstract class BaseSqlTable
 
 	/**
 	 * Сохраняет формат полей
-	 * 
+	 *
 	 * @param array $format
 	 */
 	protected static function setFieldsFormat($format)
@@ -1201,7 +1215,7 @@ abstract class BaseSqlTable
 
 	/**
 	 * Возвращает формат полей
-	 * 
+	 *
 	 * @return array
 	 */
 	protected static function getFieldsFormat()
@@ -1213,7 +1227,7 @@ abstract class BaseSqlTable
 
 	/**
 	 * Возвращает формат одного поля
-	 * 
+	 *
 	 * @param $key
 	 * @return mixed
 	 */
@@ -1248,7 +1262,7 @@ abstract class BaseSqlTable
 		return $langFields;
 //		return static::$fieldsLang;
 	}
-	
+
 }
 
 
@@ -1257,13 +1271,13 @@ $sqlFieldsFormat = array();
 
 class TableException extends \Wdpro\Exception
 {
-	
+
 }
 
 
 /**
  * Тип поля по-умолчанию
- * 
+ *
  * Class TypeDefault
  * @package Wdpro
  */
@@ -1271,7 +1285,7 @@ class SqlTypeBase
 {
 	/**
 	 * Преобразование значения для сохранения в базе
-	 * 
+	 *
 	 * @param mixed $value
 	 * @return mixed
 	 */
@@ -1283,7 +1297,7 @@ class SqlTypeBase
 
 	/**
 	 * Преобразование значения из базы для использования в php
-	 * 
+	 *
 	 * @param mixed $value
 	 * @return mixed
 	 */
@@ -1308,7 +1322,7 @@ class SqlTypeBase
 
 /**
  * Тип Json
- * 
+ *
  * @package Wdpro
  */
 class SqlTypeJson extends SqlTypeBase
@@ -1324,17 +1338,15 @@ class SqlTypeJson extends SqlTypeBase
 		return wdpro_json_decode($value);
 	}
 
-		
+
 	public static function getType($fieldType)
 	{
 		return 'text';
 	}
-	
-	
+
+
 	public static function getParams($fieldParams)
 	{
 		return '';
 	}
 }
-
-

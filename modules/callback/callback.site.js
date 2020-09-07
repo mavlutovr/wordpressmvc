@@ -1,20 +1,33 @@
 (function ($) {
-	
+
 	wdpro.callback = {
 
 		/**
 		 * Открывает окошко с формой заказа обратного звонка
 		 */
-		openWindow: function () {
-			
-			var dialog = new wdpro.dialogs.Dialog({
+		openWindow: function (params) {
+
+			params = wdpro.extend({
 				title: 'Заказ обратного звонка',
 				content: 'Загрузка...',
 				substrate: true
-			});
+			}, params);
+
+			var dialog = new wdpro.dialogs.Dialog(params);
 			dialog.show();
-			
+
+			wdpro.yandexMetrika('reachGoal', 'callback--open');
+
 			wdpro.callback.getForm(function (form) {
+
+				form.on('startFill', () => {
+					wdpro.yandexMetrikaGoal('callback--start-fill');
+				});
+
+
+				form.on('trySend', () => {
+					wdpro.yandexMetrikaGoal('callback--try-to-send');
+				});
 
 				form.getHtml(function (html) {
 					dialog.setContent(html);
@@ -36,7 +49,7 @@
 								dialog.setTitle(result['title']);
 							}
 
-							wdpro.yandexMetrika('reachGoal', 'callback');
+							wdpro.yandexMetrika('reachGoal', 'callback--send');
 						}
 					);
 				});
@@ -56,9 +69,9 @@
 
 		/**
 		 * Возвращает форму заказа обратного звонка
-		 * 
+		 *
 		 * Можно переопределять, например, в скриптах темы
-		 * 
+		 *
 		 * @param Return {function} Каллбэк, в который отправлять форму
 		 */
 		getForm: function (Return) {
@@ -69,6 +82,7 @@
 			}
 
 			var form = new wdpro.forms.Form();
+
 			form.add({
 				'name': 'name',
 				'center': 'Ваше имя',
@@ -90,7 +104,7 @@
 				'checked': true,
 				'containerClass': 'privacy-check-container'
 			});
-			
+
 			Return(form);
 		},
 
@@ -135,15 +149,15 @@
 			});
 		}
 	};
-	
-	
+
+
 	$(document).ready(function () {
-		
+
 		$('#js-callback-button').click(function () {
-			
+
 			wdpro.callback.openWindow();
 		});
 	});
-	
-	
+
+
 })(jQuery);

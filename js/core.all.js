@@ -5,7 +5,7 @@ var wdpro = {
 	templates: {},
 	data: wdproData,
 	speed: 200, // Скорость эффектов (там, там, где используется)
-	
+
 	// Константы
 	WDPRO_TEMPLATE_URL: '',
 	WDPRO_UPLOAD_IMAGES_URL: '',
@@ -120,7 +120,7 @@ if (typeof Array.isArray === 'undefined') {
 
 	/**
 	 * Как mktime в php
-	 * 
+	 *
 	 * http://javascript.ru/php/mktime
 	 */
 	wdpro.mktime = function mktime() {
@@ -232,7 +232,7 @@ if (typeof Array.isArray === 'undefined') {
 				console.log('counter', method, argsForNewMethod);
 				counter[method](...argsForNewMethod);
 			}
-			else {
+			else if (window.ym) {
 				ym(...argsForOldMethod);
 			}
 		});
@@ -364,7 +364,7 @@ if (typeof Array.isArray === 'undefined') {
 
 	/**
 	 * Удаление из массива по ключу
-	 * 
+	 *
 	 * @param arr {Array} Массив
 	 * @param i {number} Ключ
 	 */
@@ -399,18 +399,18 @@ if (typeof Array.isArray === 'undefined') {
 
 	/**
 	 * Возвращает количество элементов в объекте
-	 * 
+	 *
 	 * @param obj {{}} Объект
 	 * @returns {number}
 	 */
 	wdpro.objectLength = function (obj) {
-		
+
 		var n = 0;
-		
+
 		wdpro.each(obj, function () {
 			n ++;
 		});
-		
+
 		return n;
 	};
 
@@ -432,6 +432,89 @@ if (typeof Array.isArray === 'undefined') {
 	 */
 	wdpro.onContent = function (callback) {
 		wdpro.on('content', callback);
+	};
+
+
+	/**
+	 * Run filter
+	 *
+	 * @param  {string}   filterName
+	 * @param  {*}   data
+	 * @param  {Function} callback
+	 */
+	wdpro.doFilter = (filterName, data, callback) => {
+
+		if (!this._filters || !this._filters[filterName]) {
+			callback(data);
+			return;
+		}
+
+		wdpro.orderList(
+			this._filters[filterName],
+
+			(filter, next) => {
+				filter(data, newData => {
+					data = newData;
+					next();
+				});
+			},
+
+			() => callback(data)
+		);
+	};
+
+
+	/**
+	 * Add filter
+	 *
+	 * @param {string}   filterName
+	 * @param {Function} callback
+	 */
+	wdpro.addFilter = (filterName, callback) => {
+		this._filters = this._filters || {};
+		this._filters[filterName] = this._filters[filterName] || [];
+
+		this._filters[filterName].push(callback);
+	};
+
+
+	/**
+	 * Запускает каллбэк для каждого элемента поочереди, после чего запускает завершающий каллбэк
+	 *
+	 * @param list {{}|[]|Set} Список элементов
+	 * @param callbackEachElement {function} Каллбэк, принимающия элементы
+	 * @param [callbackFinish] {function} Каллбэк, запускающийся в конце
+	 */
+	wdpro.orderList = (list, callbackEachElement, callbackFinish) => {
+		wdpro.waitList (list, callbackEachElement, callbackFinish, true);
+	};
+
+
+	/**
+	 * Запускает каллбэк для каждого элемента поочереди, после чего запускает завершающий каллбэк
+	 *
+	 * @param list {{}|[]|Set} Список элементов
+	 * @param callbackEachElement {function} Каллбэк, принимающия элементы
+	 * @param callbackFinish {function} Каллбэк, запускающийся в конце
+	 * @param [oneByOne] {boolean} Поочереди
+	 */
+	wdpro.waitList = (list, callbackEachElement, callbackFinish, oneByOne) => {
+		let waiter = new Waiter();
+
+		if (list instanceof Set) {
+			list.forEach(element => {
+				waiter.add(next => callbackEachElement(element, next), oneByOne);
+			});
+		}
+
+		else {
+			for (let key in list) {
+				let element = list[key];
+				waiter.add(next => callbackEachElement(element, next), oneByOne);
+			}
+		}
+
+		waiter.run(callbackFinish);
 	};
 
 
@@ -706,6 +789,17 @@ if (typeof Array.isArray === 'undefined') {
 
 			      this.functions.push(ob);
 		      },
+
+
+		/**
+		 * Добавить функцию, выполнение которой надо дождаться
+		 *
+		 * @param fn {function} Функция
+		 * @param [params] Параметры
+		 */
+		add: function (fn, params) {
+			this.wait(fn, params);
+		},
 
 
 		/**
@@ -1940,15 +2034,15 @@ if (typeof Array.isArray === 'undefined') {
 
 	/**
 	 * Перебор элементов
-	 * 
+	 *
 	 * Отличается от $.each тем, что в первом аргументе каллбэк получает jQuery
 	 * объект, а торым индекс i
-	 * 
+	 *
 	 * При этом jQuery объект готов к использованию не только по конструкции
 	 * $(object).doSomething(),
 	 * но и напрямую object.doSomething()
 	 *
-	 * @param callback {function} 
+	 * @param callback {function}
 	 */
 	jQuery.fn.wdpro_each = function (callback)
 	{
@@ -1956,14 +2050,14 @@ if (typeof Array.isArray === 'undefined') {
 		{
 			callback($(this), i);
 		});
-		
+
 		return this;
 	};
 
 
 	/**
 	 * Преобразует строку запроса вида "?a=A&b=B" в объект { a: "A", b: "B" }
-	 * 
+	 *
 	 * @param [queryString] {string} Строка запроса (по-умолчанию querystring в адресе
 	 * браузера)
 	 * @returns {{}}
@@ -1971,7 +2065,7 @@ if (typeof Array.isArray === 'undefined') {
 	wdpro.parseQueryString = function (queryString)
 	{
 		queryString = queryString || window.location.search;
-		
+
 		var result = {}, queryString = queryString.slice(1),
 			re = /([^&=]+)=([^&]*)/g, m;
 
@@ -1981,24 +2075,24 @@ if (typeof Array.isArray === 'undefined') {
 
 		return result;
 	};
-	
-	
+
+
 	/**
 	 * Преобразует строку для вставки в QUERY_STRING
-	 * 
+	 *
 	 * @param string {string} Строка, которую надо преобразовать
 	 * @return {string}
 	 */
 	wdpro.urlencode = function (string) {
-		
+
 		return encodeURI(string);
-		
+
 		return encodeURIComponent(string).
 		// Note that although RFC3986 reserves "!", RFC5987 does not,
 		// so we do not need to escape it
 		replace(/['()]/g, escape). // i.e., %27 %28 %29
 		replace(/\*/g, '%2A').
-		// The following are not required for percent-encoding per RFC5987, 
+		// The following are not required for percent-encoding per RFC5987,
 		// so we can allow for a little better readability over the wire: |`^
 		replace(/%(?:7C|60|5E)/g, unescape);
 	};
@@ -2087,12 +2181,14 @@ if (typeof Array.isArray === 'undefined') {
 
 	/**
 	 * Возвращает адрес для ajax запроса
-	 * 
-	 * @param  {{}} params Данные запроса
-	 * 
+	 *
+	 * @param  {{}|string} params Данные запроса или имя запроса
+	 *
 	 * @return {string}
 	 */
 	wdpro.ajaxUrl = function (params) {
+
+		if (typeof params === 'string') params = { 'action': params };
 
 		var query = wdpro.extend(params, {
 				'action': 'wdpro',
@@ -2108,14 +2204,14 @@ if (typeof Array.isArray === 'undefined') {
 
 	/**
 	 * Выполняет ajax запрос
-	 * 
+	 *
 	 * @param $_GET_OR_ACTION {{}|string} Имя события, по которой модуль поймает этот запрос
 	 * или QUERY_STRING - то, что в php будет доступно в массиве $_GET
 	 * @param [$_POST] {{}} Данные - то, что в php будет доступно в массиве $_POST
 	 * @param [callback] {function} каллбэк, принимающий результат запроса
 	 */
 	wdpro.ajax = function ($_GET_OR_ACTION, $_POST, callback) {
-		
+
 		var self = this;
 		var url;
 
@@ -2147,13 +2243,17 @@ if (typeof Array.isArray === 'undefined') {
 
 			url = this.data['ajaxUrl']+'?'+ $.param($_GET2);
 		}
-			
+
 		if (typeof $_POST === 'function')
 		{
 			callback = $_POST;
 			$_POST = null;
 		}
-		
+
+
+		if (typeof url === 'string') {
+			//url = wdpro.ajaxUrl(url);
+		}
 
 		var params = {
 			'url': url,
@@ -2167,13 +2267,13 @@ if (typeof Array.isArray === 'undefined') {
 					data = $.extend({}, data);
 				}
 
-				
+
 				wdpro.trigger('ajaxData', data);
 
 				if (data['reloadPage']) {
 					wdpro.reloadPage();
 				}
-			
+
 				if (callback)
 				{
 					callback(data);
@@ -2186,11 +2286,11 @@ if (typeof Array.isArray === 'undefined') {
 
 		$.ajax(params);
 	};
-	
-	
+
+
 	// Глобальные события
 	var wdproGlobalEvents = new wdpro.Event();
-	
+
 	/**
 	 * Установка прослушки на событие
 	 *
@@ -2201,6 +2301,32 @@ if (typeof Array.isArray === 'undefined') {
 	wdpro.on = function (eventName, callback, params) {
 		wdproGlobalEvents.on(eventName, callback, params);
 	};
+
+
+	/**
+	 * Return current lang code or empty string when it's core lang
+	 *
+	 * @return {string}
+	 */
+	wdpro.lang = () => wdpro.data['lang'];
+
+
+	/**
+	 * Return current lang code
+	 *
+	 * @return {[type]} [description]
+	 */
+	wdpro.langNotEmpty = () => wdpro.data['langNotEmpty'];
+
+
+	/**
+	 * Return value of current lang from object
+	 *
+	 * @param  {{}} texts {{ en: '...', ru: '...' }}
+	 * @return {string|*}
+	 */
+	wdpro.langTranslate = texts => texts[wdpro.langNotEmpty()];
+
 
 	/**
 	 * Отправка событие во все прослушки этого события
@@ -2216,7 +2342,7 @@ if (typeof Array.isArray === 'undefined') {
 
 	/**
 	 * Возвращает корневой url сайта (главная страница)
-	 * 
+	 *
 	 * @returns {string}
 	 */
 	wdpro.homeUrl = function () {
@@ -2226,7 +2352,7 @@ if (typeof Array.isArray === 'undefined') {
 
 	/**
 	 * Возвращает адрес папки, в которую загружаются рисунки
-	 * 
+	 *
 	 * @returns {string}
 	 */
 	wdpro.imagesUrl = function () {
@@ -2236,11 +2362,11 @@ if (typeof Array.isArray === 'undefined') {
 
 	/**
 	 * Возвращает данные из слоя, в котором содержиться json строка
-	 * 
+	 *
 	 * @returns {{}|[]|null}
 	 */
 	$.fn.wdproGetJsonData = function() {
-		
+
 		var json = $(this).text();
 		return wdpro.parseJSON(json);
 	};
@@ -2248,7 +2374,7 @@ if (typeof Array.isArray === 'undefined') {
 
 	/**
 	 * Проверяет, телефон ли это устройство
-	 * 
+	 *
 	 * @returns {boolean}
 	 */
 	wdpro.isMobile = function () {
@@ -2260,7 +2386,7 @@ if (typeof Array.isArray === 'undefined') {
 
 	/**
 	 * Проверяет, что это либо телефон, либо планшет
-	 * 
+	 *
 	 * @returns {boolean}
 	 */
 	wdpro.isMobileOrTablet = function () {
@@ -2272,7 +2398,7 @@ if (typeof Array.isArray === 'undefined') {
 
 	/**
 	 * Отключение нажатия на что-либо
-	 * 
+	 *
 	 * @returns {jQuery}
 	 */
 	jQuery.fn.wdpro_del_down = function () {
@@ -2371,7 +2497,7 @@ if (typeof Array.isArray === 'undefined') {
 
 	/**
 	 * Преобразует текстовый ключ в объект, чтобы его было проще дальше использовать
-	 * 
+	 *
 	 * @param key {string|{}} Ключ
 	 * @returns {{key: string, object: {}}}
 	 */
@@ -3032,5 +3158,3 @@ if (typeof Array.isArray === 'undefined') {
 	})(jQuery);
 
 })(jQuery);
-
-

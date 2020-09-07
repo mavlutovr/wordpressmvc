@@ -352,6 +352,7 @@ add_action('wp_enqueue_scripts', function () {
 		'homeUrl' => home_url() . '/',
 		'imagesUrl' => WDPRO_UPLOAD_IMAGES_URL,
 		'lang' => \Wdpro\Lang\Data::getCurrentLangUri(),
+		'langNotEmpty'=>\Wdpro\Lang\Data::getCurrentLangUriNotEmpty(),
 		'currentPostId' => !empty($post->ID) ? $post->ID : '',
 		'currentPostName' => !empty($post->post_name) ? $post->post_name : '',
 	));
@@ -488,3 +489,9 @@ add_filter('get_canonical_url', function ($canonical_url, $post) {
 
 	return $canonical_url;
 }, 10, 2);
+
+
+// Remove link rel=’prev’ and link rel=’next’
+if (get_option('wdpro_remove_link_rel_prev_and_next')) {
+	remove_action( 'wp_head', 'adjacent_posts_rel_link_wp_head', 10, 0 );
+}

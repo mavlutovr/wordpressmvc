@@ -107,6 +107,8 @@ class Controller extends \Wdpro\BaseController
 
 				$summary['count_types']++;
 				$summary['count_all'] += $row['count'];
+				
+				$summary['discount'] += $row['discount_for_all'];
 
 				/** @var \Wdpro\Cart\CartElementInterface $good */
 				$good = wdpro_object_by_key($row['key']);
@@ -217,9 +219,20 @@ class Controller extends \Wdpro\BaseController
 		if (is_string($entityObjectOrKey) || is_array($entityObjectOrKey)) {
 			$entityObjectOrKey = wdpro_object_by_key($entityObjectOrKey);
 		}
+		
+		$cost = $entityObjectOrKey->getCostData(null, $data);
 
-		$data['cost_for_one'] = $entityObjectOrKey->getCost(null, $data);
+		$data['cost_for_one'] = $cost['cost'];
 		$data['cost_for_all'] = $data['cost_for_one'] * $data['count'];
+		
+		
+		$data['discount_for_one'] = 0;
+		$data['discount_for_all'] = 0;
+		if (!empty($cost['discount'])) {
+			$data['discount_for_one'] = $cost['discount'];
+			$data['discount_for_all'] = $data['discount_for_one'] * $data['count'];
+		}
+		
 
 		$data = apply_filters('wdpro_cart_elment_update', $data);
 

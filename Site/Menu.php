@@ -52,7 +52,7 @@ class Menu extends Roll
 			if (!isset($params['template'])) {
 				$params['template'] = static::getTemplatePhpFile();
 			}
-			
+
 			$template = $params['template'];
 			$templateDefault = null;
 			if (is_array($template)) {
@@ -73,11 +73,12 @@ class Menu extends Roll
 	 * Возвращает данные меню по параметрам
 	 *
 	 * @param null|array $params
+	 * @param null|array $fields Поля, которые необходимо выбрать из таблицы (это для совместимости с \Wdpro\Site\Roll)
 	 * @return array
 	 * @throws Exception
 	 * @throws \Wdpro\EntityException
 	 */
-	public static function getData($params=null)
+	public static function getData($params=null, $fields=null)
 	{
 		if (is_string($params)) $params = array('type'=>$params);
 
@@ -123,11 +124,11 @@ class Menu extends Roll
 		{
 			$params['type'] = $params['sqlTable']::getName();
 		}
-		
+
 		if (!isset($params['type']) || !$params['type'])
 		{
 			print_r($params);
-			throw new Exception('Для получения меню не был указан тип. Необходимо 
+			throw new Exception('Для получения меню не был указан тип. Необходимо
 			указать тип меню, таблицу или сущность страниц меню');
 		}
 
@@ -238,10 +239,12 @@ class Menu extends Roll
 
 					$row['url'] = $alternativeUrl;
 				}
-				
+
 				else
 				{
-					$row['url'] = wdpro_url_from_post_name($row['post_name'], $row['id']);
+					$post = wdpro_get_post_by_id($row['id']);
+					$row['url'] = $post->getUrl();
+//					$row['url'] = wdpro_url_from_post_name($row['post_name'], $row['id']);
 				}
 				$row['text'] = $row['post_title'];
 
@@ -357,7 +360,7 @@ class Menu extends Roll
 				}
 
 
-				
+
 				$data[] = $row;
 			}
 
@@ -391,22 +394,22 @@ class Menu extends Roll
 
 	/**
 	 * Тип постов
-	 * 
+	 *
 	 * @return string
 	 */
 	public static function getType() {
-		
+
 	}
 
 
 	/**
 	 * Возвращает класс сущности страниц меню
-	 * 
+	 *
 	 * @return \Wdpro\BasePage
 	 */
 	public static function getEntityClass()
 	{
-		
+
 	}
 
 
@@ -421,9 +424,9 @@ class Menu extends Roll
 
 
 	/**
-	 * Обработка параметров запроса 
+	 * Обработка параметров запроса
 	 * (можно переопределить, для указания особых параметров)
-	 * 
+	 *
 	 * @param array $params Параметры
 	 * @return array
 	 */

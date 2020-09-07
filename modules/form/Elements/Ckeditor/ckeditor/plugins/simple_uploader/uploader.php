@@ -1,18 +1,18 @@
 <?php
 session_start();
-	
+
 	error_reporting(0);
 	ini_set('display_errors', 'off');
-	
+
 	// Доступные типы файлов
 	$allowedFiles = array(
 		// Рисунки
-		'jpg', 'jpeg', 'png', 'gif', 'bmp', 
-		
+		'jpg', 'jpeg', 'png', 'gif', 'bmp',
+
 		// Другие файлы
-		'doc', 'docx', 'name', 'zip', 'rar', 'swf', 'xls', 'xlsx', 'txt',
+		'doc', 'docx', 'name', 'zip', 'rar', 'swf', 'xls', 'xlsx', 'txt', 'pdf'
 	);
-	
+
 ?><!DOCTYPE html>
 <html>
 <head>
@@ -86,14 +86,14 @@ if (preg_match('~^localhost(:[0-9]+)?$~', $_SERVER['HTTP_HOST']) || $_SESSION['a
 
 	/**
 	 * Возвращает расширение файла
-	 * 
+	 *
 	 * @param string $name Имя файла
 	 * @return string
 	 */
 	function getFileType($name)
 	{
 		$arr = explode(".", $name);
-		
+
 		if (count($arr) > 1)
 		{
 			return end($arr);
@@ -103,35 +103,35 @@ if (preg_match('~^localhost(:[0-9]+)?$~', $_SERVER['HTTP_HOST']) || $_SESSION['a
 
 	/**
 	 * Возвращает Имя файла без расширения
-	 * 
+	 *
 	 * @param string $name Имя файла
 	 * @return string
 	 */
 	function getFileName($name)
 	{
 		$info = pathinfo($name);
-		
+
 		return $info['filename'];
 	}
 
 
 	//print_r($_FILES);
-	
+
 	// Переходим в public_html
 	chdir(__DIR__.'/../../../../../../../../../uploads');
-	
+
 	// Папка, в которую грузить файл
 	$dir = 'ckeditor';
-	
+
 	// При необходимости создаем эту папку
 	if (!is_dir($dir))
 	{
 		mkdir($dir, 0777, true);
 	}
-	
+
 	// Переходим в эту папку
 	chdir($dir);
-	
+
 	// Получаем данные загружаемого файла
 	$fileData = $_FILES['uploaderInput'];
 
@@ -147,7 +147,7 @@ if (preg_match('~^localhost(:[0-9]+)?$~', $_SERVER['HTTP_HOST']) || $_SESSION['a
 			UPLOAD_ERR_NO_TMP_DIR    => "Отсутствует временная папка.",
 			UPLOAD_ERR_CANT_WRITE    => "Не удалось записать файл на диск.",
 			UPLOAD_ERR_EXTENSION     => "PHP-расширение остановило загрузку файла. PHP не предоставляет способа определить какое расширение остановило загрузку файла; в этом может помочь просмотр списка загруженных расширений из phpinfo().",
-			UPLOAD_ERR_EMPTY        => "File is empty." // add this to avoid an offset 
+			UPLOAD_ERR_EMPTY        => "File is empty." // add this to avoid an offset
 		);
 
 		echo('<div style="color: red">Ошибка: '.$upload_errors[$file['error']].'</div>');
@@ -156,29 +156,29 @@ if (preg_match('~^localhost(:[0-9]+)?$~', $_SERVER['HTTP_HOST']) || $_SESSION['a
 
 	// Получаем имя файла
 	$fileFullName = $fileData['name'];
-	
+
 	// Преобразуем русские буквы файла в английские
 	$fileFullName = ruEn($fileFullName);
-	
+
 	// Получаем расширение файла
 	$fileType = strtolower(getFileType($fileFullName));
-	
+
 	// Если такое расширение разрешено
 	if (in_array($fileType, $allowedFiles))
 	{
 		// Имя файла без расширения
 		$fileName = getFileName($fileFullName);
-		
+
 		// Номер файла (для переименования при одинаковых именах)
 		$fileN = 1;
-		
+
 		// Переименование файла, если такой файл уже есть в папке
 		while(is_file($fileFullName))
 		{
 			$fileN ++;
 			$fileFullName = $fileName.'_'.$fileN.'.'.$fileType;
 		}
-		
+
 		// Копируем загруженный файл в эту папку
 		if (move_uploaded_file($fileData['tmp_name'], $fileFullName))
 		{
@@ -188,7 +188,7 @@ if (preg_match('~^localhost(:[0-9]+)?$~', $_SERVER['HTTP_HOST']) || $_SESSION['a
 				'type'=>$_GET['type'],
 				'editorId'=>$_GET['editorId'],
 			);
-			
+
 			// Если это рисунок, добавляем размеры изображения
 			if ($_GET['type'] == 'image')
 			{
@@ -196,7 +196,7 @@ if (preg_match('~^localhost(:[0-9]+)?$~', $_SERVER['HTTP_HOST']) || $_SESSION['a
 				$editorEvent['width'] = $size[0];
 				$editorEvent['height'] = $size[1];
 			}
-			
+
 			echo('
 			<script>
 				window.parent.uploaded('.json_encode($editorEvent, JSON_UNESCAPED_UNICODE).');
@@ -204,22 +204,22 @@ if (preg_match('~^localhost(:[0-9]+)?$~', $_SERVER['HTTP_HOST']) || $_SESSION['a
 			<div>Файл загружен</div>
 			');
 		}
-		
+
 		else
 		{
 			echo('Не удалось заргузить файл');
 		}
 	}
-	
+
 	else
 	{
 		echo('Файл не подходит для загрузки');
 	}
-	
-	
-	
+
+
+
 	// window.parent.CKEDITOR.tools.callFunction(0, '/userfiles/images/Public Folder/i.png', '');
-	
+
 }
 ?>
 </body>

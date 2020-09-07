@@ -23,6 +23,6 @@ add_action('wdpro-ready', function ()
 	Wdpro\Modules::addWdpro('dev');
 	// Иконки Awesome
 	Wdpro\Modules::addWdpro('extra/fontAwesome5');
+	// Yandex.Metrika
+	Wdpro\Modules::addWdpro('tools/metrika');
 });
-
-

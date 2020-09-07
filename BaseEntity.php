@@ -6,13 +6,13 @@ $consoleRollClasses = array();
 
 /**
  * Базовый класс сущностей
- * 
+ *
  * @package Wdpro
  */
 abstract class BaseEntity
 {
 	use Tools;
-	
+
 	/** @var \Wdpro\Form\Form */
 	protected $_consoleForm;
 	protected $_loaded = false;
@@ -26,7 +26,7 @@ abstract class BaseEntity
 
 	/**
 	 * Данные сущности
-	 * 
+	 *
 	 * @var array
 	 */
 	public $data;
@@ -67,14 +67,14 @@ abstract class BaseEntity
 
 	/**
 	 * Инициализация сущности
-	 * 
+	 *
 	 * Чтобы ее таблица инициировалась и обновилась струкрута и подготовилась к работе
 	 */
 	public static function init() {
-		
+
 		/** @var \Wdpro\BaseSqlTable $table */
 		if ($table = static::getSqlTableClass()) {
-			
+
 			$table::init();
 		}
 	}
@@ -106,7 +106,7 @@ abstract class BaseEntity
 
 	/**
 	 * Загрузка данных из базы
-	 * 
+	 *
 	 * @param int|null $id ID сущности
 	 * @return bool true, если данные загрузились
 	 * @throws EntityException
@@ -135,7 +135,7 @@ abstract class BaseEntity
 
 	/**
 	 * True, если данная сущность уже находится в базе (не новая)
-	 * 
+	 *
 	 * @return bool
 	 */
 	public function existsInDb()
@@ -167,7 +167,7 @@ abstract class BaseEntity
 	public function mergeData($data)
 	{
 		$this->data = wdpro_extend_level1($this->data, $data);
-		
+
 		return $this;
 	}
 
@@ -277,6 +277,15 @@ abstract class BaseEntity
 	public function getDataForTemplate() {
 		$data = $this->getData();
 
+		$langSuffix = \Wdpro\Lang\Data::getCurrentSuffix();
+		if ($langSuffix) {
+			foreach ($data as $key => $value) {
+				if (isset($data[$key.$langSuffix])) {
+					$data[$key] = $data[$key.$langSuffix];
+				}
+			}
+		}
+
 		$data = $this->prepareDataForTemplate($data);
 
 		return $data;
@@ -313,7 +322,7 @@ abstract class BaseEntity
 
 	/**
 	 * Сохранение
-	 * 
+	 *
 	 * @returns bool|array (false или сохраненные данные)
 	 * @throws EntityException
 	 */
@@ -323,7 +332,7 @@ abstract class BaseEntity
 		if (!$data) {
 			$data = [];
 		}
-		
+
 		if (is_array($data))
 		{
 			$created = false;
@@ -339,12 +348,12 @@ abstract class BaseEntity
 			// Чтобы во время этой обработки уже были известны результаты обработки перед созданием
 			$data = $this->prepareDataForSave($data);
 			$this->_created = $created;
-			
+
 			// Если данные это true или false, значит сохранение было прервано
 			if (is_bool($data)) {
 				return $data;
 			}
-			
+
 			$this->data = $data;
 
 			// Чтобы не было ошибки из-за лишнего поля
@@ -354,21 +363,21 @@ abstract class BaseEntity
 			}*/
 
 			// Данные загружены из таблицы
-			if ($this->_loadedFromTable 
+			if ($this->_loadedFromTable
 				|| ($this->id() && static::sqlTable()->count(
 					array('WHERE id=%d', $this->id())
 				) > 0)
 			)
 			{
 				static::sqlTable()->update(
-					$data, 
+					$data,
 					array(static::idField()=>$this->id()),
 					null,
 					array('%d')
 				);
 			}
-			
-			
+
+
 			// Данные не были загружены из таблицы
 			else
 			{
@@ -385,7 +394,7 @@ abstract class BaseEntity
 				{
 					$data[static::idField()] =  $this->id();
 				}
-				
+
 				$this->_id = static::sqlTable()->insert($data);
 				$this->data[static::idField()] = $this->_id;
 
@@ -394,13 +403,13 @@ abstract class BaseEntity
 					wdpro_object_add_to_cache($this);
 				}
 			}
-			
+
 			$this->onChange();
 			$this->trigger('change', $this->getData());
 
 			return $this->data;
 		}
-		
+
 		else
 		{
 			throw new EntityException(
@@ -412,12 +421,12 @@ abstract class BaseEntity
 
 	/**
 	 * Возвращает название поля ID
-	 * 
+	 *
 	 * @return string
 	 * @throws EntityException
 	 */
 	public function idField() {
-		
+
 		return static::sqlTable()->isField('ID') ? 'ID' : 'id';
 	}
 
@@ -450,17 +459,17 @@ abstract class BaseEntity
 	 * Срабатывает после сохранения
 	 */
 	protected function onChange() {
-		
+
 	}
 
 
 	/**
 	 * Проверяет, был ли этот объект только что создан при сохранении или нет
-	 * 
+	 *
 	 * @return bool
 	 */
 	protected function created() {
-		
+
 		return $this->_created;
 	}
 
@@ -469,7 +478,7 @@ abstract class BaseEntity
 	 * Срабатывает после удаления
 	 */
 	protected function onRemove() {
-		
+
 	}
 
 
@@ -481,7 +490,7 @@ abstract class BaseEntity
 	 *
 	 * Этот метод обрабатывает данные как бы перед нормальным созданием. Когда уже
 	 * заполнили форму. И это обработка данных первого сохранение формы.
-	 * 
+	 *
 	 * @param array $data Исходные данные
 	 *
 	 * @return array
@@ -542,13 +551,13 @@ abstract class BaseEntity
 		{
 			$run('menu_order');
 		}
-		
+
 		return $this;
 	}
 
 	/**
 	 * Аналог $this->sqlTable();
-	 * 
+	 *
 	 * @return BaseSqlTable
 	 * @throws EntityException
 	 */
@@ -568,9 +577,9 @@ abstract class BaseEntity
 		/*global $sqlTableClasses;
 		if (!$sqlTableClasses[get_called_class()])
 		{
-			$sqlTableClasses[get_called_class()] = 
+			$sqlTableClasses[get_called_class()] =
 		}*/
-		
+
 		/** @var \Wdpro\BaseSqlTable $table */
 		if($table = static::getSqlTableClass())
 		{
@@ -582,7 +591,7 @@ abstract class BaseEntity
 	/**
 	 * Возвращает форму
 	 *
-	 * @param array $params Параметры 
+	 * @param array $params Параметры
 	 * @return Form\Form
 	 */
 	public function getConsoleForm($params=null)
@@ -596,7 +605,7 @@ abstract class BaseEntity
 					'entity'=>$this,
 					'params'=>$params,
 				));
-				
+
 				if ($this->loaded())
 				{
 					$this->_consoleForm->setData(
@@ -619,7 +628,7 @@ abstract class BaseEntity
 
 	/**
 	 * Возвращает имя класса формы админки сущности
-	 * 
+	 *
 	 * @return string
 	 */
 	public static function getConsoleFormClass()
@@ -633,7 +642,7 @@ abstract class BaseEntity
 
 	/**
 	 * True, если сущность загружена из базы
-	 * 
+	 *
 	 * @return bool
 	 */
 	public function loaded()
@@ -643,11 +652,11 @@ abstract class BaseEntity
 
 
 	/**
-	 * Возвращает тот ID, который был указан при создании объекта или при загрузке 
+	 * Возвращает тот ID, который был указан при создании объекта или при загрузке
 	 * данных с помощью метода loadData($id)
-	 * 
+	 *
 	 * ID возвращается независимо от того, были ли загружены данные
-	 * 
+	 *
 	 * @return int
 	 */
 	public function id()
@@ -657,7 +666,7 @@ abstract class BaseEntity
 		}
 		return $this->_id;
 	}
-	
+
 
 	/**
 	 * Возвращает тип поста
@@ -688,17 +697,17 @@ abstract class BaseEntity
 			{
 				// wp-admin/edit.php?post_type=app_course_lesson&sectionId=141
 				// wp-admin/Fajli&sectionId=143
-				
+
 				if (is_string($childParams))
 					$childParams = ['roll'=>$childParams];
-				
-				
+
+
 				// Это список дочерних объектов
 				/** @var \Wdpro\Console\PagesRoll $roll */
 				$roll = wdpro_object($childParams['roll']);
-				
+
 				$rollParams = $roll::params();
-				
+
 				// Если здесь убрать "admin.php?page=", то не будет работать ссылка на
 				// дочерние объекты, когда дочерние объекты обычные списки типа Roll
 				// Как здесь если нажать на Файлы http://localhost/club.tridodo.ru/secure_wp/wp-admin/edit.php?post_type=app_course_lesson&sectionId=141
@@ -727,7 +736,7 @@ abstract class BaseEntity
 					|| strstr($childParams['icon'], 'far')
 					|| strstr($childParams['icon'], 'fal')
 					|| strstr($childParams['icon'], 'fab')) {
-						
+
 						$iconClasses = 'fa5 '.$childParams['icon'];
 					}
 
@@ -747,7 +756,7 @@ abstract class BaseEntity
 				if (!isset($childParams['label'])) {
 					$childParams['label'] = $rollParams['labels']['label'];
 				}
-				
+
 				//$count = $roll->getChildsCount($this->id(), $type);
 				$count = $this->getChildsCount($roll);
 				$countPrint = '';
@@ -756,9 +765,9 @@ abstract class BaseEntity
 					$countPrint = '<span class="js-children-count wdpro-rounded-count">'
 						.$count.'</span>';
 				}
-				
-				$actions['wdpro_'.$type] = 
-					'<a href="'.$link.'" 
+
+				$actions['wdpro_'.$type] =
+					'<a href="'.$link.'"
 					class="js-children-button"
 					data-icon="'.$iconClasses.'"
 					data-label="'.$childParams['label'].'">'
@@ -766,7 +775,7 @@ abstract class BaseEntity
 					.'</a>';
 			}
 		}
-		
+
 		return $actions;
 	}
 
@@ -782,7 +791,7 @@ abstract class BaseEntity
 		// Количество подразделов
 		$subsectionsCount = $this->getSubsectionsCount();
 		if ($subsectionsCount) {
-			$subsectionsCount = '<span 
+			$subsectionsCount = '<span
 										class="js-subsections-count">
 										<span class="js-children-count wdpro-rounded-count">'.$subsectionsCount.'</span></span>';
 		}
@@ -795,7 +804,7 @@ abstract class BaseEntity
 			'<a href="edit.php?post_type=' .
 			static::getType()
 			. '&sectionId=' .
-			$this->id() . '" class="js-subsections"><span 
+			$this->id() . '" class="js-subsections"><span
 									class="fa fa-folder"></span> Подразделы'.$subsectionsCount.'</a>';
 
 		return $actions;
@@ -812,7 +821,7 @@ abstract class BaseEntity
 	{
 		if (is_object($childsRollOrType))
 		return $childsRollOrType->getCountForSection($this);
-		
+
 		// Пока что это сделано только для страниц
 		return 0;
 	}
@@ -820,7 +829,7 @@ abstract class BaseEntity
 
 	/**
 	 * Список дочерних объектов
-	 * 
+	 *
 	 * <pre>
 	 * return array(
 	 *  array(
@@ -842,7 +851,7 @@ abstract class BaseEntity
 	 *  \App\Good\ConsoleRoll::class,
 	 * ];
 	 * </pre>
-	 * 
+	 *
 	 * @return array
 	 */
 	protected static function childs()
@@ -853,7 +862,7 @@ abstract class BaseEntity
 
 	/**
 	 * Установка класса списка
-	 * 
+	 *
 	 * @param \Wdpro\BaseRoll $class
 	 */
 	public static function setConsoleRollClass($class)
@@ -866,7 +875,7 @@ abstract class BaseEntity
 
 	/**
 	 * Возвращает класс списка
-	 * 
+	 *
 	 * @return \Wdpro\BaseRoll
 	 */
 	public static function getConsoleRollClass()
@@ -879,7 +888,7 @@ abstract class BaseEntity
 
 	/**
 	 * Возвращает список этой сущности для админки
-	 * 
+	 *
 	 * @return \Wdpro\Console\PagesRoll|void
 	 * @throws \Exception
 	 */
@@ -896,7 +905,7 @@ abstract class BaseEntity
 
 	/**
 	 * Установка типа списка дочерних элементов
-	 * 
+	 *
 	 * @param string $type
 	 */
 	public function setChildsType($type)
@@ -916,10 +925,10 @@ abstract class BaseEntity
 		{
 			if ($row = \Wdpro\Page\SqlTable::getRow(
 				array(
-					'WHERE post_type=%s 
-					AND post_status!="auto-draft" AND post_status!="trash" 
+					'WHERE post_type=%s
+					AND post_status!="auto-draft" AND post_status!="trash"
 					AND post_parent=%d
-					ORDER BY menu_order DESC LIMIT 1', 
+					ORDER BY menu_order DESC LIMIT 1',
 					$this->getType(),
 					get_post_field('post_parent', $this->id())
 				),
@@ -946,7 +955,7 @@ abstract class BaseEntity
 
 	/**
 	 * Возвращает данные для шаблона админки
-	 * 
+	 *
 	 * @return array
 	 */
 	public function getConsoleTemplateData()
@@ -988,12 +997,12 @@ abstract class BaseEntity
 
 
 			$table->delete(array(static::idField()=>$id), array('%d'));
-			
+
 			$this->_removed = true;
-			
+
 			$this->onChange();
 			$this->trigger('change', $this->getData());
-			
+
 			$this->onRemove();
 			$this->trigger('remove', $this->id());
 
@@ -1018,16 +1027,16 @@ abstract class BaseEntity
 
 	/**
 	 * True, когда объект удален из базы данных
-	 * 
-	 * Например, это можно использовать в методе onChange, который срабатывает после 
+	 *
+	 * Например, это можно использовать в методе onChange, который срабатывает после
 	 * какого-либо изменения.
-	 * Тогда в этом методе можно проверить, удален этот объект или просто изменен, 
+	 * Тогда в этом методе можно проверить, удален этот объект или просто изменен,
 	 * и выполнить в зависимости от этого соответствующий код.
-	 * 
+	 *
 	 * @return bool
 	 */
 	public function removed() {
-		
+
 		return $this->_removed;
 	}
 
@@ -1063,5 +1072,5 @@ abstract class BaseEntity
 
 class EntityException extends \Exception
 {
-	
+
 }
