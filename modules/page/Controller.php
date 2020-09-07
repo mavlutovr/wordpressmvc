@@ -71,10 +71,10 @@ class Controller extends \Wdpro\BaseController {
 				},
 				1, 3
 			);
-			
+
 			// Удаление лишних кнопок меню
 			add_action('admin_menu', function ($a) {
-				
+
 				remove_menu_page('edit.php?post_type=page');
 			});
 		}
@@ -91,7 +91,7 @@ class Controller extends \Wdpro\BaseController {
 					&& isset($query->query_vars['page_id'])
 					&& 0 != $query->query_vars['page_id'])
 					$query->query_vars['post_type'] = array( 'page', Other\Entity::getType() );
-				
+
 				// Only noop the main query
 				if ( ! $query->is_main_query() )
 					return;
@@ -111,20 +111,20 @@ class Controller extends \Wdpro\BaseController {
 				}
 			}
 		);
-		
-		
+
+
 		// 404 ошибка
 		add_action('template_redirect', function () {
 
 			global $wp_query, $post;
-			
+
 			if ($wp_query->is_404) {
 
 				if ( isset($wp_query->query['name'])
 				     && has_action('wdpro_pages_default:' . $wp_query->query['name']) ) {
 					do_action('wdpro_pages_default:' . $wp_query->query['name']);
 				}
-				
+
 				else {
 					do_action('wdpro_pages_default:error404');
 					/** @var \WP_Query $wp_query */
@@ -149,10 +149,10 @@ class Controller extends \Wdpro\BaseController {
 		\Wdpro\Page\Controller::defaultPage('error404', function () {
 			return require __DIR__.'/default/page_404.php';
 		});
-		
-		
+
+
 		/*add_filter('pre_post_link', function ($link) {
-			
+
 			echo("link: ".$link);
 			exit();
 		});*/
@@ -163,16 +163,16 @@ class Controller extends \Wdpro\BaseController {
 	 * Дополнительная инициализация для сайта
 	 */
 	public static function initSite() {
-		
+
 		// Подменю по-умолчанию
 		wdpro_default_file(__DIR__.'/../install/default/app_theme/submenu_standart.php',
 			WDPRO_TEMPLATE_PATH.'submenu_standart.php');
 
 		// Подменю
 		add_shortcode('submenu', function () {
-			
+
 			$post = get_post();
-			
+
 			return \Wdpro\Site\Menu::getHtml(array(
 				'post_parent'=>$post->ID,
 				'type'=>$post->post_type,
@@ -180,16 +180,16 @@ class Controller extends \Wdpro\BaseController {
 				'entity'=>wdpro_get_entity_class_by_post_type($post->post_type),
 			));
 		});
-		
+
 
 		// Текст из другой страницы
 		add_shortcode('page_text', function ($params) {
-			
+
 			if (isset($params['id']) && $params['id']) {
-				
+
 				/** @var \WP_Post $post */
 				$post = get_post($params['id']);
-				
+
 				return do_shortcode($post->post_content);
 			}
 		});
@@ -265,8 +265,8 @@ class Controller extends \Wdpro\BaseController {
 				}
 			}
 		});
-		
-		
+
+
 		// Карточка страницы
 		wdpro_on_content(function ($content, $page) {
 
@@ -299,10 +299,10 @@ class Controller extends \Wdpro\BaseController {
 
 		wdpro_js_data('postId', (int)get_the_ID());
 
-		
+
 		//remove_filter('template_redirect', 'redirect_canonical');
-		
-		
+
+
 	}
 
 
@@ -333,7 +333,7 @@ class Controller extends \Wdpro\BaseController {
 				)),
 			));
 			$form->add('submitSave');
-			
+
 			return $form;
 		});
 
@@ -347,13 +347,13 @@ class Controller extends \Wdpro\BaseController {
 
 		// Удаление сущностей при удалении постов
 		add_action('admin_init', function () {
-			
+
 			// Изменение статуса
 			add_action('transition_post_status', function ($newStatus, $oldStatus, $post) {
-				
+
 				// Получаем сущность
 				if ($page = wdpro_get_post_by_id($post->ID)) {
-					
+
 					// Обновляем статус сущности
 					$page->mergeData(array(
 						'post_status'=>$newStatus,
@@ -361,7 +361,7 @@ class Controller extends \Wdpro\BaseController {
 				}
 
 			}, 10, 3);
-			
+
 			// Вообще удаление
 			add_action( 'deleted_post', function ($postId) {
 
@@ -370,7 +370,7 @@ class Controller extends \Wdpro\BaseController {
 				if ($page) {
 					$page->remove();
 				}
-				
+
 			}, 10 );
 		});
 
@@ -405,7 +405,7 @@ class Controller extends \Wdpro\BaseController {
 				global $pagenow;
 
 
-				// Блок 
+				// Блок
 				$showStructureMenu = function ($type, $selected=0) use (&$entity)
 				{
 					add_action(
@@ -421,7 +421,7 @@ class Controller extends \Wdpro\BaseController {
 									// Для этого используем хлебные крошки
 									/** @var \Wdpro\Breadcrumbs\ConsoleBreadcrumbs $breadcrumbs */
 									$breadcrumbs = null;
-									
+
 									do_action('wdpro_console_breadcrumbs',
 										function ($br) use (&$breadcrumbs)
 										{
@@ -434,7 +434,7 @@ class Controller extends \Wdpro\BaseController {
 										$rootSelectId = $breadcrumbs->getParentIdOfPostType
 										($type);
 									}
-									
+
 									//$meta = get_post_meta( $post->ID, '_parent_id', true );
 									//$selected = ( isset( $meta ) ) ? $meta : '';
 
@@ -469,7 +469,9 @@ class Controller extends \Wdpro\BaseController {
 
 									// Шаблон
 									// Сделал, чтобы отображался во всех типах страниц
-									if ( /*'page' == $post->post_type && */0 != count( get_page_templates( ) ) && get_option( 'page_for_posts' ) != $post->ID ) {
+									if ( /*'page' == $post->post_type && */
+										0 != count( get_page_templates(  ) )
+										&& get_option( 'page_for_posts' ) != $post->ID ) {
 										$metaPageTemplate = get_post_meta($post->ID, 'page_template');
 										if (is_array($metaPageTemplate)) {
 											if (!count($metaPageTemplate)) $metaPageTemplate = null;
@@ -478,7 +480,7 @@ class Controller extends \Wdpro\BaseController {
 										}
 										$template = $metaPageTemplate;
 
-										if ($template):
+										if (true):
 										?>
 										<p><strong><?php _e('Template') ?></strong></p>
 										<label class="screen-reader-text" for="page_template"><?php _e('Page Template') ?></label><select name="page_template" id="page_template">
@@ -507,20 +509,20 @@ class Controller extends \Wdpro\BaseController {
 									<p><strong><?php _e('Order') ?></strong></p>
 									<p><label class="screen-reader-text" for="menu_order"><?php _e('Order') ?></label><input name="wdpro_menu_order" type="text" size="4" id="menu_order" value="<?php echo esc_attr($post->menu_order) ?>" /></p>
 									<?php
-									
-									
+
+
 									// Отображать в меню
 									$sqlTable = $entity::sqlTable();
 									if ($sqlTable::isField('in_menu')) {
 										?>
-										<p><label class="screen-reader-text" 
+										<p><label class="screen-reader-text"
 										          for="wdpro_in_menu">Показывать в меню</label>
-											<input type="hidden" name="wdpro_in_menu" 
+											<input type="hidden" name="wdpro_in_menu"
 											       value="0" />
-											<input name="wdpro_in_menu" type="checkbox" 
-											       id="wdpro_in_menu" 
+											<input name="wdpro_in_menu" type="checkbox"
+											       id="wdpro_in_menu"
 											       <?php if (!isset($entity->data['in_menu'])
-											       || $entity->data['in_menu']): 
+											       || $entity->data['in_menu']):
 											       ?>checked="checked" <?php endif; ?>
 											       value="1"
 											/>
@@ -637,7 +639,7 @@ class Controller extends \Wdpro\BaseController {
 								}
 							}
 						}
-						
+
 						else {
 							$showStructureMenu(
 								$_GET['post_type']
@@ -836,11 +838,11 @@ class Controller extends \Wdpro\BaseController {
 
 		// Шаблон текущей страницы
 		wdpro_get_current_page(function ($page) {
-			
+
 			/** @var \Wdpro\BasePage $page */
-			
+
 			if (isset($page->data['template']) && $page->data['template']) {
-				
+
 				\Wdpro\Templates::setCurrentTemplate(
 					WDPRO_TEMPLATE_PATH.$page->data['template']
 				);
@@ -853,26 +855,26 @@ class Controller extends \Wdpro\BaseController {
 
 	/**
 	 * Установка страницы по-умолчанию
-	 * 
+	 *
 	 * @param string $uri Адрес страницы
 	 * @param callback $pageDataCallback Каллбэк, который возвращает данные страницы
 	 */
 	public static function defaultPage($uri, $pageDataCallback) {
-		
-		add_action('wdpro_pages_default:'.$uri, function () 
+
+		add_action('wdpro_pages_default:'.$uri, function ()
 		use (&$pageDataCallback, &$uri) {
 
 			if (!isset($_GET['postAdded'])) {
-				
+
 				if ($data = $pageDataCallback()) {
-					
+
 					$data = wdpro_extend([
 						'post_type'=>'page',
 						'post_status'=>'publish',
 						'post_author'=>1,
 						'post_name'=>$uri,
 					], $data);
-					
+
 					$currentPage = wdpro_get_post_by_name($data['post_name']);
 					if (!$currentPage) {
 						// Добавляем страницу
@@ -884,10 +886,10 @@ class Controller extends \Wdpro\BaseController {
 						wdpro_location(wdpro_current_uri(['postAdded'=>1]));
 					}
 				}
-				
+
 				else {
-					
-					throw new Exception("Каллбэк создания страницы ".$uri." не 
+
+					throw new Exception("Каллбэк создания страницы ".$uri." не
 					возвратил данных");
 				}
 			}
@@ -897,7 +899,7 @@ class Controller extends \Wdpro\BaseController {
 
 	/**
 	 * Возвращает обхект страницы по ее URI
-	 * 
+	 *
 	 * @param string $postName URI страницы
 	 * @return \Wdpro\BasePage
 	 */
@@ -907,7 +909,7 @@ class Controller extends \Wdpro\BaseController {
 			['WHERE `post_name`=%s ', [$postName]],
 			'id'
 		)) {
-			
+
 			return wdpro_get_post_by_id($pageData['id']);
 		}
 
