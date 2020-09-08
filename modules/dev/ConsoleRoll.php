@@ -124,7 +124,7 @@ class ConsoleRoll extends \Wdpro\Console\Roll {
 		]);
 		$form->add([
 			'left'  => 'ConsoleRoll',
-			'right' => 'Форма список элементов в админке',
+			'right' => 'Список элементов в админке',
 			'name'  => 'ConsoleRoll',
 			'type'  => $form::CHECK,
 			'autoWidth'=>false,
