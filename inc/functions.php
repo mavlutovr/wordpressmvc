@@ -3874,3 +3874,35 @@ function wdpro_add_to_htaccess($code, $params=null) {
 
 	file_put_contents(ABSPATH.'.htaccess', $htaccess);
 }
+
+
+
+/**
+ * Send a post request to url
+ *
+ * https://stackoverflow.com/questions/5647461/how-do-i-send-a-post-request-with-php
+ *
+ * @param  string $url
+ * @param  array|null $data
+ * @return string Response
+ */
+function wdpro_post_request($url, $data) {
+	$query_content = http_build_query($data);
+  $fp = fopen($url, 'r', FALSE, // do not use_include_path
+    stream_context_create([
+    'http' => [
+      'header'  => [ // header array does not need '\r\n'
+        'Content-type: application/x-www-form-urlencoded',
+        'Content-Length: ' . strlen($query_content)
+      ],
+      'method'  => 'POST',
+      'content' => $query_content
+    ]
+  ]));
+  if ($fp === FALSE) {
+    return json_encode(['error' => 'Failed to get contents...']);
+  }
+  $result = stream_get_contents($fp); // no maxlength/offset
+  fclose($fp);
+  return $result;
+}
