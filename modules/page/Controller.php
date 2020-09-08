@@ -848,6 +848,10 @@ class Controller extends \Wdpro\BaseController {
 		});
 
 
+		// Initialization of Pagination
+		\Wdpro\Tools\Pagination::runSite();
+
+
 	}
 
 
