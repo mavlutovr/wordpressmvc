@@ -2628,7 +2628,7 @@ function wdpro_default_page($uri, $pageDataCallbackOrFile) {
 
 
 /**
- * Заменяет в тексте метки типа {name} на значение
+ * Заменяет в тексте метки типа [name] на значение
  *
  * @param string $text Текст с метками
  * @param array $data Список значений и меток [['name'=>'Рома'],...]
