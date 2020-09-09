@@ -148,7 +148,7 @@ function wdpro_the_header()
 	}
 
 
-	$h1 = wdpro_the_h1(true);
+	$h1 = wdpro_the_h1(true, false);
 	$template = function ($string, $key) use (&$h1) {
 		if (!$string) {
 			$string = wdpro_get_option($key.'[lang]');
@@ -159,11 +159,16 @@ function wdpro_the_header()
 	};
 
 	$title = $template($title, 'wdpro_title_template');
+	$description = apply_filters('wdpro_description', $description);
 	$description = $template($description, 'wdpro_description_template');
+
+	// Применяем фильтры для description
+	$description = apply_filters('wdpro_description_2', $description);
 	$keywords = $template($keywords, 'wdpro_keywords_template');
 	if (!$title) {
 		$title = wdpro_the_title_standart();
 	}
+	$title = apply_filters('wdpro_title_2', $title);
 
 
 ?><title><?php echo($title); ?></title>
@@ -274,9 +279,10 @@ function wdpro_css_footer() {
  * Возвращает заголовок страницы
  *
  * @param bool $force Возвратить заголовок, даже когда он выключен через "-"
+ * @param bool $applyFilters2 Применить фильтр 2 группы
  * @return bool|null|string
  */
-function wdpro_the_h1($force=false)
+function wdpro_the_h1($force=false, $applyFilters2=true)
 {
 	$h1 = wdpro_data('h1');
 
@@ -289,6 +295,9 @@ function wdpro_the_h1($force=false)
 		if (!$h1)
 		{
 			$h1 = wdpro_the_title_standart();
+		}
+		if ($applyFilters2) {
+			$h1 = apply_filters('wdpro_h1_2', $h1);
 		}
 
 		return $h1;

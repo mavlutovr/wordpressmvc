@@ -81,7 +81,7 @@ add_action(
 									});
 
 
-								echo('<p>Заготовка плагина-приложения создана. <a 
+								echo('<p>Заготовка плагина-приложения создана. <a
 class="button-primary"
 href="'.WDPRO_CONSOLE_URL.'plugins.php">Активировать плагин</a>
 </p>
@@ -96,7 +96,7 @@ href="'.WDPRO_CONSOLE_URL.'plugins.php">Активировать плагин</a
 							if ($_GET['create_theme_app']) {
 								wdpro_copy(__DIR__.'/modules/install/default/app_theme',
 									__DIR__.'/../../themes/app');
-								echo('<p>Заготовка темы создана. <a 
+								echo('<p>Заготовка темы создана. <a
 class="button-primary"
 href="'.WDPRO_CONSOLE_URL.'themes.php">Активировать тему</a>
 </p>');
@@ -121,7 +121,7 @@ href="'.WDPRO_CONSOLE_URL.'themes.php">Активировать тему</a>
 							'type'=>'submit',
 							'text'=>'Сохранить',
 						));
-						
+
 						echo($form->getHtml());*/
 
 						wdproOptionsForm(array(
@@ -231,6 +231,47 @@ href="'.WDPRO_CONSOLE_URL.'themes.php">Активировать тему</a>
 
 								array(
 									'type'=>'html',
+									'html'=>'<h2>Шаблоны пагинации</h2>',
+								),
+
+								array(
+									'top'=>'Title',
+									'name'=>'pagination_meta_title[lang]',
+									'bottom'=>'[title] - page [page]',
+								),
+
+								array(
+									'right'=>'Игнорировать шаблон, когда Title пустой',
+									'name'=>'pagination_meta_title_skip_empty',
+									'type'=>'check',
+								),
+
+								array(
+									'top'=>'Description',
+									'name'=>'pagination_meta_description[lang]',
+									'bottom'=>'[description] - page [page]',
+								),
+
+								array(
+									'right'=>'Игнорировать шаблон, когда Description пустой',
+									'name'=>'pagination_meta_description_skip_empty',
+									'type'=>'check',
+								),
+
+								array(
+									'top'=>'H1',
+									'name'=>'pagination_meta_h1[lang]',
+									'bottom'=>'[h1] - page [page]',
+								),
+
+								array(
+									'right'=>'Игнорировать шаблон, когда H1 пустой',
+									'name'=>'pagination_meta_h1_skip_empty',
+									'type'=>'check',
+								),
+
+								array(
+									'type'=>'html',
 									'html'=>'<h3>Скрипты</h3>',
 								),
 
@@ -314,9 +355,9 @@ href="'.WDPRO_CONSOLE_URL.'themes.php">Активировать тему</a>
 								/*array(
 									'name'=>'wdpro_uncatenate_scripts',
 									'right'=>'Выключить объединение скриптов',
-									'bottom'=>'(Иногда 
-									когда они объединяются, то у сервера не хватает 
-									ресурсов, чтобы доделать это объединение и админка 
+									'bottom'=>'(Иногда
+									когда они объединяются, то у сервера не хватает
+									ресурсов, чтобы доделать это объединение и админка
 									выглядит не доделанной)',
 									'type'=>'checkbox',
 								),*/
@@ -332,7 +373,7 @@ href="'.WDPRO_CONSOLE_URL.'themes.php">Активировать тему</a>
 								),
 								array(
 									'name'=>'wdpro_send_errors_to_admins_emails',
-									'right'=>'Отправлять сообщения об ошибках в 
+									'right'=>'Отправлять сообщения об ошибках в
 									скриптах на почту',
 									'type'=>'check',
 								),
@@ -388,7 +429,7 @@ href="'.WDPRO_CONSOLE_URL.'themes.php">Активировать тему</a>
 									'autoWidth'=>false,
 									'width'=>150,
 								),
-								
+
 								array(
 									'type' => 'submit',
 									'text' => 'Сохранить',
@@ -399,7 +440,7 @@ href="'.WDPRO_CONSOLE_URL.'themes.php">Активировать тему</a>
 					}
 				);
 			}
-		
-		);	
+
+		);
 	}
 );

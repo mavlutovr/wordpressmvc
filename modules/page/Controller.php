@@ -182,6 +182,7 @@ class Controller extends \Wdpro\BaseController {
 		});
 
 
+
 		// Text from another page
 		if (false)
 		add_shortcode('page_text', function ($params) {
@@ -469,7 +470,9 @@ class Controller extends \Wdpro\BaseController {
 
 									// Шаблон
 									// Сделал, чтобы отображался во всех типах страниц
-									if ( /*'page' == $post->post_type && */0 != count( get_page_templates( ) ) && get_option( 'page_for_posts' ) != $post->ID ) {
+									if ( /*'page' == $post->post_type && */
+										0 != count( get_page_templates(  ) )
+										&& get_option( 'page_for_posts' ) != $post->ID ) {
 										$metaPageTemplate = get_post_meta($post->ID, 'page_template');
 										if (is_array($metaPageTemplate)) {
 											if (!count($metaPageTemplate)) $metaPageTemplate = null;
@@ -478,7 +481,7 @@ class Controller extends \Wdpro\BaseController {
 										}
 										$template = $metaPageTemplate;
 
-										if ($template):
+										if (true):
 										?>
 										<p><strong><?php _e('Template') ?></strong></p>
 										<label class="screen-reader-text" for="page_template"><?php _e('Page Template') ?></label><select name="page_template" id="page_template">
@@ -846,6 +849,10 @@ class Controller extends \Wdpro\BaseController {
 				);
 			}
 		});
+
+
+		// Initialization of Pagination
+		\Wdpro\Tools\Pagination::runSite();
 
 
 	}
