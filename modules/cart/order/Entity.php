@@ -190,7 +190,7 @@ class Entity extends \Wdpro\BaseEntity {
 			$label = $element->getLabel();
 			$name = $element->getName();
 
-			if ($label && $name !== 'privacy') {
+			if ($label && $name && $name !== 'privacy') {
 				$template[$name] = [
 					'label'=>$label,
 					'value'=>$formData[$name],
@@ -294,7 +294,7 @@ class Entity extends \Wdpro\BaseEntity {
 
 		return '<div class="js-order-status order-status">
 			<div class="js-order-status-current order-status-current" style="'.$color.'">'.$status['text'].'</div>
-			
+
 			<div class="js-order-status-list order-status-list g-hid">'.$list.'</div>
 		</div>';
 	}
