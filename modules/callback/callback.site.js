@@ -76,10 +76,10 @@
 		 */
 		getForm: function (Return) {
 
-			if (this.form) {
-				Return(this.form);
-				return true;
-			}
+			// if (this.form) {
+			// 	Return(this.form);
+			// 	return true;
+			// }
 
 			var form = new wdpro.forms.Form();
 
