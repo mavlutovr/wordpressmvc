@@ -724,7 +724,7 @@ function wdpro_is_current_post_name($postName) {
 
 	if ($post = get_post()) {
 
-		return $postName == $post->post_name;
+		return $postName === $post->post_name;
 	}
 
 	return false;
