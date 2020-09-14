@@ -139,7 +139,7 @@ class Controller extends \Wdpro\BaseController {
 			/** @var \Wdpro\Form\Form $form */
 			$form = new static::$backFormClass();
 
-			$form->setData($data);
+			$form->setData($_POST);
 
 			if ($form->valid()) {
 				$form->sendToAdmins('Форма обратной связи');
