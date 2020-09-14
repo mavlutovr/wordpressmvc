@@ -716,6 +716,18 @@
 
 
 		/**
+		 * Add custom validator
+		 *
+		 * @param {Function} callback => (formData, returnCallback({ error: string })
+		 */
+		addValidator(callback) {
+
+			this._validators = this._validators || [];
+			this._validators.push(callback);
+		},
+
+
+		/**
 		 * Проверка заполненности формы на корректность
 		 *
 		 * @returns {boolean}
@@ -751,6 +763,25 @@
 					});
 				}
 			);
+
+			if (this._validators) {
+				let data = this.getData();
+				for (let validator of this._validators) {
+
+					waiter.add(next => {
+						validator(data, result => {
+
+							if (result.error) {
+								sendParams.submit = false;
+								sendParams.errorsExists = true;
+								sendParams.errorsList.push(result.error);
+							}
+
+							next();
+						}, this);
+					});
+				}
+			}
 
 			// При завершении проверок всех полей
 			waiter.run(function ()
