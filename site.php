@@ -14,8 +14,11 @@ require __DIR__ . '/inc/shortcodes.php';
 do_action('wdpro-ready');
 Wdpro\Modules::run('initSiteStart');
 Wdpro\Modules::run('run');
-Wdpro\Modules::run('runSiteStart');
-do_action('app-ready');
+add_action('wp', function () {
+	Wdpro\Modules::run('runSiteStart');
+	do_action('app-ready');
+});
+
 
 /**
  * Удаление лишнего адреса у страниц
