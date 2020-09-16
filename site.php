@@ -15,6 +15,7 @@ do_action('wdpro-ready');
 Wdpro\Modules::run('initSiteStart');
 Wdpro\Modules::run('run');
 add_action('wp', function () {
+	wdpro_data('wp_inited', true);
 	Wdpro\Modules::run('runSiteStart');
 	do_action('app-ready');
 });

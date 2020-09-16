@@ -795,10 +795,17 @@ function wdpro_location($location, $code=301)
  */
 function wdpro_get_post($callback) {
 
-	add_action('wp', function () use (&$callback) {
-
+	if (wdpro_data('wp_inited')) {
 		$callback(get_post());
-	});
+	}
+
+	else {
+		add_action('wp', function () use (&$callback) {
+
+			$callback(get_post());
+		});
+	}
+
 }
 
 
