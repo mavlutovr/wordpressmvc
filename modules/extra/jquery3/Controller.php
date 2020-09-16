@@ -11,8 +11,8 @@ class Controller extends \Wdpro\BaseController {
 	public static function init() {
 
 
-		add_action( 'wp_enqueue_scripts', [static::class, 'replace_core_jquery_version'] );
-		add_action( 'admin_enqueue_scripts', [static::class, 'replace_core_jquery_version'] );
+		add_action( 'wp_enqueue_scripts', [static::class, 'replace_core_jquery_version'], 10 );
+		add_action( 'admin_enqueue_scripts', [static::class, 'replace_core_jquery_version'], 10 );
 	}
 }
 

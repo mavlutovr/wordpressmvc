@@ -112,11 +112,11 @@ else if (is_file(WDPRO_TEMPLATE_PATH . 'index.js')) {
 
 if (is_file(WDPRO_TEMPLATE_PATH . 'script.js')) {
 
-	wdpro_add_script_to_site(WDPRO_TEMPLATE_PATH . 'script.js');
+	wdpro_add_script_to_site(WDPRO_TEMPLATE_PATH . 'script.js', null, true, 100000);
 }
 if (is_file(WDPRO_TEMPLATE_PATH . '/js/script.js')) {
 
-	wdpro_add_script_to_site(WDPRO_TEMPLATE_PATH . '/js/script.js');
+	wdpro_add_script_to_site(WDPRO_TEMPLATE_PATH . '/js/script.js', null, true, 100000);
 }
 
 // app/site.js

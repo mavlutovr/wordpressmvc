@@ -175,7 +175,7 @@ function wdpro_add_script_to_console_external($absolutePath)
  *                                  Наверное, работает так, я точно не разбирался.
  * @param bool $inFooter Добавить скрипт в футер
  */
-function wdpro_add_script_to_site($absolutePath, $handle=null, $inFooter=false)
+function wdpro_add_script_to_site($absolutePath, $handle=null, $inFooter=false, $order=20)
 {
 	add_action( 'wp_enqueue_scripts', function () use ($absolutePath, $handle, &$inFooter)
 	{
@@ -187,7 +187,7 @@ function wdpro_add_script_to_site($absolutePath, $handle=null, $inFooter=false)
 			$version = 'v'.filemtime($absolutePath);
 			wp_enqueue_script( $handle, $file, [], $version, $inFooter );
 		}
-	});
+	}, $order);
 }
 
 
