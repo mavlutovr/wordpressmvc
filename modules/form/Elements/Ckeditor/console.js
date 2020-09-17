@@ -9,7 +9,7 @@ CKEDITOR.editorConfig = function( config ) {
 };
 
 (function ($) {
-	
+
 	wdpro.ckeditor = {
 
 		/**
@@ -25,7 +25,7 @@ CKEDITOR.editorConfig = function( config ) {
 
 		/**
 		 * Добавляет стиль в редактор
-		 * 
+		 *
 		 * @param style {{ name: string, element: string, attributes: {}|null }}
 		 */
 		addStyle: function (style) {
@@ -40,7 +40,7 @@ CKEDITOR.editorConfig = function( config ) {
 
 		/**
 		 * Добавляем плагин
-		 * 
+		 *
 		 * @param pluginName {string} Имя плагина (имя папки)
 		 * @param [configName] {string} Редактор "standart" или "small"
 		 */
@@ -54,13 +54,13 @@ CKEDITOR.editorConfig = function( config ) {
 
 		contentsCss: CKEDITOR.getUrl('../../../../../../../plugins/app/ckeditor.less.css')
 	};
-	
-	
+
+
 	CKEDITOR.wdproConfigs = {
 
 		// Стандартный редактор
 		'standart': {
-			
+
 			// Отключить отключалку орфографии
 			'disableNativeSpellChecker': false,
 
@@ -68,7 +68,7 @@ CKEDITOR.editorConfig = function( config ) {
 			'stylesSet': wdpro.ckeditor.styles,
 
 			// Доп Плагины
-			'extraPlugins': 'image,sourcedialog,simple_uploader,tabletools,tableresize,youtube,wpmore,resize',
+			'extraPlugins': 'image,sourcedialog,simple_uploader,tabletools,tableresize,youtube,wpmore,resize,dropdownmenumanager',
 
 			// Панель
 			'toolbar': [
@@ -90,7 +90,7 @@ CKEDITOR.editorConfig = function( config ) {
 				[ 'NumberedList', 'BulletedList' ],
 				[ 'Sourcedialog' ]
 			],
-			
+
 			width: '100%',
 			resize_maxWidth: 800,
 			resize_enabled: true,
@@ -115,13 +115,14 @@ CKEDITOR.editorConfig = function( config ) {
 			'stylesSet': wdpro.ckeditor.styles,
 
 			// Доп Плагины
-			'extraPlugins': 'image,sourcedialog,simple_uploader,tabletools,tableresize,youtube,resize',
+			'extraPlugins': 'image,sourcedialog,simple_uploader,tabletools,tableresize,youtube,resize,dropdownmenumanager',
 
 			// Панель
 			'toolbar': [
 				[ 'Format',
 					'Bold',
-					'Italic'
+					'Italic',
+					'Styles'
 				],
 				[ 'simple_uploader_photo', 'Image'], ['Link', 'Unlink' ],
 				[ 'NumberedList', 'BulletedList' ],
@@ -136,7 +137,7 @@ CKEDITOR.editorConfig = function( config ) {
 			resize_maxWidth: 800,
 			resize_enabled: true,
 			resize_dir: 'both',
-			
+
 			height: '100px',
 
 			removePlugins : 'elementspath',
@@ -149,10 +150,10 @@ CKEDITOR.editorConfig = function( config ) {
 			entities: false
 		}
 	};
-	
+
 	if (window.ckeditorConfigEditor) {
 
 		CKEDITOR.wdproConfigs = window.ckeditorConfigEditor(CKEDITOR.wdproConfigs);
 	}
-	
+
 })(jQuery);
