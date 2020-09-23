@@ -85,6 +85,24 @@ function wdpro_path_remove_root($path)
 
 
 /**
+ * Convert absolute path to url
+ * 
+ * https://wordpress.stackexchange.com/questions/216913/how-to-convert-the-file-path-to-a-url-of-the-same-file
+ *
+ * @param string $path
+ * @return string
+ */
+function wdpro_abs_path_to_url( $path = '' ) {
+    $url = str_replace(
+        wp_normalize_path( untrailingslashit( ABSPATH ) ),
+        site_url(),
+        wp_normalize_path( $path )
+    );
+    return esc_url_raw( $url );
+}
+
+
+/**
  * Исправляет слеши на соответствующие текущей ОС
  *
  * Чтобы в виндовс нормально работали пути
@@ -2720,6 +2738,28 @@ function wdpro_home_uri_with_lang($slashAtEnd=true) {
  */
 function wdpro_home_url_with_lang($slashAtEnd=true) {
 	return \Wdpro\Lang\Data::currentUrl($slashAtEnd);
+}
+
+
+/**
+ * Преобразует url адрес в path относительно корня сайта
+ *
+ * @param string $url
+ * @return string|void
+ */
+function wdpro_url_to_path_from_wp_root($url) {
+	$path = str_replace(home_url(), '', $url);
+
+	if ($path !== $url) {
+		return $path;
+	}
+}
+
+
+function wdpro_url_to_abs_path($url) {
+	if ($path = wdpro_url_to_path_from_wp_root($url)) {
+		return preg_replace('~/$~', '', ABSPATH).$path;
+	}
 }
 
 
