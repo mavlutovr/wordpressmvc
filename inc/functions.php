@@ -2289,7 +2289,7 @@ function wdpro_get_month($time) {
 function wdpro_date($time, $params=null)
 {
 	$params = wdpro_extend(array(
-		'year'=>false,
+		'year'=>true,
 		'today'=>true,
 		'time'=>false,
 		'dateFormat'=>'d Month Y',
@@ -2307,7 +2307,7 @@ function wdpro_date($time, $params=null)
 			$date = $params['todayText'];
 		}
 		else if (date('Y.m.d') == date('Y.m.d', $time + WDPRO_DAY))
-		{
+		{	
 			$date = $params['yesterdayText'];
 		}
 		else if (date('Y.m.d') == date('Y.m.d', $time - WDPRO_DAY))
@@ -2318,6 +2318,15 @@ function wdpro_date($time, $params=null)
 
 	if (!$date)
 	{
+		if ($params['year'] === 'different') {
+			if (date('Y', $time) === date('Y')) {
+				$params['dateFormat'] = preg_replace(
+					'~(\bY)\b~',
+					'',
+					$params['dateFormat']
+				);
+			}
+		}
 		$date = wdpro_rdate($params['dateFormat'], $time);
 	}
 
