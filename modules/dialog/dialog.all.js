@@ -67,12 +67,17 @@
 					margin: 0,
 					marginTop: 0,
 					closeSymbol: wdpro.dialogs.closeSymbol,
-					animate: wdpro.dialogs.animate
+					animate: wdpro.dialogs.animate,
+					cssClass: null,
 				}, params);
 				this.params = params;
 
 				// Получаем html код окна из шаблона
 				this.html = $(dialog_templates.window(params)).hide();
+
+				if (params.cssClass) {
+					this.html.addClass(params.cssClass);
+				}
 
 				// Контейнер контента, чтобы потом менять содержимое
 				this.Content = $(this.html).find('.js-dialog-content');
@@ -207,13 +212,15 @@
 						testWidth.remove();
 
 
-						var maxWindowWidth = windowWidth - self.params.margin * 2;
-						var maxWidth = Math.min(self.params.maxWidth, maxWindowWidth);
+						if (typeof self.params.maxWidth === 'number') {
 
-						dialogWidth = Math.min(dialogWidth, maxWidth);
+							var maxWindowWidth = windowWidth - self.params.margin * 2;
+							var maxWidth = Math.min(self.params.maxWidth, maxWindowWidth);
+							dialogWidth = Math.min(dialogWidth, maxWidth);
 
-						dialogWindow
-							.css('max-width', maxWidth+'px');
+							dialogWindow
+								.css('max-width', maxWidth + 'px');
+						}
 
 						var x = Math.round(
 							Math.round(windowWidth / 2)
