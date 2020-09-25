@@ -4,7 +4,7 @@ namespace Wdpro;
 
 /**
  * Шаблоны
- * 
+ *
  * @example http://docs.seobit.ru/dopolniteljnie-shabloni-stranic
  */
 class Templates
@@ -28,7 +28,7 @@ class Templates
 		{
 			//print_r($atts);
 			//exit();
-			
+
 			// Create the key used for the themes cache
 			$cache_key = 'page_templates-' . md5( get_theme_root() . '/' . get_stylesheet() );
 			// Retrieve the cache list.
@@ -55,13 +55,13 @@ class Templates
 
 		/**
 		 * Добавление формы на страницу
-		 * 
+		 *
 		 * @param $post
 		 */
 		$wdproAddTemplateForm = function ($post) {
-			
+
 			$formsHtml = '';
-			
+
 			foreach(static::$templates as $n=>$templateParams)
 			{
 				/** @var WdproForm $form */
@@ -71,12 +71,12 @@ class Templates
 					$form->mergeParams(array(
 						'removeFormTag'=>true,
 					));
-					
+
 					// Загрузка ранее сохраненных данных
 					if ($post)
 					{
 						$data = array();
-						$form->eachElementsParams(function ($elementParams) use 
+						$form->eachElementsParams(function ($elementParams) use
 						(&$data, $post)
 						{
 
@@ -114,7 +114,7 @@ class Templates
 			}
 
 			$post = get_post($postId);
-			
+
 			// Получаем данные формы из выбранного шаблона
 			if ($templateParams = static::getTemplateParamsByPost($post))
 			{
@@ -138,7 +138,7 @@ class Templates
 					);
 				}
 			}
-			
+
 
 			return $postId;
 
@@ -146,7 +146,7 @@ class Templates
 
 		// Добавление шаблонов в выпадающее меню консоли Атрибуты страницы - Шаблон
 		add_filter('page_attributes_dropdown_pages_args', $templatesAddToWordpress);
-		
+
 		// Добавление шаблонов в сохранялку страниц
 		add_filter('wp_insert_post_data', $templatesAddToWordpress);
 
@@ -154,7 +154,7 @@ class Templates
 		add_filter('template_include', function ($template) {
 
 			global $post;
-			
+
 			if ($post) {
 
 				// Когда шаблон прикреплен к точному адресу
@@ -180,14 +180,14 @@ class Templates
 					return WDPRO_TEMPLATE_PATH.$page_template;
 				}
 			}
-			
+
 			return $template;
 		});
-		
+
 		// Дополнительные формы
 		add_action('admin_init', function () use (&$wdproAddTemplateForm) {
 
-			
+
 			/*add_meta_box('form_fields',
 				'Параметры шаблона',
 				$wdproAddTemplateForm,
@@ -208,7 +208,7 @@ class Templates
 
 	/**
 	 * Возвращает параметры выбранного в посте шаблона
-	 * 
+	 *
 	 * @param \WP_Post $post Пост/страница
 	 * @return null|array
 	 */
@@ -243,33 +243,33 @@ class Templates
 		]);
 	}
 
-	
+
 	/**
 	 * Добавить шаблон
-	 * 
+	 *
 	 * <pre>
 	 * \Wdpro\Templates::add(array(
 	 *  'file'=>WDPRO_TEMPLATE_PATH.'download.php',
 	 *  'uri'=>'download',
 	 * ));</pre>
-	 * 
+	 *
 	 * @param array $params Параметры
 	 */
 	public static function add($params) {
-		
+
 		$params['_i'] = static::$templateI;
 		static::$templateI ++;
-		
+
 		$tempForm = null;
 
 		/**
 		 * Возвращает формы шаблона
-		 * 
+		 *
 		 * @return null|\Wdpro\Form\Form
 		 */
 		$params['getForm'] = function () use (&$tempForm, &$params)
 		{
-			if ($tempForm) 
+			if ($tempForm)
 			{
 				return $tempForm;
 			}
@@ -284,18 +284,18 @@ class Templates
 				}
 			}
 		};
-		
+
 		static::$templates[static::$templateI] = $params;
-		
+
 		if (isset($params['uri']) && $params['uri'])
 		{
 			if (!is_array($params['uri'])) $params['uri'] = [$params['uri']];
-			
+
 			foreach($params['uri'] as $uri) {
 				static::$templatesByUri[$uri] = $params;
 			}
 		}
-		
+
 		if ($params['file'])
 		{
 			$fileName = basename($params['file']);
@@ -307,13 +307,13 @@ class Templates
 
 	/**
 	 * Возвращает массив шаблонов для вставки в меню консоли Атрибуты страницы - Шаблон
-	 * 
+	 *
 	 * @return array
 	 */
 	public static function getArrayForConsoleMenu() {
-		
+
 		$arr = array();
-		
+
 		foreach(static::$templates as $i=>$templateParams)
 		{
 			if (isset($templateParams['name'])) {
@@ -324,31 +324,31 @@ class Templates
 				$arr[$key] = $templateParams['name'];
 			}
 		}
-		
+
 		return $arr;
 	}
 
 
 	/**
 	 * Возвращает список шаблонов в теме, которые можно выбрать для страницы
-	 * 
+	 *
 	 * @return array
 	 */
 	public static function getThemeTemplatesList() {
 
 		include_once ABSPATH . 'wp-admin/includes/theme.php';
 		if ($templates = get_page_templates()) {
-			
+
 			return array_flip($templates);
 		}
-		
+
 		return [];
 	}
 
 
 	/**
 	 * Установка своего шаблона страницы
-	 * 
+	 *
 	 * @param string $templateFile Файл шаблона
 	 */
 	public static function setCurrentTemplate($templateFile) {
@@ -366,4 +366,3 @@ class Templates
 add_action('plugins_loaded', function () {
 	Templates::init();
 });
-

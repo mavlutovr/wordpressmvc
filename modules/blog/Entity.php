@@ -33,8 +33,21 @@ class Entity extends \Wdpro\BasePage {
 		if (is_file($templateFile)) {
 			\Wdpro\Templates::setCurrentTemplate($templateFile);
 		}
+		
+		$this->data = \apply_filters('wdpro_blog_card_data', $this->data);
 
 		parent::initCard();
+	}
+
+
+	public function getData($key = NULL) {
+
+		if ($key) return parent::getData($key);
+
+		$data = parent::getData();
+		$data = \apply_filters('wdpro_blog_card_data', $data);
+
+		return $data;
 	}
 
 

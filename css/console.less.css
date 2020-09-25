@@ -596,3 +596,8 @@ h1:not(.wp-heading-inline) {
   width: 150px;
   max-width: 100%;
 }
+#poststuff .wdpro-form h2 {
+  font-weight: bold;
+  font-size: 24px;
+  margin-bottom: 20px;
+}

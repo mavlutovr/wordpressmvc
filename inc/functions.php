@@ -85,6 +85,24 @@ function wdpro_path_remove_root($path)
 
 
 /**
+ * Convert absolute path to url
+ * 
+ * https://wordpress.stackexchange.com/questions/216913/how-to-convert-the-file-path-to-a-url-of-the-same-file
+ *
+ * @param string $path
+ * @return string
+ */
+function wdpro_abs_path_to_url( $path = '' ) {
+    $url = str_replace(
+        wp_normalize_path( untrailingslashit( ABSPATH ) ),
+        site_url(),
+        wp_normalize_path( $path )
+    );
+    return esc_url_raw( $url );
+}
+
+
+/**
  * Исправляет слеши на соответствующие текущей ОС
  *
  * Чтобы в виндовс нормально работали пути
@@ -175,7 +193,7 @@ function wdpro_add_script_to_console_external($absolutePath)
  *                                  Наверное, работает так, я точно не разбирался.
  * @param bool $inFooter Добавить скрипт в футер
  */
-function wdpro_add_script_to_site($absolutePath, $handle=null, $inFooter=false)
+function wdpro_add_script_to_site($absolutePath, $handle=null, $inFooter=false, $order=20)
 {
 	add_action( 'wp_enqueue_scripts', function () use ($absolutePath, $handle, &$inFooter)
 	{
@@ -187,7 +205,7 @@ function wdpro_add_script_to_site($absolutePath, $handle=null, $inFooter=false)
 			$version = 'v'.filemtime($absolutePath);
 			wp_enqueue_script( $handle, $file, [], $version, $inFooter );
 		}
-	});
+	}, $order);
 }
 
 
@@ -795,10 +813,17 @@ function wdpro_location($location, $code=301)
  */
 function wdpro_get_post($callback) {
 
-	add_action('wp', function () use (&$callback) {
-
+	if (wdpro_data('wp_inited')) {
 		$callback(get_post());
-	});
+	}
+
+	else {
+		add_action('wp', function () use (&$callback) {
+
+			$callback(get_post());
+		});
+	}
+
 }
 
 
@@ -2282,7 +2307,7 @@ function wdpro_get_month($time) {
 function wdpro_date($time, $params=null)
 {
 	$params = wdpro_extend(array(
-		'year'=>false,
+		'year'=>true,
 		'today'=>true,
 		'time'=>false,
 		'dateFormat'=>'d Month Y',
@@ -2300,7 +2325,7 @@ function wdpro_date($time, $params=null)
 			$date = $params['todayText'];
 		}
 		else if (date('Y.m.d') == date('Y.m.d', $time + WDPRO_DAY))
-		{
+		{	
 			$date = $params['yesterdayText'];
 		}
 		else if (date('Y.m.d') == date('Y.m.d', $time - WDPRO_DAY))
@@ -2311,6 +2336,15 @@ function wdpro_date($time, $params=null)
 
 	if (!$date)
 	{
+		if ($params['year'] === 'different') {
+			if (date('Y', $time) === date('Y')) {
+				$params['dateFormat'] = preg_replace(
+					'~(\bY)\b~',
+					'',
+					$params['dateFormat']
+				);
+			}
+		}
 		$date = wdpro_rdate($params['dateFormat'], $time);
 	}
 
@@ -2713,6 +2747,28 @@ function wdpro_home_uri_with_lang($slashAtEnd=true) {
  */
 function wdpro_home_url_with_lang($slashAtEnd=true) {
 	return \Wdpro\Lang\Data::currentUrl($slashAtEnd);
+}
+
+
+/**
+ * Преобразует url адрес в path относительно корня сайта
+ *
+ * @param string $url
+ * @return string|void
+ */
+function wdpro_url_to_path_from_wp_root($url) {
+	$path = str_replace(home_url(), '', $url);
+
+	if ($path !== $url) {
+		return $path;
+	}
+}
+
+
+function wdpro_url_to_abs_path($url) {
+	if ($path = wdpro_url_to_path_from_wp_root($url)) {
+		return preg_replace('~/$~', '', ABSPATH).$path;
+	}
 }
 
 

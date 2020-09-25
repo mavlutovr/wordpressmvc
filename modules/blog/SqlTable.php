@@ -13,7 +13,7 @@ class SqlTable extends \Wdpro\BaseSqlTable {
 	 */
 	protected static function structure() {
 
-		return array(
+		$structure = array(
 			static::COLLS => array(
 				'id',
 				'in_menu'=>'tinyint',
@@ -39,6 +39,10 @@ class SqlTable extends \Wdpro\BaseSqlTable {
 			
 			static::ENGINE => static::INNODB,
 		);
+
+		$structure = \apply_filters('blog_console_sqltable_structure', $structure);
+
+		return $structure;
 	}
 
 
