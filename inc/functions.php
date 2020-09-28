@@ -1090,7 +1090,7 @@ function wdpro_human_filesize($bytes, $decimals = 2, $comma='.') {
  */
 function wdpro_json_encode($data)
 {
-	return json_encode($data, JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
+	return json_encode($data, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
 }
 
 
@@ -3710,6 +3710,22 @@ function wdpro_js_data ($key, $value) {
 
 	if (is_array($value)) {
 		$value = wdpro_json_encode($value);
+	}
+
+	$wdproJsData[$key] = $value;
+}
+
+/**
+ * Добавление данных в объект js: wdpro
+ *
+ * @param string $key Ключ
+ * @param mixed $value Значение
+ */
+function wdpro_javascript_data ($key, $value) {
+	global $wdproJsData;
+
+	if (is_array($value)) {
+		// $value = wdpro_json_encode($value);
 	}
 
 	$wdproJsData[$key] = $value;
