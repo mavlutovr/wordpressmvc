@@ -13,4 +13,12 @@ jQuery(document).ready(function () {
 		span.remove();
 	})
 
+
+	const updateScrollBarsWidth = () => {
+		document.documentElement.style.setProperty('--scrollbar-width', (window.innerWidth - document.documentElement.clientWidth) + "px");
+	};
+
+	updateScrollBarsWidth();
+	$(window).on('resize', updateScrollBarsWidth);
+
 });
