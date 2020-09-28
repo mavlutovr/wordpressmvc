@@ -2872,6 +2872,28 @@ function wdpro_on_uri_content($uri, $callback) {
 
 
 /**
+ * Run callback after wp init
+ *
+ * @param callback $callback 
+ * @return void
+ */
+function wdpro_on_wp($callback) {
+	global $wdpro_on_wp_inited;
+
+	if ($wdpro_on_wp_inited) {
+		return $callback();
+	}
+
+	add_action('wp', function () use (&$callback) {
+		global $wdpro_on_wp_inited;
+		$wdpro_on_wp_inited = true;
+
+		$callback();
+	});
+}
+
+
+/**
  * Запускает каллбэк при открытии страницы по заданному адресу, и добавляет в текст то,
  * что возвратил каллбэк
  *
@@ -2880,25 +2902,23 @@ function wdpro_on_uri_content($uri, $callback) {
  * @param int $priority Приоритет
  */
 function wdpro_on_content_uri($uri, $callback, $priority=10) {
-	add_action(
-		'wp',
-		function () use (&$uri, &$callback, &$priority) {
 
-			$post = get_post();
+	wdpro_on_wp(function () use (&$uri, &$callback, &$priority) {
 
-			if (!is_array($uri)) $uri = [$uri];
+		$post = get_post();
 
-			if ($post) {
-				foreach($uri as $uriOne) {
-					if (($uriOne == $post->post_name)
-						|| ($uriOne === '' && $post->ID == get_option('page_on_front'))) {
-						wdpro_on_content($callback, $priority);
-						break;
-					}
+		if (!is_array($uri)) $uri = [$uri];
+
+		if ($post) {
+			foreach($uri as $uriOne) {
+				if (($uriOne == $post->post_name)
+					|| ($uriOne === '' && $post->ID == get_option('page_on_front'))) {
+					wdpro_on_content($callback, $priority);
+					break;
 				}
 			}
 		}
-	);
+	});
 }
 
 
