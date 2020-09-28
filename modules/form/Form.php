@@ -368,7 +368,7 @@ window.'.$id.' = '.($this->getJson()).';
 
 		return json_encode(
 			$params,
-			JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE|JSON_HEX_QUOT
+			JSON_UNESCAPED_UNICODE|JSON_HEX_QUOT
 		);
 	}
 
