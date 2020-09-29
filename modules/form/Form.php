@@ -623,7 +623,7 @@ window.'.$id.' = '.($this->getJson()).';
 	 */
 	public function getSubmitData()
 	{
-		$data = strtolower($this->params['method']) == 'post' ? $_POST : $_GET;
+		$data = strtolower($this->params['method']) === 'post' ? $_POST : $_GET;
 
 		if (isset($this->params['name']) && $this->params['name'])
 		{
@@ -683,8 +683,10 @@ window.'.$id.' = '.($this->getJson()).';
 		// Это нужно, чтобы при удалении элементов удалялись файлы (например, картинки)
 		// Чтобы поля могли получить данные формы без отправки и удалить файлы
 		// Да и в принципе чтобы поля знали введенные в форму данные без отправки формы
-		if (!$data && $useSettedDataIfNoSubmit && isset($this->params['data']))
+		if (!$data && $useSettedDataIfNoSubmit && isset($this->params['data'])) {
 			$data = $this->params['data'];
+		}
+			
 
 		if ($data)
 		{
