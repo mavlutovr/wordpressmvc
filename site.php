@@ -14,8 +14,13 @@ require __DIR__ . '/inc/shortcodes.php';
 do_action('wdpro-ready');
 Wdpro\Modules::run('initSiteStart');
 Wdpro\Modules::run('run');
-Wdpro\Modules::run('runSiteStart');
-do_action('app-ready');
+add_action('wp', function () {
+	
+	wdpro_data('wp_inited', true);
+	Wdpro\Modules::run('runSiteStart');
+	do_action('app-ready');
+});
+
 
 /**
  * Удаление лишнего адреса у страниц
@@ -109,11 +114,11 @@ else if (is_file(WDPRO_TEMPLATE_PATH . 'index.js')) {
 
 if (is_file(WDPRO_TEMPLATE_PATH . 'script.js')) {
 
-	wdpro_add_script_to_site(WDPRO_TEMPLATE_PATH . 'script.js');
+	wdpro_add_script_to_site(WDPRO_TEMPLATE_PATH . 'script.js', null, true, 100000);
 }
 if (is_file(WDPRO_TEMPLATE_PATH . '/js/script.js')) {
 
-	wdpro_add_script_to_site(WDPRO_TEMPLATE_PATH . '/js/script.js');
+	wdpro_add_script_to_site(WDPRO_TEMPLATE_PATH . '/js/script.js', null, true, 100000);
 }
 
 // app/site.js

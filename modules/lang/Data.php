@@ -269,6 +269,8 @@ class Data {
 
 		$return = [];
 
+		if (empty($data) || !count($data)) return $return;
+
 		foreach ( $data as $datum ) {
 
 			// Если язык включен

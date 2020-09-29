@@ -3158,3 +3158,5 @@ if (typeof Array.isArray === 'undefined') {
 	})(jQuery);
 
 })(jQuery);
+
+window.wdpro = wdpro;

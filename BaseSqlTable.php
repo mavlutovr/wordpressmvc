@@ -1105,6 +1105,12 @@ abstract class BaseSqlTable
 	 */
 	protected static function valueToSqlRow($row)
 	{
+		if (!is_array($row) && WP_DEBUG) {
+			echo '$row: ';
+			var_dump($row);
+			throw new Exception('Invalid argument supplied for foreach');
+		}
+
 		foreach($row as $fieldName=>$fieldValue)
 		{
 			if (static::isField($fieldName)) {

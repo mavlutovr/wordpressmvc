@@ -76,6 +76,10 @@ class Controller extends \Wdpro\BaseController {
 		);
 
 		if (!$templateData) {
+			throw new \Exception('E-mail template ['.$name.'] is not exists');
+		}
+
+		if (!$templateData) {
 			$templateData['id'] = SqlTable::insert($templateData);
 		}
 

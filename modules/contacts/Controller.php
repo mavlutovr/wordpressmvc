@@ -6,6 +6,7 @@ class Controller extends \Wdpro\BaseController {
 
 	/** @var  \Wdpro\Form\Form */
 	protected static $backFormClass = BackForm::class;
+	protected static $consoleDisplayMenuButton = true;
 
 
 	/**
@@ -14,11 +15,14 @@ class Controller extends \Wdpro\BaseController {
 	public static function runConsole() {
 
 		// Меню - Контакты
-		\Wdpro\Console\Menu::add(array(
-			'roll'=>ConsoleRoll::class,
-			'n'=>95,
-			'icon'=>'fas fa-map-marked',
-		));
+		if (static::$consoleDisplayMenuButton) {
+			\Wdpro\Console\Menu::add(array(
+				'roll'=>ConsoleRoll::class,
+				'n'=>95,
+				'icon'=>'fas fa-map-marked',
+			));
+		}
+		
 
 		// Настройки
 		\Wdpro\Console\Menu::addSettings('Страница &quot;Контакты&quot;', function ($form) {
@@ -171,6 +175,15 @@ class Controller extends \Wdpro\BaseController {
 	}
 
 
+	/**
+	 * Display or no contacts button in console menu
+	 *
+	 * @param boolean $display
+	 * @return void
+	 */
+	public static function consoleDisplayMenuButton($display) {
+		static::$consoleDisplayMenuButton = $display;
+	}
 }
 
 return __NAMESPACE__;

@@ -691,6 +691,8 @@ abstract class BaseEntity
 	 */
 	public function addChildsToActions($actions)
 	{
+		
+
 		if ($childsParams = static::childs())
 		{
 			foreach($childsParams as $childParams)
@@ -856,7 +858,39 @@ abstract class BaseEntity
 	 */
 	protected static function childs()
 	{
+		return static::children();
+	}
 
+
+	/**
+	 * Список дочерних объектов
+	 *
+	 * <pre>
+	 * return array(
+	 *  array(
+	 *      'roll'=>\App\Good\ConsoleRoll::class,
+	 *      'label'=>'Товары',
+	 *
+	 *      // https://developer.wordpress.org/resource/dashicons/#products
+	 *      // https://fontawesome.com/icons
+	 *      'icon'=>'dashicons-products',
+	 *  )
+	 * );
+	 * </pre>
+	 *
+	 *
+	 * Или просто
+	 *
+	 * <pre>
+	 * return [
+	 *  \App\Good\ConsoleRoll::class,
+	 * ];
+	 * </pre>
+	 *
+	 * @return array
+	 */
+	protected static function children() {
+		
 	}
 
 

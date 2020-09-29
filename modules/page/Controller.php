@@ -135,6 +135,7 @@ class Controller extends \Wdpro\BaseController {
 					global $post;
 					$post = $GLOBALS['post'];
 					setup_postdata($GLOBALS['post']);
+					// print_r(setup_postdata($GLOBALS['post'])); exit();
 				}
 			}
 

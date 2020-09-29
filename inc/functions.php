@@ -85,6 +85,24 @@ function wdpro_path_remove_root($path)
 
 
 /**
+ * Convert absolute path to url
+ * 
+ * https://wordpress.stackexchange.com/questions/216913/how-to-convert-the-file-path-to-a-url-of-the-same-file
+ *
+ * @param string $path
+ * @return string
+ */
+function wdpro_abs_path_to_url( $path = '' ) {
+    $url = str_replace(
+        wp_normalize_path( untrailingslashit( ABSPATH ) ),
+        site_url(),
+        wp_normalize_path( $path )
+    );
+    return esc_url_raw( $url );
+}
+
+
+/**
  * Исправляет слеши на соответствующие текущей ОС
  *
  * Чтобы в виндовс нормально работали пути
@@ -175,7 +193,7 @@ function wdpro_add_script_to_console_external($absolutePath)
  *                                  Наверное, работает так, я точно не разбирался.
  * @param bool $inFooter Добавить скрипт в футер
  */
-function wdpro_add_script_to_site($absolutePath, $handle=null, $inFooter=false)
+function wdpro_add_script_to_site($absolutePath, $handle=null, $inFooter=false, $order=20)
 {
 	add_action( 'wp_enqueue_scripts', function () use ($absolutePath, $handle, &$inFooter)
 	{
@@ -187,7 +205,7 @@ function wdpro_add_script_to_site($absolutePath, $handle=null, $inFooter=false)
 			$version = 'v'.filemtime($absolutePath);
 			wp_enqueue_script( $handle, $file, [], $version, $inFooter );
 		}
-	});
+	}, $order);
 }
 
 
@@ -728,7 +746,7 @@ function wdpro_is_current_post_name($postName) {
 
 	if ($post = get_post()) {
 
-		return $postName == $post->post_name;
+		return $postName === $post->post_name;
 	}
 
 	return false;
@@ -799,10 +817,10 @@ function wdpro_location($location, $code=301)
  */
 function wdpro_get_post($callback) {
 
-	add_action('wp', function () use (&$callback) {
-
+	wdpro_on_wp(function () use (&$callback) {
 		$callback(get_post());
 	});
+
 }
 
 
@@ -1069,7 +1087,7 @@ function wdpro_human_filesize($bytes, $decimals = 2, $comma='.') {
  */
 function wdpro_json_encode($data)
 {
-	return json_encode($data, JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
+	return json_encode($data, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
 }
 
 
@@ -2286,7 +2304,7 @@ function wdpro_get_month($time) {
 function wdpro_date($time, $params=null)
 {
 	$params = wdpro_extend(array(
-		'year'=>false,
+		'year'=>true,
 		'today'=>true,
 		'time'=>false,
 		'dateFormat'=>'d Month Y',
@@ -2304,7 +2322,7 @@ function wdpro_date($time, $params=null)
 			$date = $params['todayText'];
 		}
 		else if (date('Y.m.d') == date('Y.m.d', $time + WDPRO_DAY))
-		{
+		{	
 			$date = $params['yesterdayText'];
 		}
 		else if (date('Y.m.d') == date('Y.m.d', $time - WDPRO_DAY))
@@ -2315,6 +2333,15 @@ function wdpro_date($time, $params=null)
 
 	if (!$date)
 	{
+		if ($params['year'] === 'different') {
+			if (date('Y', $time) === date('Y')) {
+				$params['dateFormat'] = preg_replace(
+					'~(\bY)\b~',
+					'',
+					$params['dateFormat']
+				);
+			}
+		}
 		$date = wdpro_rdate($params['dateFormat'], $time);
 	}
 
@@ -2721,6 +2748,28 @@ function wdpro_home_url_with_lang($slashAtEnd=true) {
 
 
 /**
+ * Преобразует url адрес в path относительно корня сайта
+ *
+ * @param string $url
+ * @return string|void
+ */
+function wdpro_url_to_path_from_wp_root($url) {
+	$path = str_replace(home_url(), '', $url);
+
+	if ($path !== $url) {
+		return $path;
+	}
+}
+
+
+function wdpro_url_to_abs_path($url) {
+	if ($path = wdpro_url_to_path_from_wp_root($url)) {
+		return preg_replace('~/$~', '', ABSPATH).$path;
+	}
+}
+
+
+/**
  * Запускает каллбэк при открытии страницы по заданному относительному адресу
  *
  * @param string $uri Адрес страницы
@@ -2728,8 +2777,7 @@ function wdpro_home_url_with_lang($slashAtEnd=true) {
  */
 function wdpro_on_uri($uri, $callback) {
 
-	add_action(
-		'wp',
+	wdpro_on_wp(
 		function () use (&$uri, &$callback) {
 
 			$post = get_post();
@@ -2751,8 +2799,7 @@ function wdpro_on_uri($uri, $callback) {
  */
 function wdpro_on_url($url, $callback) {
 
-	add_action(
-		'wp',
+	wdpro_on_wp(
 		function () use (&$url, &$callback) {
 
 			if (isset($_SERVER['REQUEST_SCHEME']) && $_SERVER['REQUEST_SCHEME']) {
@@ -2790,8 +2837,7 @@ function wdpro_on_url($url, $callback) {
  */
 function wdpro_on_uri_content($uri, $callback) {
 
-	add_action(
-		'wp',
+	wdpro_on_wp(
 		function () use (&$uri, &$callback) {
 
 			if (!is_array($uri)) $uri = [$uri];
@@ -2820,6 +2866,24 @@ function wdpro_on_uri_content($uri, $callback) {
 
 
 /**
+ * Run callback after wp init
+ *
+ * @param callback $callback 
+ * @return void
+ */
+function wdpro_on_wp($callback) {
+
+	if (wdpro_data('wp_inited')) {
+		return $callback();
+	}
+
+	add_action('wp', function () use (&$callback) {
+		$callback();
+	});
+}
+
+
+/**
  * Запускает каллбэк при открытии страницы по заданному адресу, и добавляет в текст то,
  * что возвратил каллбэк
  *
@@ -2828,25 +2892,23 @@ function wdpro_on_uri_content($uri, $callback) {
  * @param int $priority Приоритет
  */
 function wdpro_on_content_uri($uri, $callback, $priority=10) {
-	add_action(
-		'wp',
-		function () use (&$uri, &$callback, &$priority) {
 
-			$post = get_post();
+	wdpro_on_wp(function () use (&$uri, &$callback, &$priority) {
 
-			if (!is_array($uri)) $uri = [$uri];
+		$post = get_post();
 
-			if ($post) {
-				foreach($uri as $uriOne) {
-					if (($uriOne == $post->post_name)
-						|| ($uriOne === '' && $post->ID == get_option('page_on_front'))) {
-						wdpro_on_content($callback, $priority);
-						break;
-					}
+		if (!is_array($uri)) $uri = [$uri];
+
+		if ($post) {
+			foreach($uri as $uriOne) {
+				if (($uriOne == $post->post_name)
+					|| ($uriOne === '' && $post->ID == get_option('page_on_front'))) {
+					wdpro_on_content($callback, $priority);
+					break;
 				}
 			}
 		}
-	);
+	});
 }
 
 
@@ -3658,6 +3720,22 @@ function wdpro_js_data ($key, $value) {
 
 	if (is_array($value)) {
 		$value = wdpro_json_encode($value);
+	}
+
+	$wdproJsData[$key] = $value;
+}
+
+/**
+ * Добавление данных в объект js: wdpro
+ *
+ * @param string $key Ключ
+ * @param mixed $value Значение
+ */
+function wdpro_javascript_data ($key, $value) {
+	global $wdproJsData;
+
+	if (is_array($value)) {
+		// $value = wdpro_json_encode($value);
 	}
 
 	$wdproJsData[$key] = $value;

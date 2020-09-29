@@ -543,11 +543,11 @@ class Controller extends \Wdpro\BaseController {
 		$person->setData($data);*/
 		//$person->save();
 
-		// Ошибка
 		if ($person->save()) {
 
 			// Возвращаем данные пользователя
 			return array(
+				'user_email'=>$person->data['user_login'],
 				'user_email'=>$person->data['user_login'],
 				'user_pass'=>$person->getCreatedPass(),
 				'id'=>$person->id(),

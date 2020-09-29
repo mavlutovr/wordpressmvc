@@ -41,6 +41,8 @@ class Roll extends \Wdpro\Site\Roll {
 
 		$row['tags'] = Controller::prepareTagsForTemplate($row['tags']);
 
+		$row = \apply_filters('wdpro_blog_list_item', $row);
+
 		return $row;
 	}
 

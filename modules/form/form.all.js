@@ -241,10 +241,64 @@
 			// Список элементов
 			this.elements = {};
 
+			this.initParams(params);
+
+
+			// Еще 1 способ инициализации элементов через класс наследника
+			this.initElements();
+
+			// Установка значений полей
+			this.params['data'] && this.setData(this.params['data']);
+
+			this.on('addedToPage', function () {
+
+				self._initSubmit();
+
+				self.eachElements(function (element)
+				{
+					element.trigger('addedToPage');
+				});
+			});
+
+			wdpro.trigger('form', this);
+
+			this.on('addedToPage', function () {
+				self.updateDialogPos();
+			}, true);
+
+
+			this.on('change', () => {
+				if (this._fillStarted) return;
+				this._fillStarted = true;
+
+				this.trigger('startFill');
+			});
+		},
+
+
+		/**
+		 * Инициализация элементов в классе наследнике
+		 */
+		initElements: function () {
+
+		},
+
+
+		initParams(params) {
+
+			let self = this;
+
+			// if (params && params['elements']) {
+			// 	for (let group of params['elements']) {
+			// 		this.add(group);
+			// 	}
+			// }
+			
+
 			// По-умолчанию
 			this.params = wdpro.extend({
 				'errorsPrefix': 'Пожалуйста, заполните обязательные поля',
-				'action':       '',
+				'action': '',
 				'align': true
 			}, params);
 
@@ -265,34 +319,10 @@
 				self.add(element);
 			});
 
-
-			// Еще 1 способ инициализации элементов через класс наследника
-			this.initElements();
-
-			// Установка значений полей
-			this.params['data'] && this.setData(this.params['data']);
-
-			this.on('addedToPage', function () {
-
-				self._initSubmit();
-
-				self.eachElements(function (element)
-				{
-					element.trigger('addedToPage');
-				});
-			});
-
 			// Отправка формы в каллбэки, которые ожидают ее появления
 			if (this.params['jsName']) {
-				wdpro.trigger('form-'+this.params['jsName'], this);
+				wdpro.trigger('form-' + this.params['jsName'], this);
 			}
-
-			wdpro.trigger('form', this);
-
-			this.on('addedToPage', function () {
-				self.updateDialogPos();
-			}, true);
-
 
 			// Ajax
 			if (this.params['ajax']) {
@@ -317,9 +347,9 @@
 						var dialog = self.dialog();
 						if (dialog) {
 							response['content']
-							&& dialog.setContent(response['content']);
+								&& dialog.setContent(response['content']);
 							response['html']
-							&& dialog.setContent(response['html']);
+								&& dialog.setContent(response['html']);
 						}
 
 						else {
@@ -361,21 +391,6 @@
 					});
 				});
 			}
-
-			this.on('change', () => {
-				if (this._fillStarted) return;
-				this._fillStarted = true;
-
-				this.trigger('startFill');
-			});
-		},
-
-
-		/**
-		 * Инициализация элементов в классе наследнике
-		 */
-		initElements: function () {
-
 		},
 
 
@@ -742,6 +757,10 @@
 				errorsList:   [] // Список полей с ошибками
 			};
 
+			let validParams = {
+				standardAlert: true,
+			};
+
 
 			var waiter = new wdpro.Waiter();
 
@@ -771,10 +790,15 @@
 					waiter.add(next => {
 						validator(data, result => {
 
-							if (result.error) {
+							if (result && result.error) {
 								sendParams.submit = false;
 								sendParams.errorsExists = true;
 								sendParams.errorsList.push(result.error);
+
+								if (result.prepend) {
+									alert(result.error);
+									validParams.standardAlert = false;
+								}
 							}
 
 							next();
@@ -790,12 +814,15 @@
 				if (sendParams.errorsExists)
 				{
 					// Выводим их
-					alert(
-						self.templates.errors({
-							errors:       sendParams.errorsList,
-							errorsPrefix: self.params['errorsPrefix']
-						})
-					);
+					if (validParams.standardAlert) {
+						alert(
+							self.templates.errors({
+								errors: sendParams.errorsList,
+								errorsPrefix: self.params['errorsPrefix']
+							})
+						);
+					}
+					
 				}
 
 				Return(sendParams.submit);
@@ -3061,6 +3088,8 @@
 			textarea.val(editor.getData());
 		});
 
+		wdpro.trigger('ckeditor', { editor: editor });
+
 
 		return editor;
 	};
@@ -3097,13 +3126,41 @@
 				this.config = wdpro.extend(this.config, this.params['configParams']);
 			}
 
+			let config = wdpro.extend({}, this.config);
+
+			// https://ckeditor.com/cke4/addon/dropdownmenumanager
+			let insertBlocks = {};
+			if (this.params['insertBlocks']) {
+
+				window.insertBlockI = window.insertBlockI || 0;
+
+				let items = [];
+				for(let item of this.params['insertBlocks']) {
+					window.insertBlockI ++;
+					let commandName = 'insertBlock'+window.insertBlockI;
+
+					insertBlocks[commandName] = item.html;
+
+					items.push({
+						name: item.name,
+						command: commandName
+					});
+				}
+
+				config.dropdownmenumanager = config.dropdownmenumanager || {};
+				config.dropdownmenumanager.insertBlocks = {
+					'items': items,
+				};
+				config.toolbar.push(['insertBlocks']);
+			}
+
 
 			var heightKey = 'ckeditor-height:'+self.getName();
-			if (!this.config['height']) {
+			if (!config['height']) {
 				(function () {
 					var height = wdpro.localStorage.get(heightKey);
 					if (height) {
-						self.config['height'] = Number(height);
+						config['height'] = Number(height);
 					}
 				})();
 
@@ -3113,12 +3170,23 @@
 
 				self.html.addClass('wdpro-form-element-ckeditor');
 				if (!CKEDITOR.instances[self.htmlId]) {
-					var editor = CKEDITOR.replace(self.htmlId, self.config);
+					var editor = CKEDITOR.replace(self.htmlId, config);
+
+					for (let commandName in insertBlocks) {
+						editor.addCommand( commandName, {
+							exec: function( editor ) {
+								editor.insertHtml( insertBlocks[commandName] );
+							}
+						});
+					}
+
 
 					editor.on('resize', function (e) {
 
 						wdpro.localStorage.set(heightKey, e['data']['contentsHeight']);
 					});
+
+					wdpro.trigger('ckeditor', { editor: editor, data: self.data });
 
 					self.on('prepareToGetData', function () {
 						self.field.val(editor.getData());
