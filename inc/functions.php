@@ -590,6 +590,10 @@ function wdpro_current_uri($queryChanges=null)
 	if (isset($_SERVER['REQUEST_URI_ORIGINAL'])) $uri = $_SERVER['REQUEST_URI_ORIGINAL'];
 	if (!$uri) $uri = $_SERVER['REQUEST_URI'];
 
+	if (isset($_SERVER['QUERY_STRING'])) {
+		$uri .= '?'.$_SERVER['QUERY_STRING'];
+	}
+
 	// Преобразуем адрес сайта так, чтобы он начинался от нормального корня сайта
 	// Берем адрес сайта
 	/*$siteUrl = get_option('siteurl');
