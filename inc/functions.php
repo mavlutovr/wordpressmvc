@@ -608,6 +608,10 @@ function wdpro_current_uri($queryChanges=null)
 	if (isset($_SERVER['REQUEST_URI_ORIGINAL'])) $uri = $_SERVER['REQUEST_URI_ORIGINAL'];
 	if (!$uri) $uri = $_SERVER['REQUEST_URI'];
 
+	if (isset($_SERVER['QUERY_STRING'])) {
+		$uri .= '?'.$_SERVER['QUERY_STRING'];
+	}
+
 	// Преобразуем адрес сайта так, чтобы он начинался от нормального корня сайта
 	// Берем адрес сайта
 	/*$siteUrl = get_option('siteurl');
@@ -813,16 +817,9 @@ function wdpro_location($location, $code=301)
  */
 function wdpro_get_post($callback) {
 
-	if (wdpro_data('wp_inited')) {
+	wdpro_on_wp(function () use (&$callback) {
 		$callback(get_post());
-	}
-
-	else {
-		add_action('wp', function () use (&$callback) {
-
-			$callback(get_post());
-		});
-	}
+	});
 
 }
 
@@ -2780,8 +2777,7 @@ function wdpro_url_to_abs_path($url) {
  */
 function wdpro_on_uri($uri, $callback) {
 
-	add_action(
-		'wp',
+	wdpro_on_wp(
 		function () use (&$uri, &$callback) {
 
 			$post = get_post();
@@ -2803,8 +2799,7 @@ function wdpro_on_uri($uri, $callback) {
  */
 function wdpro_on_url($url, $callback) {
 
-	add_action(
-		'wp',
+	wdpro_on_wp(
 		function () use (&$url, &$callback) {
 
 			if (isset($_SERVER['REQUEST_SCHEME']) && $_SERVER['REQUEST_SCHEME']) {
@@ -2842,8 +2837,7 @@ function wdpro_on_url($url, $callback) {
  */
 function wdpro_on_uri_content($uri, $callback) {
 
-	add_action(
-		'wp',
+	wdpro_on_wp(
 		function () use (&$uri, &$callback) {
 
 			if (!is_array($uri)) $uri = [$uri];
@@ -2878,16 +2872,12 @@ function wdpro_on_uri_content($uri, $callback) {
  * @return void
  */
 function wdpro_on_wp($callback) {
-	global $wdpro_on_wp_inited;
 
-	if ($wdpro_on_wp_inited) {
+	if (wdpro_data('wp_inited')) {
 		return $callback();
 	}
 
 	add_action('wp', function () use (&$callback) {
-		global $wdpro_on_wp_inited;
-		$wdpro_on_wp_inited = true;
-
 		$callback();
 	});
 }

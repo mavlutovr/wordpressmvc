@@ -15,9 +15,6 @@ do_action('wdpro-ready');
 Wdpro\Modules::run('initSiteStart');
 Wdpro\Modules::run('run');
 add_action('wp', function () {
-
-	global $wdpro_on_wp_inited;
-	$wdpro_on_wp_inited = true;
 	
 	wdpro_data('wp_inited', true);
 	Wdpro\Modules::run('runSiteStart');
@@ -109,10 +106,10 @@ wdpro_add_script_to_site(__DIR__ . '/js/ready.site.js');
 // Webpack
 // Скомпилированный
 if (is_file(WDPRO_TEMPLATE_PATH . 'dist/main.js')) {
-	wdpro_add_script_to_site(WDPRO_TEMPLATE_PATH . 'dist/main.js');
+	wdpro_add_script_to_site(WDPRO_TEMPLATE_PATH . 'dist/main.js', null, true, 100000);
 } // Нескомпилированный
 else if (is_file(WDPRO_TEMPLATE_PATH . 'index.js')) {
-	wdpro_add_script_to_site(WDPRO_TEMPLATE_PATH . 'index.js');
+	wdpro_add_script_to_site(WDPRO_TEMPLATE_PATH . 'index.js', null, true, 100000);
 }
 
 if (is_file(WDPRO_TEMPLATE_PATH . 'script.js')) {

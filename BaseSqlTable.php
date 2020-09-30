@@ -1347,7 +1347,7 @@ class SqlTypeJson extends SqlTypeBase
 
 	public static function getType($fieldType)
 	{
-		return 'text';
+		return 'longtext';
 	}
 
 
