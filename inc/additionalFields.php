@@ -13,22 +13,28 @@ function wdproShowMetaForm($post)
 {
 	$form = new \Wdpro\Form\Form('wdpro');
 
-	$form->add([
-		'name'=>'alternative_url[lang]',
-		'top'=>'Ссылка на другую страницу или другой сайт',
-	]);
+	$width = null;
+	if (!\Wdpro\Lang\Data::enabled()) {
+		$width = 600;
+	}
 
-	$form->add([ 'name'=>'title[lang]', 'top'=>'Title' ]);
-	$form->add([ 'name'=>'h1[lang]', 'top'=>'H1' ]);
-	$form->add([ 'name'=>'keywords[lang]', 'top'=>'Keywords' ]);
+	$form->add([ 'name'=>'title[lang]', 'top'=>'Title', 'width'=>$width ]);
+	$form->add([ 'name'=>'h1[lang]', 'top'=>'H1', 'width'=>$width ]);
 	$form->add([
 		'name'=>'description[lang]',
 		'top'=>'Description',
 		'type'=> $form::TEXT,
+		'width'=>$width,
 	]);
-	$form->add([ 'name'=>'madein[lang]', 'top'=>'Ссылка "Сделано в студии"',
-	             'type'=>$form::TEXT
+	$form->add([ 'name'=>'keywords[lang]', 'top'=>'Keywords', 'width'=>$width ]);
+
+	$form->add([
+		'name'=>'alternative_url[lang]',
+		'top'=>'Ссылка на другую страницу или другой сайт',
 	]);
+	// $form->add([ 'name'=>'madein[lang]', 'top'=>'Ссылка "Сделано в студии"',
+	//              'type'=>$form::TEXT
+	// ]);
 
 	$formData = [];
 	$langs = \Wdpro\Lang\Data::getUris();
