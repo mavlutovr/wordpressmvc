@@ -161,7 +161,10 @@ class Controller extends \Wdpro\BaseController {
 				foreach ($langs as $lang) {
 					if (is_array($value['tags'.$lang])) {
 						foreach ($value['tags'.$lang] as $tag) {
-							$tags[$tag] = $tag;
+							$tag = trim($tag);
+							if ($tag) {
+								$tags[$tag] = $tag;
+							}
 						}
 					}
 				}
