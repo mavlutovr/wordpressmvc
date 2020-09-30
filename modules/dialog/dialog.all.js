@@ -317,6 +317,12 @@
 						self.setContent(data['content']);
 					}
 
+					if (!data['html'] && !data['content'] && data['error']) {
+						self.setContent(
+							'<div class="dialog--error">'+data['error']+'</div>'
+						);
+					}
+
 					/*if (data['reloadPage']) {
 						wdpro.reloadPage();
 					}*/
