@@ -2298,6 +2298,14 @@ if (typeof Array.isArray === 'undefined') {
 	};
 
 
+	wdpro.alertAjaxError = res => {
+		if (res.error) {
+			alert(res.error);
+			return true;
+		}
+	};
+
+
 	// Глобальные события
 	var wdproGlobalEvents = new wdpro.Event();
 
