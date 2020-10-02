@@ -601,3 +601,9 @@ h1:not(.wp-heading-inline) {
   font-size: 24px;
   margin-bottom: 20px;
 }
+@media only screen and (max-width: 960px) {
+  #adminmenu .fa,
+  #adminmenu .fa5 {
+    margin-left: 999px;
+  }
+}
