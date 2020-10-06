@@ -338,7 +338,12 @@
 
 					wdpro.ajax(action, data, function (response) {
 
-						console.log('response', response);
+						if (response['cookies']) {
+							for (let cookieName in response['cookies']) {
+								let cookie = response['cookies'][cookieName];
+								wdpro.setCookie(cookieName, cookie.value, cookie.exdays);
+							}
+						}
 
 						if (response['dialogClose']) {
 							self.closeDialog();
@@ -960,7 +965,7 @@
 			if (this.messagesContainer)
 			{
 				// Установка текста
-				this.messagesContainer.html(message);
+				this.messagesContainer.show().html(message);
 
 				// Ошибка
 				this.messagesContainer.removeClass('_error_message');
@@ -1005,7 +1010,15 @@
 		 * @param message {string}
 		 */
 		displayMessage: function (message) {
-			this.messagesContainer.html(message);
+			this.messagesContainer.show().html(message);
+		},
+
+
+		/**
+		 * Hide message
+		 */
+		hideMessage() {
+			this.messagesContainer.hide();
 		},
 
 
@@ -3740,7 +3753,7 @@
 							loadingElement.loadingStop();
 
 							// Все верно
-							if (typeof response.error == 'undefined')
+							if (typeof response.error === 'undefined')
 							{
 								// Удаляем все файлы, если поле не multiple
 								if (!self.params['multiple'])

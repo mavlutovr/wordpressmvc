@@ -34,6 +34,9 @@
   color: red;
   padding: 20px 0;
 }
+.wdpro-form .JS_messages_container {
+  display: none;
+}
 .wdpro-form-width {
   display: inline-block;
 }

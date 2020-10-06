@@ -518,6 +518,16 @@ if (typeof Array.isArray === 'undefined') {
 	};
 
 
+	wdpro.setCookie = (cname, cvalue, exdays) => {
+		exdays = exdays || 365;
+		var d = new Date();
+		d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+		var expires = "expires=" + d.toUTCString();
+		let cookieString = cname + "=" + cvalue + ";" + expires + ";path=/";
+		document.cookie = cookieString;
+	};
+
+
 	/**
 	 * Возвращает простой объект без всяких строгих типов
 	 *
@@ -1797,7 +1807,7 @@ if (typeof Array.isArray === 'undefined') {
 	{
 		try
 		{
-			if (typeof json == 'string')
+			if (typeof json === 'string')
 			{
 				var ob = $.parseJSON(json);
 				if ((ob != null) && (ob.log != null))
@@ -1807,7 +1817,7 @@ if (typeof Array.isArray === 'undefined') {
 				}
 			}
 
-			else if (typeof json == 'object')
+			else if (typeof json === 'object')
 			{
 				ob = json;
 			}
@@ -2285,6 +2295,14 @@ if (typeof Array.isArray === 'undefined') {
 		};
 
 		$.ajax(params);
+	};
+
+
+	wdpro.alertAjaxError = res => {
+		if (res.error) {
+			alert(res.error);
+			return true;
+		}
 	};
 
 
