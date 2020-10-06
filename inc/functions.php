@@ -609,7 +609,7 @@ function wdpro_current_uri($queryChanges=null)
 	if (!$uri) $uri = $_SERVER['REQUEST_URI'];
 
 	if (isset($_SERVER['QUERY_STRING'])) {
-		$uri .= '?'.$_SERVER['QUERY_STRING'];
+		// $uri .= '?'.$_SERVER['QUERY_STRING'];
 	}
 
 	// Преобразуем адрес сайта так, чтобы он начинался от нормального корня сайта
@@ -629,10 +629,15 @@ function wdpro_current_uri($queryChanges=null)
 		$uri.=$arr[$count-1];
 	}*/
 
+	if (isset($_SERVER['QUERY_STRING']) && !strstr($uri, '?')) {
+		$uri .= '?'.$_SERVER['QUERY_STRING'];
+	}
+
 	if ($queryChanges)
 	{
 		$uri = wdpro_replace_query_params_in_url($uri, $queryChanges);
 	}
+	
 
 	return $uri;
 }
