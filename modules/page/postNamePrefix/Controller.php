@@ -80,9 +80,7 @@ class Controller extends \Wdpro\BaseController {
 
 
 		// Open pages by prefixed uris
-		add_filter('init', function () {
-
-			static::$originalUri = $_SERVER['REQUEST_URI_ORIGINAL'] ? $_SERVER['REQUEST_URI_ORIGINAL'] : $_SERVER['REQUEST_URI'];
+		static::$originalUri = $_SERVER['REQUEST_URI_ORIGINAL'] ? $_SERVER['REQUEST_URI_ORIGINAL'] : $_SERVER['REQUEST_URI'];
 
 			$homeUri = wdpro_home_uri(true);
 
@@ -115,7 +113,6 @@ class Controller extends \Wdpro\BaseController {
 					}
 				}
 			}
-		});
 
 	}
 
