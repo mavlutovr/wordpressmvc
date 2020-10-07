@@ -2594,22 +2594,43 @@ function wdpro_default_file($defaultFile, $file) {
  *                                           имена файлов
  */
 function wdpro_copy($src, $dst, $callbackFilenameMod=null) {
-	$dir = opendir($src);
-	@mkdir($dst);
-	while(false !== ( $file = readdir($dir)) ) {
-		if (( $file != '.' ) && ( $file != '..' )) {
-			if ( is_dir($src . '/' . $file) ) {
-				wdpro_copy($src . '/' . $file,$dst . '/' . $file);
-			}
-			else {
-				$target = $file;
-				if ($callbackFilenameMod)
-				$target = $callbackFilenameMod($file);
-				copy($src . '/' . $file,$dst . '/' . $target);
+	
+	// Directory
+	if (is_dir($src)) {
+		$dir = opendir($src);
+
+		if (!is_dir($dst)) {
+			mkdir($dst);
+		}
+	
+		while(false !== ( $file = readdir($dir)) ) {
+			if (( $file != '.' ) && ( $file != '..' )) {
+				if ( is_dir($src . '/' . $file) ) {
+					wdpro_copy($src . '/' . $file,$dst . '/' . $file, $callbackFilenameMod);
+				}
+				else {
+					$target = $file;
+					if ($callbackFilenameMod)
+					$target = $callbackFilenameMod($file);
+					copy($src . '/' . $file, $dst . '/' . $target);
+				}
 			}
 		}
+
+		closedir($dir);
 	}
-	closedir($dir);
+
+	// File
+	else {
+
+		$pathinfo = pathinfo($dst);
+		if (!is_dir($pathinfo['dirname'])) {
+			mkdir($pathinfo['dirname'], 0777, true);
+		}
+		
+		copy($src, $dst);
+	}
+
 }
 
 
