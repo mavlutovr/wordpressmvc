@@ -758,6 +758,9 @@ function wdpro_is_current_post_name($postName) {
 }
 
 
+
+
+
 /**
  * Проверяет на соответствие тип текущей страницы
  *
@@ -771,6 +774,19 @@ function wdpro_is_current_post_type($postType) {
 	}
 
 	return false;
+}
+
+
+
+/**
+ * Check, is current page home
+ *
+ * @return void|boolean
+ */
+function wdpro_is_home() {
+	if ($page = wdpro_current_page()) {
+		return $page->isHome();
+	}
 }
 
 
