@@ -257,11 +257,13 @@ class Controller extends \Wdpro\BaseController {
 
 
 			if (method_exists($page, 'initCard')) {
-				$data = $page->initCard();
-				if (isset($data) && is_array($data)) {
-					foreach ($data as $key => $datum) {
+				$pageData = $page->initCard();
+				if (isset($pageData) && is_array($pageData)) {
+					global $data;
+					foreach ($pageData as $key => $datum) {
 						global $$key;
 						$$key = $datum;
+						$data[$key] = $datum;
 					}
 				}
 			}

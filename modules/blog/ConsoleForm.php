@@ -61,7 +61,7 @@ class ConsoleForm extends \Wdpro\Form\Form {
 		if (Controller::isTags()) {
 
 			$subinfo = Controller::isTagsPagesModule()
-				? '<p><i class="fas fa-tags"></i> <a href="edit.php?post_type=wdpro_blog_tags" target="_blank">Настроить теги</a></p>'
+				? '<p><i class="fas fa-tags"></i> <a href="options-general.php?page=Wdpro.Blog.Tags.ConsoleRoll" target="_blank">Настроить теги</a></p>'
 				: '';
 
 			$this->add([

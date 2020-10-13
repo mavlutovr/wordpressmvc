@@ -3,6 +3,27 @@ namespace Wdpro\Blog\Tags;
 
 class Controller extends \Wdpro\BaseController {
 
+
+  public static function getTagData($tag) {
+    return SqlTable::getRow([
+      'WHERE tag=%s LIMIT 1',
+      [$tag],
+    ]);
+  }
+
+
+  public static function getTagOfSlug($slug) {
+    if ($row = SqlTable::getRow([
+      'WHERE slug=%s LIMIT 1',
+      [$slug],
+    ])) {
+      return $row['tag'];
+    }
+
+    return $slug;
+  }
+
+
   public static function runConsole() {
     
     \Wdpro\Console\Menu::addToSettings(
@@ -23,7 +44,7 @@ class Controller extends \Wdpro\BaseController {
       [$tag],
     ])) {
 
-      $slug = \wdpro_text_to_file_name($tag);
+      $slug = \wdpro_text_to_file_name($tag, true);
       $slugOrig = $slug;
       $slugN = 1;
 
@@ -36,7 +57,7 @@ class Controller extends \Wdpro\BaseController {
       }
 
       $entity = Entity::instance([
-        'slug'=>\wdpro_text_to_file_name($tag),
+        'slug'=>$slug,
         'tag'=>$tag,
       ]);
       $entity->save();
