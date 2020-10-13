@@ -609,7 +609,7 @@ function wdpro_current_uri($queryChanges=null)
 	if (!$uri) $uri = $_SERVER['REQUEST_URI'];
 
 	if (isset($_SERVER['QUERY_STRING'])) {
-		$uri .= '?'.$_SERVER['QUERY_STRING'];
+		// $uri .= '?'.$_SERVER['QUERY_STRING'];
 	}
 
 	// Преобразуем адрес сайта так, чтобы он начинался от нормального корня сайта
@@ -629,10 +629,15 @@ function wdpro_current_uri($queryChanges=null)
 		$uri.=$arr[$count-1];
 	}*/
 
+	if (isset($_SERVER['QUERY_STRING']) && !strstr($uri, '?')) {
+		$uri .= '?'.$_SERVER['QUERY_STRING'];
+	}
+
 	if ($queryChanges)
 	{
 		$uri = wdpro_replace_query_params_in_url($uri, $queryChanges);
 	}
+	
 
 	return $uri;
 }
@@ -753,6 +758,9 @@ function wdpro_is_current_post_name($postName) {
 }
 
 
+
+
+
 /**
  * Проверяет на соответствие тип текущей страницы
  *
@@ -766,6 +774,19 @@ function wdpro_is_current_post_type($postType) {
 	}
 
 	return false;
+}
+
+
+
+/**
+ * Check, is current page home
+ *
+ * @return void|boolean
+ */
+function wdpro_is_home() {
+	if ($page = wdpro_current_page()) {
+		return $page->isHome();
+	}
 }
 
 
@@ -2594,22 +2615,43 @@ function wdpro_default_file($defaultFile, $file) {
  *                                           имена файлов
  */
 function wdpro_copy($src, $dst, $callbackFilenameMod=null) {
-	$dir = opendir($src);
-	@mkdir($dst);
-	while(false !== ( $file = readdir($dir)) ) {
-		if (( $file != '.' ) && ( $file != '..' )) {
-			if ( is_dir($src . '/' . $file) ) {
-				wdpro_copy($src . '/' . $file,$dst . '/' . $file);
-			}
-			else {
-				$target = $file;
-				if ($callbackFilenameMod)
-				$target = $callbackFilenameMod($file);
-				copy($src . '/' . $file,$dst . '/' . $target);
+	
+	// Directory
+	if (is_dir($src)) {
+		$dir = opendir($src);
+
+		if (!is_dir($dst)) {
+			mkdir($dst);
+		}
+	
+		while(false !== ( $file = readdir($dir)) ) {
+			if (( $file != '.' ) && ( $file != '..' )) {
+				if ( is_dir($src . '/' . $file) ) {
+					wdpro_copy($src . '/' . $file,$dst . '/' . $file, $callbackFilenameMod);
+				}
+				else {
+					$target = $file;
+					if ($callbackFilenameMod)
+					$target = $callbackFilenameMod($file);
+					copy($src . '/' . $file, $dst . '/' . $target);
+				}
 			}
 		}
+
+		closedir($dir);
 	}
-	closedir($dir);
+
+	// File
+	else {
+
+		$pathinfo = pathinfo($dst);
+		if (!is_dir($pathinfo['dirname'])) {
+			mkdir($pathinfo['dirname'], 0777, true);
+		}
+		
+		copy($src, $dst);
+	}
+
 }
 
 
