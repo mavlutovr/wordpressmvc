@@ -141,6 +141,16 @@ class Controller extends \Wdpro\BaseController {
 
 
 	/**
+	 * Check is tags pages module exists
+	 *
+	 * @return boolean
+	 */
+	public static function isTagsPagesModule() {
+		return \Wdpro\Modules::existsWdpro('blog/tags');
+	}
+
+
+	/**
 	 * Возвращает список тегов
 	 *
 	 * @return array

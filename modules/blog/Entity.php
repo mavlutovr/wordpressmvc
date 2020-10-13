@@ -127,6 +127,11 @@ class Entity extends \Wdpro\BasePage {
 				$tags = explode(',', $data['tags_string'.$suffix]);
 				foreach ( $tags as $tag ) {
 					$tag = trim($tag);
+
+					if (Controller::isTagsPagesModule()) {
+						\Wdpro\Blog\Tags\Controller::onTagSave($tag);
+					}
+					
 					$saveTags[] = $tag;
 				}
 
