@@ -1,2 +1,0 @@
-# Tags of blog
-
