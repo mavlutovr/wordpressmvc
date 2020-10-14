@@ -98,7 +98,7 @@ abstract class BasePage extends BaseEntity
 			wdpro_data('ogImage', WDPRO_UPLOAD_IMAGES_URL.$this->data['image']);
 		}
 
-		return [];
+		return $this->data;
 	}
 
 
