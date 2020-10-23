@@ -211,8 +211,17 @@ class Controller extends \Wdpro\BaseController {
 
 	public static function sortTags(&$tags) {
 
+		if (!$tags) return false;
+
 		if (static::isTagsPagesModule()) {
+			// Remove empties
+			$tags = array_filter(
+				$tags, function($value) { return !is_null($value) && $value !== ''; });
 			$tagsNames = array_column($tags, 'tag');
+			// echo 'tags: '.$tags;
+			// print_r($tags);
+			// echo 'tagsNames: '.$tagsNames;
+			// print_r($tagsNames);
 			array_multisort($tagsNames, SORT_ASC, $tags);
 		}
 		else {
