@@ -7,6 +7,11 @@
  * Author URI: https://github.com/mavlutovr/wordpressmvc
  */
 
+ if (isset($_SERVER['HTTP_X_ORIGINAL_REQUEST'])) {
+	$uri = $_SERVER['HTTP_X_ORIGINAL_REQUEST'];
+	$_SERVER['REQUEST_URI'] = $_SERVER['HTTP_X_ORIGINAL_REQUEST'];
+}
+
 // Фикс для хостинга sweb.ru
 if (isset($_SERVER['HTTP_HTTPS']) && $_SERVER['HTTP_HTTPS'] === 'on')
 	$_SERVER['HTTPS'] = 'on';

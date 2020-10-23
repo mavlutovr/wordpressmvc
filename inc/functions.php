@@ -605,7 +605,9 @@ function wdpro_current_post_name() {
 function wdpro_current_uri($queryChanges=null)
 {
 	$uri = '';
-	if (isset($_SERVER['REQUEST_URI_ORIGINAL'])) $uri = $_SERVER['REQUEST_URI_ORIGINAL'];
+	if (isset($_SERVER['REQUEST_URI_ORIGINAL']))
+		$uri = $_SERVER['REQUEST_URI_ORIGINAL'];
+
 	if (!$uri) $uri = $_SERVER['REQUEST_URI'];
 
 	if (isset($_SERVER['QUERY_STRING'])) {
@@ -4029,4 +4031,14 @@ function wdpro_post_request($url, $data) {
   $result = stream_get_contents($fp); // no maxlength/offset
   fclose($fp);
   return $result;
+}
+
+
+/**
+ * Check is it the PageSpeed Insights
+ *
+ * @return void
+ */
+function wdpro_is_google_speed_test() {
+	return strstr($_SERVER['HTTP_USER_AGENT'], 'Lighthouse');
 }
