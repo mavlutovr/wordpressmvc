@@ -4030,3 +4030,17 @@ function wdpro_post_request($url, $data) {
   fclose($fp);
   return $result;
 }
+
+
+/**
+ * Add css class to body tag
+ *
+ * @param string $class
+ * @return void
+ */
+function wdpro_add_body_class($class) {
+	add_filter( 'body_class', function ($classes) use (&$class) {
+		$classes[] = $class;
+		return $classes;
+	});
+}
