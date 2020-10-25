@@ -288,8 +288,13 @@ class YandexMoney extends Base implements MethodInterface {
 	{
 		$data = static::getBlockData($pay);
 
-		return wdpro_render_php(
+		\wdpro_default_file(
 			__DIR__.'/../templates/yandexmoney_block.php',
+			WDPRO_TEMPLATE_PATH.'pay_method_yandexmoney_block.php'
+		);
+
+		return wdpro_render_php(
+			WDPRO_TEMPLATE_PATH.'pay_method_yandexmoney_block.php',
 			$data
 		);
 	}

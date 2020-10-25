@@ -86,8 +86,13 @@ class Demo extends Base  implements MethodInterface {
 	 */
 	public static function getBlock( $pay ) {
 
-		return wdpro_render_php(
+		\wdpro_default_file(
 			__DIR__.'/../templates/demo_block.php',
+			WDPRO_TEMPLATE_PATH.'pay_method_demo_block.php'
+		);
+
+		return wdpro_render_php(
+			WDPRO_TEMPLATE_PATH.'pay_method_demo_block.php',
 			$pay->getData()
 		);
 	}
