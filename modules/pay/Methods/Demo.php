@@ -49,9 +49,14 @@ class Demo extends Base  implements MethodInterface {
 			// Форма подтверждения еще не отправлена
 			else
 			{
+				\wdpro_default_file(
+					__DIR__.'/../templates/demo_confirm.php',
+					WDPRO_TEMPLATE_PATH.'pay_method_demo_confirm.php'
+				);
+
 				// Выводим форму подтверждения
 				return $content.wdpro_render_php(
-					__DIR__.'/../templates/demo_confirm.php',
+					WDPRO_TEMPLATE_PATH.'pay_method_demo_confirm.php',
 					array(
 						'referer'=>$_SERVER['HTTP_REFERER'],
 						'post'=>$_POST,
