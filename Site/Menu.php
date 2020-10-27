@@ -190,7 +190,7 @@ class Menu extends Roll
 			else {
 				$where = array(
 					$params['where'],
-					$params['post_parent'],
+					[$params['post_parent']],
 				);
 			}
 		}
