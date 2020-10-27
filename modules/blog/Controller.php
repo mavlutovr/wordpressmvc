@@ -45,8 +45,10 @@ class Controller extends \Wdpro\BaseController {
 		// Статьи по тегам
 		wdpro_on_content_uri('blog_tag_list', function ($content, $page) {
 
+			$tag = static::getTagBySlug();
+
 			/** @var \Wdpro\Blog\Entity $page */
-			wdpro_data('h1', $page->getData('h1') . ' - ' . $_GET['tags']);
+			wdpro_data('h1', $page->getData('h1') . ' - ' . $tag);
 
 			wdpro_replace_or_append(
 				$content,
@@ -54,7 +56,7 @@ class Controller extends \Wdpro\BaseController {
 
 				Roll::getHtml([
 					'WHERE post_status="publish" AND in_menu=1 AND tags[lang] LIKE %s ORDER BY date_added',
-					['%"'.urldecode($_GET['tags']).'"%']
+					['%"'.urldecode($tag).'"%']
 				])
 			);
 
@@ -70,11 +72,23 @@ class Controller extends \Wdpro\BaseController {
 
 			$page = wdpro_current_page();
 
+			$tag = static::getTagBySlug();
 
 			wdpro_data('noindex', true);
-			wdpro_data('h1', $page->getH1() . ' - ' . urldecode($_GET['tags']));
-			wdpro_data('title', $page->getTitle() . ' - ' . urldecode($_GET['tags']));
+			wdpro_data('h1', $page->getH1() . ' - ' . $tag);
+			wdpro_data('title', $page->getTitle() . ' - ' . $tag);
 		});
+	}
+
+
+	public static function getTagBySlug() {
+		$tagSlug = isset($_GET['tags']) ? $_GET['tags'] : $_GET['tag'];
+
+			$tag = static::isTagsPagesModule()
+				? Tags\Controller::getTagOfSlug($tagSlug)
+				: urldecode($tagSlug);
+
+		return $tag;
 	}
 
 
@@ -141,6 +155,16 @@ class Controller extends \Wdpro\BaseController {
 
 
 	/**
+	 * Check is tags pages module exists
+	 *
+	 * @return boolean
+	 */
+	public static function isTagsPagesModule() {
+		return \Wdpro\Modules::existsWdpro('blog/tags');
+	}
+
+
+	/**
 	 * Возвращает список тегов
 	 *
 	 * @return array
@@ -169,11 +193,40 @@ class Controller extends \Wdpro\BaseController {
 					}
 				}
 			}
-
-			sort($tags);
 		}
 
+		if (static::isTagsPagesModule()) {
+			$tagsWithSlug = [];
+			foreach($tags as $tag) {
+				$tagsWithSlug[] = Tags\Controller::getTagData($tag);
+			}
+			$tags = $tagsWithSlug;
+		}
+
+		static::sortTags($tags);
+
 		return array_values($tags);
+	}
+
+
+	public static function sortTags(&$tags) {
+
+		if (!$tags) return false;
+
+		if (static::isTagsPagesModule()) {
+			// Remove empties
+			$tags = array_filter(
+				$tags, function($value) { return !is_null($value) && $value !== ''; });
+			$tagsNames = array_column($tags, 'tag');
+			// echo 'tags: '.$tags;
+			// print_r($tags);
+			// echo 'tagsNames: '.$tagsNames;
+			// print_r($tagsNames);
+			array_multisort($tagsNames, SORT_ASC, $tags);
+		}
+		else {
+			sort($tags);
+		}
 	}
 
 

@@ -605,7 +605,9 @@ function wdpro_current_post_name() {
 function wdpro_current_uri($queryChanges=null)
 {
 	$uri = '';
-	if (isset($_SERVER['REQUEST_URI_ORIGINAL'])) $uri = $_SERVER['REQUEST_URI_ORIGINAL'];
+	if (isset($_SERVER['REQUEST_URI_ORIGINAL']))
+		$uri = $_SERVER['REQUEST_URI_ORIGINAL'];
+
 	if (!$uri) $uri = $_SERVER['REQUEST_URI'];
 
 	if (isset($_SERVER['QUERY_STRING'])) {
@@ -758,6 +760,9 @@ function wdpro_is_current_post_name($postName) {
 }
 
 
+
+
+
 /**
  * Проверяет на соответствие тип текущей страницы
  *
@@ -771,6 +776,19 @@ function wdpro_is_current_post_type($postType) {
 	}
 
 	return false;
+}
+
+
+
+/**
+ * Check, is current page home
+ *
+ * @return void|boolean
+ */
+function wdpro_is_home() {
+	if ($page = wdpro_current_page()) {
+		return $page->isHome();
+	}
 }
 
 
@@ -2599,22 +2617,43 @@ function wdpro_default_file($defaultFile, $file) {
  *                                           имена файлов
  */
 function wdpro_copy($src, $dst, $callbackFilenameMod=null) {
-	$dir = opendir($src);
-	@mkdir($dst);
-	while(false !== ( $file = readdir($dir)) ) {
-		if (( $file != '.' ) && ( $file != '..' )) {
-			if ( is_dir($src . '/' . $file) ) {
-				wdpro_copy($src . '/' . $file,$dst . '/' . $file);
-			}
-			else {
-				$target = $file;
-				if ($callbackFilenameMod)
-				$target = $callbackFilenameMod($file);
-				copy($src . '/' . $file,$dst . '/' . $target);
+	
+	// Directory
+	if (is_dir($src)) {
+		$dir = opendir($src);
+
+		if (!is_dir($dst)) {
+			mkdir($dst);
+		}
+	
+		while(false !== ( $file = readdir($dir)) ) {
+			if (( $file != '.' ) && ( $file != '..' )) {
+				if ( is_dir($src . '/' . $file) ) {
+					wdpro_copy($src . '/' . $file,$dst . '/' . $file, $callbackFilenameMod);
+				}
+				else {
+					$target = $file;
+					if ($callbackFilenameMod)
+					$target = $callbackFilenameMod($file);
+					copy($src . '/' . $file, $dst . '/' . $target);
+				}
 			}
 		}
+
+		closedir($dir);
 	}
-	closedir($dir);
+
+	// File
+	else {
+
+		$pathinfo = pathinfo($dst);
+		if (!is_dir($pathinfo['dirname'])) {
+			mkdir($pathinfo['dirname'], 0777, true);
+		}
+		
+		copy($src, $dst);
+	}
+
 }
 
 
@@ -2671,11 +2710,12 @@ function wdpro_default_page($uri, $pageDataCallbackOrFile) {
  * @return string
  */
 function wdpro_render_text($text, $data=null) {
-
 	if (is_array($data)) {
 		foreach($data as $key=>$value) {
 
-			$text = str_replace('['.$key.']', $value, $text);
+			if (!is_array($value)) {
+				$text = str_replace('['.$key.']', $value, $text);
+			}
 		}
 	}
 
@@ -3992,4 +4032,28 @@ function wdpro_post_request($url, $data) {
   $result = stream_get_contents($fp); // no maxlength/offset
   fclose($fp);
   return $result;
+}
+
+
+/**
+ * Add css class to body tag
+ *
+ * @param string $class
+ * @return void
+ */
+function wdpro_add_body_class($class) {
+	add_filter( 'body_class', function ($classes) use (&$class) {
+		$classes[] = $class;
+		return $classes;
+	});
+}
+
+
+/**
+ * Check is it the PageSpeed Insights
+ *
+ * @return void
+ */
+function wdpro_is_google_speed_test() {
+	return strstr($_SERVER['HTTP_USER_AGENT'], 'Lighthouse');
 }

@@ -72,6 +72,12 @@
 				.outerHeight(height)
 			;
 
+			let el = self.get(0);
+			let sourceStyles = getComputedStyle(el);
+			if (sourceStyles.borderRadius) {
+				div.find('.JS_loading_bg').css('border-radius', sourceStyles.borderRadius);
+			}
+
 
 			// Отступ сверху
 			var targetTop = self.offset().top;

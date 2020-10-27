@@ -334,6 +334,7 @@ class Menu extends Roll
 								$submenu = wdpro_extend(array(
 									'type'=>$paramsForSubmenu['type'],
 									'entity'=>$paramsForSubmenu['entity'],
+									'fields'=>$paramsForSubmenu['fields'],
 									'submenu'=>$submenus,
 									'template'=>$paramsForSubmenu['template'],
 								), $submenu);

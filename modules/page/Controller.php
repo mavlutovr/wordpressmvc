@@ -8,6 +8,8 @@ use Wdpro\Templates;
 
 class Controller extends \Wdpro\BaseController {
 
+	protected static $consoleInfoByPostName = [];
+
 
 	/**
 	 * Инициализация модуля
@@ -257,11 +259,13 @@ class Controller extends \Wdpro\BaseController {
 
 
 			if (method_exists($page, 'initCard')) {
-				$data = $page->initCard();
-				if (isset($data) && is_array($data)) {
-					foreach ($data as $key => $datum) {
+				$pageData = $page->initCard();
+				if (isset($pageData) && is_array($pageData)) {
+					global $data;
+					foreach ($pageData as $key => $datum) {
 						global $$key;
 						$$key = $datum;
+						$data[$key] = $datum;
 					}
 				}
 			}
@@ -670,6 +674,11 @@ class Controller extends \Wdpro\BaseController {
 
 								function () use (&$form, &$entity)
 								{
+									$postName = $entity->getData('post_name');
+									if ($postName && !empty(static::$consoleInfoByPostName[$postName])) {
+										echo static::$consoleInfoByPostName[$postName];
+									}
+
 									//$form->setData($entity->getData());
 									if (isset($_GET['post']) && $_GET['post']) {
 										echo $entity->getEditFormMenu();
@@ -941,6 +950,12 @@ class Controller extends \Wdpro\BaseController {
 				}
 			}
 		}
+	}
+
+
+	public static function setConsoleInfoByPostName($postName, $htmlOfInfo) {
+
+		static::$consoleInfoByPostName[$postName] = $htmlOfInfo;
 	}
 
 }

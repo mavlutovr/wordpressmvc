@@ -573,6 +573,15 @@ null) {
 		$data = static::getBlockData($pay);
 		
 		
+		\wdpro_default_file(
+			__DIR__.'/../templates/yandexkassa_block.php',
+			WDPRO_TEMPLATE_PATH.'pay_method_yandexkassa_block.php'
+		);
+		\wdpro_default_file(
+			__DIR__.'/../templates/yandexkassa_block_methods.php',
+			WDPRO_TEMPLATE_PATH.'pay_method_yandexkassa_block_methods.php'
+		);
+
 		// 1 Метод оплаты
 		if (count($data['methods']) == 1) {
 			
@@ -581,7 +590,7 @@ null) {
 			}
 
 			return wdpro_render_php(
-				__DIR__.'/../templates/yandexkassa_block.php',
+				WDPRO_TEMPLATE_PATH.'pay_method_yandexkassa_block.php',
 				$data
 			);
 		}
@@ -590,7 +599,7 @@ null) {
 		else {
 
 			return wdpro_render_php(
-				__DIR__.'/../templates/yandexkassa_block_methods.php',
+				WDPRO_TEMPLATE_PATH.'pay_method_yandexkassa_block_methods.php',
 				$data
 			);
 		}

@@ -28,15 +28,19 @@ class Entity extends \Wdpro\BasePage {
 		$langSuffix = \Wdpro\Lang\Data::getCurrentLangUri();
 		if ($langSuffix) $langSuffix = '.'.$langSuffix;
 		$templateFile = $path.'main'.$langSuffix.'.php';
-		$this->data['post_url'] = $post_url;
 
 		if (is_file($templateFile)) {
 			\Wdpro\Templates::setCurrentTemplate($templateFile);
 		}
-		
-		$this->data = \apply_filters('wdpro_blog_card_data', $this->data);
 
-		parent::initCard();
+		$data = parent::initCard();
+		$this->data['post_url'] = $post_url;
+
+		$data = $this->prepareDataForTemplate($data);
+		
+		$data = \apply_filters('wdpro_blog_card_data', $data);
+
+		return $data;
 	}
 
 
@@ -70,6 +74,8 @@ class Entity extends \Wdpro\BasePage {
 		if (is_array($data['tags']) &&
 			(!count($data['tags']) || (count($data['tags']) === 1 && !$data['tags'][0])))
 			$data['tags'] = null;
+
+		$data = $this->prepareDataForTemplate($data);
 
 		// Возвращаем карточку страницы
 		$content = wdpro_render_php(
@@ -127,6 +133,11 @@ class Entity extends \Wdpro\BasePage {
 				$tags = explode(',', $data['tags_string'.$suffix]);
 				foreach ( $tags as $tag ) {
 					$tag = trim($tag);
+
+					if (Controller::isTagsPagesModule()) {
+						\Wdpro\Blog\Tags\Controller::onTagSave($tag);
+					}
+					
 					$saveTags[] = $tag;
 				}
 
@@ -167,6 +178,24 @@ class Entity extends \Wdpro\BasePage {
 		foreach(\Wdpro\Lang\Data::getUris() as $lang) {
 			$tags($lang);
 		}
+
+		return $data;
+	}
+
+
+	public function prepareDataForTemplate($data) {
+
+		if (Controller::isTagsPagesModule() 
+			&& $data['tags'] && count($data['tags']) && $data['tags'][0]) {
+
+			$data['tags_with_slug'] = [];
+
+			foreach($data['tags'] as $tag) {
+				$data['tags_with_slug'][] = Tags\Controller::getTagData($tag);
+			}
+		}
+
+		Controller::sortTags($data['tags_with_slug']);
 
 		return $data;
 	}

@@ -98,7 +98,7 @@ abstract class BasePage extends BaseEntity
 			wdpro_data('ogImage', WDPRO_UPLOAD_IMAGES_URL.$this->data['image']);
 		}
 
-		return [];
+		return $this->data;
 	}
 
 
@@ -291,6 +291,10 @@ abstract class BasePage extends BaseEntity
 	 */
 	public function getUrl() {
 
+		if ($url = $this->getAlternativeUrl()) {
+			return $url;
+		}
+
 		$url = wdpro_home_url_with_lang();
 		$url .= $this->getPostNamePrefix();
 		$url .= $this->getData('post_name');
@@ -321,6 +325,12 @@ abstract class BasePage extends BaseEntity
 	 */
 	public function getBreadcrumbsUrl() {
 		return $this->getUrl();
+	}
+
+
+	public function getAlternativeUrl() {
+		$url = get_post_meta($this->id(), 'alternative_url', 1);
+		if ($url) return $url;
 	}
 
 

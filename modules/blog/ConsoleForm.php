@@ -59,13 +59,18 @@ class ConsoleForm extends \Wdpro\Form\Form {
 
 
 		if (Controller::isTags()) {
+
+			$subinfo = Controller::isTagsPagesModule()
+				? '<p><i class="fas fa-tags"></i> <a href="options-general.php?page=Wdpro.Blog.Tags.ConsoleRoll" target="_blank">Настроить теги</a></p>'
+				: '';
+
 			$this->add([
 				'name'=>'tags_string[lang]',
 				'left'=>'Теги',
 				'class'=>'js-blog-tags',
 				'bottom'=>'<div class="js-blog-tags-list blog-tags-list">'
 				          .json_encode(Controller::getTagsList(), JSON_UNESCAPED_UNICODE)
-				          .'</div>',
+				          .'</div>'.$subinfo,
 			]);
 		}
 

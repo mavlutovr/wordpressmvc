@@ -2306,6 +2306,23 @@ if (typeof Array.isArray === 'undefined') {
 	};
 
 
+	/**
+	 * Prepare string for use in regular expression
+	 * 
+	 * https://javascript.ru/php/preg_quote
+	 * 
+	 * @param {string} str 
+	 */
+	wdpro.preg_quote = str => {	// Quote regular expression characters
+		// 
+		// +   original by: booeyOH
+		// +   improved by: Ates Goral (http://magnetiq.com)
+
+		return str.replace(/([\\\.\+\*\?\[\^\]\$\(\)\{\}\=\!\<\>\|\:])/g, "\\$1");
+	}
+
+
+
 	// Глобальные события
 	var wdproGlobalEvents = new wdpro.Event();
 
