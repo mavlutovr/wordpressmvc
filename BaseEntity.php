@@ -1080,12 +1080,19 @@ abstract class BaseEntity
 	 * переводимые на языки поля были равны текущему языку
 	 */
 	public function dataToCurrentLang() {
+		$this->data = $this->convertDataToCurrentLang($this->data);
+	}
+
+
+	public function convertDataToCurrentLang($data) {
 		$table = static::sqlTable();
 
 		foreach ($table::getLangsFields() as $coll) {
-			if (isset($this->data[$coll]))
-				$this->data[$coll] = $this->data[$coll.\Wdpro\Lang\Data::getCurrentSuffix()];
+			if (isset($data[$coll]))
+				$data[$coll] = $data[$coll.\Wdpro\Lang\Data::getCurrentSuffix()];
 		}
+
+		return $data;
 	}
 
 
