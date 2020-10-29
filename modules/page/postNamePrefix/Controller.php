@@ -54,7 +54,11 @@ class Controller extends \Wdpro\BaseController {
 
 
 		// Open pages by prefixed uris
-		static::$originalUri = $_SERVER['REQUEST_URI_ORIGINAL'] ? $_SERVER['REQUEST_URI_ORIGINAL'] : $_SERVER['REQUEST_URI'];
+		if (empty(static::$originalUri)) {
+			static::setOriginalUri(
+				$_SERVER['REQUEST_URI_ORIGINAL'] ? $_SERVER['REQUEST_URI_ORIGINAL'] : $_SERVER['REQUEST_URI']
+			);
+		}
 
 		$homeUri = wdpro_home_uri(true);
 
@@ -80,8 +84,6 @@ class Controller extends \Wdpro\BaseController {
 					$wdpro_home_uri .= '/';
 
 				if ($uri !== $wdpro_home_uri) {
-					if (!isset($_SERVER['REQUEST_URI_ORIGINAL']))
-						$_SERVER['REQUEST_URI_ORIGINAL'] = $_SERVER['REQUEST_URI'];
 
 					$_SERVER['REQUEST_URI'] = $uri.$query;
 				}
@@ -177,10 +179,19 @@ class Controller extends \Wdpro\BaseController {
 
 		if ($page) {
 			$uri = $page->getUriWithPrefix();
+			if (!strstr($uri, '?') && $_SERVER['QUERY_STRING']) {
+				$uri .= '?'.$_SERVER['QUERY_STRING'];
+			}
 
+			// echo static::$originalUri.' !== '.$uri.PHP_EOL.PHP_EOL;
 			if (static::$originalUri !== $uri)
 				wdpro_location($uri);
 		}
+	}
+
+
+	public static function setOriginalUri($uri) {
+		static::$originalUri = $uri;
 	}
 
 }

@@ -817,6 +817,7 @@ function wdpro_local() {
  */
 function wdpro_location($location, $code=301)
 {
+	// throw new \Exception('wdpro_location');
 	if (headers_sent())
 	{
 		echo('<script>window.location = "'.$location.'"; console.log("Перенаправление на '.$location.'");</script>');

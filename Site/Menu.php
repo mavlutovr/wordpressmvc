@@ -47,7 +47,10 @@ class Menu extends Roll
 		], $params);
 
 		// Получаем данные кнопок
-		if ($list = static::getData($params)) {
+		if (!isset($params['list'])) {
+			$params['list'] = static::getData($params);
+		}
+		if ($params['list']) {
 
 			if (!isset($params['template'])) {
 				$params['template'] = static::getTemplatePhpFile();
@@ -61,7 +64,7 @@ class Menu extends Roll
 			}
 
 			return wdpro_render_php($template, [
-				'list'=>$list,
+				'list'=>$params['list'],
 				'params'=>$params,
 				'pagination'=>'',
 			], $templateDefault);
@@ -190,8 +193,12 @@ class Menu extends Roll
 			else {
 				$where = array(
 					$params['where'],
-					[$params['post_parent']],
+					[],
 				);
+
+				if (strstr($where[0], '%d')) {
+					$where[1][] = $params['post_parent'];
+				}
 			}
 		}
 
