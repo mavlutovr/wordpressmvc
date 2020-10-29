@@ -30,7 +30,7 @@ function wdproShowMetaForm($post)
 
 	$form->add([
 		'name'=>'alternative_url[lang]',
-		'top'=>'Ссылка на другую страницу или другой сайт',
+		'top'=>'Ссылка на другую страницу<BR>или другой сайт',
 	]);
 	// $form->add([ 'name'=>'madein[lang]', 'top'=>'Ссылка "Сделано в студии"',
 	//              'type'=>$form::TEXT
