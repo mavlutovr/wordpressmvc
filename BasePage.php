@@ -555,6 +555,28 @@ abstract class BasePage extends BaseEntity
 	}
 
 
+	public function applyPaginationTemplate($getPageKey='page') {
+		$lang = \Wdpro\Lang\Data::getCurrentLangSuffix();
+
+		if (!empty($_GET[$getPageKey]) && !empty($this->data['pagination_title'.$lang])) {
+			$this->data['post_title'.$lang] = str_replace(
+				'[page]',
+				$_GET[$getPageKey],
+				$this->data['pagination_title'.$lang]
+			);
+		}
+
+		if (!empty($_GET[$getPageKey]) && !empty($this->data['pagination_description'.$lang])) {
+			$this->data['post_description'.$lang] = str_replace(
+				'[page]',
+				$_GET[$getPageKey],
+				$this->data['pagination_description'.$lang]
+			);
+			wdpro_data('description', $this->data['pagination_description'.$lang]);
+		}
+	}
+
+
 	/**
 	 * Сохраняет дополнительную информацию о странице
 	 *

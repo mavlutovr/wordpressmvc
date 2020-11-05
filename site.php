@@ -492,6 +492,10 @@ add_filter('get_canonical_url', function ($canonical_url, $post) {
 	// Еще раз убираем двойной слеш
 	$canonical_url = preg_replace('~//$~', '/', $canonical_url);
 
+	if (wdpro_get_option('wdpro_add_query_string_to_canonical') && !empty($_SERVER['QUERY_STRING'])) {
+		$canonical_url .= '?'.$_SERVER['QUERY_STRING'];
+	}
+
 	return $canonical_url;
 }, 10, 2);
 
