@@ -583,7 +583,7 @@ abstract class BasePage extends BaseEntity
 				$_GET[$getPageKey],
 				$this->data['pagination_description'.$lang]
 			);
-			wdpro_data('description', $this->data['pagination_description'.$lang]);
+			wdpro_data('description', $this->data['post_description'.$lang]);
 		}
 	}
 
