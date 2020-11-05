@@ -574,6 +574,7 @@ abstract class BasePage extends BaseEntity
 				$_GET[$getPageKey],
 				$this->data['pagination_title'.$lang]
 			);
+			wdpro_data('title', $this->data['post_title'.$lang]);
 		}
 
 		if (!empty($_GET[$getPageKey]) && !empty($this->data['pagination_description'.$lang])) {
