@@ -30,7 +30,7 @@ function wdproShowMetaForm($post)
 
 	$form->add([
 		'name'=>'alternative_url[lang]',
-		'top'=>'Ссылка на другую страницу или другой сайт',
+		'top'=>'Ссылка на другую страницу<BR>или другой сайт',
 	]);
 	// $form->add([ 'name'=>'madein[lang]', 'top'=>'Ссылка "Сделано в студии"',
 	//              'type'=>$form::TEXT
@@ -302,6 +302,12 @@ function wdpro_the_h1($force=false, $applyFilters2=true)
 	if ($h1 != '-' && $h1 != '—' || $force)
 	{
 		$h1 = apply_filters('wdpro_h1', $h1);
+		if (!$h1) {
+			$page = wdpro_current_page();
+			if ($page) {
+				$h1 = $page->getH1(false);
+			}
+		}
 		if (!$h1)
 		{
 			$h1 = wdpro_the_title_standart();

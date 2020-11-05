@@ -457,10 +457,13 @@ class PayPal extends Base  implements MethodInterface {
 
 		$data = $pay->getData();
 		
-		
+		\wdpro_default_file(
+			__DIR__.'/../templates/paypal_block.php',
+			WDPRO_TEMPLATE_PATH.'pay_method_paypal_block.php'
+		);
 
 		return wdpro_render_php(
-			__DIR__.'/../templates/paypal_block.php',
+			WDPRO_TEMPLATE_PATH.'pay_method_paypal_block.php',
 			$data
 		);
 	}

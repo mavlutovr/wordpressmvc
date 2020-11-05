@@ -244,8 +244,13 @@ class Robokassa extends Base  implements MethodInterface {
 		$data['IncCurrLabel'] = '';
 		$data['Culture'] = 'ru';
 		
-		return wdpro_render_php(
+		\wdpro_default_file(
 			__DIR__.'/../templates/robokassa_block.php',
+			WDPRO_TEMPLATE_PATH.'pay_method_robokassa_block.php'
+		);
+
+		return wdpro_render_php(
+			WDPRO_TEMPLATE_PATH.'pay_method_robokassa_block.php',
 			$data
 		);
 	}

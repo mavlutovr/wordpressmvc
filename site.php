@@ -278,8 +278,12 @@ function wdpro_get_current_page($callback)
 wdpro_get_current_page(function ($page) {
 	global $data;
 
+	if (!is_array($data)) {
+		$data = [];
+	}
+
 	if (method_exists($page, 'getDataWithPost')) {
-		$data = $page->getDataWithPost();
+		$data = array_merge($data, $page->getDataWithPost());
 	}
 });
 
