@@ -347,6 +347,11 @@ href="'.WDPRO_CONSOLE_URL.'themes.php">Активировать тему</a>
 									'right' => 'Убрать дополнительные поля для страниц и постов (метатеги)',
 									'type'  => 'checkbox'
 								),
+								[
+									'name'=>'wdpro_add_query_string_to_canonical',
+									'right'=>'Добавить в canonical query string (?page=2)',
+									'type'=>'checkbox',
+								],
 								/*array(
 									'name'=>'wdpro_remove_redirect_canonical',
 									'right'=>'Убрать ошибку циклической переадресации ERR_TOO_MANY_REDIRECTS',
