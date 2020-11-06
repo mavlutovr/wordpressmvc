@@ -43,7 +43,7 @@ class Robokassa extends Base  implements MethodInterface {
 				if ($post['confirm'] == 1)
 				{
 					// Подтверждаем транзакцию
-					$pay->confirm('demo');
+					$pay->confirm('robokassa');
 
 					// Переход на страницу, где была нажата кнопка "Оплатить"
 					$pay->goToReferer();
