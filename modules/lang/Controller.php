@@ -13,10 +13,12 @@ class Controller extends \Wdpro\BaseController {
 
 
 		// Current language define
+		if (!isset($_SERVER['REQUEST_URI_ORIGINAL']))
+			$_SERVER['REQUEST_URI_ORIGINAL'] = $_SERVER['REQUEST_URI'];
+
 		$uri = $_SERVER['REQUEST_URI'];
 		$uri = str_replace('?'.$_SERVER['QUERY_STRING'], '', $uri);
 
-		$_SERVER['REQUEST_URI_ORIGINAL'] = $uri;
 		$setted = false;
 
 		// Each lang uri

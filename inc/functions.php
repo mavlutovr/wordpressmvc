@@ -817,6 +817,7 @@ function wdpro_local() {
  */
 function wdpro_location($location, $code=301)
 {
+	// throw new \Exception('wdpro_location');
 	if (headers_sent())
 	{
 		echo('<script>window.location = "'.$location.'"; console.log("Перенаправление на '.$location.'");</script>');
@@ -2710,11 +2711,12 @@ function wdpro_default_page($uri, $pageDataCallbackOrFile) {
  * @return string
  */
 function wdpro_render_text($text, $data=null) {
-
 	if (is_array($data)) {
 		foreach($data as $key=>$value) {
 
-			$text = str_replace('['.$key.']', $value, $text);
+			if (!is_array($value)) {
+				$text = str_replace('['.$key.']', $value, $text);
+			}
 		}
 	}
 
@@ -4031,6 +4033,20 @@ function wdpro_post_request($url, $data) {
   $result = stream_get_contents($fp); // no maxlength/offset
   fclose($fp);
   return $result;
+}
+
+
+/**
+ * Add css class to body tag
+ *
+ * @param string $class
+ * @return void
+ */
+function wdpro_add_body_class($class) {
+	add_filter( 'body_class', function ($classes) use (&$class) {
+		$classes[] = $class;
+		return $classes;
+	});
 }
 
 

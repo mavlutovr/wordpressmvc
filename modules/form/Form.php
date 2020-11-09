@@ -236,6 +236,12 @@ class Form
 							$params2['lang'] = true;
 							$params2['icon'] = \Wdpro\Lang\Data::getFlagSrc($lang);
 
+							if (isset($params2['value']) 
+								&& is_array($params2['value']) && isset($params2['value'][$lang])) {
+								$params2['value'] = $params2['value'][$lang];
+							}
+
+
 							$add($params2);
 						}
 					}

@@ -12,6 +12,11 @@
 	$_SERVER['REQUEST_URI'] = $_SERVER['HTTP_X_ORIGINAL_REQUEST'];
 }
 
+if (!isset($_SERVER['REQUEST_URI_ORIGINAL']))
+	$_SERVER['REQUEST_URI_ORIGINAL'] = $_SERVER['REQUEST_URI'];
+
+
+
 // Фикс для хостинга sweb.ru
 if (isset($_SERVER['HTTP_HTTPS']) && $_SERVER['HTTP_HTTPS'] === 'on')
 	$_SERVER['HTTPS'] = 'on';

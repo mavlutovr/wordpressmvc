@@ -120,6 +120,23 @@ class Data {
 
 
 	/**
+	 * Each langs data
+	 *
+	 * @param callback $callback
+	 * @return void
+	 */
+	public static function each($callback) {
+		foreach(static::$data['uris'] as $uri) {
+			$data = [
+				'uri'=>$uri,
+				'suffix'=>static::getSuffix($uri),
+			];
+			$callback($data);
+		}
+	}
+
+
+	/**
 	 * Возвращает массив адресов языков [ '', 'en', 'de' ]
 	 */
 	public static function getUris () {

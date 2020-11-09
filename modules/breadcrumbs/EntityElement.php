@@ -30,9 +30,13 @@ class EntityElement extends Element
 		{
 			$text .= ': '.$this->comment;
 		}
+
+		$url = $this->entity->getBreadcrumbsUrl($this->childsType);
+		if ($url === '#') $url = '';
+
 		return array(
 			'text'=>$text,
-			'uri'=>$this->entity->getBreadcrumbsUrl($this->childsType),
+			'uri'=>$url,
 		);
 	}
 

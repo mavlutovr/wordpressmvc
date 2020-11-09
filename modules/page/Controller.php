@@ -212,6 +212,10 @@ class Controller extends \Wdpro\BaseController {
 
 			if (is_object($page)) {
 
+				// Преобразуем данные так, чтобы в основных данных были данные текущего языка
+				// То есть, если сейчас английский, то post_title будет английским, а не русским
+				$page->dataToCurrentLang();
+
 				// Front Page
 				if (method_exists($page, 'isHome')
 					&& $page->isHome()) {
@@ -274,10 +278,6 @@ class Controller extends \Wdpro\BaseController {
 
 		// Card of page
 		wdpro_on_content(function ($content, $page) {
-
-			// Преобразуем данные так, чтобы в основных данных были данные текущего языка
-			// То есть, если сейчас английский, то post_title будет английским, а не русским
-			$page->dataToCurrentLang();
 
 			/** @var $page \Wdpro\BasePage */
 			if (isset($page->data['post_content']))

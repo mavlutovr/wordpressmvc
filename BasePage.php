@@ -291,6 +291,10 @@ abstract class BasePage extends BaseEntity
 	 */
 	public function getUrl() {
 
+		if ($url = $this->getAlternativeUrl()) {
+			return $url;
+		}
+
 		$url = wdpro_home_url_with_lang();
 		$url .= $this->getPostNamePrefix();
 		$url .= $this->getData('post_name');
@@ -321,6 +325,12 @@ abstract class BasePage extends BaseEntity
 	 */
 	public function getBreadcrumbsUrl() {
 		return $this->getUrl();
+	}
+
+
+	public function getAlternativeUrl() {
+		$url = get_post_meta($this->id(), 'alternative_url', 1);
+		if ($url) return $url;
 	}
 
 
@@ -552,6 +562,29 @@ abstract class BasePage extends BaseEntity
 		$title = $this->getData('post_title[lang]');
 		$title = $this->renderParamTemplate($title);
 		return $title;
+	}
+
+
+	public function applyPaginationTemplate($getPageKey='page') {
+		$lang = \Wdpro\Lang\Data::getCurrentLangSuffix();
+
+		if (!empty($_GET[$getPageKey]) && !empty($this->data['pagination_title'.$lang])) {
+			$this->data['post_title'.$lang] = str_replace(
+				'[page]',
+				$_GET[$getPageKey],
+				$this->data['pagination_title'.$lang]
+			);
+			wdpro_data('title', $this->data['post_title'.$lang]);
+		}
+
+		if (!empty($_GET[$getPageKey]) && !empty($this->data['pagination_description'.$lang])) {
+			$this->data['post_description'.$lang] = str_replace(
+				'[page]',
+				$_GET[$getPageKey],
+				$this->data['pagination_description'.$lang]
+			);
+			wdpro_data('description', $this->data['post_description'.$lang]);
+		}
 	}
 
 

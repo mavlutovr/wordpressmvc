@@ -2058,6 +2058,14 @@
 
 			})();
 
+			// Lang VAlue
+			// if (this.params['lang']) {
+			// 	if (typeof this.params['value'] === 'object') {
+			// 		let currentLang = wdpro.lang;
+			// 		console.log('currentLang', currentLang);
+			// 	}
+			// }
+
 			// Label ID
 			if (labelIdText)
 			{
