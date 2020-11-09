@@ -14,7 +14,7 @@ blog_templates.tags = function(opt_data, opt_ignored) {
   var tagListLen4 = tagList4.length;
   for (var tagIndex4 = 0; tagIndex4 < tagListLen4; tagIndex4++) {
     var tagData4 = tagList4[tagIndex4];
-    output += '<span class="a">' + soy.$$escapeHtml(tagData4) + '</span>, ';
+    output += '<span class="a">' + ((tagData4.tag) ? soy.$$escapeHtml(tagData4.tag) : soy.$$escapeHtml(tagData4)) + '</span>, ';
   }
   output += '</div>';
   return output;
