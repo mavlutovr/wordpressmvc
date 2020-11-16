@@ -2431,6 +2431,9 @@ if (typeof Array.isArray === 'undefined') {
 	};
 
 
+	wdpro.isMacOs = () => window.navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+
+
 	/**
 	 * Отключение нажатия на что-либо
 	 *

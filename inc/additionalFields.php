@@ -176,6 +176,10 @@ function wdpro_the_header()
 	}
 	$title = apply_filters('wdpro_title_2', $title);
 
+	if ($description === '-') {
+		$description = '';
+	}
+
 
 ?><title><?php echo($title); ?></title>
 	<meta name="description" content="<?php echo( htmlspecialchars($description) );

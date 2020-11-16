@@ -13,6 +13,7 @@
 
 				if (json) {
 					var tagsList = JSON.parse(json);
+					console.log('tagsList', tagsList);
 					var tagsHtml = $(blog_templates.tags({
 						tags: tagsList
 					}));

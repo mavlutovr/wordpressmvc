@@ -7,7 +7,7 @@
 {template .tags}
 <div>
 {foreach $tag in $tags}
-<span class="a">{$tag}</span>,{sp}
+<span class="a">{if $tag.tag}{$tag.tag}{else}{$tag}{/if}</span>,{sp}
 {/foreach}
 </div>
 {/template}

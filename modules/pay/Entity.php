@@ -89,8 +89,19 @@ class Entity extends \Wdpro\BaseEntity {
 			/** @var $target \Wdpro\Pay\TargetInterface */
 
 			// Отправляем транзакцию в целевой объект для зачисления средств
-			return $target->pay($this);
+			return $this->target()->pay($this);
 		}
+	}
+
+
+	/**
+	 * Update pay (renewal)
+	 *
+	 * @param array $data
+	 * @return void
+	 */
+	public function update($data) {
+		$this->target()->payUpdate($this, $data);
 	}
 
 
