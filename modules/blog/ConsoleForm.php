@@ -74,6 +74,13 @@ class ConsoleForm extends \Wdpro\Form\Form {
 			]);
 		}
 
+		if ($info = \Wdpro\Page\Controller::getConsoleFormInfo()) {
+			$this->add([
+				'type'=>static::HTML,
+				'html'=>$info,
+			]);
+		}
+
 		do_action('blog_console_form', $this);
 
 		//print_r($this->getElementByName('image')); exit();
