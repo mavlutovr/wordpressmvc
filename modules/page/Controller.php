@@ -9,6 +9,7 @@ use Wdpro\Templates;
 class Controller extends \Wdpro\BaseController {
 
 	protected static $consoleInfoByPostName = [];
+	protected static $consoleFormInfo = '';
 
 
 	/**
@@ -897,6 +898,7 @@ class Controller extends \Wdpro\BaseController {
 
 						wdpro_create_post($data);
 
+
 						// Редирект
 						wdpro_location(wdpro_current_uri(['postAdded'=>1]));
 					}
@@ -956,6 +958,16 @@ class Controller extends \Wdpro\BaseController {
 	public static function setConsoleInfoByPostName($postName, $htmlOfInfo) {
 
 		static::$consoleInfoByPostName[$postName] = $htmlOfInfo;
+	}
+
+
+	public static function addConsoleFormInfo($info) {
+		static::$consoleFormInfo .= $info;
+	}
+
+
+	public static function getConsoleFormInfo() {
+		if (static::$consoleFormInfo) return static::$consoleFormInfo;
 	}
 
 }

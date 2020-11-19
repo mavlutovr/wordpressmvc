@@ -21,6 +21,13 @@ class ConsoleForm extends \<?=(
 		'type' => static::CKEDITOR,
 		]);
 
+		if ($info = \Wdpro\Page\Controller::getConsoleFormInfo()) {
+			$this->add([
+				'type'=>static::HTML,
+				'html'=>$info,
+			]);
+		}
+
 <?php else: ?>
 		// Сортировка и сохранение
 		$this->add(static::SORTING);

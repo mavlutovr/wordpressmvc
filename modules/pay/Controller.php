@@ -160,6 +160,21 @@ class Controller extends \Wdpro\BaseController {
 			/** @var MethodInterface $method */
 			$method::runConsole();
 		});
+
+
+		\Wdpro\Console\Menu::addSettings('Оплата', function ($form) {
+
+			/** @var \Wdpro\Form\Form $form */
+
+			$form->add([
+				'name'=>'pay_methods_not_exists_message',
+				'top'=>'Сообщение, когда ни один способ оплаты не подключен',
+				'type'=>$form::CKEDITOR,
+			]);
+
+			$form->add($form::SUBMIT_SAVE);
+			return $form;
+		});
 	}
 
 
@@ -233,12 +248,18 @@ class Controller extends \Wdpro\BaseController {
 			if(!isset($transaction['methods'])
 				|| !is_array($transaction['methods'])
 				|| !count($transaction['methods'])) {
-				$transaction['methods_error'] = 'Не подключен ни один метод оплаты. Их 
-				нужно подключить в скриптах и потом включить в админке.';
-				echo '<p>Добавьте хотябы один метод оплаты:</p>
-							<code>\Wdpro\Pay\Controller::addMethod(\Wdpro\Pay\Methods\Robokassa::class);</code>
-							<p>А затем включите его в админке.</p><BR><BR>';
-				throw new \Exception('Нет способа оплаты');
+
+				// $transaction['methods_error'] = 'Не подключен ни один метод оплаты. Их 
+				// нужно подключить в скриптах и потом включить в админке.';
+				// echo '<p>Добавьте хотябы один метод оплаты:</p>
+				// 			<code>\Wdpro\Pay\Controller::addMethod(\Wdpro\Pay\Methods\Robokassa::class);</code>
+				// 			<p>А затем включите его в админке.</p><BR><BR>';
+				// throw new \Exception('Нет способа оплаты');
+
+				return \wdpro_get_option(
+					'pay_methods_not_exists_message',
+					'<p>Payment in will start working soon. As soon as the payment system confirms our request.</p>'
+				);
 			}
 
 			if (isset($transaction)) {
