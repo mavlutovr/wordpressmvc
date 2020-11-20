@@ -631,7 +631,7 @@ function wdpro_current_uri($queryChanges=null)
 		$uri.=$arr[$count-1];
 	}*/
 
-	if (isset($_SERVER['QUERY_STRING']) && !strstr($uri, '?')) {
+	if (isset($_SERVER['QUERY_STRING']) && $_SERVER['QUERY_STRING'] && !strstr($uri, '?')) {
 		$uri .= '?'.$_SERVER['QUERY_STRING'];
 	}
 

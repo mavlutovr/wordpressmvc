@@ -19,6 +19,13 @@ class ConsoleForm extends \Wdpro\Form\Form
 			'top' => 'Текст страницы',
 			'type' => static::CKEDITOR,
 		]);
+
+		if ($info = \Wdpro\Page\Controller::getConsoleFormInfo()) {
+			$this->add([
+				'type'=>static::HTML,
+				'html'=>$info,
+			]);
+		}
 	}
 
 
