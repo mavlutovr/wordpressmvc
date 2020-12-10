@@ -1,9 +1,26 @@
 <?php
 
+// Protection
+// https://habr.com/ru/post/98083/
+global $user_ID; 
+if($user_ID) {
+  if(!current_user_can('level_10')) {
+    if (strlen($_SERVER['REQUEST_URI']) > 255 ||
+      strpos($_SERVER['REQUEST_URI'], "eval(") ||
+      strpos($_SERVER['REQUEST_URI'], "CONCAT") ||
+      strpos($_SERVER['REQUEST_URI'], "UNION+SELECT") ||
+      strpos($_SERVER['REQUEST_URI'], "base64")) {
+        @header("HTTP/1.1 414 Request-URI Too Long");
+				@header("Status: 414 Request-URI Too Long");
+				@header("Connection: Close");
+				@exit;
+    }
+  }
+}
+
 // Редирект с index.php на корень сайта /
 if (wdpro_current_uri() === '/index.php') {
-	header('HTTP/1.1 301 Moved Permanently');
-	header('Location: ' . home_url() . '/');
+	wdpro_location(home_url() . '/');
 	exit();
 }
 

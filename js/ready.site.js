@@ -15,7 +15,11 @@ jQuery(document).ready(function () {
 
 
 	const updateScrollBarsWidth = () => {
-		document.documentElement.style.setProperty('--scrollbar-width', (window.innerWidth - document.documentElement.clientWidth) + "px");
+		document.documentElement.style.setProperty('--scrollbar-width', (
+			// window.innerWidth // Changed it to screen.width for fix pixels size in retina screens
+			screen.width
+			- document.documentElement.clientWidth) + "px"
+			);
 	};
 
 	updateScrollBarsWidth();

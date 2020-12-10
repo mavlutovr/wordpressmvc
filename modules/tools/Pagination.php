@@ -6,6 +6,7 @@ class Pagination {
 	protected $params = array();
 
 	protected $pages;
+	protected $currentPageSetted = false;
 
 	/**
 	 * @param null|true|array $params Параметры. Если указано true, то ничего не
@@ -117,6 +118,14 @@ class Pagination {
 	 */
 	public function getLimitParams() {
 
+		if (!$this->currentPageSetted) {
+			$this->setCurrentPage(
+				!empty($_GET[$this->params['key']])
+					? $_GET[$this->params['key']]
+					: 1
+			);
+		}
+
 		return array(
 			'offset'=>(int)(($this->params['currentPage'] - 1)
 				* $this->params['pageSize']),
@@ -158,6 +167,7 @@ class Pagination {
 	public function setCurrentPage($pageNumber) {
 
 		$this->params['currentPage'] = $pageNumber;
+		$this->currentPageSetted = true;
 	}
 
 

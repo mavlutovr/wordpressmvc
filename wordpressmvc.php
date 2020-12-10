@@ -22,7 +22,12 @@ if (isset($_SERVER['HTTP_HTTPS']) && $_SERVER['HTTP_HTTPS'] === 'on')
 	$_SERVER['HTTPS'] = 'on';
 
 // Дата
-date_default_timezone_set(ini_get('date.timezone'));
+if (defined('TIMEZONE') && TIMEZONE) {
+	date_default_timezone_set(TIMEZONE);
+}
+else {
+	date_default_timezone_set(ini_get('date.timezone'));
+}
 
 
 // Standart Functions
