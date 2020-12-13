@@ -525,3 +525,12 @@ add_filter('get_canonical_url', function ($canonical_url, $post) {
 if (get_option('wdpro_remove_link_rel_prev_and_next')) {
 	remove_action( 'wp_head', 'adjacent_posts_rel_link_wp_head', 10, 0 );
 }
+
+
+// Disable redirection from /a to /account, /b to /blog... It is for security
+function remove_redirect_guess_404_permalink( $redirect_url ) {
+    if ( is_404() )
+        return false;
+    return $redirect_url;
+}
+add_filter( 'redirect_canonical', 'remove_redirect_guess_404_permalink' );
