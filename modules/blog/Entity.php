@@ -5,6 +5,19 @@ use Wdpro\Exception;
 
 class Entity extends \Wdpro\BasePage {
 
+
+	public function getOgImage() {
+		if ($this->data['image']) {
+			return WDPRO_UPLOAD_IMAGES_URL.$this->data['image'];
+		}
+	}
+
+
+	public function getOgType() {
+		return 'article';
+	}
+
+
 	/**
 	 * Инициализация страницы до отправки html кода в браузер
 	 *

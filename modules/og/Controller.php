@@ -60,6 +60,15 @@ class Controller extends \Wdpro\BaseController {
 		// Из Wdpro
 		$ogImage = '';
 
+
+		// Из страницы (из метода)
+		if (!$ogImage) {
+			if (\method_exists($page, 'getOgImage')) {
+				$ogImage = $page->getOgImage();
+			}
+		}
+
+
 		// Из страницы (из специального поля)
 		if (!$ogImage) {
 			if (!empty($page->data['og_image'])) {
@@ -141,6 +150,14 @@ class Controller extends \Wdpro\BaseController {
 
 
 		$data['fbAppId'] = wdpro_get_option('fbAppId');
+
+
+		$data['type'] = 'website';
+		if (\method_exists($page, 'getOgType')) {
+			$data['type'] = $page->getOgType();
+		}
+
+		$data = \apply_filters('wdpro_og', $data);
 
 		return wdpro_render_php(
 			__DIR__.'/templates/header.php',
