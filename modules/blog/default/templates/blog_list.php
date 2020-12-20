@@ -21,7 +21,7 @@
 					<?php endif; ?>
 
 					<!-- Справа -->
-					<div class="glog-row-2 blog-item-coll">
+					<div class="blog-row-2 blog-item-coll">
 						<!-- Название статьи -->
 						<div class="blog-row-name">
 							<a href="<?=$item['url']?>"><?php
@@ -31,11 +31,11 @@
 						<!-- Даты -->
 						<?php if ($item['date_added']): ?>
 							<p class="blog-date">
-				<span class="glog-date-added">
+				<span class="blog-date-added">
 					Опубликовано: <?php echo wdpro_date($item['date_added']); ?>.
 				</span>
 								<?php if ($item['date_edited']): ?>
-									<span class="glog-date-edited">
+									<span class="blog-date-edited">
 						Обновлено: <?php echo wdpro_date($item['date_added']); ?>.</span>
 								<?php endif; ?>
 							</p>

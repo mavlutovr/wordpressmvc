@@ -5,7 +5,10 @@ namespace Wdpro\Blog;
 class Controller extends \Wdpro\BaseController {
 
 	protected static $tags = false;
+	protected static $dateEdited = false;
 	protected static $postNamePrefix = false;
+	protected static $imageEnabled = true;
+	protected static $anonsEnabled = true;
 
 
 	/**
@@ -139,8 +142,8 @@ class Controller extends \Wdpro\BaseController {
 	 *
 	 * @param bool $on true
 	 */
-	public static function setTags($on) {
-		static::$tags = $on;
+	public static function setTags($enabled) {
+		static::$tags = $enabled;
 	}
 
 
@@ -154,6 +157,26 @@ class Controller extends \Wdpro\BaseController {
 	}
 
 
+	public static function isImageEnabled() {
+		return static::$imageEnabled;
+	}
+
+
+	public static function setImageEnabled($enabled) {
+		static::$imageEnabled = $enabled;
+	}
+
+
+	public static function isAnonsEnabled() {
+		return static::$anonsEnabled;
+	}
+
+
+	public static function setAnonsEnabled($enabled) {
+		static::$anonsEnabled = $enabled;
+	}
+
+
 	/**
 	 * Check is tags pages module exists
 	 *
@@ -161,6 +184,27 @@ class Controller extends \Wdpro\BaseController {
 	 */
 	public static function isTagsPagesModule() {
 		return \Wdpro\Modules::existsWdpro('blog/tags');
+	}
+
+
+	/**
+	 * Is date edited enabled
+	 *
+	 * @return boolean
+	 */
+	public static function isDateEdited() {
+		return static::$dateEdited;
+	}
+
+
+	/**
+	 * Enable date edited
+	 *
+	 * @param boolean $enabled
+	 * @return void
+	 */
+	public static function setDateEdited($enabled) {
+		static::$dateEdited = $enabled;
 	}
 
 
