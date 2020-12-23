@@ -15,6 +15,7 @@ class BaseForm extends \Wdpro\Form\Form {
 			'name'=>'privacy',
 			'type'=>static::CHECK,
 			'right'=>'Я даю свое согласие на обработку персональных данных и соглашаюсь с условиями и <a href="'.home_url().'/privacy-policy/" target="_blank">политикой конфиденциальности</a>.',
+			'containerClass'=>'privacy-check',
 			'*'=>true,
 			'checked'=>true,
 		]);
