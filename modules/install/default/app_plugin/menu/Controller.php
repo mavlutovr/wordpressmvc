@@ -3,6 +3,16 @@ namespace App\Menu;
 
 class Controller extends \Wdpro\BaseController {
 
+
+
+
+	public static function runConsole() {
+
+		// Информация для редактирования страницы Контакты (contacts)
+		\Wdpro\Contacts\Controller::showInfoForContactsPage();
+	}
+
+
 	/**
 	 * Дополниительная инициализация для админки
 	 *

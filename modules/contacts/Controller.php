@@ -14,6 +14,7 @@ class Controller extends \Wdpro\BaseController {
 	 */
 	public static function runConsole() {
 
+
 		// Меню - Контакты
 		if (static::$consoleDisplayMenuButton) {
 			\Wdpro\Console\Menu::add(array(
@@ -183,6 +184,16 @@ class Controller extends \Wdpro\BaseController {
 	 */
 	public static function consoleDisplayMenuButton($display) {
 		static::$consoleDisplayMenuButton = $display;
+	}
+
+	
+
+	public static function showInfoForContactsPage() {
+		// Информация для редактирования страницы 'contacts'
+		\Wdpro\Page\Controller::setConsoleInfoByPostName(
+			'contacts',
+			'<p>Т.к. может быть несколько адресов и для каждого адреса можно указать свою карту, контакты редактируются <a href="admin.php?page=Wdpro.Contacts.ConsoleRoll">здесь</a>.</p>'
+		);
 	}
 }
 
