@@ -17,6 +17,7 @@ class Form
 	protected $groups = [];
 	protected $saveErrorsToOptions = false;
 	protected static $defaultMethod = 'POST';
+	protected $errors = [];
 
 	const CKEDITOR = 'ckeditor';
 	const CKEDITOR_SMALL = 'ckeditorSmall';
@@ -611,6 +612,7 @@ window.'.$id.' = '.($this->getJson()).';
 				if (!$element->valid($data))
 				{
 					$valid = false;
+					$this->errors[] = $element->getError();
 
 					/*$this->params['errors'][$element->getName()] =
 						$element->getError();*/
@@ -619,6 +621,11 @@ window.'.$id.' = '.($this->getJson()).';
 		}
 
 		return $valid;
+	}
+
+
+	public function getErrors() {
+		return $this->errors;
 	}
 
 
