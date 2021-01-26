@@ -14,6 +14,7 @@ class Controller extends \Wdpro\BaseController {
 	 */
 	public static function runConsole() {
 
+
 		// Меню - Контакты
 		if (static::$consoleDisplayMenuButton) {
 			\Wdpro\Console\Menu::add(array(
@@ -42,6 +43,7 @@ class Controller extends \Wdpro\BaseController {
 
 				$params = $element->getParams();
 				if (isset($params['name']) && $params['name'] !== 'privacy') {
+
 					if (isset($params['top'])) {
 						$form->add([
 							'name'=>'contacts_form_element_'.$params['name'].'_top[lang]',
@@ -63,9 +65,16 @@ class Controller extends \Wdpro\BaseController {
 						]);
 					}
 
+					if (isset($params['center'])) {
+						$form->add([
+							'name'=>'contacts_form_element_'.$params['name'].'_center[lang]',
+							'top'=>$params['center'],
+						]);
+					}
+
 				}
 
-				if (isset($params['type']) && $params['type'] == 'submit') {
+				if (isset($params['type']) && $params['type'] === 'submit') {
 					$form->add([
 						'name'=>'contacts_form_element_submit[lang]',
 						'top'=>'Отправить',
@@ -116,6 +125,11 @@ class Controller extends \Wdpro\BaseController {
 					$right = wdpro_get_option('contacts_form_element_'.$params['name'].'_right[lang]');
 					if ($right) {
 						$element->mergeParams(['right'=>$right]);
+					}
+
+					$center = wdpro_get_option('contacts_form_element_'.$params['name'].'_center[lang]');
+					if ($center) {
+						$element->mergeParams(['center'=>$center]);
 					}
 				}
 
@@ -183,6 +197,23 @@ class Controller extends \Wdpro\BaseController {
 	 */
 	public static function consoleDisplayMenuButton($display) {
 		static::$consoleDisplayMenuButton = $display;
+	}
+
+	
+
+	public static function showInfoForContactsPage() {
+		// Информация для редактирования страницы 'contacts'
+		\Wdpro\Page\Controller::setConsoleInfoByPostName(
+			'contacts',
+			'<h3>Где редактировать контакты</h3>
+			<p>Т.к. может быть несколько адресов и для каждого адреса можно указать свою карту, контакты редактируются <a href="admin.php?page=Wdpro.Contacts.ConsoleRoll">здесь</a>.</p>
+			'
+		);
+
+		\Wdpro\Page\Controller::addConsoleFormInfo('
+			<p>[contacts_list] - Список контактов<p>
+			<p>[contacts_form] - Форма обратной связи</p>
+		', 'contacts');
 	}
 }
 

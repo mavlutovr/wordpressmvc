@@ -291,7 +291,9 @@ class Base
 	 */
 	public function getSendValue() {
 
-		return $this->getSaveValue();
+		if (!isset($this->params['send']) || $this->params['send']) {
+			return $this->getSaveValue();
+		}
 	}
 
 

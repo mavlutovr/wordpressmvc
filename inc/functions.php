@@ -1265,7 +1265,7 @@ function wdopro_file_free_name($pathToFile)
  *
  * @param string $originalImageFile Путь к файлу оригинального изображения
  * @param string $newImageFile Имя Путь к файлу нового уменьшенного изображения
- * @param array $params Параметры
+ * @param array $paramsOrActionName Параметры
  * array(
  *  'width'=>number,
  *  'height'=>number,
@@ -1273,20 +1273,20 @@ function wdopro_file_free_name($pathToFile)
  * )
  * @throws Exception
  */
-function wdpro_image_resize($originalImageFile, $newImageFile, $params)
+function wdpro_image_resize($originalImageFile, $newImageFile, $paramsOrActionName)
 {
 	$pathInfo = pathinfo($newImageFile);
 	wdpro_upload_dir_create($pathInfo['dirname']);
 
-	if ((isset($params['type']) && $params['type'] == 'crop')
-		|| (isset($params['mode']) && $params['mode'] == 'crop')
+	if ((isset($paramsOrActionName['type']) && $paramsOrActionName['type'] == 'crop')
+		|| (isset($paramsOrActionName['mode']) && $paramsOrActionName['mode'] == 'crop')
 	)
 	{
 		wdpro_image_resize_crop(
 			$originalImageFile,
 			$newImageFile,
-			isset($params['width']) ? $params['width'] : null,
-			isset($params['height']) ? $params['height'] : null
+			isset($paramsOrActionName['width']) ? $paramsOrActionName['width'] : null,
+			isset($paramsOrActionName['height']) ? $paramsOrActionName['height'] : null
 		);
 	}
 	else
@@ -1294,8 +1294,8 @@ function wdpro_image_resize($originalImageFile, $newImageFile, $params)
 		wdpro_image_resize_rate(
 			$originalImageFile,
 			$newImageFile,
-			isset($params['width']) ? $params['width'] : null,
-			isset($params['height']) ? $params['height'] : null
+			isset($paramsOrActionName['width']) ? $paramsOrActionName['width'] : null,
+			isset($paramsOrActionName['height']) ? $paramsOrActionName['height'] : null
 		);
 	}
 }
@@ -1305,70 +1305,70 @@ function wdpro_image_resize($originalImageFile, $newImageFile, $params)
  * Наложение водяного знака на изображение
  *
  * @param string $fileFullName Адрес файла изображения
- * @param array $params Параметры
+ * @param array $paramsOrActionName Параметры
  * array('file'=>WDPRO_UPLOAD_IMAGES_PATH.'watermark.png', 'top|right|bottom|left'=>100)
  */
-function wdpro_image_watermark($fileFullName, $params) {
+function wdpro_image_watermark($fileFullName, $paramsOrActionName) {
 
 	ini_set('display_errors', 'on');
 	error_reporting(7);
 
-	if (!isset($params['opacity'])) $params['opacity'] = 1;
+	if (!isset($paramsOrActionName['opacity'])) $paramsOrActionName['opacity'] = 1;
 
-	if (!isset($params['file'])) {
-		$params['file']
+	if (!isset($paramsOrActionName['file'])) {
+		$paramsOrActionName['file']
 			= WDPRO_UPLOAD_IMAGES_PATH.wdpro_get_option('wdpro_watermark');
 	}
 
 	// Сохранение оригинального рисунка
-	if ($params['original']) {
+	if ($paramsOrActionName['original']) {
 		$originalPath = pathinfo($fileFullName);
 
 		wdpro_copy_file($fileFullName,
 			$originalPath['dirname']
-			. '/' . $params['original']
+			. '/' . $paramsOrActionName['original']
 			. '/' . $originalPath['basename']);
 
 		$htaccessFileName = $originalPath['dirname']
-			. '/' . $params['original'];
+			. '/' . $paramsOrActionName['original'];
 
 		if (!is_file($htaccessFileName)) {
 			wdpro_copy_file(
 				__DIR__.'/../modules/tools/watermark/default/htaccess',
 				$originalPath['dirname']
-				. '/' . $params['original']
+				. '/' . $paramsOrActionName['original']
 				. '/.htaccess'
 			);
 		}
 	}
 
-	if ($fileFullName && is_file($fileFullName) && is_file($params['file'])) {
+	if ($fileFullName && is_file($fileFullName) && is_file($paramsOrActionName['file'])) {
 
 
-		$getPos = function ($sizeBig, $sizeSmall) use (&$params) {
+		$getPos = function ($sizeBig, $sizeSmall) use (&$paramsOrActionName) {
 			// Центр (по-умолчанию)
 			$x = round($sizeBig['width'] / 2 - $sizeSmall['width'] / 2);
 			$y = round($sizeBig['height'] / 2 - $sizeSmall['height'] / 2);
 
 			// Справа
-			if (isset($params['right']) && $params['right']) {
-				$x = $sizeBig['width'] - $sizeSmall['width'] - $params['right'];
+			if (isset($paramsOrActionName['right']) && $paramsOrActionName['right']) {
+				$x = $sizeBig['width'] - $sizeSmall['width'] - $paramsOrActionName['right'];
 			}
 
 			// Слева
-			if (isset($params['left']) && $params['left']) {
-				$x = $params['left'];
+			if (isset($paramsOrActionName['left']) && $paramsOrActionName['left']) {
+				$x = $paramsOrActionName['left'];
 			}
 
 			// Сверху
-			if (isset($params['top']) && $params['top']) {
-				$y = $params['top'];
+			if (isset($paramsOrActionName['top']) && $paramsOrActionName['top']) {
+				$y = $paramsOrActionName['top'];
 			}
 
 			// Снизу
-			if (isset($params['bottom']) && $params['bottom']) {
+			if (isset($paramsOrActionName['bottom']) && $paramsOrActionName['bottom']) {
 				$y = $sizeBig['height'] - $sizeSmall['height'] -
-					$params['bottom'];
+					$paramsOrActionName['bottom'];
 			}
 
 			return [
@@ -1386,10 +1386,10 @@ function wdpro_image_watermark($fileFullName, $params) {
 
 			// Водяной знак
 			$watermark = new Imagick();
-			$watermark->readImage($params['file']);
+			$watermark->readImage($paramsOrActionName['file']);
 
-			if ($params['opacity'] !== 1) {
-				$watermark->setImageOpacity($params['opacity']);
+			if ($paramsOrActionName['opacity'] !== 1) {
+				$watermark->setImageOpacity($paramsOrActionName['opacity']);
 			}
 
 			// Размеры изображений
@@ -1417,7 +1417,7 @@ function wdpro_image_watermark($fileFullName, $params) {
 			imagesavealpha($img,true);*/
 
 			// Водяной знак
-			$watermark = wdpro_gd_create_image($params['file']);
+			$watermark = wdpro_gd_create_image($paramsOrActionName['file']);
 			/*imagealphablending($watermark, false);
 			imagesavealpha($watermark,true);*/
 
@@ -1440,8 +1440,8 @@ function wdpro_image_watermark($fileFullName, $params) {
 			/*imagecopymerge(
 				$img,
 				$watermark,
-				$params['left'],
-				$params['top'],
+				$paramsOrActionName['left'],
+				$paramsOrActionName['top'],
 				0,
 				0,
 				$watermarkSize['width'],
@@ -2332,12 +2332,12 @@ function wdpro_get_month($time) {
  * Преобразует секунды в отображаемую дату
  *
  * @param int $time Секунды от какого-то там 1970 года
- * @param null|array $params Параметры
+ * @param null|array $paramsOrActionName Параметры
  * @return string
  */
-function wdpro_date($time, $params=null)
+function wdpro_date($time, $paramsOrActionName=null)
 {
-	$params = wdpro_extend(array(
+	$paramsOrActionName = wdpro_extend(array(
 		'year'=>true,
 		'today'=>true,
 		'time'=>false,
@@ -2346,42 +2346,42 @@ function wdpro_date($time, $params=null)
 		'todayText'=>'Сегодня',
 		'yesterdayText'=>'Вчера',
 		'tomorrowText'=>'Завтра',
-	), $params);
+	), $paramsOrActionName);
 
 	$date = null;
-	if ($params['today'])
+	if ($paramsOrActionName['today'])
 	{
 		if (date('Y.m.d') == date('Y.m.d', $time))
 		{
-			$date = $params['todayText'];
+			$date = $paramsOrActionName['todayText'];
 		}
 		else if (date('Y.m.d') == date('Y.m.d', $time + WDPRO_DAY))
 		{	
-			$date = $params['yesterdayText'];
+			$date = $paramsOrActionName['yesterdayText'];
 		}
 		else if (date('Y.m.d') == date('Y.m.d', $time - WDPRO_DAY))
 		{
-			$date = $params['tomorrowText'];
+			$date = $paramsOrActionName['tomorrowText'];
 		}
 	}
 
 	if (!$date)
 	{
-		if ($params['year'] === 'different') {
+		if ($paramsOrActionName['year'] === 'different') {
 			if (date('Y', $time) === date('Y')) {
-				$params['dateFormat'] = preg_replace(
+				$paramsOrActionName['dateFormat'] = preg_replace(
 					'~(\bY)\b~',
 					'',
-					$params['dateFormat']
+					$paramsOrActionName['dateFormat']
 				);
 			}
 		}
-		$date = wdpro_rdate($params['dateFormat'], $time);
+		$date = wdpro_rdate($paramsOrActionName['dateFormat'], $time);
 	}
 
-	if ($params['time']) {
+	if ($paramsOrActionName['time']) {
 
-		$date .= wdpro_rdate($params['timeFormat'], $time);
+		$date .= wdpro_rdate($paramsOrActionName['timeFormat'], $time);
 	}
 
 	return $date;
@@ -3072,21 +3072,27 @@ function wdpro_urlencode_array2($arr, $no=null, $name=null)
  *
  * @return string|void
  */
-function wdpro_ajax_url($params=null) {
+function wdpro_ajax_url($paramsOrActionName=null) {
 
 
 	$url =  admin_url('admin-ajax.php');
 
-	if ($params) {
+	if (is_string($paramsOrActionName)) {
+		$paramsOrActionName = [
+			'action'=>$paramsOrActionName,
+		];
+	}
 
-		if (isset($params['action'])) {
-			$params['wdproAction'] = $params['action'];
-			$params['action'] = 'wdpro';
+	if ($paramsOrActionName) {
+
+		if (isset($paramsOrActionName['action'])) {
+			$paramsOrActionName['wdproAction'] = $paramsOrActionName['action'];
+			$paramsOrActionName['action'] = 'wdpro';
 		}
 
-		$params['lang'] = \Wdpro\Lang\Controller::getCurrentLangUri();
+		$paramsOrActionName['lang'] = \Wdpro\Lang\Controller::getCurrentLangUri();
 
-		$url .= '?'.http_build_query($params);
+		$url .= '?'.http_build_query($paramsOrActionName);
 	}
 
 	return $url;
@@ -3962,12 +3968,12 @@ function wdpro_strip_slashes_in_array(&$array) {
  * Добавляет в .htaccess код
  *
  * @param string $code Добавляемый код
- * @param null|array $params Параметры
+ * @param null|array $paramsOrActionName Параметры
  *    ['position'] => 'end', // По-умолчанию код добавляется в начало
  *    ['name'] => string, // Имя блока, чтобы заменить ранее добавленный блок с таким же именем
  *    ['info'] => string, // Описание блока
  */
-function wdpro_add_to_htaccess($code, $params=null) {
+function wdpro_add_to_htaccess($code, $paramsOrActionName=null) {
 
 	$htaccess = file_get_contents(
 		ABSPATH.'.htaccess'
@@ -3977,32 +3983,32 @@ function wdpro_add_to_htaccess($code, $params=null) {
 	$end = '';
 
 	// Когда есть название блока
-	if (!empty($params['name'])) {
+	if (!empty($paramsOrActionName['name'])) {
 
 		// Удаляем старый блок
 		$htaccess = preg_replace(
-			'~(# BEGIN '.$params['name'].'[\s\S.]*# End '.$params['name'].')~i',
+			'~(# BEGIN '.$paramsOrActionName['name'].'[\s\S.]*# End '.$paramsOrActionName['name'].')~i',
 			'',
 			$htaccess
 		);
 
 		// Создаем метки начало и конца блока
-		$start = '# BEGIN '.$params['name'].PHP_EOL;
-		if (!empty($params['info'])) {
+		$start = '# BEGIN '.$paramsOrActionName['name'].PHP_EOL;
+		if (!empty($paramsOrActionName['info'])) {
 			$infoArr = explode('
-', $params['info']);
+', $paramsOrActionName['info']);
 			$info = '# '.join('
 # ', $infoArr);
 
 			$start .= $info.PHP_EOL;
 		}
 		$start .= PHP_EOL;
-		$end = PHP_EOL.'# END '.$params['name'].PHP_EOL;
+		$end = PHP_EOL.'# END '.$paramsOrActionName['name'].PHP_EOL;
 	}
 
 	$adding = $start.$code.$end;
 
-	if (!empty($params['position']) && $params['position'] === 'end') {
+	if (!empty($paramsOrActionName['position']) && $paramsOrActionName['position'] === 'end') {
 		$htaccess .= $adding;
 	}
 

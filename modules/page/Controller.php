@@ -10,6 +10,14 @@ class Controller extends \Wdpro\BaseController {
 
 	protected static $consoleInfoByPostName = [];
 	protected static $consoleFormInfo = '';
+	protected static $consoleFormInfoByPostName = [];
+
+	/**
+	 * Current editing page
+	 *
+	 * @var \Wdpro\BasePage
+	 */
+	protected static $editingPage;
 
 
 	/**
@@ -659,6 +667,7 @@ class Controller extends \Wdpro\BaseController {
 				if ($entity)
 				{
 					$form = null;
+					static::$editingPage = $entity;
 
 					// Форма "Параметры"
 					if ($form = $entity->getConsoleForm())
@@ -961,13 +970,34 @@ class Controller extends \Wdpro\BaseController {
 	}
 
 
-	public static function addConsoleFormInfo($info) {
-		static::$consoleFormInfo .= $info;
+	public static function addConsoleFormInfo($info, $postNameWithPrefix=null) {
+		if ($postNameWithPrefix) {
+			if (!isset(static::$consoleFormInfoByPostName[$postNameWithPrefix])) {
+				static::$consoleFormInfoByPostName[$postNameWithPrefix] = '';
+			}
+
+			static::$consoleFormInfoByPostName[$postNameWithPrefix] .= $info;
+		}
+		else {
+			static::$consoleFormInfo .= $info;
+		}
 	}
 
 
 	public static function getConsoleFormInfo() {
-		if (static::$consoleFormInfo) return static::$consoleFormInfo;
+		$ret = '';
+
+		if (static::$editingPage) {
+			$postNameWithPrefix = static::$editingPage->getPostNameWithPrefix();
+
+			if (!empty(static::$consoleFormInfoByPostName[$postNameWithPrefix])) {
+				$ret .= static::$consoleFormInfoByPostName[$postNameWithPrefix];
+			}
+		}
+
+		if (static::$consoleFormInfo) $ret .= static::$consoleFormInfo;
+
+		return $ret;
 	}
 
 }

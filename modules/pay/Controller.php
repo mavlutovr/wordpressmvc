@@ -172,6 +172,12 @@ class Controller extends \Wdpro\BaseController {
 				'type'=>$form::CKEDITOR,
 			]);
 
+			$form->add([
+				'name'=>'pay_save_payment_systems_responses',
+				'top'=>'Сохранять ответы платежных систем',
+				'type'=>$form::CHECK,
+			]);
+
 			$form->add($form::SUBMIT_SAVE);
 			return $form;
 		});

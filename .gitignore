@@ -1,5 +1,6 @@
 modules/lang/langs.json
 .directory
+modules/pay/Methods/ipn-code-samples
 
 # Сюда не нужно добавлять уже спомпилированные файлы **/*.less.css и **/*.soy.js, чтобы
  они скачивались и их не надо было компилировать на боевом сервере

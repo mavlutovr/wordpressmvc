@@ -322,7 +322,11 @@ class Entity extends \Wdpro\BaseEntity {
 	 */
 	public function getComment()
 	{
-		return $this->data['params']['message'];
+		if (!empty($this->data['params']['message'])) {
+			return $this->data['params']['message'];
+		}
+		
+		return $this->target()->payGetItemName();
 	}
 
 
@@ -401,7 +405,9 @@ class Entity extends \Wdpro\BaseEntity {
 	 */
 	public function mergeInfo($data)
 	{
-		$this->data['info'] = wdpro_extend($this->data['info'], $data);
+		if (get_option('pay_methods_not_exists_message') == 1) {
+			$this->data['info'] = wdpro_extend($this->data['info'], $data);
+		}
 
 		return $this;
 	}
@@ -421,4 +427,15 @@ class Entity extends \Wdpro\BaseEntity {
 	}
 
 
+	/**
+	 * Return additional data for pay transaction (user_id, order_id, etc.)
+	 *
+	 * @return void
+	 */
+	public function getCustomData() {
+		return [
+			'pai'=>$this->id(),
+			'pas'=>$this->data['secret'],
+		];
+	}
 }

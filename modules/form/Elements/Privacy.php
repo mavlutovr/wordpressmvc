@@ -22,6 +22,7 @@ class Privacy extends Check
 
 		$params = wdpro_extend(array(
 			'name' => 'privacy',
+			'containerClass'=>'privacy-check',
 			'right' => $right,
 			'required' => true,
 		), $params);

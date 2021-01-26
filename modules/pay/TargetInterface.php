@@ -107,4 +107,20 @@ interface TargetInterface
 	 * @return string
 	 */
 	public function getCustomerNumber();
+
+
+	/**
+	 * Return product name
+	 *
+	 * @return string
+	 */
+	public function payGetItemName();
+
+
+	/**
+	 * Return count of products
+	 *
+	 * @return number
+	 */
+	public function payGetItemsCount();
 }
