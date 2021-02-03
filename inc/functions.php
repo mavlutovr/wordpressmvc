@@ -792,6 +792,16 @@ function wdpro_is_home() {
 }
 
 
+function wdpro_display_404_page () {
+	global $wdproPage;
+	$wdproPage = \wdpro_get_post_by_name('error404');
+	status_header( 404 );
+	nocache_headers();
+	include( get_query_template( '404' ) );
+	die();
+}
+
+
 /**
  * True, если это локальная машина
  *
