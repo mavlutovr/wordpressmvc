@@ -4074,3 +4074,13 @@ function wdpro_add_body_class($class) {
 function wdpro_is_google_speed_test() {
 	return strstr($_SERVER['HTTP_USER_AGENT'], 'Lighthouse');
 }
+
+
+/**
+ * Returns random hash
+ *
+ * @return void
+ */
+function wdpro_get_random_hash() {
+	return bin2hex(openssl_random_pseudo_bytes(16));
+}
