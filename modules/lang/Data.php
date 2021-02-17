@@ -126,6 +126,8 @@ class Data {
 	 * @return void
 	 */
 	public static function each($callback) {
+		if (!is_array(static::$data['uris'])) return false;
+		
 		foreach(static::$data['uris'] as $uri) {
 			$data = [
 				'uri'=>$uri,
