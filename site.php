@@ -506,9 +506,14 @@ add_filter('get_canonical_url', function ($canonical_url, $post) {
 	if (get_query_var('cpage', 0) && $post->ID === get_queried_object_id()) {
 		$canonical_url = get_permalink($post);
 	}
+
 	// Добавляем в конец слеш, когда адреса со слешем в конце
-	if (!preg_match('~/$~', $canonical_url))
-		$canonical_url .= wdpro_url_slash_at_end();
+	$canonical_url = preg_replace(
+		'~(/)$~',
+		'',
+		$canonical_url
+	);
+	$canonical_url .= wdpro_url_slash_at_end();
 
 	// Еще раз убираем двойной слеш
 	$canonical_url = preg_replace('~//$~', '/', $canonical_url);
