@@ -10,6 +10,8 @@ class EntityElement extends Element
 
 
 	/**
+	 * Конструктор
+	 * 
 	 * @param \Wdpro\BasePage $entity страница
 	 */
 	public function __construct($entity)
@@ -25,7 +27,7 @@ class EntityElement extends Element
 	 */
 	public function getData()
 	{
-		$text = $this->entity->getButtonText();
+		$text = $this->entity->getBreadcrumbsLabel();
 		if ($this->comment)
 		{
 			$text .= ': '.$this->comment;

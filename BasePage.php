@@ -328,6 +328,15 @@ abstract class BasePage extends BaseEntity
 	}
 
 
+	public function getBreadcrumbsLabel() {
+		if (!empty($this->data['breadcrumbs_label'])) {
+			return $this->data['breadcrumbs_label'];
+		}
+
+		return $this->getButtonText();
+	}
+
+
 	public function getAlternativeUrl() {
 		$url = get_post_meta($this->id(), 'alternative_url', 1);
 		if ($url) return $url;

@@ -26,6 +26,7 @@ class SqlTable extends \Wdpro\BaseSqlTable {
 				'post_name',
 				'post_title[lang]',
 				'image',
+				'breadcrumbs_label[lang]',
 				'anons[lang]'=>'text',
 				'tags[lang]'=>'json',
 			//	'tags_string[lang]'=>'text',
