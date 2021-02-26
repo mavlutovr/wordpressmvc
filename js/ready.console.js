@@ -243,4 +243,19 @@ jQuery(document).ready(function ()
 			});
 		});
 	});
+
+
+	// Code copy
+	$('body').on('click', 'code', function (e) {
+		const $code = $(this);
+		let code = $code.html();
+		let text = $code.text();
+		if (code === text) {
+			let range = document.createRange();
+			range.selectNode($code.get(0));
+			window.getSelection().removeAllRanges();
+			window.getSelection().addRange(range);
+		}
+	});
+
 });

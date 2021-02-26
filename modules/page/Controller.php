@@ -987,6 +987,8 @@ class Controller extends \Wdpro\BaseController {
 	public static function getConsoleFormInfo() {
 		$ret = '';
 
+		if (static::$consoleFormInfo) $ret .= static::$consoleFormInfo;
+
 		if (static::$editingPage) {
 			$postNameWithPrefix = static::$editingPage->getPostNameWithPrefix();
 
@@ -994,8 +996,6 @@ class Controller extends \Wdpro\BaseController {
 				$ret .= static::$consoleFormInfoByPostName[$postNameWithPrefix];
 			}
 		}
-
-		if (static::$consoleFormInfo) $ret .= static::$consoleFormInfo;
 
 		return $ret;
 	}
