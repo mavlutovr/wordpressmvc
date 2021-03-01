@@ -39,7 +39,7 @@ class Controller extends \Wdpro\BaseController {
 			{
 				$url = parse_url($location);
 				$action = null; $post = null; $message = '';
-				parse_str($url['query']);
+				// parse_str($url['query']);
 
 				if ($action === 'edit')
 				{
