@@ -246,6 +246,7 @@ abstract class BasePage extends BaseEntity
 	 */
 	public function getUri()
 	{
+		if (isset($this->data['post_name'])) return $this->data['post_name'];
 		return get_post_field('post_name', $this->id());
 	}
 
