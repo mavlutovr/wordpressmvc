@@ -15,8 +15,8 @@
 		<?php endif; ?>
 		
 		<?php foreach($data['pages'] as $page): ?>
-			<? if ($page == 'crumbs'): 
-				?> ... <? 
+			<?php if ($page == 'crumbs'): 
+				?> ... <?php
 			else: 
 				if (isset($page['url']) && $page['url']):
 					?><a href="<?php echo($page['url']); ?>"
