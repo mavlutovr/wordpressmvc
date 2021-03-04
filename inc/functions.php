@@ -4079,8 +4079,9 @@ function wdpro_is_google_speed_test() {
 /**
  * Returns random hash
  *
- * @return void
+ * @param number $length
+ * @return string
  */
-function wdpro_get_random_hash() {
-	return bin2hex(openssl_random_pseudo_bytes(16));
+function wdpro_get_random_hash($length=32) {
+	return bin2hex(openssl_random_pseudo_bytes($length / 2));
 }
