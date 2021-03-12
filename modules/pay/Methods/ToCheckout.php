@@ -21,17 +21,7 @@ class ToCheckout extends Base  implements MethodInterface {
       $data = $_POST;
       $cacheFileName = __DIR__.'/post/2checkout_ipn';
 
-      // TODO: Выключить
-      // TODO: Выключить
-      // TODO: Выключить
-      // TODO: Выключить
-      // TODO: Выключить
-      // TODO: Выключить
-      // TODO: Выключить
-      // TODO: Выключить
-      // TODO: Выключить
-      // TODO: Выключить
-      // TODO: Выключить
+      // Это было для тестов
       if (false && !empty($_GET['tridodo_repeat'])) {
         $json = \file_get_contents($cacheFileName);
         $data = \json_decode($json, 1);

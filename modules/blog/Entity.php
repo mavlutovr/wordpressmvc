@@ -220,7 +220,7 @@ class Entity extends \Wdpro\BasePage {
 	 * @return string
 	 */
 	public function getPostNamePrefix() {
-		if (Controller::isPostNamePrefix()) {
+		if (Controller::isPostNamePrefix() && !is_admin()) {
 			return $this->getParent()->getUri().'/';
 		}
 	}
