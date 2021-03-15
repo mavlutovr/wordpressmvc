@@ -103,7 +103,6 @@ class PayPalHttpConnection
 
         //Logging Each Headers for debugging purposes
         foreach ($this->getHttpHeaders() as $header) {
-            //TODO: Strip out credentials and other secure info when logging.
             // $this->logger->debug($header);
         }
 
