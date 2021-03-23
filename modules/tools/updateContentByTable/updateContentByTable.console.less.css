@@ -1,0 +1,11 @@
+.update-content-table-colls--block {
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+.update-content-table-colls {
+  border-collapse: collapse;
+}
+.update-content-table-colls td {
+  border: 1px solid #AAA;
+  padding: 10px;
+}
