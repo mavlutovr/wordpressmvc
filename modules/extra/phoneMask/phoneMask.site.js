@@ -32,9 +32,6 @@ wdpro.ready($ => {
 				input.inputmasks(maskOpts);
 			});
 
-			input.on('focus', function () {
-
-			});
 			input.change();
 		});
 	}, 500);

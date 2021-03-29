@@ -28,6 +28,18 @@
         params.ajax = this.$form.data('ajax');
       }
 
+      // Url
+      if (typeof params.ajax === 'string' && !params.url) {
+        if (params.ajax.indexOf('?') === -1) {
+          params.url = wdpro.ajaxUrl({
+            action: params.ajax,
+          });
+        }
+        else {
+          params.url = params.ajax;
+        }
+      }
+
       // Init Elements
       this.$form.find('.JS_element').each(function () {
         self.initElement($(this));
@@ -40,15 +52,20 @@
         }
 
         if (params.ajax) {
-          let url = this.$form.attr('action');
+          let url = this.$form.attr('action') || params.url;
           this.loading();
 
           let data = this.$form.serializeObject();
 
+          console.log('url', url);
+          console.log('data', data)
+
           wdpro.ajax(url, data, res => {
 
+            this.loadingStop();
+
             if (res.error) {
-              this.showMessage(res.error, { type: error })
+              this.showMessage(res.error, { type: 'error' })
             }
 
             else if (res.message) {
@@ -64,7 +81,7 @@
             }
 
 
-            if (res.hideForm) {
+            if (res.hideForm || params.hideOnSend) {
               if (res.message) {
                 this.$messages.css('min-height', this.$form.height());
               }
@@ -161,31 +178,31 @@
     initCenter() {
       if (!this.$center.length) return;
 
-      let focused = false;
-
       const update = () => {
-        if (this.getValue() != '' || focused) {
+        if (this.getValue() != '') {
           this.$center.hide();
         }
         else {
           this.$center.show();
           
-          if (this.$input.is('.seobit-input-focus')) {
-            this.$center.addClass('_focused');
+          if (this.$input.is(':focus')) {
+            if (this.$input.is('.js-masked')) {
+              this.$center.addClass('wdpro-form-input--masked--center');
+            }
+            this.$center.addClass('wdpro-form-input--focus--center');
           }
           else {
-            this.$center.removeClass('_focused');
+            this.$center.removeClass('wdpro-form-input--masked--center');
+            this.$center.removeClass('wdpro-form-input--focus--center');
           }
         }
       };
 
       this.$input.on('focus', () => {
-        focused = true;
         update();
       });
 
       this.$input.on('blur', () => {
-        focused = false;
         update();
       });
 
@@ -229,9 +246,14 @@
    * @returns {HtmlForm}
    */
   jQuery.fn.htmlForm = function (params) {
+    let form;
 
-    const $container = $(this);
-    return new HtmlForm($container.get(0), params);
+    $(this).each(function () {
+      const $container = $(this);
+      form = new HtmlForm($container.get(0), params);
+    });
+
+    return form;
   };
 
 }

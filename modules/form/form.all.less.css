@@ -158,3 +158,9 @@
   margin-left: 20px;
   margin-right: 0;
 }
+.wdpro-form-input--focus--center {
+  opacity: .3;
+}
+.wdpro-form-input--masked--center {
+  opacity: 0;
+}

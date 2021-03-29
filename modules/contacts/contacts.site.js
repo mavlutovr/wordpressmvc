@@ -1,5 +1,6 @@
 wdpro.ready(function ($) {
 
+	// Ajax Form
 	wdpro.forms.onForm('contactsBack', function (form) {
 
 		// Start fill
@@ -32,5 +33,17 @@ wdpro.ready(function ($) {
 				}
 			});
 		});
+	});
+
+
+	// Html Form
+	$('#js-contacts-form').htmlForm({
+		ajax: 'contactsBack',
+		hideOnSend: true,
+		metrikaGoals: {
+			startFill: 'contacts--start-fill',
+			tryToSend: 'contacts--try-to-send',
+			// sended: 'request--send',
+		},
 	});
 });
