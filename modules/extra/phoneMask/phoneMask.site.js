@@ -2,6 +2,7 @@ wdpro.ready($ => {
 
 	var maskList = $.masksSort($.masksLoad(wdpro.data.homeUrl+"wp-content/themes/app/data/phones-ru.json"),
 		['#'], /[0-9]|#/, "mask");
+	
 	var maskOpts = {
 		inputmask: {
 			definitions: {
@@ -28,11 +29,22 @@ wdpro.ready($ => {
 		$('input[type=tel]:not(.js-masked), .js-phone-mask:not(.js-masked)').each(function () {
 			var input = $(this).addClass('js-masked');
 
-			input.change(function() {
+			input.change(function () {
 				input.inputmasks(maskOpts);
 			});
 
 			input.change();
+		});
+	}, 500);
+
+
+	setInterval(function () {
+		$('.js-phone-simple-mask:not(.js-masked)').each(function () {
+			var input = $(this).addClass('js-masked');
+
+			Inputmask({
+				mask: '+9 (999) 999-99-99',
+			}).mask(input.get(0));
 		});
 	}, 500);
 

@@ -57,9 +57,6 @@
 
           let data = this.$form.serializeObject();
 
-          console.log('url', url);
-          console.log('data', data)
-
           wdpro.ajax(url, data, res => {
 
             this.loadingStop();
@@ -213,9 +210,11 @@
 
 
     initInput() {
-      this.$input.on('keyup change', () => {
-        this.dispatchEvent(new Event('start-fill'));
-      });
+      setTimeout(() => {
+        this.$input.on('keyup', () => {
+          this.dispatchEvent(new Event('start-fill'));
+        });
+      }, 100)
     }
 
 
