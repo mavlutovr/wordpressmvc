@@ -562,6 +562,17 @@ window.'.$id.' = '.($this->getJson()).';
 	}
 
 
+	public function getSecureData() {
+		$data = $this->getSubmitData();
+
+		array_walk_recursive($data, function (&$value) {
+			$value = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+		});
+
+		return $data;
+	}
+
+
 	/**
 	 * Отправка формы администраторам
 	 *
@@ -572,7 +583,7 @@ window.'.$id.' = '.($this->getJson()).';
 
 		$startHtml = '';
 
-		$data = $this->getSubmitData();
+		$data = $this->getSecureData();
 
 		$this->eachElements(function ($element) use (&$startHtml, &$data) {
 
