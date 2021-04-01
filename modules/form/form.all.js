@@ -3148,6 +3148,9 @@
 			}
 
 			let config = wdpro.extend({}, this.config);
+			if (data.height) {
+				config.height = data.height;
+			}
 
 			// https://ckeditor.com/cke4/addon/dropdownmenumanager
 			let insertBlocks = {};
@@ -3191,6 +3194,7 @@
 
 				self.html.addClass('wdpro-form-element-ckeditor');
 				if (!CKEDITOR.instances[self.htmlId]) {
+
 					var editor = CKEDITOR.replace(self.htmlId, config);
 
 					for (let commandName in insertBlocks) {
