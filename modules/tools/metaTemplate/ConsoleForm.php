@@ -14,6 +14,7 @@ class ConsoleForm extends \Wdpro\Form\Form {
 		$this->add([
 			'name'=>'post_name',
 			'left'=>'Адрес раздела',
+			'center'=>'catalog',
 			'*'=>true,
 		]);
 
@@ -27,16 +28,20 @@ class ConsoleForm extends \Wdpro\Form\Form {
 		$this->add([
 			'name'=>'title[lang]',
 			'left'=>'Title',
+			'width'=>500,
 		]);
 
 		$this->add([
 			'name'=>'description[lang]',
 			'left'=>'Description',
+			'width'=>500,
+			'type'=>static::TEXT,
 		]);
 
 		$this->add([
 			'name'=>'h1[lang]',
 			'left'=>'H1',
+			'width'=>500,
 		]);
 
 		$this->add(static::SORTING);

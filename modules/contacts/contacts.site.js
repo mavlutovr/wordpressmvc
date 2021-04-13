@@ -37,13 +37,15 @@ wdpro.ready(function ($) {
 
 
 	// Html Form
-	$('#js-contacts-form').htmlForm({
-		ajax: 'contactsBack',
-		hideOnSend: true,
-		metrikaGoals: {
-			startFill: 'contacts--start-fill',
-			tryToSend: 'contacts--try-to-send',
-			// sended: 'request--send',
-		},
+	$('#js-contacts-form').each(function () {
+		$(this).htmlForm({
+			ajax: 'contactsBack',
+			hideOnSend: true,
+			metrikaGoals: {
+				startFill: 'contacts--start-fill',
+				tryToSend: 'contacts--try-to-send',
+				// sended: 'request--send',
+			},
+		})
 	});
 });
