@@ -17,7 +17,7 @@ class Controller extends \Wdpro\BaseController {
 	 */
 	public static function runSite()
 	{
-		$sel = SqlTable::select('ORDER BY menu_order');
+		$templates = SqlTable::select('ORDER BY menu_order');
 
 
 		/**
@@ -48,25 +48,46 @@ class Controller extends \Wdpro\BaseController {
 
 
 		// При инициализации хлебных крошек
-		breadcrumbsInit(function ($breadcrumbs) use (&$sel, &$add) {
+		breadcrumbsInit(function ($breadcrumbs) use (&$templates, &$add) {
 			/** @var \Wdpro\Breadcrumbs\Breadcrumbs $breadcrumbs */
 
 			// Находим шаблон для данной страницы
-			$breadcrumbs->eachReverse(function ($element) use (&$sel, &$add) {
+			$breadcrumbs->eachReverse(function ($element) use (&$templates, &$add) {
 				/** @var \Wdpro\Breadcrumbs\Element $element */
 
+				// echo PHP_EOL.'# BREAD: '.PHP_EOL;
+				// print_r($element->getData());
+
 				// Перебираем все шаблоны
-				foreach ($sel as $row){
+				foreach ($templates as $templateRow) {
+
+					// echo PHP_EOL.'- Template'.PHP_EOL;
+
+					// print_r($templateRow);
 
 					// Если это шаблон для страницы в хлебных крошках
-					if ($element->isUri($row['post_name'])) {
-						$instance = Entity::instance($row);
-						$add('title', $instance);
-						$add('description', $instance);
-						$add('h1', $instance);
+					if ($element->isUri($templateRow['post_name'])) {
+						$template = Entity::instance($templateRow);
+						$add('title', $template);
+						$add('description', $template);
+						$add('h1', $template);
 					}
 				}
 			});
+
+			// Добавляем шаблоны главной /
+			foreach ($templates as $templateRow) {
+
+				// echo PHP_EOL.'- Template HOME'.PHP_EOL;
+
+				// Если это шаблон для страницы в хлебных крошках
+				if ($templateRow['post_name'] === '/') {
+					$template = Entity::instance($templateRow);
+					$add('title', $template);
+					$add('description', $template);
+					$add('h1', $template);
+				}
+			}
 
 		});
 	}
