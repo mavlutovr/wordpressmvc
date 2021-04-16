@@ -819,6 +819,18 @@ function wdpro_local() {
 }
 
 
+function replace_home_page_to_custom($string) {
+
+	if (!defined('WDPRO_CUSTOM_HOME_PAGE')) return $string;
+
+	return preg_replace(
+		'~'.preg_quote('http://localhost/').'~',
+		WDPRO_CUSTOM_HOME_PAGE,
+		$string
+	);
+}
+
+
 /**
  * Редирект с остановкой текущих скриптов
  *
@@ -827,6 +839,9 @@ function wdpro_local() {
  */
 function wdpro_location($location, $code=301)
 {
+	$location = replace_home_page_to_custom($location);
+
+
 	// throw new \Exception('wdpro_location');
 	if (headers_sent())
 	{
@@ -838,6 +853,7 @@ function wdpro_location($location, $code=301)
 			header("HTTP/1.1 301 Moved Permanently");
 		}
 
+		// echo 'Location 3: '.$location; exit();
 		header('Location: '.$location);
 	}
 	exit();
@@ -876,6 +892,7 @@ function wdpro_upload_dir($subDir=false)
 	$dirs = wp_upload_dir();
 
 	$dir = $dirs['basedir'] . DIRECTORY_SEPARATOR . 'wdpro';
+	$dir = replace_home_page_to_custom($dir);
 
 	if ($subDir)
 	{
@@ -939,6 +956,7 @@ function wdpro_upload_dir_url($subDir=false)
 	$dirs = wp_upload_dir();
 
 	$dir = $dirs['baseurl'] . '/' . 'wdpro';
+	$dir = replace_home_page_to_custom($dir);
 
 	if ($subDir)
 	{
@@ -965,6 +983,7 @@ function wdpro_upload_dir_ckeditor_url($subDir=false)
 	$dirs = wp_upload_dir();
 
 	$dir = $dirs['baseurl'] . '/' . 'ckeditor';
+	$dir = replace_home_page_to_custom($dir);
 
 	if ($subDir)
 	{
@@ -991,6 +1010,7 @@ function wdpro_upload_dir_path($subDir=false)
 	$dirs = wp_upload_dir();
 
 	$dir = $dirs['basedir'] . '/' . 'wdpro';
+	$dir = replace_home_page_to_custom($dir);
 
 	if ($subDir)
 	{
@@ -2803,6 +2823,11 @@ function wdpro_home_url_with_lang($slashAtEnd=true) {
 }
 
 
+function wdpro_home_url() {
+	return replace_home_page_to_custom(home_url());
+}
+
+
 /**
  * Преобразует url адрес в path относительно корня сайта
  *
@@ -3076,6 +3101,8 @@ function wdpro_ajax_url($paramsOrActionName=null) {
 
 
 	$url =  admin_url('admin-ajax.php');
+
+	$url = replace_home_page_to_custom($url);
 
 	if (is_string($paramsOrActionName)) {
 		$paramsOrActionName = [
