@@ -51,7 +51,9 @@ class Controller extends \Wdpro\BaseController {
 	 */
 	public static function getCountersHtml() {
 
-		//if (wdpro_is_google_speed_test()) return '<!-- Counters Disabled -->';
+		if (get_option('wdpro_disable_counters_on_speed_test') && wdpro_is_google_speed_test()) {
+			return '<!-- Counters Disabled -->';
+		}
 
 		if (static::$addedToPage) return false;
 		static::$addedToPage = true;

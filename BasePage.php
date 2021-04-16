@@ -617,6 +617,24 @@ abstract class BasePage extends BaseEntity
 	}
 
 
+	public function mergeMeta($meta) {
+		
+		$merge = function ($key, $value) {
+			if ($key === 'description' ||
+				$key === 'keywords' || 
+				$key === 'title' || 
+				$key === 'h1'
+			) {
+				$this->setMeta($key, $value);
+			}
+		};
+
+		foreach($meta as $key => $value) {
+			$merge($key, $value);
+		}
+	}
+
+
 	/**
 	 * Возвращает description страницы
 	 *

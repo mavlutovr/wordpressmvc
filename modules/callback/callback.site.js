@@ -90,7 +90,7 @@
 			},{
 				'name': 'phone',
 				'center': 'Телефон',
-				'class': 'js-phone-mask',
+				'class': 'js-phone-simple-mask',
 				'*': true
 			});
 			form.add({

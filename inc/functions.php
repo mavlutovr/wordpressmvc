@@ -2850,6 +2850,15 @@ function wdpro_url_to_abs_path($url) {
 }
 
 
+function wdpro_url_to_uri($url) {
+	return preg_replace(
+		'~^('.preg_quote(home_url()).')~',
+		'',
+		$url
+	);
+}
+
+
 /**
  * Запускает каллбэк при открытии страницы по заданному относительному адресу
  *

@@ -503,6 +503,11 @@ if ($reCaptcha3SiteKey) {
 // Чтобы не было дублей страниц
 add_filter('get_canonical_url', function ($canonical_url, $post) {
 
+	$currentPage = wdpro_current_page();
+	if ($currentPage && $currentPage->isHome()) {
+		return home_url() . '/';
+	}
+
 	if (get_query_var('cpage', 0) && $post->ID === get_queried_object_id()) {
 		$canonical_url = get_permalink($post);
 	}
