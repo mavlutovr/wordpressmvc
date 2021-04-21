@@ -491,7 +491,9 @@ class Controller extends \Wdpro\BaseController {
 										if (is_array($metaPageTemplate)) {
 											if (!count($metaPageTemplate)) $metaPageTemplate = null;
 
-											$metaPageTemplate = $metaPageTemplate[0];
+											if (!empty($metaPageTemplate[0])) {
+												$metaPageTemplate = $metaPageTemplate[0];
+											}
 										}
 										$template = $metaPageTemplate;
 

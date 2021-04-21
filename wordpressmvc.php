@@ -175,6 +175,8 @@ function _wdpro_print_js_data () {
 			. 'wdpro.'.$key.' = '.json_encode($value, JSON_UNESCAPED_UNICODE).';';
 	}
 
+	$wdproJsData = [];
+
 	echo '<script>
 		if (window.wdpro) {
 			wdpro.WDPRO_TEMPLATE_URL = "'.WDPRO_TEMPLATE_URL.'";

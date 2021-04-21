@@ -4121,3 +4121,15 @@ function wdpro_is_google_speed_test() {
 function wdpro_get_random_hash($length=32) {
 	return bin2hex(openssl_random_pseudo_bytes($length / 2));
 }
+
+
+function wdpro_disable_cache_current_page() {
+	header('Cache-Control: no-cache, no-store, must-revalidate');
+	header('Pragma: no-cache');
+	header('Expires: 0');
+}
+
+
+function wdpro_disable_indexing_current_page() {
+	header('X-Robots-Tag: noindex');
+}
