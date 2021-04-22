@@ -138,21 +138,27 @@ class Controller extends \Wdpro\BaseController {
 
 				else {
 					do_action('wdpro_pages_default:error404');
-					/** @var \WP_Query $wp_query */
-					$wp_query->set_404();
 					$page = wdpro_get_post_by_name('error404');
-					$GLOBALS['post'] = get_post($page->id());
+					$temp = $wp_query;
+					$wp_query = null;
+					$wp_query = new \WP_Query([
+						'post_type' => 'page',
+						'post_status' => 'publish',
+						'p' => $page->id(),   // id of the post you want to query
+					]);
+					$wp_query->set_404();
+
+					$wpPost = get_post($page->id());
+					$GLOBALS['post'] = $wpPost;
+
 					$wp_query->have_posts();
-					global $post;
-					$post = $GLOBALS['post'];
-					setup_postdata($GLOBALS['post']);
-					// print_r(setup_postdata($GLOBALS['post'])); exit();
+					setup_postdata($wpPost);
 				}
 			}
 
-			/*print_r($wp_query);
-			print_r($post);
-			exit();*/
+			// print_r($wp_query);
+			// print_r($post);
+			// exit();
 		});
 
 
