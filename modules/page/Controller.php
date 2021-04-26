@@ -64,7 +64,7 @@ class Controller extends \Wdpro\BaseController {
 			add_filter(
 				'post_type_link',
 				function ($postLink, $post=0)
-				{
+				{		
 					if (!wdpro_is_post_type($post->post_type)
 						|| get_option('permalink_structure') != '/%postname%/')
 						return $postLink;
@@ -163,11 +163,6 @@ class Controller extends \Wdpro\BaseController {
 		});
 
 
-		/*add_filter('pre_post_link', function ($link) {
-
-			echo("link: ".$link);
-			exit();
-		});*/
 	}
 
 
@@ -226,8 +221,7 @@ class Controller extends \Wdpro\BaseController {
 				$page->dataToCurrentLang();
 
 				// Front Page
-				if (method_exists($page, 'isHome')
-					&& $page->isHome()) {
+				if (method_exists($page, 'isHome') && $page->isHome()) {
 
 					// 301 redirect to /
 					if (wdpro_current_post_name() !== '/'.$langUri) {
@@ -318,6 +312,64 @@ class Controller extends \Wdpro\BaseController {
 		//remove_filter('template_redirect', 'redirect_canonical');
 
 
+		// Sitemap
+		if (strstr($_SERVER['REQUEST_URI'], '/wp-sitemap')
+		|| strstr($_SERVER['REQUEST_URI'], '/sitemap')) {
+
+			// Pages
+			$sitemapPageCallback = function ($post_link, $post) {
+				if (wdpro_is_post_type($post->post_type)) {
+					$wdproPost = wdpro_get_post_by_id($post->ID);
+
+					if ($wdproPost->loaded()) {
+						if (!$wdproPost->isInSitemap()) {
+							return '';
+						}
+					}
+				}
+
+				else {
+					if (strstr($post_link, home_url().'/sample-page'))
+					if ($post_link === home_url().'/sample-page'.wdpro_url_slash_at_end()) return '';
+					if ($post_link === home_url().'/error404'.wdpro_url_slash_at_end()) return '';
+					if ($post_link === home_url().'/%d0%bf%d1%80%d0%b8%d0%b2%d0%b5%d1%82-%d0%bc%d0%b8%d1%80'.wdpro_url_slash_at_end()) return '';
+				}
+
+				return $post_link;
+			};
+			\add_filter('post_type_link', $sitemapPageCallback, 10, 2);
+			\add_filter('page_link', $sitemapPageCallback, 10, 2);
+			\add_filter('post_link', $sitemapPageCallback, 10, 2);
+
+
+
+			// WP / Taxonomy
+			add_filter(
+				'wp_sitemaps_taxonomies',
+				function( $taxonomies ) {
+					foreach ($taxonomies as $key => $value) {
+						unset($taxonomies[$key]);
+					}
+					return $taxonomies;
+				}
+			);
+
+
+			// WP / Users, Posts
+			add_filter(
+				'wp_sitemaps_add_provider',
+				function( $provider, $name ) {
+
+						if ( 'users' === $name ) return false;
+						// if ( 'posts' === $name ) return false;
+		
+						return $provider;
+				},
+				10,
+				2
+			);
+		}
+		
 	}
 
 

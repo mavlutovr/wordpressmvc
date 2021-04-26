@@ -843,4 +843,11 @@ abstract class BasePage extends BaseEntity
 	}
 
 
+	public function isInSitemap() {
+		if ($this->data['post_name'] === 'error404') return false;
+		if ($this->getAlternativeUrl()) return false;
+		return true;
+	}
+
+
 }
