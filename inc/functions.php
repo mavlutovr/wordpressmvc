@@ -2348,6 +2348,23 @@ function wdpro_get_month($time) {
 }
 
 
+$wdproDefaultDateParams = [
+	'year'=>true,
+	'today'=>true,
+	'time'=>false,
+	'dateFormat'=>'d Month Y',
+	'timeFormat'=>', H:i',
+	'todayText'=>'Сегодня',
+	'yesterdayText'=>'Вчера',
+	'tomorrowText'=>'Завтра',
+];
+
+function wdpro_set_date_default_params($params) {
+	global $wdproDefaultDateParams;
+
+	$wdproDefaultDateParams = wdpro_extend($wdproDefaultDateParams, $params);
+}
+
 /**
  * Преобразует секунды в отображаемую дату
  *
@@ -2357,16 +2374,9 @@ function wdpro_get_month($time) {
  */
 function wdpro_date($time, $paramsOrActionName=null)
 {
-	$paramsOrActionName = wdpro_extend(array(
-		'year'=>true,
-		'today'=>true,
-		'time'=>false,
-		'dateFormat'=>'d Month Y',
-		'timeFormat'=>', H:i',
-		'todayText'=>'Сегодня',
-		'yesterdayText'=>'Вчера',
-		'tomorrowText'=>'Завтра',
-	), $paramsOrActionName);
+	global $wdproDefaultDateParams;
+
+	$paramsOrActionName = wdpro_extend($wdproDefaultDateParams, $paramsOrActionName);
 
 	$date = null;
 	if ($paramsOrActionName['today'])
