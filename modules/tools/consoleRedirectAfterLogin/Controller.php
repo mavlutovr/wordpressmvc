@@ -21,8 +21,15 @@ class Controller extends \Wdpro\BaseController {
     $ref = $_SERVER['HTTP_REFERER'];
     $whlUri = get_option('whl_page');
 
-    if ((strstr($ref, '/wp-login.php') || ($whlUri && strstr($ref, '/'.$whlUri.'/'))) 
-    && empty($_GET['logged']) && static::$uri) {
+    $dashboard = site_url().'/wp-admin/' === wdpro_current_url_with_proto();
+
+    if (empty($_GET['logged']) && static::$uri 
+    &&(
+      $dashboard 
+      || strstr($ref, '/wp-login.php') 
+      || ($whlUri && strstr($ref, '/'.$whlUri.'/'))
+      ) 
+    ) {
       $url = home_url() . static::$uri;
       $url = wdpro_replace_query_params_in_url($url, ['logged'=>1]);
       wdpro_location($url);

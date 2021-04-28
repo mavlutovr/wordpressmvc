@@ -670,6 +670,24 @@ function wdpro_current_url($queryChanges=null) {
 }
 
 
+function wdpro_current_url_with_proto($queryChanges=null) {
+	$url = wdpro_current_url($queryChanges);
+
+	$http = 'http';
+	if (isset($_SERVER['HTTP_HTTPS']) && $_SERVER['HTTP_HTTPS'] === 'on') {
+		$http = 'https';
+	}
+	else if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
+		$http = 'https';
+	}
+	else if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+		$http = 'https';
+	}
+
+	return $http . ':' . $url;
+}
+
+
 /**
  * Возвращает абсолютный адрес текущей страницы с русскоязычным доменом
  *
