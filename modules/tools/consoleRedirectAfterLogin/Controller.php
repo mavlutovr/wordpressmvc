@@ -10,6 +10,13 @@ class Controller extends \Wdpro\BaseController {
   }
 
 
+  public static function removeDashboard() {
+    add_action('admin_menu', function () {
+      remove_menu_page('index.php');
+    });
+  }
+
+
   public static function initConsole() {
     $ref = $_SERVER['HTTP_REFERER'];
     $whlUri = get_option('whl_page');
