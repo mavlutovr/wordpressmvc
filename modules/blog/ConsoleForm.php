@@ -11,7 +11,7 @@ class ConsoleForm extends \Wdpro\Form\Form {
 	 */
 	protected function initFields() {
 
-		if (\Wdpro\Lang\Data::enabled()) {
+		if (\Wdpro\Lang\Data::enabled() && Controller::isLangsTitlesEnabled()) {
 			$this->add([
 				'name'=>'post_title[lang]',
 				'left'=>'Заголовок',
