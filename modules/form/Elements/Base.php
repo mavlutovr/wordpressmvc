@@ -59,8 +59,13 @@ class Base
 	 */
 	public function getSaveValue()
 	{
-		if (isset($this->value))
-			return $this->value;
+		if (isset($this->value)) {
+			$value = $this->value;
+
+			$value = $this->filterValue($value);
+
+			return $value;
+		}
 	}
 
 
@@ -79,7 +84,29 @@ class Base
 
 		if (is_string($data)) $data = stripslashes($data);
 
+		$data = $this->filterValue($data);
+
 		return $data;
+	}
+
+
+	public function filterValue($value) {
+
+		if (!empty($this->params['filter'])) {
+			$cleanedValue = '';
+			$reg = '~'.$this->params['filter'].'~';
+
+			preg_replace_callback(
+				$reg,
+				function ($arr) use (&$cleanedValue) {
+					$cleanedValue .= $arr[0];
+				},
+				$value
+			);
+			$value = $cleanedValue;
+		}
+
+		return $value;
 	}
 
 
