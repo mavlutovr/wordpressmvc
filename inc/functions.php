@@ -3233,14 +3233,18 @@ function output_file($file,$name)
 /**
  * Возвращает случайный пароль
  *
+ * @param number|null $length
+ * @param string|null $alphabet
  * @return string
  */
-function wdpro_generate_password() {
-	$alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
-	.'!@#$%^&*()-=_+[]/';
+function wdpro_generate_password($length=8, $alphabet=null) {
+	if (!$alphabet) {
+		$alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
+		.'!@#$%^&*()-=_+[]/';
+	}
 	$pass = array(); //remember to declare $pass as an array
 	$alphaLength = strlen($alphabet) - 1; //put the length -1 in cache
-	for ($i = 0; $i < 8; $i++) {
+	for ($i = 0; $i < $length; $i++) {
 		$n = rand(0, $alphaLength);
 		$pass[] = $alphabet[$n];
 	}
