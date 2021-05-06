@@ -969,7 +969,7 @@
 			if (this.messagesContainer)
 			{
 				// Установка текста
-				this.messagesContainer.show().html(message);
+				this.messagesContainer.addClass('wdpro-form-messages--container-visible').html(message);
 
 				// Ошибка
 				this.messagesContainer.removeClass('_error_message');
