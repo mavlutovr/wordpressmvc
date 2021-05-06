@@ -229,11 +229,12 @@ class Menu extends Roll
 				$row['attrs'] = '';
 				$row['before'] = '';
 				$row['after'] = '';
-				$alternativeUrl = get_post_field(
+				$alternativeUrlOriginal = get_post_field(
 					'alternative_url'.\Wdpro\Lang\Data::getCurrentSuffix(),
 					$row['id']);
+				$alternativeUrl = $alternativeUrlOriginal;
 
-				if ($alternativeUrl)
+				if ($alternativeUrlOriginal)
 				{
 					if (preg_match('~^https?://~', $alternativeUrl)) {
 						$row['attrs'] .= ' target="_blank" rel="nofollow"';
@@ -251,13 +252,13 @@ class Menu extends Roll
 				{
 					$post = wdpro_get_post_by_id($row['id']);
 					$row['url'] = $post->getUrl();
-//					$row['url'] = wdpro_url_from_post_name($row['post_name'], $row['id']);
 				}
 				$row['text'] = $row['post_title'];
 
 
 				// Прям текущая страница
-				if (wdpro_is_current_post_name($row['post_name'])) {
+				if (wdpro_is_current_post_name($row['post_name'])
+					|| ($alternativeUrlOriginal && wdpro_is_current_post_name($alternativeUrlOriginal))) {
 					$row['current'] = true;
 				}
 				else {
@@ -269,7 +270,9 @@ class Menu extends Roll
 
 				// Выбранность кнопки
 				// В хлебных крошках
-				if (wdpro_breadcrumbs()->isUri($row['post_name'])) {
+				if (wdpro_breadcrumbs()->isUri($row['post_name']) 
+					|| ($alternativeUrlOriginal && wdpro_breadcrumbs()->isUri($alternativeUrlOriginal))) {
+
 					$row['active'] = true;
 					$row['breadcrumbs'] = true;
 				}
