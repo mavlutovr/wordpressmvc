@@ -34,7 +34,9 @@ else {
 require(__DIR__ . '/inc/functions.php');
 
 if (!wdpro_is_session_started())
-	session_start();
+	session_start([
+		'cookie_lifetime'=>60*60*24 * 360,
+	]);
 
 // Constants
 require(__DIR__ . '/inc/constants.php');
