@@ -41,7 +41,7 @@
       }
 
       // Init Elements
-      this.$form.find('.JS_element').each(function () {
+      this.$form.find('.JS_element, .js-element').each(function () {
         self.initElement($(this));
       });
 
@@ -51,44 +51,68 @@
           wdpro.yandexMetrikaGoal(this.params.metrikaGoals?.tryToSend);
         }
 
-        if (params.ajax) {
-          let url = this.$form.attr('action') || params.url;
-          this.loading();
+        this.loading();
 
-          let data = this.$form.serializeObject();
+        if (!this.skipValid) {
+          this.valid(valid => {
 
-          wdpro.ajax(url, data, res => {
-
-            this.loadingStop();
-
-            if (res.error) {
-              this.showMessage(res.error, { type: 'error' })
+            if (!valid) {
+              this.loadingStop();
+              return;
             }
 
-            else if (res.message) {
-              this.showMessage(res.message);
+            if (params.ajax) {
+              let url = this.$form.attr('action') || params.url;
+              this.loading();
+
+              let data = this.$form.serializeObject();
+
+              wdpro.ajax(url, data, res => {
+
+                this.loadingStop();
+
+                if (res.error) {
+                  this.showMessage(res.error, { type: 'error' })
+                }
+
+                else if (res.message) {
+                  this.showMessage(res.message);
+                }
+
+                if (res.metrika) {
+                  wdpro.yandexMetrikaGoal(res.metrika);
+                }
+
+                if (this.params.metrikaGoals?.sended) {
+                  wdpro.yandexMetrikaGoal(this.params.metrikaGoals?.sended);
+                }
+
+
+                if (res.hideForm || params.hideOnSend) {
+                  if (res.message) {
+                    this.$messages.css('min-height', this.$form.height());
+                  }
+                  this.hide();
+                }
+              });
+
+              e.preventDefault();
+              return false;
             }
 
-            if (res.metrika) {
-              wdpro.yandexMetrikaGoal(res.metrika);
-            }
-
-            if (this.params.metrikaGoals?.sended) {
-              wdpro.yandexMetrikaGoal(this.params.metrikaGoals?.sended);
-            }
-
-
-            if (res.hideForm || params.hideOnSend) {
-              if (res.message) {
-                this.$messages.css('min-height', this.$form.height());
-              }
-              this.hide();
+            else {
+              this.skipValid = true;
+              console.log(1)
+              this.$form.submit();
+              this.skipValid = false;s
             }
           });
-
+        
           e.preventDefault();
           return false;
         }
+
+        return true;
       });
     }
 
@@ -137,8 +161,71 @@
     }
 
 
-    valid() {
+    valid(callback) {
+      var waiter = new wdpro.Waiter();
 
+      // Параметры отправки
+      var sendParams = {
+        submit: true, // Форма подходит для топравки
+        errorsExists: false, // Ошибки (не правильно заполненные поля)
+        errorsList: [] // Список полей с ошибками
+      };
+
+      let validParams = {
+        standardAlert: true,
+      };
+
+      // Data
+      let data = this.$form.serializeObject();
+
+
+      // Validatorss
+      if (this._validators) {
+        for (let validator of this._validators) {
+
+          waiter.add(next => {
+            validator(data, result => {
+
+              if (result && result.error) {
+                sendParams.submit = false;
+                sendParams.errorsExists = true;
+                sendParams.errorsList.push(result.error);
+
+                if (result.stop) {
+                  validParams.stop = true;
+                }
+
+                if (result.prepend) {
+                  alert(result.error);
+                  validParams.standardAlert = false;
+                }
+              }
+
+              next();
+            }, this);
+          });
+        }
+      }
+
+
+      // При завершении проверок всех полей
+      waiter.run(() => {
+        // Если есть ошибки
+        if (sendParams.errorsExists) {
+
+          // Выводим их
+          if (validParams.standardAlert && !validParams.stop) {
+            alert(
+              wdpro.templates.forms.errorsWithoutPrefix({
+                errors: sendParams.errorsList,
+              })
+            );
+          }
+
+        }
+
+        callback(sendParams.submit);
+      });
     }
 
 
@@ -149,6 +236,18 @@
 
     loadingStop() {
       this.$submitButton.loadingStop();
+    }
+
+
+    /**
+     * Add custom validator
+     *
+     * @param {Function} callback => (formData, returnCallback({ error: string })
+     */
+    addValidator(callback) {
+
+      this._validators = this._validators || [];
+      this._validators.push(callback);
     }
     
   }
