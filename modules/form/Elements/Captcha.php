@@ -14,7 +14,7 @@ class Captcha extends Base
     }
 
     if (!isset($params['error_text'])) {
-      $params['error_text'] = 'Вы не верно указали контрольные цифры.';
+      $params['error_text'] = 'Вы не верно указали контрольный код.';
     }
 
     parent::__construct($params);
