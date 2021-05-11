@@ -3426,6 +3426,39 @@
 	});
 
 
+	const CaptchaElement = wdpro.forms.CaptchaElement = BaseElement.extend({
+
+		// init: function (data) {
+
+		// 	var self = this;
+
+		// 	this._super(data);
+
+		// 	// this.classArr = ['js-captcha'];
+		// },
+
+
+		/**
+		 * Создает HTML код поля
+		 *
+		 * @param callback {function}
+		 */
+		createField: function (callback) {
+			var params = this.getParams();
+
+			var attrs = this.getAttrs();
+
+			callback(this.templates.captchaField({
+				data: params,
+				attrs: attrs
+			}));
+		},
+
+
+		
+	});
+
+
 	/**
 	 * Обычная кнопка
 	 */
@@ -4369,7 +4402,8 @@
 		'Email': wdpro.forms.EmailElement,
 		'Privacy': Privacy,
 		'Date': wdpro.forms.DateElement,
-		'Recaptcha3': Recaptcha3Element
+		'Recaptcha3': Recaptcha3Element,
+		'Captcha': CaptchaElement,
 	};
 
 

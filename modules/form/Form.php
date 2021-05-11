@@ -42,6 +42,7 @@ class Form
 	const MENU_ORDER_TOP = 'menuOrderTop';
 	const RECAPTCHA3 = 'recaptcha3';
 	const PRIVACY = 'privacy';
+	const CAPTCHA = 'captcha';
 
 	static $n = 0;
 
@@ -77,6 +78,7 @@ class Form
 		'menuOrderTop'=>'\Wdpro\Form\Elements\MenuOrderTop',
 		'recaptcha3'=>'\Wdpro\Form\Elements\Recaptcha3',
 		'privacy'=>'\Wdpro\Form\Elements\Privacy',
+		'captcha'=>'\Wdpro\Form\Elements\Captcha',
 	);
 
 
@@ -637,6 +639,11 @@ window.'.$id.' = '.($this->getJson()).';
 
 	public function getErrors() {
 		return $this->errors;
+	}
+
+
+	public function getErrorMessage() {
+		return implode('. ', $this->getErrors());
 	}
 
 

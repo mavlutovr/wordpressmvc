@@ -78,7 +78,8 @@
             }
 
 
-            if (res.hideForm || params.hideOnSend) {
+            console.log('res', res);
+            if (res.hideForm || (params.hideOnSend && !res.error)) {
               if (res.message) {
                 this.$messages.css('min-height', this.$form.height());
               }
@@ -129,6 +130,14 @@
           $message.addClass('error');
         }
         this.$messages.show().append($message);
+        
+        // Scroll
+        let y = this.$messages.offset().top - 100;
+
+        window.scrollTo({
+          top: y,
+          behavior: "smooth"
+        });
       }
 
       else {

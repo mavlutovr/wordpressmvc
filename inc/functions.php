@@ -4094,3 +4094,14 @@ function wdpro_is_google_speed_test() {
 function wdpro_get_random_hash($length=32) {
 	return bin2hex(openssl_random_pseudo_bytes($length / 2));
 }
+
+
+
+function wdpro_get_captcha_src() {
+	require_once __DIR__.'/../modules/form/captcha/simple-php-captcha.php';
+	$_SESSION['captcha'] = simple_php_captcha([
+		'min_length'=>2,
+	]);
+	return $_SESSION['captcha']['image_src'];
+}
+

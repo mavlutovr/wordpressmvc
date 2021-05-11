@@ -169,6 +169,14 @@ if (goog.DEBUG) {
 }
 
 
+wdpro.templates.forms.captchaField = function(opt_data, opt_ignored) {
+  return ((opt_data.data['nothing']) ? '' : '') + '<span class="wdpro-form-captha--grid"><img src="' + soy.$$escapeHtml(opt_data.data['src']) + '"><span>&#8594;</span><input type="text" required' + wdpro.templates.forms.attrs(opt_data) + '/></span>';
+};
+if (goog.DEBUG) {
+  wdpro.templates.forms.captchaField.soyTemplateName = 'wdpro.templates.forms.captchaField';
+}
+
+
 wdpro.templates.forms.buttonField = function(opt_data, opt_ignored) {
   return ((opt_data.data['nothing']) ? '' : '') + '<input type="button" value="' + soy.$$escapeHtml(opt_data.data['value'] ? opt_data.data['value'] : '') + '"' + wdpro.templates.forms.attrs(opt_data) + '/>';
 };
@@ -195,11 +203,11 @@ if (goog.DEBUG) {
 
 wdpro.templates.forms.selectField = function(opt_data, opt_ignored) {
   var output = ((opt_data.attrs['nothing']) ? '' : '') + '<div><select ' + wdpro.templates.forms.attrs(opt_data) + '>';
-  var nList325 = soy.$$getMapKeys(opt_data.data['options']);
-  var nListLen325 = nList325.length;
-  for (var nIndex325 = 0; nIndex325 < nListLen325; nIndex325++) {
-    var nData325 = nList325[nIndex325];
-    output += '<option value="' + soy.$$escapeHtml(opt_data.data['options'][nData325][0]) + '"' + ((opt_data.data['value'] == opt_data.data['options'][nData325][0]) ? ' selected="selected"' : '') + '>' + soy.$$escapeHtml(opt_data.data['options'][nData325][1]) + '</option>';
+  var nList333 = soy.$$getMapKeys(opt_data.data['options']);
+  var nListLen333 = nList333.length;
+  for (var nIndex333 = 0; nIndex333 < nListLen333; nIndex333++) {
+    var nData333 = nList333[nIndex333];
+    output += '<option value="' + soy.$$escapeHtml(opt_data.data['options'][nData333][0]) + '"' + ((opt_data.data['value'] == opt_data.data['options'][nData333][0]) ? ' selected="selected"' : '') + '>' + soy.$$escapeHtml(opt_data.data['options'][nData333][1]) + '</option>';
   }
   output += '</select>' + ((opt_data.data['multiple']) ? '<div class="wdpro-form-select-multiple-info">\u0423\u0434\u0435\u0440\u0436\u0438\u0432\u0430\u0439\u0442\u0435 CTRL, \u0447\u0442\u043E\u0431\u044B \u0432\u044B\u0431\u0440\u0430\u0442\u044C \u043D\u0435\u0441\u043A\u043E\u043B\u044C\u043A\u043E</div>' : '') + '</div>';
   return output;
@@ -219,11 +227,11 @@ if (goog.DEBUG) {
 
 wdpro.templates.forms.checksLevel = function(opt_data, opt_ignored) {
   var output = '<div class="wdpro-form-checks-level">';
-  var optionList353 = opt_data.options;
-  var optionListLen353 = optionList353.length;
-  for (var optionIndex353 = 0; optionIndex353 < optionListLen353; optionIndex353++) {
-    var optionData353 = optionList353[optionIndex353];
-    output += '<div class=""><label>' + ((optionData353['value'] && ! opt_data.data['disabled'][optionData353['value']]) ? '<input type="checkbox" data-value="' + soy.$$escapeHtml(optionData353['value']) + '" class="js-checks-check" /> ' : '') + soy.$$escapeHtml(optionData353['text']) + '</label></div>' + ((optionData353['options']) ? wdpro.templates.forms.checksLevel({options: optionData353['options'], data: opt_data.data}) : '');
+  var optionList361 = opt_data.options;
+  var optionListLen361 = optionList361.length;
+  for (var optionIndex361 = 0; optionIndex361 < optionListLen361; optionIndex361++) {
+    var optionData361 = optionList361[optionIndex361];
+    output += '<div class=""><label>' + ((optionData361['value'] && ! opt_data.data['disabled'][optionData361['value']]) ? '<input type="checkbox" data-value="' + soy.$$escapeHtml(optionData361['value']) + '" class="js-checks-check" /> ' : '') + soy.$$escapeHtml(optionData361['text']) + '</label></div>' + ((optionData361['options']) ? wdpro.templates.forms.checksLevel({options: optionData361['options'], data: opt_data.data}) : '');
   }
   output += '</div>';
   return output;

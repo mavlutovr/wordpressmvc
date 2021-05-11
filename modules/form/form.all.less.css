@@ -164,3 +164,12 @@
 .wdpro-form-input--masked--center {
   opacity: 0;
 }
+.wdpro-form-captha--grid {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  grid-gap: 10px;
+  align-items: center;
+}
+.wdpro-form-captha--grid span {
+  font-size: 2em;
+}

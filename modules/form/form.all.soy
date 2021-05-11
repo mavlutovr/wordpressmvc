@@ -429,6 +429,25 @@
 {/template}
 
 
+/**
+* Капча
+* @param data Данные элемента
+* @param attrs Аттрибуты
+*/
+{template .captchaField}
+	{if ($data['nothing'])}{/if}
+	<span class="wdpro-form-captha--grid">
+		<img src="{$data['src']}">
+		<span>&#8594;</span>
+		<input
+			type="text"
+			required
+			{call .attrs data="all" /}
+		/>
+	</span>
+{/template}
+
+
 
 /**
 * Button

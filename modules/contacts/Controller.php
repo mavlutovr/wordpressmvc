@@ -170,7 +170,7 @@ class Controller extends \Wdpro\BaseController {
 			}
 			else {
 				return [
-					'error'=>'Отправка не удалась, попробуйте еще раз.',
+					'error'=>$form->getErrorMessage(),
 				];
 			}
 
