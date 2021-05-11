@@ -2372,6 +2372,7 @@ $wdproDefaultDateParams = [
 	'time'=>false,
 	'dateFormat'=>'d Month Y',
 	'timeFormat'=>', H:i',
+	'onlyTimeFormat'=>'H:i',
 	'todayText'=>'Сегодня',
 	'yesterdayText'=>'Вчера',
 	'tomorrowText'=>'Завтра',
@@ -2427,7 +2428,12 @@ function wdpro_date($time, $paramsOrActionName=null)
 		$date = wdpro_rdate($paramsOrActionName['dateFormat'], $time);
 	}
 
-	if ($paramsOrActionName['time']) {
+	if ($paramsOrActionName['time'] === 'today') {
+		if (date('YMD') === date('YMD', $time)) {
+			$date = date($paramsOrActionName['onlyTimeFormat'], $time);
+		}
+	}
+	else if ($paramsOrActionName['time']) {
 
 		$date .= wdpro_rdate($paramsOrActionName['timeFormat'], $time);
 	}
