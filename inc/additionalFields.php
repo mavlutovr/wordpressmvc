@@ -184,7 +184,10 @@ function wdpro_the_header()
 ?><title><?php echo($title); ?></title>
 	<meta name="description" content="<?php echo( htmlspecialchars($description) );
 	?>" />
+
+	<?php if ($keywords): ?>
 	<meta name="keywords" content="<?php echo( htmlspecialchars($keywords) ); ?>" />
+	<?php endif; ?>
 
 	<meta charset="<?php bloginfo( 'charset' ); ?>" />
 

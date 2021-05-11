@@ -2775,6 +2775,20 @@ if (typeof Array.isArray === 'undefined') {
 	wdpro.relativeUrlToAbsolute = relativeUrl =>
 		wdpro.unparseUrl( wdpro.parseUrl(relativeUrl) );
 
+	
+	wdpro.debounce = (func, wait) => {
+		let timeout;
+
+		return function executedFunction(...args) {
+			const later = () => {
+				clearTimeout(timeout);
+				func(...args);
+			};
+
+			clearTimeout(timeout);
+			timeout = setTimeout(later, wait);
+		};
+	};
 
 
 	let originalPlaceId = 0;

@@ -800,6 +800,10 @@
 								sendParams.errorsExists = true;
 								sendParams.errorsList.push(result.error);
 
+								if (result.stop) {
+									validParams.stop = true;
+								}
+
 								if (result.prepend) {
 									alert(result.error);
 									validParams.standardAlert = false;
@@ -819,7 +823,7 @@
 				if (sendParams.errorsExists)
 				{
 					// Выводим их
-					if (validParams.standardAlert) {
+					if (validParams.standardAlert && !validParams.stop) {
 						alert(
 							self.templates.errors({
 								errors: sendParams.errorsList,
@@ -965,7 +969,7 @@
 			if (this.messagesContainer)
 			{
 				// Установка текста
-				this.messagesContainer.show().html(message);
+				this.messagesContainer.addClass('wdpro-form-messages--container-visible').html(message);
 
 				// Ошибка
 				this.messagesContainer.removeClass('_error_message');
@@ -2432,6 +2436,32 @@
 			field.on('focus', function () {
 
 			});
+
+			if (this.params['filter']) {
+				let filter = (textbox, reg) => {
+					let inputFilter = value => {
+						return reg.test(value);
+					};
+						
+					["input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop"].forEach(function (event) {
+						textbox.addEventListener(event, function () {
+							if (inputFilter(this.value)) {
+								this.oldValue = this.value;
+								this.oldSelectionStart = this.selectionStart;
+								this.oldSelectionEnd = this.selectionEnd;
+							} else if (this.hasOwnProperty("oldValue")) {
+								this.value = this.oldValue;
+								this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
+							} else {
+								this.value = "";
+							}
+						});
+					});
+				};
+
+				let reg = new RegExp('^'+this.params['filter']+'$');
+				filter(field.get(0), reg);
+			}
 		},
 
 

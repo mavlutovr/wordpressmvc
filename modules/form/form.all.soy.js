@@ -40,12 +40,12 @@ if (goog.DEBUG) {
 wdpro.templates.forms.errors = function(opt_data, opt_ignored) {
   var output = '' + soy.$$escapeHtml(opt_data.errorsPrefix);
   if (opt_data.errors != null && opt_data.errors.length) {
-    output += ': \n\n';
-    var errorList36 = opt_data.errors;
-    var errorListLen36 = errorList36.length;
-    for (var errorIndex36 = 0; errorIndex36 < errorListLen36; errorIndex36++) {
-      var errorData36 = errorList36[errorIndex36];
-      output += ((! (errorIndex36 == 0)) ? ', ' : '') + soy.$$escapeHtml(errorData36);
+    output += (opt_data.errorsPrefix) ? ': \n\n' : '';
+    var errorList38 = opt_data.errors;
+    var errorListLen38 = errorList38.length;
+    for (var errorIndex38 = 0; errorIndex38 < errorListLen38; errorIndex38++) {
+      var errorData38 = errorList38[errorIndex38];
+      output += ((! (errorIndex38 == 0)) ? ', ' : '') + soy.$$escapeHtml(errorData38);
     }
     output += '.';
   } else {
@@ -58,13 +58,30 @@ if (goog.DEBUG) {
 }
 
 
+wdpro.templates.forms.errorsWithoutPrefix = function(opt_data, opt_ignored) {
+  var output = '';
+  if (opt_data.errors != null && opt_data.errors.length) {
+    var errorList50 = opt_data.errors;
+    var errorListLen50 = errorList50.length;
+    for (var errorIndex50 = 0; errorIndex50 < errorListLen50; errorIndex50++) {
+      var errorData50 = errorList50[errorIndex50];
+      output += ((! (errorIndex50 == 0)) ? ', ' : '') + soy.$$escapeHtml(errorData50);
+    }
+  }
+  return output;
+};
+if (goog.DEBUG) {
+  wdpro.templates.forms.errorsWithoutPrefix.soyTemplateName = 'wdpro.templates.forms.errorsWithoutPrefix';
+}
+
+
 wdpro.templates.forms.group = function(opt_data, opt_ignored) {
   var output = '<div class="wdpro-form-group JS_group">';
-  var elementList47 = opt_data.elements;
-  var elementListLen47 = elementList47.length;
-  for (var elementIndex47 = 0; elementIndex47 < elementListLen47; elementIndex47++) {
-    var elementData47 = elementList47[elementIndex47];
-    output += soy.$$filterNoAutoescape(elementData47);
+  var elementList58 = opt_data.elements;
+  var elementListLen58 = elementList58.length;
+  for (var elementIndex58 = 0; elementIndex58 < elementListLen58; elementIndex58++) {
+    var elementData58 = elementList58[elementIndex58];
+    output += soy.$$filterNoAutoescape(elementData58);
   }
   output += '</div>';
   return output;
@@ -100,11 +117,11 @@ if (goog.DEBUG) {
 
 wdpro.templates.forms.attrs = function(opt_data, opt_ignored) {
   var output = '';
-  var attrNameList234 = soy.$$getMapKeys(opt_data.attrs);
-  var attrNameListLen234 = attrNameList234.length;
-  for (var attrNameIndex234 = 0; attrNameIndex234 < attrNameListLen234; attrNameIndex234++) {
-    var attrNameData234 = attrNameList234[attrNameIndex234];
-    output += (opt_data.attrs[attrNameData234]) ? ' ' + soy.$$escapeHtml(attrNameData234) + '="' + soy.$$escapeHtml(opt_data.attrs[attrNameData234]) + '"' : '';
+  var attrNameList245 = soy.$$getMapKeys(opt_data.attrs);
+  var attrNameListLen245 = attrNameList245.length;
+  for (var attrNameIndex245 = 0; attrNameIndex245 < attrNameListLen245; attrNameIndex245++) {
+    var attrNameData245 = attrNameList245[attrNameIndex245];
+    output += (opt_data.attrs[attrNameData245]) ? ' ' + soy.$$escapeHtml(attrNameData245) + '="' + soy.$$escapeHtml(opt_data.attrs[attrNameData245]) + '"' : '';
   }
   return output;
 };
@@ -203,11 +220,11 @@ if (goog.DEBUG) {
 
 wdpro.templates.forms.selectField = function(opt_data, opt_ignored) {
   var output = ((opt_data.attrs['nothing']) ? '' : '') + '<div><select ' + wdpro.templates.forms.attrs(opt_data) + '>';
-  var nList333 = soy.$$getMapKeys(opt_data.data['options']);
-  var nListLen333 = nList333.length;
-  for (var nIndex333 = 0; nIndex333 < nListLen333; nIndex333++) {
-    var nData333 = nList333[nIndex333];
-    output += '<option value="' + soy.$$escapeHtml(opt_data.data['options'][nData333][0]) + '"' + ((opt_data.data['value'] == opt_data.data['options'][nData333][0]) ? ' selected="selected"' : '') + '>' + soy.$$escapeHtml(opt_data.data['options'][nData333][1]) + '</option>';
+  var nList344 = soy.$$getMapKeys(opt_data.data['options']);
+  var nListLen344 = nList344.length;
+  for (var nIndex344 = 0; nIndex344 < nListLen344; nIndex344++) {
+    var nData344 = nList344[nIndex344];
+    output += '<option value="' + soy.$$escapeHtml(opt_data.data['options'][nData344][0]) + '"' + ((opt_data.data['value'] == opt_data.data['options'][nData344][0]) ? ' selected="selected"' : '') + '>' + soy.$$escapeHtml(opt_data.data['options'][nData344][1]) + '</option>';
   }
   output += '</select>' + ((opt_data.data['multiple']) ? '<div class="wdpro-form-select-multiple-info">\u0423\u0434\u0435\u0440\u0436\u0438\u0432\u0430\u0439\u0442\u0435 CTRL, \u0447\u0442\u043E\u0431\u044B \u0432\u044B\u0431\u0440\u0430\u0442\u044C \u043D\u0435\u0441\u043A\u043E\u043B\u044C\u043A\u043E</div>' : '') + '</div>';
   return output;
@@ -227,11 +244,11 @@ if (goog.DEBUG) {
 
 wdpro.templates.forms.checksLevel = function(opt_data, opt_ignored) {
   var output = '<div class="wdpro-form-checks-level">';
-  var optionList361 = opt_data.options;
-  var optionListLen361 = optionList361.length;
-  for (var optionIndex361 = 0; optionIndex361 < optionListLen361; optionIndex361++) {
-    var optionData361 = optionList361[optionIndex361];
-    output += '<div class=""><label>' + ((optionData361['value'] && ! opt_data.data['disabled'][optionData361['value']]) ? '<input type="checkbox" data-value="' + soy.$$escapeHtml(optionData361['value']) + '" class="js-checks-check" /> ' : '') + soy.$$escapeHtml(optionData361['text']) + '</label></div>' + ((optionData361['options']) ? wdpro.templates.forms.checksLevel({options: optionData361['options'], data: opt_data.data}) : '');
+  var optionList372 = opt_data.options;
+  var optionListLen372 = optionList372.length;
+  for (var optionIndex372 = 0; optionIndex372 < optionListLen372; optionIndex372++) {
+    var optionData372 = optionList372[optionIndex372];
+    output += '<div class=""><label>' + ((optionData372['value'] && ! opt_data.data['disabled'][optionData372['value']]) ? '<input type="checkbox" data-value="' + soy.$$escapeHtml(optionData372['value']) + '" class="js-checks-check" /> ' : '') + soy.$$escapeHtml(optionData372['text']) + '</label></div>' + ((optionData372['options']) ? wdpro.templates.forms.checksLevel({options: optionData372['options'], data: opt_data.data}) : '');
   }
   output += '</div>';
   return output;

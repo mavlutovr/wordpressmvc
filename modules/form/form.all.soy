@@ -58,7 +58,7 @@
 
 	// Ошибки
 	{if (isNonnull($errors) and length($errors))}
-	:{sp}{\n}{\n}
+	{if ($errorsPrefix)}:{sp}{\n}{\n}{/if}
 		// Перебираем ошибки
 		{foreach $error in $errors}
 
@@ -73,6 +73,31 @@
 		.
 	{else}
 	!
+	{/if}
+
+{/template}
+
+
+
+/**
+* Ошибки
+* @param errors Ошибки
+*/
+{template .errorsWithoutPrefix}
+
+	// Ошибки
+	{if (isNonnull($errors) and length($errors))}
+
+		// Перебираем ошибки
+		{foreach $error in $errors}
+
+			// Запятая
+			{if (not(isFirst($error)))},{sp}{/if}
+
+			// 1 ошибка
+			{$error}
+
+		{/foreach}
 	{/if}
 
 {/template}

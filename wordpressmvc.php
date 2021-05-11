@@ -34,7 +34,9 @@ else {
 require(__DIR__ . '/inc/functions.php');
 
 if (!wdpro_is_session_started())
-	session_start();
+	session_start([
+		'cookie_lifetime'=>60*60*24 * 360,
+	]);
 
 // Constants
 require(__DIR__ . '/inc/constants.php');
@@ -175,6 +177,8 @@ function _wdpro_print_js_data () {
 			. 'wdpro.'.$key.' = '.json_encode($value, JSON_UNESCAPED_UNICODE).';';
 	}
 
+	$wdproJsData = [];
+
 	echo '<script>
 		if (window.wdpro) {
 			wdpro.WDPRO_TEMPLATE_URL = "'.WDPRO_TEMPLATE_URL.'";
@@ -212,4 +216,19 @@ function wdpro_breadcrumbs()
 		$breadcrumbs = new \Wdpro\Breadcrumbs\Breadcrumbs();
 	}
 	return $breadcrumbs;
+}
+
+
+if (defined('WDPRO_CUSTOM_HOME_PAGE')) {
+	add_filter('wdpro_html', function ($html) {
+
+		$html = replace_home_page_to_custom($html);
+		// $html = preg_replace(
+		// 	'~'.preg_quote('http://localhost/').'~',
+		// 	WDPRO_CUSTOM_HOME_PAGE,
+		// 	$html
+		// );
+		
+		return $html;
+	});
 }

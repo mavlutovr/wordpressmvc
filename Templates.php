@@ -236,7 +236,11 @@ class Templates
 	 * @param string $uri Адрес страницы
 	 * @param string $templateFile Путь к файлу шаблона WDPRO_TEMPLATE_PATH.'download.php'
 	 */
-	public static function addTemplateForUri($uri, $templateFile) {
+	public static function addTemplateForUri($uri, $templateFile=null) {
+		if ($templateFile === null) {
+			$templateFile = WDPRO_TEMPLATE_PATH.$uri.'.php';
+		}
+		
 		static::add([
 			'uri'=>$uri,
 			'file'=>$templateFile,

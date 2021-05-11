@@ -173,3 +173,6 @@
 .wdpro-form-captha--grid span {
   font-size: 2em;
 }
+.wdpro-form .wdpro-form-messages--container-visible {
+  display: block;
+}

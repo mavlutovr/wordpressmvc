@@ -670,6 +670,24 @@ function wdpro_current_url($queryChanges=null) {
 }
 
 
+function wdpro_current_url_with_proto($queryChanges=null) {
+	$url = wdpro_current_url($queryChanges);
+
+	$http = 'http';
+	if (isset($_SERVER['HTTP_HTTPS']) && $_SERVER['HTTP_HTTPS'] === 'on') {
+		$http = 'https';
+	}
+	else if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
+		$http = 'https';
+	}
+	else if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+		$http = 'https';
+	}
+
+	return $http . ':' . $url;
+}
+
+
 /**
  * Возвращает абсолютный адрес текущей страницы с русскоязычным доменом
  *
@@ -819,6 +837,18 @@ function wdpro_local() {
 }
 
 
+function replace_home_page_to_custom($string) {
+
+	if (!defined('WDPRO_CUSTOM_HOME_PAGE')) return $string;
+
+	return preg_replace(
+		'~'.preg_quote('http://localhost/').'~',
+		WDPRO_CUSTOM_HOME_PAGE,
+		$string
+	);
+}
+
+
 /**
  * Редирект с остановкой текущих скриптов
  *
@@ -827,6 +857,9 @@ function wdpro_local() {
  */
 function wdpro_location($location, $code=301)
 {
+	$location = replace_home_page_to_custom($location);
+
+
 	// throw new \Exception('wdpro_location');
 	if (headers_sent())
 	{
@@ -838,6 +871,7 @@ function wdpro_location($location, $code=301)
 			header("HTTP/1.1 301 Moved Permanently");
 		}
 
+		// echo 'Location 3: '.$location; exit();
 		header('Location: '.$location);
 	}
 	exit();
@@ -876,6 +910,7 @@ function wdpro_upload_dir($subDir=false)
 	$dirs = wp_upload_dir();
 
 	$dir = $dirs['basedir'] . DIRECTORY_SEPARATOR . 'wdpro';
+	$dir = replace_home_page_to_custom($dir);
 
 	if ($subDir)
 	{
@@ -939,6 +974,7 @@ function wdpro_upload_dir_url($subDir=false)
 	$dirs = wp_upload_dir();
 
 	$dir = $dirs['baseurl'] . '/' . 'wdpro';
+	$dir = replace_home_page_to_custom($dir);
 
 	if ($subDir)
 	{
@@ -965,6 +1001,7 @@ function wdpro_upload_dir_ckeditor_url($subDir=false)
 	$dirs = wp_upload_dir();
 
 	$dir = $dirs['baseurl'] . '/' . 'ckeditor';
+	$dir = replace_home_page_to_custom($dir);
 
 	if ($subDir)
 	{
@@ -991,6 +1028,7 @@ function wdpro_upload_dir_path($subDir=false)
 	$dirs = wp_upload_dir();
 
 	$dir = $dirs['basedir'] . '/' . 'wdpro';
+	$dir = replace_home_page_to_custom($dir);
 
 	if ($subDir)
 	{
@@ -2328,6 +2366,24 @@ function wdpro_get_month($time) {
 }
 
 
+$wdproDefaultDateParams = [
+	'year'=>true,
+	'today'=>true,
+	'time'=>false,
+	'dateFormat'=>'d Month Y',
+	'timeFormat'=>', H:i',
+	'onlyTimeFormat'=>'H:i',
+	'todayText'=>'Сегодня',
+	'yesterdayText'=>'Вчера',
+	'tomorrowText'=>'Завтра',
+];
+
+function wdpro_set_date_default_params($params) {
+	global $wdproDefaultDateParams;
+
+	$wdproDefaultDateParams = wdpro_extend($wdproDefaultDateParams, $params);
+}
+
 /**
  * Преобразует секунды в отображаемую дату
  *
@@ -2337,16 +2393,9 @@ function wdpro_get_month($time) {
  */
 function wdpro_date($time, $paramsOrActionName=null)
 {
-	$paramsOrActionName = wdpro_extend(array(
-		'year'=>true,
-		'today'=>true,
-		'time'=>false,
-		'dateFormat'=>'d Month Y',
-		'timeFormat'=>', H:i',
-		'todayText'=>'Сегодня',
-		'yesterdayText'=>'Вчера',
-		'tomorrowText'=>'Завтра',
-	), $paramsOrActionName);
+	global $wdproDefaultDateParams;
+
+	$paramsOrActionName = wdpro_extend($wdproDefaultDateParams, $paramsOrActionName);
 
 	$date = null;
 	if ($paramsOrActionName['today'])
@@ -2379,7 +2428,12 @@ function wdpro_date($time, $paramsOrActionName=null)
 		$date = wdpro_rdate($paramsOrActionName['dateFormat'], $time);
 	}
 
-	if ($paramsOrActionName['time']) {
+	if ($paramsOrActionName['time'] === 'today') {
+		if (date('YMD') === date('YMD', $time)) {
+			$date = date($paramsOrActionName['onlyTimeFormat'], $time);
+		}
+	}
+	else if ($paramsOrActionName['time']) {
 
 		$date .= wdpro_rdate($paramsOrActionName['timeFormat'], $time);
 	}
@@ -2803,6 +2857,11 @@ function wdpro_home_url_with_lang($slashAtEnd=true) {
 }
 
 
+function wdpro_home_url() {
+	return replace_home_page_to_custom(home_url());
+}
+
+
 /**
  * Преобразует url адрес в path относительно корня сайта
  *
@@ -3086,6 +3145,8 @@ function wdpro_ajax_url($paramsOrActionName=null) {
 
 	$url =  admin_url('admin-ajax.php');
 
+	$url = replace_home_page_to_custom($url);
+
 	if (is_string($paramsOrActionName)) {
 		$paramsOrActionName = [
 			'action'=>$paramsOrActionName,
@@ -3178,14 +3239,18 @@ function output_file($file,$name)
 /**
  * Возвращает случайный пароль
  *
+ * @param number|null $length
+ * @param string|null $alphabet
  * @return string
  */
-function wdpro_generate_password() {
-	$alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
-	.'!@#$%^&*()-=_+[]/';
+function wdpro_generate_password($length=8, $alphabet=null) {
+	if (!$alphabet) {
+		$alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
+		.'!@#$%^&*()-=_+[]/';
+	}
 	$pass = array(); //remember to declare $pass as an array
 	$alphaLength = strlen($alphabet) - 1; //put the length -1 in cache
-	for ($i = 0; $i < 8; $i++) {
+	for ($i = 0; $i < $length; $i++) {
 		$n = rand(0, $alphaLength);
 		$pass[] = $alphabet[$n];
 	}
@@ -4105,3 +4170,13 @@ function wdpro_get_captcha_src() {
 	return $_SESSION['captcha']['image_src'];
 }
 
+function wdpro_disable_cache_current_page() {
+	header('Cache-Control: no-cache, no-store, must-revalidate');
+	header('Pragma: no-cache');
+	header('Expires: 0');
+}
+
+
+function wdpro_disable_indexing_current_page() {
+	header('X-Robots-Tag: noindex');
+}
