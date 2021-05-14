@@ -3356,8 +3356,11 @@ function wdpro_get_option($optionName, $defaultValue=null) {
 
 	if (!$value && $defaultValue !== null) {
 		update_option($optionName, $defaultValue);
-		return $defaultValue;
+		$value = $defaultValue;
 	}
+
+	$value = \apply_filters('wdpro_get_option', $value, $optionName);
+	$value = \apply_filters('wdpro_get_option--' . $optionName, $value);
 
 	return $value;
 }
