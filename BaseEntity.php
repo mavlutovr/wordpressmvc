@@ -740,7 +740,9 @@ abstract class BaseEntity
 				$icon = '';
 				$iconClasses = '';
 				if (!isset($childParams['icon'])) {
-					$childParams['icon'] = $rollParams['icon'];
+					if (isset($rollParams['icon'])) {
+						$childParams['icon'] = $rollParams['icon'];
+					}
 				}
 
 				if (isset($childParams['icon']) && $childParams['icon'])
