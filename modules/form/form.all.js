@@ -2092,6 +2092,13 @@
 			{
 				this.setFieldBlock(this.params['field']);
 			}
+
+
+			if (params.remove) {
+				setTimeout(() => {
+					this.remove();
+				})
+			}
 		},
 
 
