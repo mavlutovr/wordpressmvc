@@ -42,7 +42,7 @@ class Base {
 	public static function enabled() {
 		
 		// Demo только для админов
-		if (!is_admin() && static::isDemo()) return false;
+		if (!current_user_can('administrator') && static::isDemo()) return false;
 
 
 		return !!get_option('pay_method_'.static::getName().'_enabled');
