@@ -244,6 +244,11 @@ class Entity extends \Wdpro\BaseEntity {
 	}
 
 
+	public function updateCost($cost) {
+		$this->data['cost'] = $cost;
+	}
+
+
 	/**
 	 * Возвращает описание покупки
 	 * 
@@ -310,6 +315,11 @@ class Entity extends \Wdpro\BaseEntity {
 	public function target()
 	{
 		return wdpro_object_by_key($this->data['target_key']);
+	}
+
+
+	public function getTraget() {
+		return $this->target();
 	}
 
 
@@ -435,5 +445,10 @@ class Entity extends \Wdpro\BaseEntity {
 			'pai'=>$this->id(),
 			'pas'=>$this->data['secret'],
 		];
+	}
+
+
+	public function getSecret() {
+		return $this->data['secret'];
 	}
 }
