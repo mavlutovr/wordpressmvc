@@ -1,56 +1,5 @@
 wdpro.ready($ => {
 
-  // https://stackoverflow.com/a/45184412/6694099
-  const toNonExponential = value => {
-    // if value is not a number try to convert it to number
-    if (typeof value !== "number") {
-      value = parseFloat(value);
-
-      // after convert, if value is not a number return empty string
-      if (isNaN(value)) {
-        return "";
-      }
-    }
-
-    var sign;
-    var e;
-
-    // if value is negative, save "-" in sign variable and calculate the absolute value
-    if (value < 0) {
-      sign = "-";
-      value = Math.abs(value);
-    }
-    else {
-      sign = "";
-    }
-
-    // if value is between 0 and 1
-    if (value < 1.0) {
-      // get e value
-      e = parseInt(value.toString().split('e-')[1]);
-
-      // if value is exponential convert it to non exponential
-      if (e) {
-        value *= Math.pow(10, e - 1);
-        value = '0.' + (new Array(e)).join('0') + value.toString().substring(2);
-      }
-    }
-    else {
-      // get e value
-      e = parseInt(value.toString().split('e+')[1]);
-
-      // if value is exponential convert it to non exponential
-      if (e) {
-        value /= Math.pow(10, e);
-        value += (new Array(e + 1)).join('0');
-      }
-    }
-
-    // if value has negative sign, add to it
-    return sign + value;
-  }
-
-
 
   $('#js-pay-crypts').each(function () {
     $(this).find('.js-pay-crypt').each(function () {
@@ -81,7 +30,7 @@ wdpro.ready($ => {
               return;
             }
 
-            res['amountCrypt'] = toNonExponential(res['amountCrypt'])
+            res['amountCrypt'] = wdpro.toNonExponential(res['amountCrypt'])
 
             
             let $content = $(paykassaTemplates.goToPaykassa({

@@ -4107,15 +4107,20 @@ function wdpro_add_to_htaccess($code, $paramsOrActionName=null) {
  * @param  array|null $data
  * @return string Response
  */
-function wdpro_post_request($url, $data) {
+function wdpro_post_request($url, $data, $headers=[]) {
 	$query_content = http_build_query($data);
+
+	$headers = array_merge([ // header array does not need '\r\n'
+		'Content-type: application/x-www-form-urlencoded',
+		'Content-Length: ' . strlen($query_content)
+	], $headers);
+
+	print_r($headers);
+
   $fp = fopen($url, 'r', FALSE, // do not use_include_path
     stream_context_create([
     'http' => [
-      'header'  => [ // header array does not need '\r\n'
-        'Content-type: application/x-www-form-urlencoded',
-        'Content-Length: ' . strlen($query_content)
-      ],
+      'header'  => $headers,
       'method'  => 'POST',
       'content' => $query_content
     ]
@@ -4182,4 +4187,22 @@ function wdpro_disable_cache_current_page() {
 
 function wdpro_disable_indexing_current_page() {
 	header('X-Robots-Tag: noindex');
+}
+
+
+function wdpro_number_no_e($amount) {
+	$number = ''.number_format($amount, 16);
+	$number = preg_replace('~0*$~', '', $number);
+	return $number;
+
+	$amount = (string)$amount; // cast the number in string
+	$pos = stripos($amount, 'E-'); // get the E- position
+	$there_is_e = $pos !== false; // E- is found
+
+	if ($there_is_e) {
+			$decimals = intval(substr($amount, $pos + 2, strlen($amount))); // extract the decimals
+			$amount = number_format($amount, $decimals, '.', ','); // format the number without E-
+	}
+
+	return $amount;
 }
