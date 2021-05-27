@@ -14,17 +14,61 @@ require_once __DIR__.'/PaykassaPro/paykassa_sci.class.php';
 class PaykassaPro extends Base  implements MethodInterface {
 
   protected static $currencies = [
-    "bitcoin" => ['id'=>11, 'name'=>'BTC'], // поддерживаемые валюты BTC    
-    "ethereum" => ['id'=>12, 'name'=>'ETH'], // поддерживаемые валюты ETH    
-    "litecoin" => ['id'=>14, 'name'=>'LTC'], // поддерживаемые валюты LTC    
-    "dogecoin" => ['id'=>15, 'name'=>'DOGE'], // поддерживаемые валюты DOGE    
-    "dash" => ['id'=>16, 'name'=>'DASH'], // поддерживаемые валюты DASH    
-    "bitcoincash" => ['id'=>18, 'name'=>'BCH'], // поддерживаемые валюты BCH    
-    "zcash" => ['id'=>19, 'name'=>'ZEC'], // поддерживаемые валюты ZEC    
-    "ripple" => ['id'=>22, 'name'=>'XRP'], // поддерживаемые валюты XRP    
-    "tron" => ['id'=>27, 'name'=>'TRX'], // поддерживаемые валюты TRX    
-    "stellar" => ['id'=>28, 'name'=>'XLM'], // поддерживаемые валюты XLM    
-    "binancecoin" => ['id'=>29, 'name'=>'BNB'], // поддерживаемые валюты BNB    
+    "bitcoin" => [
+      'id'=>11,
+      'name'=>'BTC',
+      'image'=>'bitcoin.png',
+    ],
+    "ethereum" => [
+      'id'=>12,
+      'name'=>'ETH',
+      'image'=>'ethereum.png',
+    ],  
+    "litecoin" => [
+      'id'=>14,
+      'name'=>'LTC',
+      'image'=>'litecoin.png',
+    ],  
+    "dogecoin" => [
+      'id'=>15,
+      'name'=>'DOGE',
+      'image'=>'dogecoin.png',
+    ],
+    "dash" => [
+      'id'=>16,
+      'name'=>'DASH',
+      'image'=>'dash.png',
+    ], 
+    "bitcoincash" => [
+      'id'=>18,
+      'name'=>'BCH',
+      'image'=>'bitcoincash.png',
+    ],  
+    "zcash" => [
+      'id'=>19,
+      'name'=>'ZEC',
+      'image'=>'zcash.png',
+    ],
+    "ripple" => [
+      'id'=>22,
+      'name'=>'XRP',
+      'image'=>'ripple.png',
+    ],   
+    "tron" => [
+      'id'=>27,
+      'name'=>'TRX',
+      'image'=>'tron.png',
+    ],  
+    "stellar" => [
+      'id'=>28,
+      'name'=>'XLM',
+      'image'=>'stellar.png',
+    ],  
+    "binancecoin" => [
+      'id'=>29,
+      'name'=>'BNB',
+      'image'=>'binancecoin.png',
+    ],   
   ];
 
   public static function init() {
@@ -40,23 +84,37 @@ class PaykassaPro extends Base  implements MethodInterface {
       $res = $paykassa->sci_confirm_order();
 
       if ($res['error']) {
-        
+        \Wdpro\AdminNotice\Controller::sendMessageHtml('Payment Error', $res['message']);
       }
 
       else {
-        $payId = $res["data"]["order_id"];
-        $pay = \Wdpro\Pay\Controller::getById($payId);
-        $pay->setResultPost($res);
-        $pay->confirm(static::getName(), 1);
+        try {
+          $payId = $res["data"]["order_id"];
+          $pay = \Wdpro\Pay\Controller::getById($payId);
+          $pay->setResultPost($res);
 
-        $transaction = $res["data"]["transaction"]; // номер транзакции в системе paykassa: 96401
-        $hash = $res["data"]["hash"];               // hash, пример: bde834a2f48143f733fcc9684e4ae0212b370d015cf6d3f769c9bc695ab078d1
-        $currency = $res["data"]["currency"];       // валюта платежа, пример: DASH
-        $system = $res["data"]["system"];           // система, пример: Dash
-        $address = $res["data"]["address"];         // адрес криптовалютного кошелька, пример: Xybb9RNvdMx8vq7z24srfr1FQCAFbFGWLg
-        $tag = $res["data"]["tag"];                 // Tag для Ripple и Stellar
-        $partial = $res["data"]["partial"];         // настройка приема недоплаты или переплаты, 'yes' - принимать, 'no' - не принимать
-        $amount = (float)$res["data"]["amount"];    // сумма счета, пример: 1.0000000
+          // Проверка суммы
+          if (!$pay->isValidAmount($amount)) {
+            throw new \Exception('The amount '.$amount.' is not equal to '.$pay->getCost());
+          }
+
+          $pay->confirm(static::getName(), 1);
+
+          $transaction = $res["data"]["transaction"]; // номер транзакции в системе paykassa: 96401
+          $hash = $res["data"]["hash"];               // hash, пример: bde834a2f48143f733fcc9684e4ae0212b370d015cf6d3f769c9bc695ab078d1
+          $currency = $res["data"]["currency"];       // валюта платежа, пример: DASH
+          $system = $res["data"]["system"];           // система, пример: Dash
+          $address = $res["data"]["address"];         // адрес криптовалютного кошелька, пример: Xybb9RNvdMx8vq7z24srfr1FQCAFbFGWLg
+          $tag = $res["data"]["tag"];                 // Tag для Ripple и Stellar
+          $partial = $res["data"]["partial"];         // настройка приема недоплаты или переплаты, 'yes' - принимать, 'no' - не принимать
+          $amount = (float)$res["data"]["amount"];    // сумма счета, пример: 1.0000000
+
+          echo $id.'|success';
+        }
+        catch (\Exception $err) {
+          $pay->logError($err->getMessage())->saveE();
+        }
+        
       }
       
       exit();
@@ -78,7 +136,7 @@ class PaykassaPro extends Base  implements MethodInterface {
         $paykassa = static::getPaykassa();
 
         $res = $paykassa->sci_create_order(
-          $amount,
+          $amountCrypt,
           $currency['name'],
           // static::getMainCurrency(),
           $pay->id(),
@@ -90,8 +148,15 @@ class PaykassaPro extends Base  implements MethodInterface {
           throw new \Exception($res['error']);
         }
 
+        return [
+          'currency'=>$currency,
+          'amount'=>$amount,
+          'amountCrypt'=>$amountCrypt,
+          'url'=>$res['data']['url'],
+        ];
+
         print_r([
-          $amount,
+          $amountCrypt,
           $currency['name'],
           // static::getMainCurrency(),
           $pay->id(),
@@ -114,6 +179,14 @@ class PaykassaPro extends Base  implements MethodInterface {
 
   public static function runSite() {
 		wdpro_add_script_to_site(__DIR__.'/../templates/paykassa.js');
+
+    wdpro_on_uri('pay', function () {
+      \wdpro_default_file(
+        __DIR__.'/../templates/paykassa.site.soy',
+        WDPRO_TEMPLATE_PATH.'soy/paykassa.site.soy'
+      );
+    });
+
   }
 
 

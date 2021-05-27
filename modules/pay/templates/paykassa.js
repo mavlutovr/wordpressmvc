@@ -19,12 +19,31 @@ wdpro.ready($ => {
           },
 
           res => {
-            if (res['error']) {
-              alert(res['error']);
-            }
-            
             $pay.loadingStop();
-            console.log('res', res);
+
+            if (res['error']) {
+              if (res['error'] == '1') {
+                res['error'] = 'Something went wrong. Try a different payment method.'
+              }
+              alert(res['error']);
+              return;
+            }
+
+            
+            let $content = $(paykassaTemplates.goToPaykassa({
+              name: res['currency']['name'],
+              image: wdpro.WDPRO_HOME_URL
+                + 'wp-content/plugins/wordpressmvc/modules/pay/Methods/images/'
+                + res['currency']['image'],
+              amount: res['amount'],
+              amountCrypt: res['amountCrypt'],
+              url: res['url'],
+            }));
+
+            let dialog = new wdpro.dialogs.Dialog({
+              content: $content,
+            });
+            dialog.show();
           }
         );
       });

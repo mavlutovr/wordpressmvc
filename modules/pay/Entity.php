@@ -64,6 +64,17 @@ class Entity extends \Wdpro\BaseEntity {
 	}
 
 
+	public function logError($message) {
+		if (empty($this->data['result_post']['errors'])) {
+			$this->data['result_post']['errors'] = [];
+		}
+
+		$this->data['result_post']['errors'][] = $message;
+
+		return $this;
+	}
+
+
 	/**
 	 * Подтверждение транзакции
 	 *
@@ -451,4 +462,17 @@ class Entity extends \Wdpro\BaseEntity {
 	public function getSecret() {
 		return $this->data['secret'];
 	}
+
+
+	public function isValidAmount($amount) {
+
+		$target = $this->target();
+		if (method_exists($target, 'isValidAmount')) {
+			return $target->isValidAmount($amount, $this);
+		}
+
+		return $this->getCost() == $amount;
+	}
 }
+
+
