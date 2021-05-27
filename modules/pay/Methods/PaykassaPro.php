@@ -93,13 +93,6 @@ class PaykassaPro extends Base  implements MethodInterface {
           $pay = \Wdpro\Pay\Controller::getById($payId);
           $pay->setResultPost($res);
 
-          // Проверка суммы
-          if (!$pay->isValidAmount($amount)) {
-            throw new \Exception('The amount '.$amount.' is not equal to '.$pay->getCost());
-          }
-
-          $pay->confirm(static::getName(), 1);
-
           $transaction = $res["data"]["transaction"]; // номер транзакции в системе paykassa: 96401
           $hash = $res["data"]["hash"];               // hash, пример: bde834a2f48143f733fcc9684e4ae0212b370d015cf6d3f769c9bc695ab078d1
           $currency = $res["data"]["currency"];       // валюта платежа, пример: DASH
@@ -109,10 +102,18 @@ class PaykassaPro extends Base  implements MethodInterface {
           $partial = $res["data"]["partial"];         // настройка приема недоплаты или переплаты, 'yes' - принимать, 'no' - не принимать
           $amount = (float)$res["data"]["amount"];    // сумма счета, пример: 1.0000000
 
+          // Проверка суммы
+          if (!$pay->isValidAmount($amount, $res)) {
+            throw new \Exception('The amount '.$amount.' is not equal to '.$pay->getCost());
+          }
+
+          $pay->confirm(static::getName(), 1);
+
           echo $id.'|success';
         }
         catch (\Exception $err) {
-          $pay->logError($err->getMessage())->saveE();
+          echo $err->getMessage();
+          $pay->logError($err->getMessage())->save();
         }
         
       }
@@ -151,6 +152,7 @@ class PaykassaPro extends Base  implements MethodInterface {
         return [
           'currency'=>$currency,
           'amount'=>$amount,
+          // 'amountCrypt'=>''.sprintf ("%.16f", $amountCrypt),
           'amountCrypt'=>$amountCrypt,
           'url'=>$res['data']['url'],
         ];
@@ -433,6 +435,17 @@ class PaykassaPro extends Base  implements MethodInterface {
     }
 
     return $currency;
+  }
+
+  public static function getCurrensyByName($name) {
+    foreach(static::$currencies as $key => $currency) {
+      if ($currency['name'] === $name) {
+        $currency['key'] = $key;
+        return $currency;
+      }
+    }
+
+    throw new \Exception('Currency "'.$name.'" not found');
   }
 
 

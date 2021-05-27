@@ -464,11 +464,11 @@ class Entity extends \Wdpro\BaseEntity {
 	}
 
 
-	public function isValidAmount($amount) {
+	public function isValidAmount($amount, $params=null) {
 
 		$target = $this->target();
 		if (method_exists($target, 'isValidAmount')) {
-			return $target->isValidAmount($amount, $this);
+			return $target->isValidAmount($amount, $params, $this);
 		}
 
 		return $this->getCost() == $amount;
