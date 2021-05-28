@@ -272,7 +272,7 @@
         return true;
     }
 
-    var masksKeyDown = function(e) {
+    var masksKeyDown = function (e) {
         if (e.metaKey) {
             runOriginal.call(this, e);
             return true;

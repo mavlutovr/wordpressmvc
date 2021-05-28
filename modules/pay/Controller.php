@@ -96,6 +96,9 @@ class Controller extends \Wdpro\BaseController {
 							wdpro_location($pay->getAftersaleUrl());
 						}
 
+						wdpro_javascript_data('payIn', $pay->id());
+						wdpro_javascript_data('paySw', $pay->getSecret());
+
 						return static::getStartBlock(array(
 							'pay'=>$pay,
 						));
@@ -147,6 +150,8 @@ class Controller extends \Wdpro\BaseController {
 				return $pay;
 			}
 		}
+
+		throw new \Exception('Transaction not found');
 	}
 
 

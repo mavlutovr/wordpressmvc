@@ -139,6 +139,7 @@
   margin-top: 3px;
   margin-left: 3px;
   opacity: 0.8;
+  pointer-events: none;
 }
 .wdpro-form-element-middle {
   display: flex;
@@ -156,4 +157,22 @@
 .wdpro-form-checks-level .wdpro-form-checks-level {
   margin-left: 20px;
   margin-right: 0;
+}
+.wdpro-form-input--focus--center {
+  opacity: .3;
+}
+.wdpro-form-input--masked--center {
+  opacity: 0;
+}
+.wdpro-form-captha--grid {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  grid-gap: 10px;
+  align-items: center;
+}
+.wdpro-form-captha--grid span {
+  font-size: 2em;
+}
+.wdpro-form .wdpro-form-messages--container-visible {
+  display: block;
 }

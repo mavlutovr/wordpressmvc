@@ -41,6 +41,21 @@ class Base {
 	 */
 	public static function enabled() {
 		
-		return get_option('pay_method_'.static::getName().'_enabled') == 1;
+		// Demo только для админов
+		if (!current_user_can('administrator') && static::isDemo()) return false;
+
+
+		return !!get_option('pay_method_'.static::getName().'_enabled');
+
+	}
+
+
+	public static function isDemo() {
+		return !!get_option('pay_method_' . static::getName() . '_test');
+	}
+
+
+	public static function isTest() {
+		return static::isDemo();
 	}
 }

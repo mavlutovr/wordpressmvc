@@ -111,7 +111,7 @@ if (wdpro_get_option('wdpro_disable_revisions')) {
 add_action('admin_enqueue_scripts', function () {
 	wp_localize_script('wdpro.core.all', 'wdproData', array(
 		'ajaxUrl' => wdpro_ajax_url(),
-		'homeUrl' => home_url() . '/',
+		'homeUrl' => wdpro_home_url() . '/',
 		'imagesUrl' => WDPRO_UPLOAD_IMAGES_URL,
 	));
 });

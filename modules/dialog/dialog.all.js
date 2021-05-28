@@ -69,6 +69,7 @@
 					closeSymbol: wdpro.dialogs.closeSymbol,
 					animate: wdpro.dialogs.animate,
 					cssClass: null,
+					bodyClass: null,
 				}, params);
 				this.params = params;
 
@@ -77,6 +78,9 @@
 
 				if (params.cssClass) {
 					this.html.addClass(params.cssClass);
+				}
+				if (params.bodyClass) {
+					$('body').addClass(params.bodyClass);
 				}
 
 				// Контейнер контента, чтобы потом менять содержимое
@@ -375,6 +379,10 @@
 				{
 					// запускаем каллбэки закрытия
 					this.trigger('closed', this);
+
+					if (self.params.bodyClass) {
+						$('body').removeClass(self.params.bodyClass);
+					}
 				}
 
 
@@ -401,6 +409,10 @@
 
 								// Включаем скролл страницы
 								$('body').removeClass('dialog-body-no-scroll');
+
+								if (self.params.bodyClass) {
+									$('body').removeClass(self.params.bodyClass);
+								}
 							});
 						}
 					};
@@ -435,6 +447,10 @@
 					$(this.substrateHtml).hide();
 					finish();
 				}
+
+				if (this.params.bodyClass) {
+					$('body').removeClass(this.params.bodyClass);
+				}
 			},
 
 
@@ -460,6 +476,10 @@
 					$(this.html).show();
 					$(this.substrateHtml).show();
 					finish();
+				}
+
+				if (this.params.bodyClass) {
+					$('body').addClass(this.params.bodyClass);
 				}
 			},
 

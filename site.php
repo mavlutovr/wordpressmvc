@@ -375,7 +375,7 @@ add_action('wp_enqueue_scripts', function () {
 
 	wp_localize_script('wdpro', 'wdproData', array(
 		'ajaxUrl' => wdpro_ajax_url(),
-		'homeUrl' => home_url() . '/',
+		'homeUrl' => wdpro_home_url() . '/',
 		'imagesUrl' => WDPRO_UPLOAD_IMAGES_URL,
 		'lang' => \Wdpro\Lang\Data::getCurrentLangUri(),
 		'langNotEmpty'=>\Wdpro\Lang\Data::getCurrentLangUriNotEmpty(),
@@ -502,6 +502,11 @@ if ($reCaptcha3SiteKey) {
 // Правка <link rel=canonical
 // Чтобы не было дублей страниц
 add_filter('get_canonical_url', function ($canonical_url, $post) {
+
+	$currentPage = wdpro_current_page();
+	if ($currentPage && $currentPage->isHome()) {
+		return home_url() . '/';
+	}
 
 	if (get_query_var('cpage', 0) && $post->ID === get_queried_object_id()) {
 		$canonical_url = get_permalink($post);

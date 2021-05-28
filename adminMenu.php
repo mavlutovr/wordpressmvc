@@ -389,6 +389,12 @@ href="'.WDPRO_CONSOLE_URL.'themes.php">Активировать тему</a>
 								),
 
 								array(
+									'name'=>'wdpro_disable_counters_on_speed_test',
+									'right'=>'Disable counters on speed test',
+									'type'=>'check',
+								),
+
+								array(
 									'type' => 'submit',
 									'text' => 'Сохранить',
 									'class'=>WDPRO_BUTTON_CSS_CLASS,

@@ -5,6 +5,7 @@ define('WDPRO_DIR', realpath(__DIR__.'/../').'/');
 define('WDPRO_PATH', WDPRO_DIR);
 define('WDPRO_URL', plugins_url('wordpressmvc').'/');
 define('WDPRO_CONSOLE_URL', admin_url());
+define('WDPRO_HOME_PATH', realpath(WDPRO_DIR.'../../../').'/');
 
 // Css классы синей кнопки
 // http://screenshot3.seobit.ru/roma.2015.09.02___19:32:1441211575.png

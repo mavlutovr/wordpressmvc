@@ -64,6 +64,17 @@ class Entity extends \Wdpro\BaseEntity {
 	}
 
 
+	public function logError($message) {
+		if (empty($this->data['result_post']['errors'])) {
+			$this->data['result_post']['errors'] = [];
+		}
+
+		$this->data['result_post']['errors'][] = $message;
+
+		return $this;
+	}
+
+
 	/**
 	 * Подтверждение транзакции
 	 *
@@ -244,6 +255,11 @@ class Entity extends \Wdpro\BaseEntity {
 	}
 
 
+	public function updateCost($cost) {
+		$this->data['cost'] = $cost;
+	}
+
+
 	/**
 	 * Возвращает описание покупки
 	 * 
@@ -310,6 +326,11 @@ class Entity extends \Wdpro\BaseEntity {
 	public function target()
 	{
 		return wdpro_object_by_key($this->data['target_key']);
+	}
+
+
+	public function getTraget() {
+		return $this->target();
 	}
 
 
@@ -436,4 +457,22 @@ class Entity extends \Wdpro\BaseEntity {
 			'pas'=>$this->data['secret'],
 		];
 	}
+
+
+	public function getSecret() {
+		return $this->data['secret'];
+	}
+
+
+	public function isValidAmount($amount, $params=null) {
+
+		$target = $this->target();
+		if (method_exists($target, 'isValidAmount')) {
+			return $target->isValidAmount($amount, $params, $this);
+		}
+
+		return $this->getCost() == $amount;
+	}
 }
+
+

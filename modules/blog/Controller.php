@@ -9,6 +9,7 @@ class Controller extends \Wdpro\BaseController {
 	protected static $postNamePrefix = false;
 	protected static $imageEnabled = true;
 	protected static $anonsEnabled = true;
+	protected static $langsTitlesEnabled = true;
 
 
 	/**
@@ -174,6 +175,16 @@ class Controller extends \Wdpro\BaseController {
 
 	public static function setAnonsEnabled($enabled) {
 		static::$anonsEnabled = $enabled;
+	}
+
+
+	public static function isLangsTitlesEnabled() {
+		return static::$langsTitlesEnabled;
+	}
+
+
+	public static function setLangsTitlesEnabled($enabled) {
+		static::$langsTitlesEnabled = $enabled;
 	}
 
 

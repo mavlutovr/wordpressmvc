@@ -104,7 +104,7 @@
 			{
 				var plusTop = targetTop - loadingTop;
 
-				div.css('margin-top', plusTop+'px');
+				loadingBg.css('margin-top', plusTop+'px');
 			}
 
 

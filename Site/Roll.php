@@ -140,6 +140,13 @@ class Roll extends \Wdpro\BaseRoll {
 
 			return wdpro_render_php($params['template'], $list, static::$templateExtraData);
 		}
+
+		else return static::getEmpty();
+	}
+
+
+	public static function getEmpty() {
+		
 	}
 
 

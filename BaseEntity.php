@@ -16,6 +16,7 @@ abstract class BaseEntity
 	/** @var \Wdpro\Form\Form */
 	protected $_consoleForm;
 	protected $_loaded = false;
+	protected $_loadedData = null;
 	protected $_loadedFromTable = false;
 	protected $_removed = false;
 	protected $_id;
@@ -126,6 +127,7 @@ abstract class BaseEntity
 		{
 			$this->setData($data);
 			$this->_loaded = true;
+			$this->_loadedData = $data;
 			$this->_loadedFromTable = true;
 
 			return true;
@@ -332,6 +334,7 @@ abstract class BaseEntity
 		if (!$data) {
 			$data = [];
 		}
+		$dataPrev = $this->_loadedData;
 
 		if (is_array($data))
 		{
@@ -405,6 +408,7 @@ abstract class BaseEntity
 			}
 
 			$this->onChange();
+			$this->onChange1($dataPrev);
 			$this->trigger('change', $this->getData());
 
 			return $this->data;
@@ -459,6 +463,14 @@ abstract class BaseEntity
 	 * Срабатывает после сохранения
 	 */
 	protected function onChange() {
+
+	}
+
+
+	/**
+	 * Срабатывает после сохранения и получает предыдущие данные
+	 */
+	protected function onChange1($prevData) {
 
 	}
 
@@ -728,7 +740,9 @@ abstract class BaseEntity
 				$icon = '';
 				$iconClasses = '';
 				if (!isset($childParams['icon'])) {
-					$childParams['icon'] = $rollParams['icon'];
+					if (isset($rollParams['icon'])) {
+						$childParams['icon'] = $rollParams['icon'];
+					}
 				}
 
 				if (isset($childParams['icon']) && $childParams['icon'])
@@ -1035,6 +1049,7 @@ abstract class BaseEntity
 			$this->_removed = true;
 
 			$this->onChange();
+			$this->onChange1([]);
 			$this->trigger('change', $this->getData());
 
 			$this->onRemove();

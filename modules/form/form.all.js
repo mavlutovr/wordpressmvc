@@ -800,6 +800,10 @@
 								sendParams.errorsExists = true;
 								sendParams.errorsList.push(result.error);
 
+								if (result.stop) {
+									validParams.stop = true;
+								}
+
 								if (result.prepend) {
 									alert(result.error);
 									validParams.standardAlert = false;
@@ -819,7 +823,7 @@
 				if (sendParams.errorsExists)
 				{
 					// Выводим их
-					if (validParams.standardAlert) {
+					if (validParams.standardAlert && !validParams.stop) {
 						alert(
 							self.templates.errors({
 								errors: sendParams.errorsList,
@@ -965,7 +969,7 @@
 			if (this.messagesContainer)
 			{
 				// Установка текста
-				this.messagesContainer.show().html(message);
+				this.messagesContainer.addClass('wdpro-form-messages--container-visible').html(message);
 
 				// Ошибка
 				this.messagesContainer.removeClass('_error_message');
@@ -2088,6 +2092,13 @@
 			{
 				this.setFieldBlock(this.params['field']);
 			}
+
+
+			if (params.remove) {
+				setTimeout(() => {
+					this.remove();
+				})
+			}
 		},
 
 
@@ -2432,6 +2443,32 @@
 			field.on('focus', function () {
 
 			});
+
+			if (this.params['filter']) {
+				let filter = (textbox, reg) => {
+					let inputFilter = value => {
+						return reg.test(value);
+					};
+						
+					["input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop"].forEach(function (event) {
+						textbox.addEventListener(event, function () {
+							if (inputFilter(this.value)) {
+								this.oldValue = this.value;
+								this.oldSelectionStart = this.selectionStart;
+								this.oldSelectionEnd = this.selectionEnd;
+							} else if (this.hasOwnProperty("oldValue")) {
+								this.value = this.oldValue;
+								this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
+							} else {
+								this.value = "";
+							}
+						});
+					});
+				};
+
+				let reg = new RegExp('^'+this.params['filter']+'$');
+				filter(field.get(0), reg);
+			}
 		},
 
 
@@ -3148,6 +3185,9 @@
 			}
 
 			let config = wdpro.extend({}, this.config);
+			if (data.height) {
+				config.height = data.height;
+			}
 
 			// https://ckeditor.com/cke4/addon/dropdownmenumanager
 			let insertBlocks = {};
@@ -3191,6 +3231,7 @@
 
 				self.html.addClass('wdpro-form-element-ckeditor');
 				if (!CKEDITOR.instances[self.htmlId]) {
+
 					var editor = CKEDITOR.replace(self.htmlId, config);
 
 					for (let commandName in insertBlocks) {
@@ -3419,6 +3460,39 @@
 			return this._super() + ' js-recaptcha3-input';
 		}
 
+	});
+
+
+	const CaptchaElement = wdpro.forms.CaptchaElement = BaseElement.extend({
+
+		// init: function (data) {
+
+		// 	var self = this;
+
+		// 	this._super(data);
+
+		// 	// this.classArr = ['js-captcha'];
+		// },
+
+
+		/**
+		 * Создает HTML код поля
+		 *
+		 * @param callback {function}
+		 */
+		createField: function (callback) {
+			var params = this.getParams();
+
+			var attrs = this.getAttrs();
+
+			callback(this.templates.captchaField({
+				data: params,
+				attrs: attrs
+			}));
+		},
+
+
+		
 	});
 
 
@@ -4365,7 +4439,8 @@
 		'Email': wdpro.forms.EmailElement,
 		'Privacy': Privacy,
 		'Date': wdpro.forms.DateElement,
-		'Recaptcha3': Recaptcha3Element
+		'Recaptcha3': Recaptcha3Element,
+		'Captcha': CaptchaElement,
 	};
 
 

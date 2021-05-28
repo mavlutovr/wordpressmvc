@@ -3,11 +3,13 @@ namespace Wdpro\Form\Elements;
 
 class Recaptcha3 extends Base
 {
+	protected $error;
 
 	public function __construct($params) {
 
 		$params = wdpro_extend(array(
 			'name'=>'recaptcha3',
+			'error_text'=>'Ошибка Recaptcha 3',
 		), $params);
 
 		parent::__construct($params);
@@ -41,10 +43,16 @@ class Recaptcha3 extends Base
 				return true;
 			}
 
+			$this->error = $this->params['error_text'];
 			return false;
 		}
 
 		return true;
+	}
+
+
+	public function getError() {
+		return $this->error;
 	}
 
 

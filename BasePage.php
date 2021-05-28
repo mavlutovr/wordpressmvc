@@ -655,9 +655,11 @@ abstract class BasePage extends BaseEntity
 	 *
 	 * @return string
 	 */
-	public function getKeywords() {
+	public function getKeywords($applyFilters=true) {
 		$keywords = wdpro_get_post_meta('keywords', $this->id());
-		$keywords = apply_filters('wdpro_keywords', $keywords);
+		if ($applyFilters) {
+			$keywords = apply_filters('wdpro_keywords', $keywords);
+		}
 		$keywords = $this->renderParamTemplate($keywords);
 
 		return $keywords;
@@ -840,6 +842,13 @@ abstract class BasePage extends BaseEntity
 	 */
 	public function getPostNamePrefix() {
 
+	}
+
+
+	public function isInSitemap() {
+		if ($this->data['post_name'] === 'error404') return false;
+		if ($this->getAlternativeUrl()) return false;
+		return true;
 	}
 
 
