@@ -4169,6 +4169,10 @@ function wdpro_get_random_hash($length=32) {
 }
 
 
+function wdpro_echo_image_size_attributes($src) {
+	$size = getimagesize($src);
+	echo $size[3];
+}
 
 function wdpro_get_captcha_src() {
 	require_once __DIR__.'/../modules/form/captcha/simple-php-captcha.php';
