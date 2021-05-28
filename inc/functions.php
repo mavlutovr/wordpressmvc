@@ -4094,3 +4094,9 @@ function wdpro_is_google_speed_test() {
 function wdpro_get_random_hash($length=32) {
 	return bin2hex(openssl_random_pseudo_bytes($length / 2));
 }
+
+
+function wdpro_echo_image_size_attributes($src) {
+	$size = getimagesize($src);
+	echo $size[3];
+}
