@@ -4,6 +4,8 @@ wdpro.ready($ => {
   $('#js-nopayments-methods').each(function () {
     const $container = $(this);
 
+    const priceForMonth = Number($('#js-price').text());
+
     $container.find('.js-method').each(function () {
       const $button = $(this);
       const key = $button.data('key');
