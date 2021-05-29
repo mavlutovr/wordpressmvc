@@ -1,0 +1,22 @@
+{namespace nowpaymentsTemplates}
+
+
+/**
+* Go to paykassa
+* @param amount
+* @param amountCrypt
+* @param name
+* @param image
+* @param url
+*/
+{template .start}
+<div class="paykassa-start">
+  <img src="{$image}">
+
+  <span class="paykassa-start--amount-crypt">{$amountCrypt} {$name}</span>
+  <span class="paykassa-start--amount">(${$amount})</span>
+
+  <a class="button" href="{$url}">Continue</a>
+
+</div>
+{/template}

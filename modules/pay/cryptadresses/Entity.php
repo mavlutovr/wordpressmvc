@@ -1,5 +1,5 @@
 <?php
-namespace Wdpro\Pay\CryptWallets;
+namespace Wdpro\Pay\CryptAddresses;
 
 /**
  * Основная сущность модуля
