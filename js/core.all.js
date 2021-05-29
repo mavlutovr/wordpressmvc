@@ -2791,6 +2791,19 @@ if (typeof Array.isArray === 'undefined') {
 	};
 
 
+	wdpro.copyTextFromElement = $element => {
+		const element = $element.get ? $element.get(0) : $element;
+
+		str = element.innerHTML;
+		const el = document.createElement('textarea');
+		el.value = str;
+		document.body.appendChild(el);
+		el.select();
+		document.execCommand('copy');
+		document.body.removeChild(el);
+	};
+
+
 	// https://stackoverflow.com/a/45184412/6694099
 	wdpro.toNonExponential = value => {
 		// if value is not a number try to convert it to number

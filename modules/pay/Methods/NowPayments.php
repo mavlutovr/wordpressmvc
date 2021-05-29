@@ -18,31 +18,37 @@ class NowPayments extends Base  implements MethodInterface {
       'id'=>11,
       'name'=>'BTC',
       'image'=>'bitcoin.png',
+      'query'=>'bitcoin:[address]?amount=[amount]&message=[message]&time=[time]&exp=86400',
     ],
     "ethereum" => [
       'id'=>12,
       'name'=>'ETH',
       'image'=>'ethereum.png',
+      'query'=>'bitcoin:[address]?amount=[amount]&message=[message]&time=[time]&exp=86400',
     ],  
     "litecoin" => [
       'id'=>14,
       'name'=>'LTC',
       'image'=>'litecoin.png',
+      'query'=>'litecoin:[address]?amount=[amount]&message=[message]&time=[time]&exp=86400',
     ],  
     "dogecoin" => [
       'id'=>15,
       'name'=>'DOGE',
       'image'=>'dogecoin.png',
+      'query'=>'dogecoin:[address]?amount=[amount]&message=[message]&time=[time]&exp=86400',
     ],
     "dash" => [
       'id'=>16,
       'name'=>'DASH',
       'image'=>'dash.png',
+      'query'=>'dash:[address]?amount=[amount]&message=[message]&time=[time]&exp=86400',
     ], 
     "bitcoincash" => [
       'id'=>18,
       'name'=>'BCH',
       'image'=>'bitcoincash.png',
+      'query'=>'bitcoincash:[address]?amount=[amount]&message=[message]&time=[time]&exp=86400',
     ],  
     // "zcash" => [
     //   'id'=>19,
@@ -75,15 +81,35 @@ class NowPayments extends Base  implements MethodInterface {
   protected static $mins;
 
 
+  public static function cron() {
+    $last = get_option('nowpayments_last_min_update');
+
+    if (!$last || $last < time() - 60 * 5) {
+      static::updateMins();
+      update_option('nowpayments_last_min_update', time());
+    }
+  }
+
+
   public static function init() {
 
-    \Wdpro\Modules::add(__DIR__.'/cryptwallets');
-    
-		
-		// Result URL
-		wdpro_ajax('nowpayments_check', function ($data) {
+    \Wdpro\Modules::add(__DIR__.'/NowPayments');
+    \Wdpro\Modules::addWdpro('extra/qrcodejs');
 
-      // wdpro_post_request();
+
+    // Result URL
+		wdpro_ajax('nowpayments_check', function () {
+
+      // Body
+      // {"payment_id":5077125051,"payment_status":"waiting","pay_address":"0xd1cDE08A07cD25adEbEd35c3867a59228C09B606","price_amount":170,"price_currency":"usd","pay_amount":155.38559757,"actually_paid":0,"pay_currency":"mana","order_id":"2","order_description":"Apple Macbook Pro 2019 x 1","purchase_id":"6084744717","created_at":"2021-04-12T14:22:54.942Z","updated_at":"2021-04-12T14:23:06.244Z","outcome_amount":1131.7812095,"outcome_currency":"trx"}
+
+      $headers = getallheaders();
+      $sig = $headers['x-nowpayments-sig'];
+
+      \Wdpro\AdminNotice\Controller::sendMessageHtml(
+        'ipn_callback_url',
+        print_r($_POST, true)
+      );
       
       exit();
 		});
@@ -91,42 +117,7 @@ class NowPayments extends Base  implements MethodInterface {
 
     wdpro_on_uri('pay', function () {
       try {
-        $mins = [];
-
-        foreach(static::getEnabledCurrencies() as $currency) {
-
-          $mins[$currency['name']] = '?';
-
-          $minAmount = static::request(
-            'https://api.sandbox.nowpayments.io/v1/min-amount?currency_from='
-              .$currency['name'],
-            null,
-            5
-          );
-
-          if (!empty($minAmount['min_amount'])) {
-            $rate = static::request(
-              'https://api.nowpayments.io/v1/estimate'
-              .'?amount='.wdpro_number_no_e($minAmount['min_amount'])
-              .'&currency_from='. $currency['name']
-              .'&currency_to='. static::getMainCurrency(),
-              null,
-              5
-            );
-
-            if (isset($rate['estimated_amount'])) {
-              $mins[$currency['name']] = $rate['estimated_amount'];
-            }
-
-          }
-          
-
-        }
-
-        static::$mins = $mins;
-
-        // wdpro_data('nowpaymentsMinAmounts', $min);
-        // wdpro_javascript_data('nowpaymentsMinAmounts', $min);
+        static::$mins = static::getMins();
       }
       catch(\Exception $err) {
         throw $err;
@@ -142,29 +133,33 @@ class NowPayments extends Base  implements MethodInterface {
         $amount = $pay->getCost();
         $currency = static::getCurrencyByKey($_GET['currencyKey']);
         
-        $req = static::request(
+        $rate = static::request(
           'https://api.nowpayments.io/v1/estimate'
           .'?amount='.$amount
           .'&currency_from='. static::getMainCurrency()
           .'&currency_to='. $currency['name']
         );
-        $amountCrypt = wdpro_number_no_e($req['estimated_amount']);
 
+        $amountCrypt = static::mainAmountToCurrency($currency['name'], $amount);
+        // $amountCrypt = wdpro_number_no_e($rate['estimated_amount']);
 
-        // $available = static::request(
-        //   'https://api.nowpayments.io/v1/currencies'
-        // );
-        // print_r($available);
+        $minAmount = static::getMinForCurrency($currency['name']);
 
-        $minAmount = static::request(
-          'https://api.sandbox.nowpayments.io/v1/min-amount?currency_from=doge&currency_to=ltc'
-        );
-        print_r($minAmount);
+        $error = null;
+        if ($amount < $minAmount) {
+          $error = 'The minimum amount for '.$currency['name']
+          .' is now $'.(round($minAmount*10)/10).'.'
+          .PHP_EOL
+          .'Please increase the number of months or choose another paying method...';
+        }
+        
 
         return [
           'amount'=>$amount,
-          'amountCrypt'=>$amountCrypt,
+          'amountCrypt'=>wdpro_number_no_e($amountCrypt),
           'currency'=>$currency,
+          'minAmount'=>$minAmount,
+          'error'=>$error,
         ];
         
       }
@@ -185,24 +180,33 @@ class NowPayments extends Base  implements MethodInterface {
         $pay = \Wdpro\Pay\Controller::getPayByGet();
         $amount = $pay->getCost();
         $currency = static::getCurrencyByKey($_GET['currencyKey']);
+        // $amountCrypt = static::mainAmountToCurrency($currency['name'], $amount);
 
-        $data = [
+        $req = [
           'price_amount'=>$amount,
           'price_currency'=>mb_strtolower(static::getMainCurrency()),
           'pay_currency'=>mb_strtolower($currency['name']),
-          'ipn_callback_url'=>static::getCheckUrl(),
+          // 'ipn_callback_url'=>static::getCheckUrl(),
           'order_id'=>$pay->id(),
           'order_description'=>$pay->getMessage(),
         ];
 
-        $req = static::request(
+        if (!wdpro_local()) {
+          $req['ipn_callback_url'] = static::getCheckUrl();
+        }
+
+        $res = static::request(
           'https://api.nowpayments.io/v1/payment',
-          $data
+          $req
         );
 
-        print_r($req);
+        $url = NowPayments\Controller::add($res, $pay);
+
+        return [
+          'url'=>$url,
+        ];
+
         exit();
-        
       }
       catch(\Exception $err) {
         return [
@@ -235,7 +239,7 @@ class NowPayments extends Base  implements MethodInterface {
 
     // $ch = curl_init();
     $curl = curl_init();
-    curl_setopt_array($curl, array(
+    $options = [
       CURLOPT_URL => $url,
       CURLOPT_RETURNTRANSFER => true,
       CURLOPT_ENCODING => '',
@@ -244,26 +248,18 @@ class NowPayments extends Base  implements MethodInterface {
       CURLOPT_FOLLOWLOCATION => true,
       CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
       CURLOPT_CUSTOMREQUEST => $postMethod ? 'POST' : 'GET',
-      CURLOPT_HTTPHEADER => array(
-        'x-api-key: '.trim(static::getApiKey())
-      ),
-    ));
+      CURLOPT_HTTPHEADER => [
+        'x-api-key: '.trim(static::getApiKey()),
+      ],
+    ];
 
     if ($postMethod) {
-      $headers[] = 'Content-Type: application/json';
-      // curl_setopt($ch, CURLOPT_POST, 1);
-      curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($postData));
+      $options[CURLOPT_POST] = 1;
+      $options[CURLOPT_HTTPHEADER][] = 'Content-Type: application/json';
+      $options[CURLOPT_POSTFIELDS] = json_encode($postData);
     }
-    
-    // curl_setopt($ch, CURLOPT_URL, $url);
-    
-    // curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-    // curl_setopt($ch, CURLOPT_HEADER, 0);
-    // curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-    // curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-    // curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    // curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-    // curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+
+    curl_setopt_array($curl, $options);
 
     $result = trim(curl_exec($curl));
     // $c_errors = curl_error($ch);
@@ -283,8 +279,76 @@ class NowPayments extends Base  implements MethodInterface {
   }
 
 
+  public static function updateMins() {
+    $mins = [];
+    $minRatio = static::getMinRatio();
+
+
+    foreach(static::getEnabledCurrencies() as $currency) {
+
+      $mins[$currency['name']] = static::getMinForCurrency($currency['name']);
+    }
+
+    update_option('nowpayments_mins', json_encode($mins));
+  }
+
+
+  public static function getMinForCurrency($currencyName, $rate=null) {
+
+    $minAmount = static::request(
+      'https://api.nowpayments.io/v1/min-amount?currency_from='
+        .$currencyName
+        // .'&currency_to='.$currency['name']
+        ,
+      null,
+      5
+    );
+
+
+    if (!empty($minAmount['min_amount'])) {
+      if (!$rate) {
+        $url = 'https://api.nowpayments.io/v1/estimate'
+          .'?amount='.wdpro_number_no_e($minAmount['min_amount'])
+          .'&currency_from='.$currencyName
+          .'&currency_to='. static::getMainCurrency();
+
+        $rate = static::request($url, null, 5);
+      }
+
+      if (isset($rate['estimated_amount'])) {
+        return $rate['estimated_amount'] * static::getMinRatio();
+      }
+    }
+
+    return '?';
+  }
+
+
+  public static function mainAmountToCurrency($currencyName, $mainAmount) {
+    $rate = static::request(
+      'https://api.nowpayments.io/v1/estimate'
+      .'?amount='.$mainAmount
+      .'&currency_from='. static::getMainCurrency()
+      .'&currency_to='. $currencyName
+    );
+
+    return $rate['estimated_amount'];
+  }
+
+
+  public static function getMins() {
+    $minsJson = get_option('nowpayments_mins');
+    if ($minsJson) {
+      return json_decode($minsJson, true);
+    }
+
+    return [];
+  }
+
+
   public static function runSite() {
 		wdpro_add_script_to_site(__DIR__.'/../templates/nowpayments.js');
+    \Wdpro\Extra\QrCodeJs\Controller::requireScript();
 
     wdpro_on_uri('pay', function () {
       \wdpro_default_file(
@@ -340,28 +404,33 @@ class NowPayments extends Base  implements MethodInterface {
         'html'=>'<p><a href="https://documenter.getpostman.com/view/7907941/S1a32n38?version=latest#9998079f-dcc8-4e07-9ac7-3d52f0fd733a" target="_blank">Документация</a></p>'
       ]);
 
+      $form->add([
+        'name'=>'pay_method_' . static::getName() . '_min_ratio',
+        'left'=>'Множитель минимальных оплат',
+      ]);
+
       $form->addHeader('В боевом режиме');
 
       $form->add([
         'name'=>'pay_method_' . static::getName() . '_api_key',
-        'top'=>'API KEY',
+        'left'=>'API KEY',
       ]);
 
       $form->add([
         'name'=>'pay_method_' . static::getName() . '_secret_key',
-        'top'=>'Secret key',
+        'left'=>'Secret key',
       ]);
 
       $form->addHeader('В тестовом режиме');
 
       $form->add([
         'name'=>'pay_method_' . static::getName() . '_test_api_key',
-        'top'=>'API KEY',
+        'left'=>'API KEY',
       ]);
 
       $form->add([
         'name'=>'pay_method_' . static::getName() . '_test_secret_key',
-        'top'=>'Secret key',
+        'left'=>'Secret key',
       ]);
 
       $form->add($form::SUBMIT_SAVE);
@@ -459,9 +528,11 @@ class NowPayments extends Base  implements MethodInterface {
     );
   }
 
+
   public static function getCurrencies() {
     return static::$currencies;
   }
+
   
   public static function getEnabledCurrencies() {
     $currencies = static::getCurrencies();
@@ -478,6 +549,7 @@ class NowPayments extends Base  implements MethodInterface {
     return $enabledCurrencies;
   }
 
+
   public static function getLabel() {
     return 'NowPayments';
   }
@@ -491,6 +563,7 @@ class NowPayments extends Base  implements MethodInterface {
   public static function isCurrencyEnabled($currencyId) {
     return !!wdpro_get_option('pay_method_' . static::getName() . '_currency_'.$currencyId);
   }
+
 
   public static function isTestMode() {
     return wdpro_get_option('pay_method_' . static::getName() . '_test');
@@ -525,6 +598,18 @@ class NowPayments extends Base  implements MethodInterface {
   }
 
 
+  public static function getCurrencyByName($name) {
+    foreach(static::$currencies as $key => $currency) {
+      if (mb_strtolower($currency['name']) == mb_strtolower($name)) {
+        $currency['key'] = $key;
+        return $currency;
+      }
+    }
+
+    throw new \Exception('A currency not found by the name '.$key.'');
+  }
+
+
   public static function getWalletId() {
     return get_option('pay_method_' . static::getName() . '_wallet_id');
   }
@@ -539,5 +624,18 @@ class NowPayments extends Base  implements MethodInterface {
     return wdpro_ajax_url([
       'action'=>'nowpayments_check',
     ]);
+  }
+
+
+  public static function getMinRatio() {
+    $ratio = get_option(
+      'pay_method_' . static::getName() . '_min_ratio'
+    );
+
+    if ($ratio) {
+      return $ratio * 1;
+    }
+
+    return 1;
   }
 }

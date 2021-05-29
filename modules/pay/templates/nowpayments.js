@@ -1,10 +1,53 @@
 
 wdpro.ready($ => {
 
-  $('#js-nopayments-methods').each(function () {
+  // Карточка заказа
+  $('#js-nopayments-payment').each(function () {
     const $container = $(this);
 
-    const priceForMonth = Number($('#js-price').text());
+
+    // QR Code
+    $('#js-payment-qrcode').each(function () {
+      const $qrCodeContainer = $(this);
+      const query = $qrCodeContainer.data('query');
+
+      new QRCode($qrCodeContainer.get(0), {
+        text: query,
+        width: 128 * 1.5,
+        height: 128 * 1.5,
+        // colorDark: "#000000",
+        // colorLight: "#ffffff",
+        // correctLevel: QRCode.CorrectLevel.H
+      });
+    });
+
+
+    // Copy
+    $container.find('.js-copy-text').each(function () {
+      const $text = $(this);
+      const $button = $(nowpaymentsTemplates.copy());
+      $text.after($button);
+
+      $button.on('click', function () {
+        wdpro.copyTextFromElement($text);
+        $button.addClass('copy-text-button-clicked');
+
+        setTimeout(function () {
+          $button.removeClass('copy-text-button-clicked');
+        }, 250);
+        // copyText.select();
+        // const copyText = $text.get(0);
+        // copyText.select();
+        // copyText.setSelectionRange(0, 99999);
+        // document.execCommand("copy");
+      });
+    });
+  });
+
+
+  // Выбор способа оплаты
+  $('#js-nopayments-methods').each(function () {
+    const $container = $(this);
 
     $container.find('.js-method').each(function () {
       const $button = $(this);
@@ -41,6 +84,7 @@ wdpro.ready($ => {
                 + res['currency']['image'],
               amount: res['amount'],
               amountCrypt: res['amountCrypt'],
+              error: res['error'],
             }));
 
 
@@ -59,7 +103,15 @@ wdpro.ready($ => {
                 },
 
                 res => {
-                  console.log('res', res);
+                  if (res['error']) {
+                    alert(res['error']);
+                    dialog.close();
+                    return;
+                  }
+                  
+                  if (res['url']) {
+                    window.location = res['url'];
+                  }
                 }
               );
             });

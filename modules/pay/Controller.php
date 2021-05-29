@@ -132,6 +132,16 @@ class Controller extends \Wdpro\BaseController {
 	}
 
 
+	public static function cron()
+	{
+		static::eachMethods(function ($method) {
+
+			/** @var MethodInterface $method */
+			$method::cron();
+		});
+	}
+
+
 	/**
 	 * Возвращает объект платежки по $_GET данным
 	 * 
