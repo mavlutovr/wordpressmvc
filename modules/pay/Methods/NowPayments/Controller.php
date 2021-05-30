@@ -32,6 +32,7 @@ class Controller extends \Wdpro\BaseController {
       
       return [
         'status'=>$entity->getStatus(),
+        'update'=>!$entity->isCompleted(),
       ];
 
       exit();

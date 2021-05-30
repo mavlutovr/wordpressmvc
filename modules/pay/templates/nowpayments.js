@@ -78,14 +78,18 @@ wdpro.ready($ => {
               $status = $newStatus;
 
               sec = 15;
-              update();
+
+              if (res['update']) {
+                update();
+              }
             }
           )
         }
       }
 
       // setInterval(update, 1000);
-      update();
+      if ($secondsContainer.length) update();
+      
     }
   });
 

@@ -107,7 +107,7 @@ class NowPayments extends Base  implements MethodInterface {
 
         // Sign checking
         $json = file_get_contents('php://input');
-        $data = json_decode($json);
+        $data = json_decode($json, true);
         ksort($data);
         $hmacJson = json_encode($data);
         $hmacJson = str_replace('\\/', '/', $hmacJson);
@@ -125,17 +125,39 @@ class NowPayments extends Base  implements MethodInterface {
 
         \Wdpro\AdminNotice\Controller::sendMessageHtml(
           'IOctopus / NowPayment Checking Ok ('.$data['payment_status'].')',
-          print_r($_POST, true)
-          .print_r($_SERVER, true)
-          .$entityBody
+          'headers: '.print_r($headers, true).PHP_EOL.PHP_EOL
+          .'POST: '.PHP_EOL
+          .print_r($_POST, true).PHP_EOL.PHP_EOL
+          .'SERVER: '.PHP_EOL
+          .print_r($_SERVER, true).PHP_EOL.PHP_EOL
+          .$json
         );
       }
 
       catch(\Exception $err) {
         \Wdpro\AdminNotice\Controller::sendMessageHtml(
           'IOctopus / '.$err->getMessage(),
-          print_r($_SERVER, true)
-          .$entityBody
+
+          // Text
+          'headers: '.print_r($headers, true).PHP_EOL.PHP_EOL
+
+          .'POST: '.PHP_EOL
+          .print_r($_POST, true).PHP_EOL.PHP_EOL
+
+          .'SERVER: '.PHP_EOL
+          .print_r($_SERVER, true).PHP_EOL.PHP_EOL
+
+          .'hmac1: '.PHP_EOL
+          .$hmac1.PHP_EOL.PHP_EOL
+
+          .'data: '.PHP_EOL
+          .print_r($data, true).PHP_EOL.PHP_EOL
+
+          .'hmacJson: '.PHP_EOL
+          .$hmacJson.PHP_EOL.PHP_EOL
+
+          .'json: '.PHP_EOL
+          .$json.PHP_EOL.PHP_EOL
         );
       }
         

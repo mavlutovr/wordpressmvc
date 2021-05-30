@@ -102,4 +102,9 @@ class Entity extends \Wdpro\BaseEntity {
     return mb_strtoupper($this->data['pay_currency'])
       .' invoice #'.$this->data['payment_id'];
   }
+
+
+  public function isCompleted() {
+    return !!$this->data['completed'];
+  }
 }
