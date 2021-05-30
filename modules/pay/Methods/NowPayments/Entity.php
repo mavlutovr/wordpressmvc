@@ -7,6 +7,7 @@ class Entity extends \Wdpro\BaseEntity {
     $data['hash'] = wdpro_get_random_hash();
     $data['created'] = strtotime($data['created_at']);
     $data['updated'] = strtotime($data['updated_at']);
+    $data['valid_until'] = $data['created'] + 60 * 60 * 24;
 
     return $data;
   }
@@ -14,6 +15,11 @@ class Entity extends \Wdpro\BaseEntity {
 
   public function getUrl() {
     return home_url().'/cryptpayment?id='.$this->data['hash'];
+  }
+
+
+  public function getValidUntil() {
+    return $this->data['valid_until'];
   }
 
 
@@ -46,14 +52,21 @@ class Entity extends \Wdpro\BaseEntity {
   }
 
 
-  public function updateStatus() {
+  public function getStatus() {
+    return $this->data['payment_status'];
+  }
+
+
+  public function updateStatus($req= null) {
 
     if ($this->data['completed']) return;
     
     try {
-      $req = \Wdpro\Pay\Methods\NowPayments::request(
-        'https://api.nowpayments.io/v1/payment/'.$this->data['payment_id']
-      );
+      if (!$req) {
+        $req = \Wdpro\Pay\Methods\NowPayments::request(
+          'https://api.nowpayments.io/v1/payment/'.$this->data['payment_id']
+        );
+      }
 
       if (!empty($req['payment_status'])) {
         $this->data['payment_status'] = $req['payment_status'];
@@ -82,5 +95,11 @@ class Entity extends \Wdpro\BaseEntity {
       // print_r($err);
       // exit();
     }
+  }
+
+
+  public function getTitle() {
+    return mb_strtoupper($this->data['pay_currency'])
+      .' invoice #'.$this->data['payment_id'];
   }
 }

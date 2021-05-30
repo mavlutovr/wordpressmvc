@@ -14,8 +14,28 @@ class Controller extends \Wdpro\BaseController {
     $entity = new Entity($data);
     $entity->save();
 
-    return $entity->getUrl();
+    return $entity;
     
+  }
+
+
+  public static function init() {
+
+    // Load status (for payment card)
+    wdpro_ajax('nowpayments_get_payment_status', function () {
+
+      if (wdpro_local()) {
+        sleep(1); // TODO
+      }
+
+      $entity = static::getEntityByHash($_GET['id']);
+      
+      return [
+        'status'=>$entity->getStatus(),
+      ];
+
+      exit();
+    });
   }
 
 
@@ -35,7 +55,16 @@ class Controller extends \Wdpro\BaseController {
     wdpro_on_uri('cryptpayment', function ($page) {
       try {
         static::$payment = static::getEntityByHash($_GET['id']);
-        static::$payment->updateStatus();
+        // static::$payment->updateStatus();
+
+        $title = static::$payment->getTitle();
+
+        add_filter('wdpro_title', function () use ($title) {
+          return $title;
+        });
+        add_filter('wdpro_h1', function () use ($title) {
+          return $title;
+        });
       }
       catch(\Exception $err) {
         wdpro_data('wdpro_title', $err->getMessage());
@@ -55,7 +84,6 @@ class Controller extends \Wdpro\BaseController {
     wdpro_on_uri_content('cryptpayment', function ($content) {
 
       if (!empty(static::$payment)) {
-
         $payment = wdpro_render_php(
           WDPRO_TEMPLATE_PATH.'nowpayment-payment.php',
           static::$payment->getTemplateData()
@@ -85,7 +113,19 @@ class Controller extends \Wdpro\BaseController {
       return Entity::instance($row);
     }
 
-    throw new \Exception('Can\'t find the payment');
+    throw new \Exception('Can\'t find the payment by hash '.$hash);
+  }
+
+
+  public static function getEntityByPaymentId($paymentId) {
+    if ($row = SqlTable::getRow([
+      'WHERE payment_id=%d ORDER BY id DESC LIMIT 1',
+      [$paymentId]
+    ])) {
+      return Entity::instance($row);
+    }
+
+    throw new \Exception('Can\'t find the payment by payment_id '.$paymentId);
   }
 }
 

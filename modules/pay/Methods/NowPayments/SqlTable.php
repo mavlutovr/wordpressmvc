@@ -25,6 +25,7 @@ class SqlTable extends \Wdpro\BaseSqlTable {
         'pay_currency',
         'pay_id'=>'int',
         'created'=>'int',
+        'valid_until'=>'int',
         'updated'=>'int',
         'purchase_id'=>'bigint',
         'person_id'=>'int',

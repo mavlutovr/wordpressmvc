@@ -13,8 +13,8 @@ wdpro.ready($ => {
 
       new QRCode($qrCodeContainer.get(0), {
         text: query,
-        width: 128 * 1.5,
-        height: 128 * 1.5,
+        width: 128 * 2,
+        height: 128 * 2,
         // colorDark: "#000000",
         // colorLight: "#ffffff",
         // correctLevel: QRCode.CorrectLevel.H
@@ -42,6 +42,51 @@ wdpro.ready($ => {
         // document.execCommand("copy");
       });
     });
+
+    
+    // Update Page
+    {
+      let sec = 15;
+      const $secondsContainer = $container.find('.js-update--seconds');
+      let $status = $container.find('.js-status');
+
+      const update = () => {
+
+        $secondsContainer.html(sec);
+        sec--;
+
+        if (sec >= 0) {
+          setTimeout(update, 1000);
+        }
+
+        else {
+          let query = wdpro.getQueryStringObject();
+
+          $status.loading();
+
+          wdpro.ajax(
+            {
+              action: 'nowpayments_get_payment_status',
+              id: query['id'],
+            },
+
+            res => {
+              $status.loadingStop();
+              let $newStatus = $(nowpaymentsTemplates.status(res));
+              $status.after($newStatus);
+              $status.remove();
+              $status = $newStatus;
+
+              sec = 15;
+              update();
+            }
+          )
+        }
+      }
+
+      // setInterval(update, 1000);
+      update();
+    }
   });
 
 

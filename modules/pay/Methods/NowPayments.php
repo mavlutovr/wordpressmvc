@@ -100,18 +100,47 @@ class NowPayments extends Base  implements MethodInterface {
     // Result URL
 		wdpro_ajax('nowpayments_check', function () {
 
-      // Body
-      // {"payment_id":5077125051,"payment_status":"waiting","pay_address":"0xd1cDE08A07cD25adEbEd35c3867a59228C09B606","price_amount":170,"price_currency":"usd","pay_amount":155.38559757,"actually_paid":0,"pay_currency":"mana","order_id":"2","order_description":"Apple Macbook Pro 2019 x 1","purchase_id":"6084744717","created_at":"2021-04-12T14:22:54.942Z","updated_at":"2021-04-12T14:23:06.244Z","outcome_amount":1131.7812095,"outcome_currency":"trx"}
-
       $headers = getallheaders();
       $sig = $headers['x-nowpayments-sig'];
 
-      \Wdpro\AdminNotice\Controller::sendMessageHtml(
-        'ipn_callback_url',
-        print_r($_POST, true)
-      );
-      
+      try {
+
+        // Sign checking
+        $json = file_get_contents('php://input');
+        $data = json_decode($json);
+        ksort($data);
+        $hmacJson = json_encode($data);
+        $hmacJson = str_replace('\\/', '/', $hmacJson);
+
+        $hmac1 = hash_hmac('sha512', $hmacJson, static::getSecretKey());
+        if ($_SERVER['HTTP_X_NOWPAYMENTS_SIG'] !== $hmac1) {
+          throw new \Exception('NowPayment Error Check');
+        }
+
+
+        // Pay configming
+        $payment = NowPayments\Controller::getEntityByPaymentId($data['payment_id']);
+        $payment->updateStatus($data);
+
+
+        \Wdpro\AdminNotice\Controller::sendMessageHtml(
+          'IOctopus / NowPayment Checking Ok ('.$data['payment_status'].')',
+          print_r($_POST, true)
+          .print_r($_SERVER, true)
+          .$entityBody
+        );
+      }
+
+      catch(\Exception $err) {
+        \Wdpro\AdminNotice\Controller::sendMessageHtml(
+          'IOctopus / '.$err->getMessage(),
+          print_r($_SERVER, true)
+          .$entityBody
+        );
+      }
+        
       exit();
+      
 		});
 
 
@@ -200,10 +229,28 @@ class NowPayments extends Base  implements MethodInterface {
           $req
         );
 
-        $url = NowPayments\Controller::add($res, $pay);
+        $payment = NowPayments\Controller::add($res, $pay);
+        $res['url'] = $payment->getUrl();
+
+        
+        // Время, до которого можно платить
+        $res['valid_until'] = $payment->getValidUntil();
+        $res['valid_until_string'] = date('Y-m-d, H:i', $res['valid_until']);
+
+
+        // Email to user
+        $email = $pay->getEmail();
+        if ($email) {
+          \Wdpro\Sender\Templates\Email\Controller::send(
+            'nowpayments_create',
+            $email,
+            $res
+          );
+        }
+        
 
         return [
-          'url'=>$url,
+          'url'=>$res['url'],
         ];
 
         exit();
@@ -351,6 +398,10 @@ class NowPayments extends Base  implements MethodInterface {
     \Wdpro\Extra\QrCodeJs\Controller::requireScript();
 
     wdpro_on_uri('pay', function () {
+      \wdpro_default_file(
+        __DIR__.'/../templates/nowpayments.site.soy',
+        WDPRO_TEMPLATE_PATH.'soy/nowpayments.site.soy'
+      );
       \wdpro_default_file(
         __DIR__.'/../templates/nowpayments.site.soy',
         WDPRO_TEMPLATE_PATH.'soy/nowpayments.site.soy'
