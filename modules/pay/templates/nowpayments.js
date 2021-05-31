@@ -1,6 +1,104 @@
 
 wdpro.ready($ => {
 
+  // Карточка заказа
+  $('#js-nopayments-payment').each(function () {
+    const $container = $(this);
+
+
+    // QR Code
+    $('#js-payment-qrcode').each(function () {
+      const $qrCodeContainer = $(this);
+      const query = $qrCodeContainer.data('query');
+
+      new QRCode($qrCodeContainer.get(0), {
+        text: query,
+        width: 128 * 2,
+        height: 128 * 2,
+        // colorDark: "#000000",
+        // colorLight: "#ffffff",
+        // correctLevel: QRCode.CorrectLevel.H
+      });
+    });
+
+
+    // Copy
+    $container.find('.js-copy-text').each(function () {
+      const $text = $(this);
+      const $button = $(nowpaymentsTemplates.copy());
+      $text.after($button);
+
+      $button.on('click', function () {
+        wdpro.copyTextFromElement($text);
+        $button.addClass('copy-text-button-clicked');
+
+        setTimeout(function () {
+          $button.removeClass('copy-text-button-clicked');
+        }, 250);
+        // copyText.select();
+        // const copyText = $text.get(0);
+        // copyText.select();
+        // copyText.setSelectionRange(0, 99999);
+        // document.execCommand("copy");
+      });
+    });
+
+    
+    // Update Status
+    {
+      let sec = 15;
+      const $secondsContainer = $container.find('.js-update--seconds');
+      let $status = $container.find('.js-status');
+
+      const update = () => {
+
+        $secondsContainer.html(sec);
+        sec--;
+
+        if (sec >= 0) {
+          setTimeout(update, 1000);
+        }
+
+        else {
+          let query = wdpro.getQueryStringObject();
+
+          $status.loading();
+
+          wdpro.ajax(
+            {
+              action: 'nowpayments_get_payment_status',
+              id: query['id'],
+            },
+
+            res => {
+              $status.loadingStop();
+              let $newStatus = $(nowpaymentsTemplates.status(res));
+              $status.after($newStatus);
+              $status.remove();
+              $status = $newStatus;
+
+              sec = 15;
+
+              if (res['redirect']) {
+                window.location = res['redirect'];
+              }
+
+              if (res['update']) {
+                update();
+              }
+            }
+          )
+        }
+      }
+
+      // setInterval(update, 1000);
+      if ($secondsContainer.length) update();
+      
+    }
+  });
+
+
+  // Выбор способа оплаты
   $('#js-nopayments-methods').each(function () {
     const $container = $(this);
 
@@ -39,6 +137,7 @@ wdpro.ready($ => {
                 + res['currency']['image'],
               amount: res['amount'],
               amountCrypt: res['amountCrypt'],
+              error: res['error'],
             }));
 
 
@@ -57,7 +156,15 @@ wdpro.ready($ => {
                 },
 
                 res => {
-                  console.log('res', res);
+                  if (res['error']) {
+                    alert(res['error']);
+                    dialog.close();
+                    return;
+                  }
+                  
+                  if (res['url']) {
+                    window.location = res['url'];
+                  }
                 }
               );
             });

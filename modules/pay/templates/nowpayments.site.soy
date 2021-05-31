@@ -7,7 +7,7 @@
 * @param amountCrypt
 * @param name
 * @param image
-* @param url
+* @param error
 */
 {template .start}
 <div class="paykassa-start">
@@ -16,7 +16,33 @@
   <span class="paykassa-start--amount-crypt">{$amountCrypt} {$name}</span>
   <span class="paykassa-start--amount">(${$amount})</span>
 
-  <a class="button" href="{$url}">Continue</a>
+  {if $error}
+    <div class="red">{$error}</div>
+
+  {else}
+    <div><button>Continue</button></div>
+
+  {/if}
 
 </div>
 {/template}
+
+
+/**
+* Copy
+*/
+{template .copy}
+<i class="fas fa-copy copy-text-button"></i>
+{/template}
+
+
+/**
+* status
+* @param status
+*/
+{template .status}
+<span
+  class="crypt-payment--status crypt-payment--status--{$status} js-status"
+>{$status}</span>
+{/template}
+

@@ -4234,3 +4234,4 @@ function wdpro_number_no_e($amount) {
 
 	return $amount;
 }
+

@@ -58,4 +58,10 @@ class Base {
 	public static function isTest() {
 		return static::isDemo();
 	}
+
+
+	public static function cron () {
+		
+	}
 }
+

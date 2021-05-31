@@ -1,5 +1,5 @@
 <?php
-namespace Wdpro\Pay\CryptWallets;
+namespace Wdpro\Pay\CryptAddresses;
 
 /*
  * Основная Mysql таблица модуля
@@ -11,7 +11,7 @@ class SqlTable extends \Wdpro\BaseSqlTable {
 	 *
 	 * @var string
 	 */
-	protected static $name = 'app_cryptwallets';
+	protected static $name = 'app_cryptaddresses';
 
 	/**
 	 * Структура таблицы
