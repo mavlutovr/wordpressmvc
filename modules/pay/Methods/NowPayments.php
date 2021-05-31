@@ -260,6 +260,10 @@ class NowPayments extends Base  implements MethodInterface {
         $res['valid_until_string'] = date('Y-m-d, H:i', $res['valid_until']);
 
 
+        // btc -> BTC
+        $res['PAY_CURRENCY'] = \mb_strtoupper($res['pay_currency']);
+
+
         // Email to user
         $email = $pay->getEmail();
         if ($email) {
