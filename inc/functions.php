@@ -520,6 +520,28 @@ function wdpro_search_bot($user_agent=null)
 }
 
 
+function wdpro_sort_query_params_in_url($url) {
+	$arr = parse_url($url);
+
+	$get = [];
+	if (isset($arr['query'])) {
+		parse_str($arr['query'], $get);
+	}
+
+	$queryString = '';
+
+	if (is_array($get)) {
+		ksort($get);
+		$queryString = http_build_query($get);
+		if ($queryString) {
+			$queryString = '?'.$queryString;
+		}
+	}
+
+	return $arr['path'].$queryString;
+}
+
+
 /**
  * Заменяет в адресе query данные или добавляет их
  *
@@ -639,6 +661,8 @@ function wdpro_current_uri($queryChanges=null)
 	{
 		$uri = wdpro_replace_query_params_in_url($uri, $queryChanges);
 	}
+
+	$uri = wdpro_sort_query_params_in_url($uri);
 	
 
 	return $uri;

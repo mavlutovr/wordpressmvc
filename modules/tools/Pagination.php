@@ -48,11 +48,13 @@ class Pagination {
 		];
 
 
-		if (!empty($_GET['pagination'])) {
+		if (true /* || !empty($_GET['pagination']) */) {
 
 			// Title
 			if (!empty($metaTemplate['title'])) {
 				add_filter('wdpro_title_2', function ($title) use (&$metaTemplate) {
+
+					if (empty($_GET['pagination'])) return $title;
 
 					if (!$title && wdpro_get_option('pagination_meta_title_skip_empty')) return '';
 
@@ -67,6 +69,8 @@ class Pagination {
 			if (!empty($metaTemplate['description'])) {
 				add_filter('wdpro_description_2', function ($description) use (&$metaTemplate) {
 
+					if (empty($_GET['pagination'])) return $description;
+
 					if (!$description && wdpro_get_option('pagination_meta_description_skip_empty')) return '';
 
 					return wdpro_render_text($metaTemplate['description'], [
@@ -79,6 +83,8 @@ class Pagination {
 			// H1
 			if (!empty($metaTemplate['h1'])) {
 				add_filter('wdpro_h1_2', function ($h1) use (&$metaTemplate) {
+
+					if (empty($_GET['pagination'])) return $h1;
 
 					if (!$h1 && wdpro_get_option('pagination_meta_h1_skip_empty')) return '';
 
