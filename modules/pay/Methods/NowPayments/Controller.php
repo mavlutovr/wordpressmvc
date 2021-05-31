@@ -29,10 +29,18 @@ class Controller extends \Wdpro\BaseController {
       }
 
       $entity = static::getEntityByHash($_GET['id']);
+
+      $status = $entity->getStatus();
+
+      $redirect = '';
+      if ($status === 'finished') {
+        $redirect = \Wdpro\Pay\Methods\NowPayments::getThankYouPageUrl();
+      }
       
       return [
-        'status'=>$entity->getStatus(),
+        'status'=>$status,
         'update'=>!$entity->isCompleted(),
+        'redirect'=>$redirect,
       ];
 
       exit();

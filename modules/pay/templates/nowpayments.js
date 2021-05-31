@@ -44,7 +44,7 @@ wdpro.ready($ => {
     });
 
     
-    // Update Page
+    // Update Status
     {
       let sec = 15;
       const $secondsContainer = $container.find('.js-update--seconds');
@@ -78,6 +78,10 @@ wdpro.ready($ => {
               $status = $newStatus;
 
               sec = 15;
+
+              if (res['redirect']) {
+                window.location = res['redirect'];
+              }
 
               if (res['update']) {
                 update();

@@ -482,6 +482,14 @@ class NowPayments extends Base  implements MethodInterface {
         'left'=>'Множитель минимальных оплат',
       ]);
 
+
+      $form->addHeader('Старницы');
+
+      $form->add([
+        'name'=>'pay_method_' . static::getName() . '_thankyou',
+        'left'=>'Успешная оплата',
+      ]);
+
       $form->addHeader('В боевом режиме');
 
       $form->add([
@@ -710,5 +718,10 @@ class NowPayments extends Base  implements MethodInterface {
     }
 
     return 1;
+  }
+
+
+  public static function getThankYouPageUrl() {
+    return get_option('pay_method_' . static::getName() . '_thankyou');
   }
 }
