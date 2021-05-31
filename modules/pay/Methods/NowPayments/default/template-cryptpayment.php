@@ -30,12 +30,14 @@
         <span class="crypt-payment--label">Valid:</span>
         <span class="crypt-payment--value">
           <span><?= date('Y-m-d, H:i', $data['valid_until']) ?></span>
+          <?php if (!$data['completed']): ?>
           <span class="crypt-payment--until--container">
             (<span class="js-countdown crypt-payment--until" data-until="<?=$data['valid_until']?>"></span>)
             <?php if ($data['valid_until'] < time()): ?>
               <div class="red">Time is up invoice is not longer valid.</div>
             <?php endif; ?>
           </span>
+          <?php endif; ?>
         </span>
       </div>
 
@@ -59,9 +61,12 @@
   <p>
     Status: <span class="inline-block"><span class="crypt-payment--status crypt-payment--status--<?= $data['payment_status']?> js-status"><?= $data['payment_status']?></span></span>
 
-    <span class="crypt-payment--status--update"><i class="fas fa-sync-alt"></i> <span class="js-update--seconds"></span></span>
+    <?php if (!$data['completed']): ?>
+      <span class="crypt-payment--status--update"><i class="fas fa-sync-alt"></i> <span class="js-update--seconds"></span></span>
+    <?php endif; ?>
   </p>
 
 </div>
 
 <script src="<?=WDPRO_TEMPLATE_URL?>node_modules/jquery-countdown/dist/jquery.countdown.min.js"></script>
+s
