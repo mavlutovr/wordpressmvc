@@ -144,6 +144,28 @@ class Roll extends BaseRoll
 	}
 
 
+	public function getSortingDefault() {
+		return [];
+	}
+
+
+	public function getWhereSortingByIndexes($indexes) {
+		$headers = $this->templateHeaders();
+
+		if (isset($indexes[0]) && isset($headers[$indexes[0]])) {
+			$sorting = $headers[$indexes[0]]['sorting'];
+
+			if (is_array($sorting) && isset($indexes[1])) {
+				$sorting = $sorting[$indexes[1]];
+			}
+
+			return $sorting;
+		}
+		
+		return '';
+	}
+
+
 	/**
 	 * Отображает страницу модуля
 	 * 
@@ -153,6 +175,15 @@ class Roll extends BaseRoll
 	public function viewPage() {
 
 		$params = $this->getParams();
+
+		$currentSorting = $this->getSortingDefault();
+		if (isset($_GET['sorting'])) {
+			$currentSorting = [$_GET['sorting']];
+			if (strstr($currentSorting[0], '-')) {
+				$currentSorting = explode('-', $currentSorting[0]);
+			}
+		}
+
 
 		// Хлебные крошки
 		$breadcrumbs = new \Wdpro\Breadcrumbs\ConsoleBreadcrumbs();
@@ -337,6 +368,26 @@ class Roll extends BaseRoll
 				// Список
 				if ($where = $this->getWhere())
 				{
+					$tempWhere = is_array($where) ? $where[0] : $where;
+
+					// Сортировка
+					if (strstr($tempWhere, '[sorting]')) {
+						$whereSorting = $this->getWhereSortingByIndexes($currentSorting);
+						$tempWhere = str_replace(
+							'[sorting]',
+							$whereSorting,
+							$tempWhere
+						);
+
+						if (is_array($where)) {
+							$where[0] = $tempWhere;
+						}
+						else {
+							$where = $tempWhere;
+						}
+					}
+
+
 					// Постраничность
 					$paginationHtml = '';
 					if (isset($params['pagination'])) {
@@ -363,15 +414,51 @@ id="wdpro-console-roll-'.static::getType().'">';
 						// Заголовки
 						if ($headers = $this->templateHeaders())
 						{
+							
 							$table .= '<thead><tr>';
 
-							foreach($headers as $header)
+							foreach($headers as $i=>$header)
 							{
 								if (!is_array($header)) {
 									$header = [
 										'text'=>$header,
 									];
 								}
+
+								// Sorting
+								if (!empty($header['sorting'])) {
+
+									$sortingParam = $i;
+									$bold = false;
+
+									if (is_array($header['sorting'])) {
+										$sortingParam .= '-';
+
+										if (isset($currentSorting[1]) && $i == $currentSorting[0]) {
+											$bold = true;
+											foreach($header['sorting'] as $j=>$sortingValue) {
+												if ($currentSorting[1] != $j) {
+													$sortingParam .= $j;
+												}
+											}
+										}
+										else {
+											$sortingParam .= '0';
+										}
+									}
+
+									if ($bold) {
+										$header['text'] = '<strong>'.$header['text'].'</string>';
+									}
+
+									$header['text'] = '<a href="'
+									.wdpro_current_uri([
+										'sorting'=>$sortingParam,
+										'pagination'=>null,
+									])
+									.'">'.$header['text'].'</a>';
+								}
+
 								$table .= '<td style="'
 									.(empty($header['style']) ? '' : $header['style'])
 									.'">'.$header['text']
