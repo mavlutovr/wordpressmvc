@@ -56,6 +56,8 @@ class PayPal extends Base  implements MethodInterface {
 				$amount = apply_filters('wdpro_paypal_amount', $amount);
 				$amount['value'] = round($amount['value'], 2);
 
+				$description = $pay->getDescription();
+
 
 				$res = static::request(
 					'https://api-m.sandbox.paypal.com/v2/checkout/orders',
@@ -63,6 +65,7 @@ class PayPal extends Base  implements MethodInterface {
 						'intent'=>'CAPTURE',
 						'purchase_units'=>[
 							[
+								'description'=>$description,
 								'amount'=>$amount,
 							]
 						],
