@@ -56,7 +56,7 @@ class PayPal extends Base  implements MethodInterface {
 				$amount = apply_filters('wdpro_paypal_amount', $amount);
 				$amount['value'] = round($amount['value'], 2);
 
-				$description = $pay->getDescription();
+				$description = $pay->getComment();
 
 
 				$res = static::request(
