@@ -64,7 +64,8 @@ body {
 .g-hid {
   display: none;
 }
-.g-bold {
+.g-bold,
+.bold {
   font-weight: bold;
 }
 .g-italic {

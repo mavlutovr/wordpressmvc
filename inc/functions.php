@@ -4193,9 +4193,25 @@ function wdpro_get_random_hash($length=32) {
 }
 
 
-function wdpro_echo_image_size_attributes($src) {
-	$size = getimagesize($src);
-	echo $size[3];
+function wdpro_echo_image_size_attributes($path) {
+	echo wdpro_get_image_size_attributes($path);
+}
+
+
+function wdpro_get_image_size_attributes($path) {
+	$size = getimagesize($path);
+	return $size[3];
+}
+
+
+function wdpro_get_img_attrs_from_template($src) {
+	return ' src="'.WDPRO_TEMPLATE_URL.$src.'" '
+	.wdpro_get_image_size_attributes(WDPRO_TEMPLATE_PATH.$src);
+}
+
+function wdpro_get_img_attrs_from_upload_images($src) {
+	return ' src="'.WDPRO_UPLOAD_IMAGES_URL .$src.'" '
+		.wdpro_get_image_size_attributes(WDPRO_UPLOAD_IMAGES_PATH.$src);
 }
 
 function wdpro_get_captcha_src() {
