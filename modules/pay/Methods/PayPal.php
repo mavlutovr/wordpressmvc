@@ -548,8 +548,8 @@ class PayPal extends Base  implements MethodInterface {
 	public static function fixUrl($url) {
 		if (!static::isTestMode()) {
       $url = str_replace(
-        'https://api-m.sandbox.paypal.com/',
-        'https://api-m.paypal.com/',
+        'sandbox.paypal.com',
+        'paypal.com',
         $url
       );
     }
