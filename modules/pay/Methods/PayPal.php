@@ -96,7 +96,7 @@ class PayPal extends Base  implements MethodInterface {
 							throw new \Exception('Invalid currency code (not '.$info['currency_code'].')');
 						}
 
-						$delta = $info['amount'] / $data['mc_gross'];
+						$delta = ($info['amount'] - $data['mc_gross']) / $info['amount'];
 						if ($delta > 1) $delta = 1/$delta;
 						if ($delta > .2) {
 							throw new \Exception('Payed amount is not uqual (not '.$info['amount'].')');
