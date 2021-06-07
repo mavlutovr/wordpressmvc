@@ -17,9 +17,16 @@ class PayPal extends Base  implements MethodInterface {
 		wdpro_ajax('paypal_ipn', function () {
       
 
+			$query = file_get_contents('php://input');
+			parse_str($query, $data);
+
 			try {
-				$query = file_get_contents('php://input');
-				parse_str($query, $data);
+
+				// if ($data['charset'] != 'utf-8') {
+				// 	$query = iconv($data['charset'], 'utf-8', $query);
+				// 	parse_str($query, $data);
+				// }
+
 
 				\Wdpro\AdminNotice\Controller::sendMessageHtml(
 					'PayPal.post',
@@ -28,14 +35,77 @@ class PayPal extends Base  implements MethodInterface {
 					.print_r($data, true)
 				);
 
+				$payArr = explode(':', $data['item_number']);
+				$pay = \Wdpro\Pay\Controller::getPay($payArr[0], $payArr[1]);
 
-				$checkUrl = 'https://ipnpb.paypal.com/cgi-bin/webscr?cmd=_notify-validate&'.$query;
-				$check = file_get_contents($url);
-				if ($check === 'VERIFIED') {
-					$pay = \Wdpro\Pay\Controller::getPay($data['pay_id'], $data['pay_s']);
-					$pay->comfirm(static::getName());
+
+				// Check
+				// https://developer.paypal.com/docs/api-basics/notifications/ipn/ht-ipn/
+				$raw_post_array = explode('&', $query);
+				$myPost = array();
+				foreach ($raw_post_array as $keyval) {
+					$keyval = explode ('=', $keyval);
+					if (count($keyval) == 2)
+						$myPost[$keyval[0]] = urldecode($keyval[1]);
+				}
+				$req = 'cmd=_notify-validate';
+				if (function_exists('get_magic_quotes_gpc')) {
+					$get_magic_quotes_exists = true;
+				}
+				foreach ($data as $key => $value) {
+					if ($get_magic_quotes_exists == true && get_magic_quotes_gpc() == 1) {
+						$value = urlencode(stripslashes($value));
+					} else {
+						$value = urlencode($value);
+					}
+					$req .= "&$key=$value";
 				}
 
+				if (static::isTestMode()) {
+					$checkUrl = 'https://www.sandbox.paypal.com/cgi-bin/webscr';
+				}
+				else {
+					$checkUrl = 'https://ipnpb.paypal.com/cgi-bin/webscr';
+				}
+
+				$ch = curl_init($checkUrl);
+				curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+				curl_setopt($ch, CURLOPT_POST, 1);
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
+				curl_setopt($ch, CURLOPT_POSTFIELDS, $req);
+				curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
+				curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+				curl_setopt($ch, CURLOPT_FORBID_REUSE, 1);
+				curl_setopt($ch, CURLOPT_HTTPHEADER, array('Connection: Close'));
+
+				$res = curl_exec($ch);
+				\Wdpro\AdminNotice\Controller::sendMessageHtml(
+					'PayPal.check',
+					'req: '.$req.'<BR><BR>'.
+					'res: '.$res
+				);
+
+
+				// Check OK
+				if ($res !== 'VERIFIED') throw new \Exception('Verify failed');
+				
+				$info = $pay->getInfo();
+				if (is_array($info)) {
+					if (isset($info['amount']) && isset($info['currency_code'])) {
+						if ($info['currency_code'] != $data['mc_currency']) {
+							throw new \Exception('Invalid currency code (not '.$info['currency_code'].')');
+						}
+
+						$delta = $info['amount'] / $data['mc_gross'];
+						if ($delta > 1) $delta = 1/$delta;
+						if ($delta > .2) {
+							throw new \Exception('Payed amount is not uqual (not '.$info['amount'].')');
+						}
+					}
+				}
+
+				$pay->setResultPost($data);
+				$pay->confirm(static::getName());
 				
 				// Reply with an empty 200 response to indicate to paypal the IPN was received correctly.
 				header("HTTP/1.1 200 OK");
@@ -45,6 +115,7 @@ class PayPal extends Base  implements MethodInterface {
 				\Wdpro\AdminNotice\Controller::sendMessageHtml(
 					'PayPal.error',
 					$err->getMessage()
+					.print_r($data, true)
 				);
 			}
       exit();
@@ -55,6 +126,10 @@ class PayPal extends Base  implements MethodInterface {
 		wdpro_ajax('paypal_get_pay_button', function () {
 			try {
 				$pay = \Wdpro\Pay\Controller::getPayByGet();
+
+				if (!$pay->process()) {
+					throw new \Exception('The transaction is finished. Go back and try again.');
+				}
 
 				$url = 'https://www.sandbox.paypal.com/cgi-bin/webscr';
 				$url = static::fixUrl($url);
@@ -69,65 +144,20 @@ class PayPal extends Base  implements MethodInterface {
 					'cancel_url'=>static::getCancelUrl($pay),
 					'pay_id'=>$pay->id(),
 					'pay_s'=>$pay->getSecret(),
+					'item_number'=>$pay->id().':'.$pay->getSecret(),
 				];
 
 				$data = apply_filters('wdpro_paypal_button', $data);
 				$data['amount'] = round($data['amount'], 2);
 
-				if (true) {
-					$formHtml = wdpro_render_php(
-						WDPRO_TEMPLATE_PATH.'pay_method_paypal_button.php',
-						$data
-					);
-
-					return [
-						'form'=>$formHtml,
-					];
-				}
-
-				else {
-					$description = $pay->getComment();
-
-					$options = [
-					'intent'=>'CAPTURE',
-					'no_shipping'=>1,
-					'NOSHIPPING'=>1,
-					"experience"=> [
-							"input_fields"=> [
-									"no_shipping"=> 1
-							]
-					],
-					'purchase_units'=>[
-						[
-							'description'=>$description,
-							'amount'=>$amount,
-							'no_shipping'=>1,
-							'NOSHIPPING'=>1,
-						]
-					],
-
-					// https://developer.paypal.com/docs/api/orders/v2/#definition-order_application_context
-					'application_contextobject'=>[
-						'brand_name'=>static::getBrandName(),
-						'return_url'=>static::getReturnUrl($pay),
-						'cancel_url'=>static::getCancelUrl($pay),
-					],
-				];
-
-				$res = static::request(
-					'https://api-m.sandbox.paypal.com/v2/checkout/orders',
-					$options,
-					[
-						'Prefer: return=representation',
-					]
+				$formHtml = wdpro_render_php(
+					WDPRO_TEMPLATE_PATH.'pay_method_paypal_button.php',
+					$data
 				);
 
-
-
-				print_r($options);
-				print_r($res);
-				}
-
+				return [
+					'form'=>$formHtml,
+				];
 				
 			}
 			catch(\Exception $err) {
@@ -420,6 +450,11 @@ class PayPal extends Base  implements MethodInterface {
 		\wdpro_default_file(
 			__DIR__.'/../templates/paypal_block.php',
 			WDPRO_TEMPLATE_PATH.'pay_method_paypal_block.php'
+    );
+		
+		\wdpro_default_file(
+			__DIR__.'/../templates/paypal_button.php',
+			WDPRO_TEMPLATE_PATH.'pay_method_paypal_button.php'
     );
     
 

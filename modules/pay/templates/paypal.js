@@ -16,7 +16,11 @@ wdpro.ready($ => {
 
         res => {
           $button.loadingStop();
-          console.log(res);
+
+          if (res['error']) {
+            alert(res['error']);
+            return;
+          }
 
           let dialog = new wdpro.dialogs.Dialog({
             title: 'Pay via PayPal',
