@@ -9,13 +9,20 @@ wdpro.ready($ => {
 
       wdpro.ajax(
         {
-          action: 'paypal_get_pay_data',
+          action: 'paypal_get_pay_button',
           in: wdpro.payIn,
           sw: wdpro.paySw,
         },
 
         res => {
+          $button.loadingStop();
           console.log(res);
+
+          let dialog = new wdpro.dialogs.Dialog({
+            title: 'Pay via PayPal',
+            content: res['form'],
+            substrate: true,
+          });
         }
       );
     });

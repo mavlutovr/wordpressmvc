@@ -3,6 +3,7 @@
 // install
 // from this dir:
 // git clone https://github.com/paypal/ipn-code-samples.git
+// https://developer.paypal.com/docs/api/orders/v2/
 
 namespace Wdpro\Pay\Methods;
 
@@ -12,76 +13,122 @@ class PayPal extends Base  implements MethodInterface {
   public static function init() {
 
 		// IPN Listener
+		// https://developer.paypal.com/docs/api-basics/notifications/ipn/
 		wdpro_ajax('paypal_ipn', function () {
       
-			\Wdpro\AdminNotice\Controller::sendMessageHtml(
-				'PayPal.post',
-				print_r($_POST, true)
-			);
 
-      require __DIR__.'/ipn-code-samples/php/PaypalIPN.php';
+			try {
+				$query = file_get_contents('php://input');
+				parse_str($query, $data);
 
-      $ipn = new PaypalIPN();
+				\Wdpro\AdminNotice\Controller::sendMessageHtml(
+					'PayPal.post',
+					print_r($_POST, true)
+					.$query
+					.print_r($data, true)
+				);
 
-      if (static::isSandbox()) {
-        $ipn->useSandbox();
-      }
 
-      $verified = $ipn->verifyIPN();
-			\file_put_contents(__DIR__.'/PayPal.post2', 'verified: '.$verified);
-			\Wdpro\AdminNotice\Controller::sendMessageHtml(
-				'PayPal.verified',
-				'verified: '.$verified
-			);
+				$checkUrl = 'https://ipnpb.paypal.com/cgi-bin/webscr?cmd=_notify-validate&'.$query;
+				$check = file_get_contents($url);
+				if ($check === 'VERIFIED') {
+					$pay = \Wdpro\Pay\Controller::getPay($data['pay_id'], $data['pay_s']);
+					$pay->comfirm(static::getName());
+				}
 
-      if ($verified) {
-      }
+				
+				// Reply with an empty 200 response to indicate to paypal the IPN was received correctly.
+				header("HTTP/1.1 200 OK");
+			}
 
-      // Reply with an empty 200 response to indicate to paypal the IPN was received correctly.
-      header("HTTP/1.1 200 OK");
+			catch(\Exception $err) {
+				\Wdpro\AdminNotice\Controller::sendMessageHtml(
+					'PayPal.error',
+					$err->getMessage()
+				);
+			}
       exit();
 		});
 
 
 		// Get Pay Data (link)
-		wdpro_ajax('paypal_get_pay_data', function () {
+		wdpro_ajax('paypal_get_pay_button', function () {
 			try {
 				$pay = \Wdpro\Pay\Controller::getPayByGet();
 
-				$amount = [
+				$url = 'https://www.sandbox.paypal.com/cgi-bin/webscr';
+				$url = static::fixUrl($url);
+
+				$data = [
+					'url'=>$url,
+					'business'=>static::getReceiverEmail(),
+					'comment'=>$pay->getComment(),
+					'amount'=>$pay->getCost(),
 					'currency_code'=>static::getCurrencyCode(),
-					'value'=>$pay->getCost(),
+					'return_url'=>static::getReturnUrl($pay),
+					'cancel_url'=>static::getCancelUrl($pay),
+					'pay_id'=>$pay->id(),
+					'pay_s'=>$pay->getSecret(),
 				];
-				
-				$amount = apply_filters('wdpro_paypal_amount', $amount);
-				$amount['value'] = round($amount['value'], 2);
 
-				$description = $pay->getComment();
+				$data = apply_filters('wdpro_paypal_button', $data);
+				$data['amount'] = round($data['amount'], 2);
 
+				if (true) {
+					$formHtml = wdpro_render_php(
+						WDPRO_TEMPLATE_PATH.'pay_method_paypal_button.php',
+						$data
+					);
+
+					return [
+						'form'=>$formHtml,
+					];
+				}
+
+				else {
+					$description = $pay->getComment();
+
+					$options = [
+					'intent'=>'CAPTURE',
+					'no_shipping'=>1,
+					'NOSHIPPING'=>1,
+					"experience"=> [
+							"input_fields"=> [
+									"no_shipping"=> 1
+							]
+					],
+					'purchase_units'=>[
+						[
+							'description'=>$description,
+							'amount'=>$amount,
+							'no_shipping'=>1,
+							'NOSHIPPING'=>1,
+						]
+					],
+
+					// https://developer.paypal.com/docs/api/orders/v2/#definition-order_application_context
+					'application_contextobject'=>[
+						'brand_name'=>static::getBrandName(),
+						'return_url'=>static::getReturnUrl($pay),
+						'cancel_url'=>static::getCancelUrl($pay),
+					],
+				];
 
 				$res = static::request(
 					'https://api-m.sandbox.paypal.com/v2/checkout/orders',
+					$options,
 					[
-						'intent'=>'CAPTURE',
-						'purchase_units'=>[
-							[
-								'description'=>$description,
-								'amount'=>$amount,
-							]
-						],
-
-						// https://developer.paypal.com/docs/api/orders/v2/#definition-order_application_context
-						'application_contextobject'=>[
-							'brand_name'=>static::getBrandName(),
-							'return_url'=>static::getReturnUrl($pay),
-							'cancel_url'=>static::getCancelUrl($pay),
-						],
+						'Prefer: return=representation',
 					]
 				);
 
 
 
+				print_r($options);
 				print_r($res);
+				}
+
+				
 			}
 			catch(\Exception $err) {
 				return [
@@ -93,7 +140,7 @@ class PayPal extends Base  implements MethodInterface {
   }
 
 
-	public static function request($url, $postData=null) {
+	public static function request($url, $postData=null, $headers=null) {
 
     $url = static::fixUrl($url);
 		$token = static::getToken();
@@ -118,6 +165,11 @@ class PayPal extends Base  implements MethodInterface {
       $options[CURLOPT_HTTPHEADER][] = 'Authorization: Bearer '.$token;
       $options[CURLOPT_POSTFIELDS] = json_encode($postData);
     }
+		if (is_array($headers)) {
+			foreach ($headers as $header) {
+				$options[CURLOPT_HTTPHEADER][] = $header;
+			}
+		}
 
     curl_setopt_array($curl, $options);
 
@@ -206,10 +258,10 @@ class PayPal extends Base  implements MethodInterface {
 
 			$form->addHeader('Настройки');
 
-			$form->add([
-				'name'=>'pay_method_'.static::getName().'_brand_name',
-        'left'=>'Название компании',
-			]);
+			// $form->add([
+			// 	'name'=>'pay_method_'.static::getName().'_brand_name',
+      //   'left'=>'Название компании',
+			// ]);
       
       // Код валюты
       $form->add([
@@ -221,7 +273,10 @@ class PayPal extends Base  implements MethodInterface {
 
 
 			$form->addHeader('PayPal');
-			$form->addHtml('<p><a href="https://developer.paypal.com/developer/applications" target="_blank">Создать приложение</a></p>');
+			// $form->addHtml('<p><a href="https://developer.paypal.com/developer/applications" target="_blank">Создать приложение</a></p>');
+
+			
+			$form->addHtml('<p><a href="https://www.sandbox.paypal.com/businessmanage/account/website" target="_blank">Создать кнопку Sandbox</a> <a href="https://www.paypal.com/businessmanage/account/website" target="_blank">Создать кнопку LIve</a></p>');
       
       $form->addHeader('Sandbox');
 
@@ -231,15 +286,15 @@ class PayPal extends Base  implements MethodInterface {
         'bottom'=>'(куда поступают средства)',
       ]);
 
-			$form->add([
-        'name'=>'pay_method_' . static::getName() . '_client_id_test',
-				'left'=>'Client ID',
-			]);
+			// $form->add([
+      //   'name'=>'pay_method_' . static::getName() . '_client_id_test',
+			// 	'left'=>'Client ID',
+			// ]);
 
-			$form->add([
-        'name'=>'pay_method_' . static::getName() . '_secret_test',
-				'left'=>'Secret',
-			]);
+			// $form->add([
+      //   'name'=>'pay_method_' . static::getName() . '_secret_test',
+			// 	'left'=>'Secret',
+			// ]);
 
 
       $form->addHeader('Live');
@@ -250,16 +305,16 @@ class PayPal extends Base  implements MethodInterface {
         'bottom'=>'(куда поступают средства)',
       ]);
 
-			$form->add([
-        'name'=>'pay_method_' . static::getName() . '_client_id_live',
-				'name'=>'paypal_sandbox_clientid',
-				'left'=>'Client ID',
-			]);
+			// $form->add([
+      //   'name'=>'pay_method_' . static::getName() . '_client_id_live',
+			// 	'name'=>'paypal_sandbox_clientid',
+			// 	'left'=>'Client ID',
+			// ]);
 
-			$form->add([
-        'name'=>'pay_method_' . static::getName() . '_secret_live',
-				'left'=>'Secret',
-			]);
+			// $form->add([
+      //   'name'=>'pay_method_' . static::getName() . '_secret_live',
+			// 	'left'=>'Secret',
+			// ]);
 
 
       $form->addHeader('Страницы');
