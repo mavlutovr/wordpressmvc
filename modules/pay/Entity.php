@@ -329,7 +329,7 @@ class Entity extends \Wdpro\BaseEntity {
 	}
 
 
-	public function getTraget() {
+	public function getTarget() {
 		return $this->target();
 	}
 
