@@ -7,6 +7,13 @@ class Entity extends \Wdpro\BasePage {
 
 
 	public function getOgImage() {
+		
+		if ($ogImage = apply_filters('wdpro_blog_og_image', $this->data)) {
+			if (is_string($ogImage)) {
+				return $ogImage;
+			}
+		}
+
 		if ($this->data['image']) {
 			return WDPRO_UPLOAD_IMAGES_URL.$this->data['image'];
 		}
