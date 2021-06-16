@@ -5347,7 +5347,10 @@ class Less_Tree_Dimension extends Less_Tree{
 			if( !$unit->numerator && !$unit->denominator ){
 				$unit->numerator = $other->unit->numerator;
 				$unit->denominator = $other->unit->denominator;
-			}elseif( !$other->unit->numerator && !$other->unit->denominator ){
+			}elseif( 
+				(!isset($other->unit->numerator) || !$other->unit->numerator)
+				&& (!isset($other->unit->denominator) || !$other->unit->denominator)
+			){
 				// do nothing
 			}else{
 				$other = $other->convertTo( $this->unit->usedUnits());
