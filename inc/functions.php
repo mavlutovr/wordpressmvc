@@ -3295,6 +3295,11 @@ function wdpro_visitor_session_id() {
 }
 
 
+function wdpro_get_visitor_id() {
+	return wdpro_visitor_session_id();
+}
+
+
 /**
  * Проверяет что сессия запущена
  *
