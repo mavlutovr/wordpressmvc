@@ -2746,6 +2746,14 @@ function wdpro_copy($src, $dst, $callbackFilenameMod=null) {
 }
 
 
+function wdpro_mkdir_for_file($filePath) {
+	$pathinfo = pathinfo($filePath);
+	if (!is_dir($pathinfo['dirname'])) {
+		mkdir($pathinfo['dirname'], 0755, true);
+	}
+}
+
+
 /**
  * Копирует файл и при необходимости создает папки
  *
