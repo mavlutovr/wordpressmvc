@@ -22,6 +22,15 @@ class Controller extends \Wdpro\BaseController {
 	}
 
 
+	public static function sendException($err) {
+		\Wdpro\AdminNotice\Controller::sendMessageHtml(
+			'Error: '.$err->getMessage(),
+			'<h1>'.$err->getMessage().'</h1>'
+			.'<pre>'.prinr_r($err, true).'</pre>'
+		);
+	}
+
+
 	/**
 	 * Возвращает массив ящиков для уведомлений
 	 *
