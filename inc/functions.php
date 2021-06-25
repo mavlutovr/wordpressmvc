@@ -1172,7 +1172,10 @@ function wdpro_human_filesize($bytes, $decimals = 2, $comma='.') {
 			break;
 		}
 	}
-	return $result;
+
+	if (!empty($result)) {
+		return $result;
+	}
 }
 
 /**
