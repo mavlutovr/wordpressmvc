@@ -3710,9 +3710,13 @@ function wdpro_data($name, $value='WDPRO_NOT_SETTED_SO_RETURN_VALUE') {
  *
  * @return string
  */
-function wdpro_check_html($visible, $title='') {
+function wdpro_check_html($visible, $title='', $displayTitle=false) {
 	if ($visible) {
-		return '<i class="fa fa-check" aria-hidden="true" title="'.$title.'"></i>';
+		$label = '';
+		if ($displayTitle) {
+			$label = ' '.$title;
+		}
+		return '<i class="fa fa-check" aria-hidden="true" title="'.$title.'"></i>'.$label;
 	}
 }
 
