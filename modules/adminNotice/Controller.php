@@ -26,7 +26,7 @@ class Controller extends \Wdpro\BaseController {
 		\Wdpro\AdminNotice\Controller::sendMessageHtml(
 			'Error: '.$err->getMessage(),
 			'<h1>'.$err->getMessage().'</h1>'
-			.'<pre>'.prinr_r($err, true).'</pre>'
+			.'<pre>'.print_r($err, true).'</pre>'
 		);
 	}
 
