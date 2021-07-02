@@ -46,6 +46,8 @@ class Entity extends \Wdpro\BaseEntity {
           $target->getMailingEmail(),
           'Рассылка завершена',
           '<p><p href="'.home_url().'/wp-admin/admin.php?page=App.Mailing.ConsoleRoll">Посмотреть результаты</p>',
+          null, null, null,
+          true
         );
       }
     }

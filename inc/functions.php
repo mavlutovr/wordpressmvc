@@ -4278,3 +4278,20 @@ function wdpro_number_no_e($amount) {
 	return $amount;
 }
 
+
+function wdpro_mail_without_cron(
+			$withoutCron,
+			$to,
+			$subject,
+			$messageInHtmlFormat,
+			$headers,
+			$attachments) {
+	
+	$subject = 'CCRROONN_SSEENNDD::'.$subject;
+
+	wp_mail( $to,
+			$subject,
+			$messageInHtmlFormat,
+			$headers,
+			$attachments );
+}
