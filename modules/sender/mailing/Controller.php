@@ -88,8 +88,6 @@ class Controller extends \Wdpro\BaseController {
       $targetHash = $arr[3];
 
       $target = static::getTargetById($targetId);
-      // TODO
-      print_r($target->data);
       if ($target->isCorrectMailingHash($targetHash)) {
 
         $data = [
@@ -101,12 +99,7 @@ class Controller extends \Wdpro\BaseController {
         do_action('mailing-stat', $data);
         Stat\Controller::add($data);
 
-      // TODO
-        print_r($data);
       }
-
-      // TODO
-        exit();
     }
   }
 
