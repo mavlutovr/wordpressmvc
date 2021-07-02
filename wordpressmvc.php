@@ -157,8 +157,9 @@ function breadcrumbsInit($callback) {
 
 // Cron
 if (defined('DOING_CRON') && DOING_CRON) {
-
-	\Wdpro\Modules::run('cron');
+	add_action( 'wp_loaded', function () {
+		\Wdpro\Modules::run('cron');
+	});
 }
 
 
@@ -232,3 +233,9 @@ if (defined('WDPRO_CUSTOM_HOME_PAGE')) {
 		return $html;
 	});
 }
+
+
+
+
+
+

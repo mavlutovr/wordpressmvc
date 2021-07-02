@@ -675,19 +675,26 @@ function wdpro_current_uri($queryChanges=null)
  * @param null|array $queryChanges Изменить параметры QUERY_STRING согласно этому массиву
  * @return string
  */
-function wdpro_current_url($queryChanges=null) {
+function wdpro_current_url($queryChanges=null, $addHttp = false) {
 	$uri = wdpro_current_uri($queryChanges);
 
 	$http = '';
-	/*if (isset($_SERVER['HTTP_HTTPS']) && $_SERVER['HTTP_HTTPS'] === 'on') {
-		$http = 'https';
+
+	if ($addHttp) {
+		if (isset($_SERVER['HTTP_HTTPS']) && $_SERVER['HTTP_HTTPS'] === 'on') {
+			$http = 'https:';
+		}
+		else if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
+			$http = 'https:';
+		}
+		else if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+			$http = 'https:';
+		}
+		else {
+			$http = 'http:';
+		}
 	}
-	else if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
-		$http = 'https';
-	}
-	else if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
-		$http = 'https';
-	}*/
+	
 
 
 	return $http.'//'.$_SERVER['HTTP_HOST'].$uri;
