@@ -127,7 +127,7 @@ class Controller extends \Wdpro\BaseController {
         }
 
         $target = static::getTargetById($_GET['i']);
-        if (!$target->isCorrectUnsubscriptionSecret($_GET['h'])) {
+        if (!$target->isCorrectMailingHash($_GET['h'])) {
           $throwErrorUrl();
         }
 
