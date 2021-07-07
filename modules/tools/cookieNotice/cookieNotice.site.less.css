@@ -1,0 +1,21 @@
+.cookie-notice {
+  position: fixed;
+  z-index: 100;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  max-width: 100%;
+  padding: 10px;
+  background: white;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-gap: 20px;
+  align-items: center;
+}
+.cookie-notice button {
+  min-width: none;
+  width: auto;
+  padding: 20px;
+}
