@@ -84,7 +84,7 @@ class NowPayments extends Base  implements MethodInterface {
   public static function cron() {
     $last = get_option('nowpayments_last_min_update');
 
-    if (!$last || $last < time() - 60 * 5) {
+    if (/* !empty($_GET['test']) ||  */!$last || $last < time() - 60 * 5) {
       static::updateMins();
       update_option('nowpayments_last_min_update', time());
     }
@@ -377,6 +377,12 @@ class NowPayments extends Base  implements MethodInterface {
       5
     );
 
+    // echo PHP_EOL;
+    // echo PHP_EOL;
+    // echo 'minAmount: ';
+    // print_r($minAmount);
+    // echo PHP_EOL;
+
 
     if (!empty($minAmount['min_amount'])) {
       if (!$rate) {
@@ -386,6 +392,9 @@ class NowPayments extends Base  implements MethodInterface {
           .'&currency_to='. static::getMainCurrency();
 
         $rate = static::request($url, null, 5);
+        // echo 'rate: ';
+        // print_r($rate);
+        // echo PHP_EOL;
       }
 
       if (isset($rate['estimated_amount'])) {

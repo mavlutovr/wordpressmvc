@@ -15,6 +15,7 @@ class Templates
 	protected static $forms = array();
 	protected static $templateI = 0;
 	protected static $data = [];
+	protected static $currentTemplateFile;
 
 
 
@@ -356,11 +357,17 @@ class Templates
 	 * @param string $templateFile Файл шаблона
 	 */
 	public static function setCurrentTemplate($templateFile) {
+		static::$currentTemplateFile = $templateFile;
 
 		add_filter('template_include', function ($template) use ($templateFile) {
 
 			return $templateFile;
 		});
+	}
+
+
+	public static function getCurrentTemplateFile() {
+		return static::$currentTemplateFile;
 	}
 
 

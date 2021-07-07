@@ -329,7 +329,7 @@ class Entity extends \Wdpro\BaseEntity {
 	}
 
 
-	public function getTraget() {
+	public function getTarget() {
 		return $this->target();
 	}
 
@@ -424,11 +424,18 @@ class Entity extends \Wdpro\BaseEntity {
 	 */
 	public function mergeInfo($data)
 	{
-		if (get_option('pay_methods_not_exists_message') == 1) {
-			$this->data['info'] = wdpro_extend($this->data['info'], $data);
-		}
+		// if (get_option('pay_methods_not_exists_message') == 1) {
+		// 	$this->data['info'] = wdpro_extend($this->data['info'], $data);
+		// }
+
+		$this->data['info'] = wdpro_extend($this->data['info'], $data);
 
 		return $this;
+	}
+
+
+	public function getInfo() {
+		return $this->data['info'];
 	}
 
 

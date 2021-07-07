@@ -13,6 +13,7 @@ add_action('wdpro-ready', function ()
 	// App
 	Wdpro\Modules::add(__DIR__.'/menu');
 	Wdpro\Modules::add(__DIR__.'/menu/top');
+	Wdpro\Modules::add(__DIR__.'/consoleRedirectAfterLogin');
 
 	// Wdpro
 	Wdpro\Modules::addWdpro('contacts');

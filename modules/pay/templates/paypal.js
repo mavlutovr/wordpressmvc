@@ -1,41 +1,35 @@
-wdpro.ready(function($) {
-	
-	// Форма
-	$('#js-paypal').wdpro_each(function (form) {
-		
-		var submitButton = form.find('.js-submit');
-		var payId = form.attr('data-pay-id');
-		var s = form.attr('data-pay-s');
+wdpro.ready($ => {
 
-		// Submit
-		form.on('submit.paypal', function () {
+  $('#js-paypal-method').each(function () {
+    const $button = $(this);
 
-			submitButton.loading();
-			
-			wdpro.ajax(
-				{
-					'action': 'pay_paypal_get_pay_url',
-					'payId': payId,
-					's': s
-				},
-				
-				function (ob) {
-					
-					if (ob && ob['url']) {
-						
-						// console.log(ob);
-						
-						window.location = ob['url'];
-						
-						/*form.attr('action', ob['url'])
-							.off('submit.paypal')
-							.submit()
-						;*/
-					}
-				}
-			);
-			
-			return false;
-		});
-	});
+    // Get link
+    $button.on('click', function () {
+      $button.loading();
+
+      wdpro.ajax(
+        {
+          action: 'paypal_get_pay_button',
+          in: wdpro.payIn,
+          sw: wdpro.paySw,
+        },
+
+        res => {
+          $button.loadingStop();
+
+          if (res['error']) {
+            alert(res['error']);
+            return;
+          }
+
+          let dialog = new wdpro.dialogs.Dialog({
+            title: 'Pay via PayPal',
+            content: res['form'],
+            substrate: true,
+          });
+        }
+      );
+    });
+  });
+
 });

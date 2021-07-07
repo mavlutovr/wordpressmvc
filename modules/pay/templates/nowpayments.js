@@ -129,9 +129,11 @@ wdpro.ready($ => {
 
             res['amountCrypt'] = wdpro.toNonExponential(res['amountCrypt'])
 
+            let name = res['currency']['name'];
 
             let $content = $(nowpaymentsTemplates.start({
-              name: res['currency']['name'],
+              name: name.toLowerCase(),
+              NAME: name.toUpperCase(),
               image: wdpro.WDPRO_HOME_URL
                 + 'wp-content/plugins/wordpressmvc/modules/pay/Methods/images/'
                 + res['currency']['image'],

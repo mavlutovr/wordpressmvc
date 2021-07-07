@@ -675,19 +675,26 @@ function wdpro_current_uri($queryChanges=null)
  * @param null|array $queryChanges Изменить параметры QUERY_STRING согласно этому массиву
  * @return string
  */
-function wdpro_current_url($queryChanges=null) {
+function wdpro_current_url($queryChanges=null, $addHttp = false) {
 	$uri = wdpro_current_uri($queryChanges);
 
 	$http = '';
-	/*if (isset($_SERVER['HTTP_HTTPS']) && $_SERVER['HTTP_HTTPS'] === 'on') {
-		$http = 'https';
+
+	if ($addHttp) {
+		if (isset($_SERVER['HTTP_HTTPS']) && $_SERVER['HTTP_HTTPS'] === 'on') {
+			$http = 'https:';
+		}
+		else if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
+			$http = 'https:';
+		}
+		else if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+			$http = 'https:';
+		}
+		else {
+			$http = 'http:';
+		}
 	}
-	else if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
-		$http = 'https';
-	}
-	else if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
-		$http = 'https';
-	}*/
+	
 
 
 	return $http.'//'.$_SERVER['HTTP_HOST'].$uri;
@@ -1172,7 +1179,10 @@ function wdpro_human_filesize($bytes, $decimals = 2, $comma='.') {
 			break;
 		}
 	}
-	return $result;
+
+	if (!empty($result)) {
+		return $result;
+	}
 }
 
 /**
@@ -2749,6 +2759,14 @@ function wdpro_copy($src, $dst, $callbackFilenameMod=null) {
 }
 
 
+function wdpro_mkdir_for_file($filePath) {
+	$pathinfo = pathinfo($filePath);
+	if (!is_dir($pathinfo['dirname'])) {
+		mkdir($pathinfo['dirname'], 0755, true);
+	}
+}
+
+
 /**
  * Копирует файл и при необходимости создает папки
  *
@@ -3298,6 +3316,11 @@ function wdpro_visitor_session_id() {
 }
 
 
+function wdpro_get_visitor_id() {
+	return wdpro_visitor_session_id();
+}
+
+
 /**
  * Проверяет что сессия запущена
  *
@@ -3697,9 +3720,13 @@ function wdpro_data($name, $value='WDPRO_NOT_SETTED_SO_RETURN_VALUE') {
  *
  * @return string
  */
-function wdpro_check_html($visible, $title='') {
+function wdpro_check_html($visible, $title='', $displayTitle=false) {
 	if ($visible) {
-		return '<i class="fa fa-check" aria-hidden="true" title="'.$title.'"></i>';
+		$label = '';
+		if ($displayTitle) {
+			$label = ' '.$title;
+		}
+		return '<i class="fa fa-check" aria-hidden="true" title="'.$title.'"></i>'.$label;
 	}
 }
 
@@ -4196,9 +4223,25 @@ function wdpro_get_random_hash($length=32) {
 }
 
 
-function wdpro_echo_image_size_attributes($src) {
-	$size = getimagesize($src);
-	echo $size[3];
+function wdpro_echo_image_size_attributes($path) {
+	echo wdpro_get_image_size_attributes($path);
+}
+
+
+function wdpro_get_image_size_attributes($path) {
+	$size = getimagesize($path);
+	return $size[3];
+}
+
+
+function wdpro_get_img_attrs_from_template($src) {
+	return ' src="'.WDPRO_TEMPLATE_URL.$src.'" '
+	.wdpro_get_image_size_attributes(WDPRO_TEMPLATE_PATH.$src);
+}
+
+function wdpro_get_img_attrs_from_upload_images($src) {
+	return ' src="'.WDPRO_UPLOAD_IMAGES_URL .$src.'" '
+		.wdpro_get_image_size_attributes(WDPRO_UPLOAD_IMAGES_PATH.$src);
 }
 
 function wdpro_get_captcha_src() {
@@ -4238,3 +4281,20 @@ function wdpro_number_no_e($amount) {
 	return $amount;
 }
 
+
+function wdpro_mail_without_cron(
+			$withoutCron,
+			$to,
+			$subject,
+			$messageInHtmlFormat,
+			$headers,
+			$attachments) {
+	
+	$subject = 'CCRROONN_SSEENNDD::'.$subject;
+
+	wp_mail( $to,
+			$subject,
+			$messageInHtmlFormat,
+			$headers,
+			$attachments );
+}

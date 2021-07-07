@@ -29,18 +29,8 @@ class Modules
 			$controllerClassFileName = $pathToModuleDir.'/Controller.php';
 			$controllerClassFileName = wdpro_fix_directory_separator($controllerClassFileName);
 
-			if (is_file($controllerClassFileName))
+			if ($moduleNamespace = static::addNamespace($pathToModuleDir))
 			{
-				$moduleNamespace = require($controllerClassFileName);
-				if (!$moduleNamespace || $moduleNamespace === 1)
-				{
-					throw new Exception('Файл '.$controllerClassFileName
-						.' не возвращает имя пространства имен. Добавьте в конец этого 
-					файла строку return __NAMESPACE__;');
-				}
-
-				Autoload::add($moduleNamespace, $pathToModuleDir);
-				
 				/** @var \Wdpro\BaseController $controller */
 				$controller = $moduleNamespace.'\\Controller';
 				//$controller = new $controllerClassName;
@@ -50,12 +40,6 @@ class Modules
 				$controller::initStart();
 			}
 
-			else {
-				// Это отключил, чтобы не мозолило глаза
-				if (false && defined('WP_DEBUG') && WP_DEBUG) {
-					echo 'Notify: Нет файла: '.$controllerClassFileName.PHP_EOL.PHP_EOL;
-				}
-			}
 
 			// Секции (все, только сайт, только админка)
 			$sections = array('all', 'site', 'console');
@@ -211,6 +195,34 @@ class Modules
 	public static function addWdpro($moduleName)
 	{
 		static::add(WDPRO_DIR.'modules/'.$moduleName);
+	}
+
+
+	// Только добавляет модуль в autoload без запуска функций контроллера
+	public static function addNamespaceWdpro($moduleName) {
+		static::addNamespace(WDPRO_DIR.'modules/'.$moduleName);
+	}
+
+
+	public static function addNamespace($pathToModuleDir) {
+		$pathToModuleDir = wdpro_fix_directory_separator($pathToModuleDir);
+		$controllerClassFileName = $pathToModuleDir.'/Controller.php';
+		$controllerClassFileName = wdpro_fix_directory_separator($controllerClassFileName);
+
+		if (is_file($controllerClassFileName))
+		{
+			$moduleNamespace = require($controllerClassFileName);
+			if (!$moduleNamespace || $moduleNamespace === 1)
+			{
+				throw new Exception('Файл '.$controllerClassFileName
+					.' не возвращает имя пространства имен. Добавьте в конец этого 
+				файла строку return __NAMESPACE__;');
+			}
+
+			Autoload::add($moduleNamespace, $pathToModuleDir);
+
+			return $moduleNamespace;
+		}
 	}
 
 

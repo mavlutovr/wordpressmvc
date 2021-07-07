@@ -38,7 +38,7 @@ class Controller extends \Wdpro\BaseController {
 	 * @return Entity
 	 * @throws \Exception
 	 */
-	public static function getPay($payId) {
+	public static function getPay($payId, $secret = null) {
 		
 		/** @var \Wdpro\BaseEntity $obj */
 		$obj = wdpro_object(
@@ -47,6 +47,10 @@ class Controller extends \Wdpro\BaseController {
 		);
 		
 		if ($obj->loaded()) {
+
+			if ($secret && $secret !== $obj->getSecret()) {
+				throw new \Exception('Can\'t find payment');
+			}
 			return $obj;
 		}
 	}

@@ -234,8 +234,6 @@ class Controller extends \Wdpro\BaseController
 				)) {
 					foreach ($sel as $row) {
 
-						print_r($row);
-
 						if ($row['smtp']) {
 							global $wdproTempSmtp, $wdproTempSmtpN;
 							$wdproTempSmtpN ++;
@@ -315,7 +313,8 @@ class Controller extends \Wdpro\BaseController
 		$messageInHtmlFormat = null,
 		$headers = null,
 		$attachments = null,
-		$smtp=null)
+		$smtp=null,
+		$withoutCron=false)
 	{
 		if (is_array( $headers )) {
 			$headers[] = 'content-type: text/html';
@@ -334,7 +333,12 @@ class Controller extends \Wdpro\BaseController
 			$subject .= ':::SMTP:'.$wdproTempSmtpN.':::';
 		}
 
-		return wp_mail( $to,
+		if ($withoutCron) {
+			
+		}
+		return wdpro_mail_without_cron(
+			$withoutCron,
+			$to,
 			$subject,
 			$messageInHtmlFormat,
 			$headers,
