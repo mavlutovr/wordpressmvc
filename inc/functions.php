@@ -2700,8 +2700,11 @@ function wdpro_render_php($file, $templateData=null) {
  * @param string $file Файл, которого может не быть
  */
 function wdpro_default_file($defaultFile, $file) {
-
-	if (!is_file($file) && is_dir(dirname($file)) && is_file($defaultFile)) {
+	$dir = dirname($file);
+	if (!is_dir($dir)) {
+		mkdir($dir, 0755, true);
+	}
+	if (!is_file($file) && is_file($defaultFile)) {
 		copy($defaultFile, $file);
 	}
 }
