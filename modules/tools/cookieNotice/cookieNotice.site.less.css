@@ -19,3 +19,6 @@
   width: auto;
   padding: 20px;
 }
+.cookie-notice--message {
+  word-break: break-word;
+}
