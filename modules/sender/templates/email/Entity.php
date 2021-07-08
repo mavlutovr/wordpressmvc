@@ -12,9 +12,11 @@ class Entity extends \Wdpro\BaseEntity {
 	public function send($email, $data) {
 		
 		$text = $this->getData('text');
+		$text = apply_filters('wdpro_sender_templates_text', $text);
 		$text = wdpro_render_text($text, $data);
 		
 		$subject = $this->getData('subject');
+		$text = apply_filters('wdpro_sender_templates_subject', $text);
 		$subject = wdpro_render_text($subject, $data);
 		
 		\Wdpro\Sender\Controller::sendEmail(

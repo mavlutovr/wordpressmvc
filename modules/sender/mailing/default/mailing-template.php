@@ -1,35 +1,6 @@
 
 <style>
-.wdpro--substrate {
-  background: #EEE;
-  padding: 20px;
-  height: 100%;
-  font-family: Verdana;
-}
-
-.wdpro--signature,
-.wdpro--content-block {
-  padding: 30px;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.wdpro--content-block {
-  background: white;
-  border-radius: 8px;
-}
-
-.wdpro--signature {
-  font-size: 0.75em;
-  color: #777;
-}
-
-.wdpro--signature a {
-  color: #777;
-}
-
-.wdpro--substrate img {
+.wdpro--content img {
   max-width: 100%;
   border-radius: 5px;
 }
@@ -37,13 +8,34 @@
 
 
 
-<div class="wdpro--substrate">
+<div style="
+  background: #EEE;
+  padding: 20px;
+  min-height: 100%;
+  font-family: Verdana;
+">
 
-  <div class="wdpro--content-block">
+  <!-- Content -->
+  <div class="wdpro--content" style="
+    padding: 30px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    background: white;
+    border-radius: 8px;
+  ">
     <?= $data['content'] ?>
   </div>
 
-  <div class="wdpro--signature">
+  <!-- Signature -->
+  <div style="
+    padding: 30px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 0.85em;
+    color: #777;
+  ">
     <?= $data['signature'] ?>
   </div>
 
