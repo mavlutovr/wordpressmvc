@@ -1,5 +1,7 @@
 wdpro.ready($ => {
 
+  if (wdpro.disableCookieNotice) return;
+
   const getCookie = name => {
     let matches = document.cookie.match(new RegExp(
       "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
