@@ -34,7 +34,7 @@ class Entity extends \Wdpro\BaseEntity {
       $target = $this->getNextTarget();
       $this->data['sended_last_id'] = $target->id();
       $this->data['sended_count'] ++;
-      $this->sendToTarget($target);
+      $this->send($target);
     }
     catch (\Exception $err) {
       $this->data['status'] = 'completed';
@@ -42,12 +42,10 @@ class Entity extends \Wdpro\BaseEntity {
       // Рассылка уведомления об окончании
       $targets = $this->getTestTargets();
       foreach($targets as $target) {
-        \Wdpro\Sender\Controller::sendEmail(
-          $target->getMailingEmail(),
+        $this->send(
+          $target,
           'Рассылка завершена',
-          '<p><p href="'.home_url().'/wp-admin/admin.php?page=App.Mailing.ConsoleRoll">Посмотреть результаты</p>',
-          null, null, null,
-          true
+          '<p><a href="'.home_url().'/wp-admin/admin.php?page=App.Mailing.ConsoleRoll">Посмотреть результаты</a>'
         );
       }
     }
@@ -57,20 +55,12 @@ class Entity extends \Wdpro\BaseEntity {
   }
 
 
-  public function sendTest() {
-    $targets = $this->getTestTargets();
-    
-    foreach($targets as $target) {
-      $this->sendToTarget($target);
-    }
-  }
-
-
-  public function sendToTarget($target) {
-    $data = $this->data;
-
+  public function send($target) {
 
     $email = $target->getMailingEmail();
+
+    $data = $this->data;
+
     $templateData = $target->getMailingData($data);
     if (empty($templateData['signature'])) {
       $templateData['signature'] = wdpro_get_option('mailing_signature');
@@ -90,15 +80,33 @@ class Entity extends \Wdpro\BaseEntity {
       ]);
     }
 
-    foreach($data as $key => $value) {
-      $data[$key] = wdpro_render_text($value, $templateData);
-    }
+    $subject = wdpro_render_text($this->data['subject'], $templateData);
+
+    $html = wdpro_render_php(
+      WDPRO_TEMPLATE_PATH.'mailing-template.php',
+      [
+        'content'=>$this->data['text'],
+        'signature'=>wdpro_get_option('mailing_signature'),
+      ]
+    );
+    $html = wdpro_render_text($html, $templateData);
 
     \Wdpro\Sender\Controller::sendEmail(
       $email,
-      $data['subject'],
-      $data['text']
+      $subject,
+      $html,
+      null, null, null,
+      true
     );
+  }
+
+
+  public function sendTest() {
+    $targets = $this->getTestTargets();
+    
+    foreach($targets as $target) {
+      $this->send($target);
+    }
   }
 
 }

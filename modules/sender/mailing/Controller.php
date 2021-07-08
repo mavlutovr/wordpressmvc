@@ -113,6 +113,12 @@ class Controller extends \Wdpro\BaseController {
 			return require __DIR__.'/default/page-unsubscribe.php';
     });
 
+    // Mail Template
+    \wdpro_default_file(
+      __DIR__.'/default/mailing-template.php',
+      WDPRO_TEMPLATE_PATH.'mailing-template.php'
+    );
+
 
     // Unsubscription
     wdpro_on_uri('mailing-unsubscribe', function () {
